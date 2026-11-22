@@ -538,6 +538,19 @@ contestButton.Parent = gui
 addCorner(contestButton, 12)
 addStroke(contestButton, Color3.fromRGB(231, 190, 111), 1.5)
 
+local hallButton = Instance.new("TextButton")
+hallButton.Name = "IslandHallOfFameButton"
+hallButton.Position = UDim2.fromOffset(18, 642)
+hallButton.Size = UDim2.fromOffset(250, 42)
+hallButton.BackgroundColor3 = Color3.fromRGB(90, 101, 145)
+hallButton.Text = "ЗАЛ СЛАВЫ"
+hallButton.TextColor3 = Color3.fromRGB(255, 245, 220)
+hallButton.TextSize = 13
+hallButton.Font = Enum.Font.GothamBlack
+hallButton.Parent = gui
+addCorner(hallButton, 12)
+addStroke(hallButton, Color3.fromRGB(171, 184, 230), 1.5)
+
 local contestPanel = Instance.new("Frame")
 contestPanel.Name = "IslandContestPanel"
 contestPanel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -2222,8 +2235,111 @@ local function openContestPanel()
     end
 end
 
+local function openHallPanel()
+    local response = invokeContest({ Action = "List" })
+    if response then
+        contestData = response
+        contestPanel.Visible = true
+        contestTabs.Visible = false
+        contestTitle.Text = "ЗАЛ СЛАВЫ NEST RAIDERS"
+        contestWeek.Text = "Победители прошлых недель · награды только за достижения"
+        clearContestList()
+
+        local history = response.History or {}
+        if #history == 0 then
+            addContestLabel("Пока нет завершённых конкурсов. Первые победители появятся после окончания недели!", 1, 64, Color3.fromRGB(255, 220, 151))
+        else
+            local order = 1
+            for _, archive in ipairs(history) do
+                addContestLabel("НЕДЕЛЯ " .. tostring(archive.Week), order, 25, Color3.fromRGB(255, 220, 151))
+                order += 1
+                for _, categoryId in ipairs({"Cozy", "Nature", "Fantasy"}) do
+                    local winners = archive.Categories and archive.Categories[categoryId] or {}
+                    local categoryNames = { Cozy = "Уют", Nature = "Природа", Fantasy = "Фэнтези" }
+                    addContestLabel(categoryNames[categoryId] or categoryId, order, 21, Color3.fromRGB(208, 218, 238))
+                    order += 1
+                    if #winners == 0 then
+                        addContestLabel("Нет призёров", order, 22)
+                        order += 1
+                    else
+                        for _, winner in ipairs(winners) do
+                            local winnerEntry = winner
+                            local medal = winnerEntry.Place == 1 and "🥇" or (winnerEntry.Place == 2 and "🥈" or "🥉")
+                            local awardKey = archive.Week .. "_" .. categoryId
+                            local alreadyClaimed = response.ClaimedTrophies
+                                and response.ClaimedTrophies[awardKey] ~= nil
+                            local row = Instance.new("Frame")
+                            row.LayoutOrder = order
+                            row.Size = UDim2.new(1, -8, 0, 48)
+                            row.BackgroundColor3 = Color3.fromRGB(62, 70, 88)
+                            row.BorderSizePixel = 0
+                            row.Parent = contestList
+                            addCorner(row, 9)
+
+                            local name = Instance.new("TextLabel")
+                            name.BackgroundTransparency = 1
+                            name.Position = UDim2.fromOffset(9, 4)
+                            name.Size = UDim2.new(1, -112, 1, -8)
+                            name.Text = string.format("%s %s · %d голосов", medal, winnerEntry.DisplayName, winnerEntry.Votes or 0)
+                            name.TextColor3 = Color3.fromRGB(240, 242, 248)
+                            name.TextSize = 10
+                            name.TextWrapped = true
+                            name.TextXAlignment = Enum.TextXAlignment.Left
+                            name.Font = Enum.Font.GothamBold
+                            name.Parent = row
+
+                            if winnerEntry.UserId == player.UserId then
+                                local claim = Instance.new("TextButton")
+                                claim.AnchorPoint = Vector2.new(1, 0.5)
+                                claim.Position = UDim2.new(1, -6, 0.5, 0)
+                                claim.Size = UDim2.fromOffset(94, 34)
+                                claim.BackgroundColor3 = alreadyClaimed and Color3.fromRGB(83, 91, 104) or Color3.fromRGB(166, 126, 64)
+                                claim.Text = alreadyClaimed and "ПОЛУЧЕНО" or "ЗАБРАТЬ КУБОК"
+                                claim.TextColor3 = Color3.new(1, 1, 1)
+                                claim.TextSize = 8
+                                claim.Font = Enum.Font.GothamBlack
+                                claim.Active = not alreadyClaimed
+                                claim.Parent = row
+                                addCorner(claim, 8)
+                                claim.Activated:Connect(function()
+                                    if alreadyClaimed then return end
+                                    claim.Active = false
+                                    local result = invokeContest({
+                                        Action = "ClaimTrophy",
+                                        Week = archive.Week,
+                                        Category = categoryId,
+                                    })
+                                    if result then
+                                        response.ClaimedTrophies = response.ClaimedTrophies or {}
+                                        response.ClaimedTrophies[awardKey] = {
+                                            Week = archive.Week,
+                                            Category = categoryId,
+                                            Place = winnerEntry.Place,
+                                        }
+                                        showNotice(result.Message or "Кубок установлен в твоём гнезде!")
+                                        openHallPanel()
+                                    else
+                                        claim.Active = true
+                                    end
+                                end)
+                            end
+                            order += 1
+                        end
+                    end
+                end
+            end
+        end
+        contestPanel.Visible = true
+    end
+end
+
 contestButton.Activated:Connect(openContestPanel)
-contestClose.Activated:Connect(function() contestPanel.Visible = false end)
+hallButton.Activated:Connect(openHallPanel)
+contestClose.Activated:Connect(function()
+    contestPanel.Visible = false
+    contestTabs.Visible = true
+    contestTitle.Text = "ЕЖЕНЕДЕЛЬНЫЙ КОНКУРС"
+end)
 
 local activeDecorDrag = nil
 local dragPreview = nil
