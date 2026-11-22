@@ -190,3 +190,10 @@
 - Offspring starts at level 1 / one star and records both parent species for collection lineage.
 - The collection UI uses a two-parent selection flow followed by explicit confirmation. Breeding is server-authoritative and blocked for active/displayed parents or a full collection.
 - Distinct hybrid species models remain future work; current offspring uses one parent's existing species model.
+
+
+## Lineage egg incubation — Sprint 4.16
+- Breeding now produces a persistent lineage egg rather than an immediate companion.
+- Incubation lasts five minutes. The egg stores the server-selected offspring species, inherited/mutated genetic trait, and parent species IDs.
+- The collection displays incubator count, remaining time, offspring preview, and genetic trait. The player hatches the ready egg at their own plot's hatch station.
+- The hatch service uses the stored offspring outcome; it does not reroll species or genetics. Standard eggs retain their existing random hatch behavior.
