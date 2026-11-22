@@ -197,3 +197,12 @@ A feature is done only when:
 - Destination arrival must verify that the requested owner still owns the requested plot before moving the visitor.
 - Directory unavailability degrades gracefully to local listings; Studio remains local-only.
 - Directory entries are ephemeral and refresh periodically; they are not a persistent player profile or ranking database.
+
+
+## Player identity, public profiles, achievements, and titles
+- Public profiles are served for online players in the same game server. Offline and cross-server lookup is a future extension.
+- Public fields: display name, username, level, nest level, companion count, unique species, collection completion, received island likes, contest trophy count, achievement states, available titles, and equipped title.
+- Private profile fields such as currency, raw inventory entries, item instance IDs, session tokens, and raw save data must not be exposed.
+- Achievements are derived from server-authoritative profile state: first companion, 10 companions, five unique species, nest level 3, first contest trophy, 10 received likes, and level 10.
+- Titles are cosmetic, may be equipped only after unlocking, persist in `Nest.EquippedTitle`, and render above the character.
+- Client requests cannot grant achievements or equip locked titles.
