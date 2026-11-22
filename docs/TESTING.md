@@ -336,3 +336,16 @@
 - [ ] Verify old saved companions with missing genetic data normalize to Natural without errors.
 - [ ] Verify hybrid species can render every supported genetic mutation without losing their base species silhouette.
 - [ ] Verify visual density and readability on desktop and mobile; ornaments must not block ProximityPrompts or interaction hitboxes.
+
+
+## Personal nest breeding altar — Sprint 4.19
+- [ ] Verify every personal plot builds a dedicated BreedingStation beside its hatch station.
+- [ ] Verify the altar has a visible neon ring, soft purple PointLight, and a ProximityPrompt labelled "Разведение" / "Алтарь потомства".
+- [ ] Verify the owning player receives guidance when activating their own altar.
+- [ ] Verify a non-owner activating another player's altar receives an ownership notice.
+- [ ] Verify breeding from anywhere outside the owner's 18-stud station radius is rejected before coins/cooldowns/egg inventory change.
+- [ ] Verify breeding inside the owner's station radius still enforces adult level, different species, ownership, equipped/displayed restrictions, cooldown, currency, and capacity.
+- [ ] Verify a player cannot use another player's altar to bypass personal plot ownership.
+- [ ] Verify station placement does not overlap the hatch station, nest bowl, owner sign, or display pedestals.
+- [ ] Verify the station and prompt are usable on desktop and mobile touch controls.
+- [ ] Verify prompt activation and remote invocation spam do not duplicate lineage eggs or charge coins more than once.
