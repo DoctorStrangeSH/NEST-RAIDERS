@@ -31,3 +31,15 @@ Any other Creator Store model remains unapproved until its current price, creato
 
 ## Visual consistency lock
 Bright, friendly stylized low-poly / chunky forms; saturated but controlled colors; soft readable lighting; consistent tree scale; clear paths and silhouettes. Do not mix realistic assets, classic blocky props, and high-detail PBR packs in the same visible area.
+
+
+## Nest decoration prototype (scripted placeholders)
+
+| Item | Purpose | Prototype visual | Target art direction |
+|---|---|---|---|
+| Flower Pot | Personal nest decoration | Colorful pot with three blooms | Bright low-poly flowers, soft leaf shapes |
+| Warm Lantern | Warm ambient lighting | Wooden post with glowing orb | Cozy lantern with warm glass and metal trim |
+| Meadow Crystal | Magical accent | Neon green-blue crystal and point light | Faceted translucent fantasy crystal |
+| Mushroom Seat | Resting / cozy decor | Mushroom cap and stem bench | Stylized oversized mushroom furniture |
+
+These are temporary scripted models, not imported Creator Store assets. Replace only after checking asset permissions, performance, scale, and visual consistency in Studio.
