@@ -12,10 +12,12 @@ Status legend: [x] done · [ ] not done · [~] in progress
 ## Milestone 0 — Project foundation
 - [x] Create repository and product direction.
 - [x] Lock bright art direction, connected island world, balanced PvP, ambitious scope.
-- [ ] Rojo project and Luau folder structure.
-- [ ] Shared configuration and server bootstrap.
-- [ ] Data persistence and safe profile defaults.
-- [ ] Automated static checks / CI.
+- [x] Add Rojo project mapping and Luau folder structure.
+- [x] Add shared configuration, profile template, and server bootstrap.
+- [x] Add initial DataStore profile lifecycle and zone progression rules.
+- [x] Add project specification, asset pipeline, asset catalog, and Studio test checklist.
+- [ ] Add automated static checks / CI.
+- [ ] Validate Rojo build and Luau scripts in Roblox Studio.
 
 ## Milestone 1 — First playable loop
 - [ ] Spawn on Starter Island and claim a personal nest.
@@ -28,7 +30,7 @@ Status legend: [x] done · [ ] not done · [~] in progress
 
 ## Milestone 2 — Open-world progression
 - [ ] Seamless connected biomes with no mandatory world portals.
-- [ ] Level, quest, and trial requirements for biome access.
+- [~] Level and quest requirements defined in shared configuration; gameplay gates not yet implemented.
 - [ ] Server-side zone checks for egg collection and interactions.
 - [ ] Starter Island, Emerald Wilds, Frost Highlands, Emberlands, Crystal Realm, Ancient Heights, Void Frontier.
 - [ ] World landmarks, secrets, caves, traversal routes, and discovery rewards.
@@ -56,3 +58,6 @@ Status legend: [x] done · [ ] not done · [~] in progress
 
 ## Release gates
 A milestone is not complete until its acceptance tests pass in Roblox Studio on desktop and mobile emulation. Monetization and public launch are blocked until saving, server authority, exploit resistance, and moderation basics are verified.
+
+## Current implementation note
+The current code is a foundation, not yet a playable game. DataStore persistence and progression logic have not been runtime-tested in Studio. The first playable loop and Creator Store asset integration remain upcoming work.
