@@ -929,7 +929,7 @@ renderDisplay = function(data)
     for index, entry in ipairs(data.Displayed or {}) do
         local card = Instance.new("Frame")
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 82)
+        card.Size = UDim2.new(1, -8, 0, 108)
         card.BackgroundColor3 = Color3.fromRGB(49, 66, 83)
         card.BorderSizePixel = 0
         card.Parent = displayList
@@ -939,7 +939,7 @@ renderDisplay = function(data)
         info.BackgroundTransparency = 1
         info.Position = UDim2.fromOffset(10, 7)
         info.Size = UDim2.new(1, -118, 1, -14)
-        info.Text = entry.Empty and ("Витрина №" .. entry.Slot .. "\nСвободное место") or string.format("Витрина №%d · %s\n%s · +%d / 10 сек.", entry.Slot, entry.Name, entry.Rarity or "Обычный", entry.Income or 0)
+        info.Text = entry.Empty and ("Витрина №" .. entry.Slot .. "\nСвободное место") or string.format("Витрина №%d · %s\n%s · +%d / 10 сек.\nНастроение: %d%%", entry.Slot, entry.Name, entry.Rarity or "Обычный", entry.Income or 0, entry.Mood or 50)
         info.TextColor3 = Color3.fromRGB(236, 241, 247)
         info.TextSize = 12
         info.TextWrapped = true
@@ -949,8 +949,9 @@ renderDisplay = function(data)
 
         local action = Instance.new("TextButton")
         action.AnchorPoint = Vector2.new(1, 0.5)
-        action.Position = UDim2.new(1, -8, 0.5, 0)
-        action.Size = UDim2.fromOffset(102, 36)
+        action.Position = UDim2.new(1, -8, 0, 10)
+        action.AnchorPoint = Vector2.new(1, 0)
+        action.Size = UDim2.fromOffset(102, 34)
         action.BackgroundColor3 = entry.Empty and Color3.fromRGB(83, 151, 103) or Color3.fromRGB(154, 91, 77)
         action.Text = entry.Empty and "ВЫБРАТЬ" or "СНЯТЬ"
         action.TextColor3 = Color3.new(1, 1, 1)
@@ -969,6 +970,29 @@ renderDisplay = function(data)
                 if updated then renderDisplay(updated) else action.Active = true end
             end
         end)
+
+        if not entry.Empty then
+            local interact = Instance.new("TextButton")
+            interact.AnchorPoint = Vector2.new(1, 1)
+            interact.Position = UDim2.new(1, -8, 1, -8)
+            interact.Size = UDim2.fromOffset(102, 34)
+            interact.BackgroundColor3 = Color3.fromRGB(89, 143, 112)
+            interact.Text = "ПОГЛАДИТЬ"
+            interact.TextColor3 = Color3.new(1, 1, 1)
+            interact.TextSize = 11
+            interact.Font = Enum.Font.GothamBlack
+            interact.Parent = card
+            addCorner(interact, 8)
+            interact.Activated:Connect(function()
+                interact.Active = false
+                local updated = invokeDisplay({
+                    Action = "Interact",
+                    Interaction = "Pet",
+                    InstanceId = entry.InstanceId,
+                })
+                if updated then renderDisplay(updated) else interact.Active = true end
+            end)
+        end
     end
 end
 
