@@ -929,7 +929,11 @@ end
 renderDisplay = function(data)
     if not data then return end
     latestDisplayData = data
-    displayIncome.Text = string.format("Витрины: %d / %d  ·  Доход: +%d монет каждые %d сек.\nНакоплено: %d монет", #(data.Displayed or {}), data.SlotLimit or 0, data.IncomePerTick or 0, data.TickSeconds or 10, data.StoredCoins or 0)
+    local filledSlots = 0
+    for _, entry in ipairs(data.Displayed or {}) do
+        if not entry.Empty then filledSlots += 1 end
+    end
+    displayIncome.Text = string.format("Занято витрин: %d / %d  ·  Доход: +%d монет каждые %d сек.\nНакоплено: %d монет", filledSlots, data.SlotLimit or 0, data.IncomePerTick or 0, data.TickSeconds or 10, data.StoredCoins or 0)
     collectDisplay.Text = "СОБРАТЬ · " .. tostring(data.StoredCoins or 0) .. " 🪙"
     collectDisplay.Active = (data.StoredCoins or 0) > 0
     collectDisplay.AutoButtonColor = collectDisplay.Active
