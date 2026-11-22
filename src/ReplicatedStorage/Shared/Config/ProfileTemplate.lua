@@ -13,6 +13,8 @@ local ProfileTemplate = {
     Nest = {
         Level = 1,
         PlotId = nil,
+        DisplayedCompanions = {},
+        StoredCoins = 0,
     },
     Settings = {
         MusicEnabled = true,
