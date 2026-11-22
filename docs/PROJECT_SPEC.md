@@ -237,3 +237,13 @@ A feature is done only when:
 - Collection capacity is 100 companions. Breeding must fail without charging currency or setting cooldowns when the collection is full.
 - UI requires selecting parent A, selecting parent B, then explicitly confirming breeding before spending coins.
 - This is the first breeding loop; true hybrid species and distinct cross-species models are future work. The child retains one parent's existing species model.
+
+
+## Lineage egg incubation
+- Successful breeding creates a persistent egg record in the player's existing EggInventory. No companion is created immediately.
+- The egg stores a server-selected offspring species, genetic trait, both parent species IDs, origin = Breeding, and IncubatesUntil = creation time + 300 seconds.
+- The inventory snapshot exposes egg origin, remaining incubation seconds, offspring species name, genetic trait name, and parent names. The client cannot modify stored egg outcomes.
+- Before the deadline, hatch requests leave the egg untouched and return a remaining-time notice. At or after the deadline, the player's owned plot hatch station consumes the egg and creates exactly one companion using its stored species, genetics, and lineage.
+- Normal world/shop eggs keep the existing random hatch flow.
+- The collection UI shows an incubator summary with lineage egg count, next egg countdown, species preview, and genetic trait.
+- Breeding checks both companion and egg inventory capacity before charging currency or setting parent cooldowns.
