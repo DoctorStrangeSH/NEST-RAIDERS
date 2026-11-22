@@ -41,7 +41,7 @@ local function getSnapshot(profile)
         if def then
             table.insert(placed, {
                 Key = tostring(key), Id = item.Id, Name = def.Name,
-                X = item.X, Z = item.Z, Rotation = item.Rotation or 0,
+                X = item.X, Z = item.Z, Rotation = item.Rotation or 0, Footprint = def.Footprint,
             })
         end
     end
