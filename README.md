@@ -48,3 +48,11 @@ Use Creator Store assets only after checking creator, permissions, dependencies,
 - Confirm with mouse click or touch tap; rotate with R on desktop or the on-screen rotate control on mobile.
 - Cancel with Escape or the on-screen cancel control. The editor panel is hidden during placement so the island remains visible.
 - The client only raycasts against the current player's own plot surface; the server still validates ownership, slot, proximity, and transform bounds.
+
+
+## First island construction system
+- Added a server-authoritative catalog for five buildable objects: Stone Path (12), Clover Bush (28), Apple Tree (85), Wooden Fence (22), and Cozy Cottage (260).
+- Players purchase objects into a persistent build inventory, place them on a 2-stud island grid, move and rotate them, and remove them back into inventory.
+- The server enforces coin costs, inventory ownership, plot proximity, grid bounds, object-footprint overlap, per-type limits, and a 100-object island cap.
+- Built models are reconstructed from saved profile data when the plot is assigned and cleared when the plot is released.
+- Current models are lightweight scripted prototypes; reviewed Creator Store assets and drag-preview placement remain future polish tasks.
