@@ -111,10 +111,20 @@ function CompanionService:RefreshPlayer(player)
     folder.Parent = rootFolder
     self._folders[player] = folder
 
+    local ownedById = {}
+    for _, companion in ipairs(profile.Companions) do
+        if type(companion.InstanceId) == "string" then
+            ownedById[companion.InstanceId] = companion
+        end
+    end
+
     local followers = {}
-    for index, companion in ipairs(profile.Companions) do
-        if index > MAX_VISIBLE_COMPANIONS then break end
-        table.insert(followers, buildPet(folder, companion, index))
+    for _, instanceId in ipairs(profile.ActiveCompanions or {}) do
+        if #followers >= MAX_VISIBLE_COMPANIONS then break end
+        local companion = ownedById[instanceId]
+        if companion then
+            table.insert(followers, buildPet(folder, companion, #followers + 1))
+        end
     end
 
     task.spawn(function()
