@@ -5,6 +5,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
+local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 
 local DisplayPetService = {}
 DisplayPetService._lastRequest = {}
@@ -14,6 +15,8 @@ local INTERACTION_COOLDOWN = 3
 local MOOD_GAIN = { Pet = 15, Play = 25 }
 local FEED_COST = 10
 local FEED_HUNGER = 35
+local TREAT_COST = 15
+local TREAT_MOOD = 15
 local SLEEP_DURATION = 60
 local NEEDS_DECAY = { Hunger = 300, Energy = 480, Mood = 600 }
 local SLOT_OFFSETS = {
@@ -77,6 +80,7 @@ local function getSnapshot(profile)
         if companion then
             displayedSet[instanceId] = true
             local needs = getNeeds(profile, instanceId, now)
+            local definition = CompanionCatalog[companion.Id] or {}
             table.insert(displayed, {
                 Slot = slot,
                 InstanceId = instanceId,
@@ -89,6 +93,9 @@ local function getSnapshot(profile)
                 Hunger = math.floor(needs.Hunger),
                 Energy = math.floor(needs.Energy),
                 IsSleeping = (tonumber(needs.RestingUntil) or 0) > now,
+                Personality = definition.Personality or "Без характера",
+                PersonalityDescription = definition.PersonalityDescription or "",
+                FavoriteFood = definition.FavoriteFood or "Обычный корм",
             })
         else
             table.insert(displayed, { Slot = slot, Empty = true })
@@ -235,24 +242,29 @@ function DisplayPetService:HandleRequest(player, payload)
             return { Ok = false, Message = "Питомцу нужно немного времени перед новой игрой." }
         end
         local needs = getNeeds(profile, payload.InstanceId, os.time())
-        if interaction == "Feed" then
-            if profile.Coins < FEED_COST then
-                return { Ok = false, Message = "Не хватает монет на корм. Нужно " .. FEED_COST .. " монет." }
+        local definition = CompanionCatalog[companion.Id] or {}
+        if interaction == "Feed" or interaction == "Treat" then
+            local isTreat = interaction == "Treat"
+            local cost = isTreat and TREAT_COST or FEED_COST
+            if profile.Coins < cost then
+                return { Ok = false, Message = "Не хватает монет. Нужно " .. cost .. " монет." }
             end
             if needs.Hunger >= 95 then
                 return { Ok = false, Message = companion.Name .. " пока не голоден." }
             end
-            profile.Coins -= FEED_COST
+            profile.Coins -= cost
             needs.Hunger = math.clamp(needs.Hunger + FEED_HUNGER, 0, 100)
+            local moodGain = isTreat and TREAT_MOOD or 5
             profile.Nest.CompanionMood[payload.InstanceId] = math.clamp(
-                (tonumber(profile.Nest.CompanionMood[payload.InstanceId]) or 50) + 5,
+                (tonumber(profile.Nest.CompanionMood[payload.InstanceId]) or 50) + moodGain,
                 0,
                 100
             )
             player:SetAttribute("Coins", profile.Coins)
             self._lastInteraction[interactionKey] = now
             self:RefreshPlayer(player)
-            player:SetAttribute("LastNotice", companion.Name .. " с удовольствием поел!")
+            local foodName = isTreat and (definition.FavoriteFood or "лакомство") or "корм"
+            player:SetAttribute("LastNotice", companion.Name .. " с удовольствием съел: " .. foodName .. "!")
             return { Ok = true, Data = getSnapshot(profile) }
         elseif interaction == "Sleep" then
             if (tonumber(needs.RestingUntil) or 0) > os.time() then
@@ -274,8 +286,11 @@ function DisplayPetService:HandleRequest(player, payload)
             if interaction == "Play" and needs.Energy < 10 then
                 return { Ok = false, Message = companion.Name .. " устал. Дай ему отдохнуть." }
             end
+            local personalityBonus = interaction == "Play"
+                and (tonumber(definition.PlayMoodBonus) or 0)
+                or (tonumber(definition.PetMoodBonus) or 0)
             profile.Nest.CompanionMood[payload.InstanceId] = math.clamp(
-                (tonumber(profile.Nest.CompanionMood[payload.InstanceId]) or 50) + gain,
+                (tonumber(profile.Nest.CompanionMood[payload.InstanceId]) or 50) + gain + personalityBonus,
                 0,
                 100
             )
