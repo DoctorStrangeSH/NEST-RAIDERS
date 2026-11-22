@@ -260,3 +260,13 @@ A feature is done only when:
 - Companion follower models have dedicated hybrid silhouettes and color palettes; they do not fall back to the starter fox model.
 - EmberFox has the CinderDash adult ability, unlocked at level 7, requiring an equipped companion, with server-side reward formula 60 + level × 12 + star rank × 20 and the catalog cooldown.
 - Fernshell and BriarGuardian currently have no active ability; their ability kits are future balancing work.
+
+
+## Genetic mutation appearance — Sprint 4.18
+- Natural: no additional genetic ornaments.
+- Verdant: green aura, three leaf/crystal growths along the upper silhouette, and a neon heart gem.
+- Luminous: cyan aura and three neon lantern orbs, each with a soft PointLight.
+- Prismatic: violet aura, three differently colored neon facets, and a prismatic core.
+- Genetic ornaments are built into the same companion model used for followers and nest displays, so the trait appearance is consistent across contexts.
+- Inventory cards show trait name, rarity, rounded passive-income bonus percentage, growth XP, and passive income.
+- Existing profile compatibility: missing or malformed genetic traits normalize to Natural.
