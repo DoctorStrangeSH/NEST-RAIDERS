@@ -107,7 +107,8 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add companion training XP, 10 levels, and Hatchling / Young / Adult growth stages.
 - [x] Scale passive income from companion level, star rank, and capped genetic bonus.
 - [x] Show genetic traits and growth stages in inventory; render trait auras and larger evolved models.
-- [ ] Add species-specific active abilities and trait inheritance through breeding.
+- [x] Add species-specific adult abilities with server validation, persistent per-pet cooldowns, and distinct rewards.
+- [ ] Add genetic trait inheritance rules and breeding through the nest.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
 - [ ] Economy sinks and telemetry-driven balancing.
