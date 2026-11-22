@@ -221,7 +221,7 @@
 
 
 ## Breeding ritual reveal — Sprint 4.20
-- Two parent-energy echoes converge through colored beams into the personal altar.
+- The two selected companion models appear on opposite altar pads and move toward the core as colored energy beams converge.
 - A lineage egg grows from a spark above the altar and receives trait-colored light and particles.
 - Hybrid offspring receive a distinct golden shard burst.
 - Effects are cosmetic; breeding results and incubation remain server-authoritative.
