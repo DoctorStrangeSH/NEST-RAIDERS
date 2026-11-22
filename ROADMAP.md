@@ -109,6 +109,7 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Show genetic traits and growth stages in inventory; render trait auras and larger evolved models.
 - [x] Add species-specific adult abilities with server validation, persistent per-pet cooldowns, and distinct rewards.
 - [x] Add adult cross-species breeding with inherited genetics, rare mutations, lineage records, parent cooldowns, and explicit confirmation.
+- [x] Add persistent lineage eggs with a five-minute incubation timer, offspring preview, inherited genetics, and hatch-at-station flow.
 - [ ] Add distinct hybrid species models, nest breeding station, and visual mutation variants.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
