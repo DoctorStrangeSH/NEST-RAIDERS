@@ -365,3 +365,12 @@
 - [ ] Verify the ritual does not block the inventory response or delay the five-minute incubation timer.
 - [ ] Verify two players breeding simultaneously see effects only at their own personal altars.
 - [ ] Verify the altar ritual is readable on mobile and does not obstruct nearby prompts.
+
+
+## Actual parent models in breeding ritual — Sprint 4.20 follow-up
+- [ ] Verify the ritual displays the exact two selected companion species, including hybrid silhouettes and genetic mutation ornaments.
+- [ ] Verify parent models appear on opposite altar pads, facing the ritual core.
+- [ ] Verify both models smoothly move toward the core while species-colored beams transfer energy.
+- [ ] Verify the parent preview models are temporary copies and do not duplicate, mutate, equip, or remove the player's saved companions.
+- [ ] Verify preview models and their lights are removed after the energy transfer and all temporary effects are cleaned up.
+- [ ] Verify simultaneous rituals by different players do not mix parent previews or effects.
