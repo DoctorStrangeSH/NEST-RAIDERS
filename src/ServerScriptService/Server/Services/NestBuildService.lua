@@ -12,7 +12,7 @@ local REQUEST_COOLDOWN = 0.3
 local MAX_BUILDINGS = 100
 local MAX_PER_TYPE = 50
 local GRID = 2
-local LIMIT = 16
+local LIMIT = 14
 
 local function ensureNest(profile)
     profile.Nest = profile.Nest or { Level = 1 }
@@ -162,10 +162,13 @@ function NestBuildService:HandleRequest(player,payload)
         if not def then return {Ok=false,Message="Выбери объект из каталога."} end
         local count=math.max(0,math.floor(tonumber(nest.BuildInventory[id]) or 0))
         if count<1 then return {Ok=false,Message="Сначала купи этот объект."} end
-        if #nest.PlacedBuildings>=MAX_BUILDINGS then return {Ok=false,Message="На острове уже достаточно построек."} end
+        local buildingCount = 0
+        for _ in pairs(nest.PlacedBuildings) do buildingCount += 1 end
+        if buildingCount >= MAX_BUILDINGS then return {Ok=false,Message="На острове уже достаточно построек."} end
         local x,z=tonumber(payload.X),tonumber(payload.Z)
         local rotation=tonumber(payload.Rotation) or 0
-        if not x or not z or x~=x or z~=z or math.abs(x)>LIMIT or math.abs(z)>LIMIT or math.abs(rotation)>36000 then
+        if not x or not z or x~=x or z~=z or math.abs(x)==math.huge or math.abs(z)==math.huge
+            or math.abs(x)>LIMIT or math.abs(z)>LIMIT or rotation~=rotation or math.abs(rotation)>36000 then
             return {Ok=false,Message="Некорректное место размещения."}
         end
         x,z=snap(x),snap(z)
@@ -191,7 +194,8 @@ function NestBuildService:HandleRequest(player,payload)
         if type(entry)~="table" or not NestBuildCatalog[entry.Id] then return {Ok=false,Message="Постройка не найдена."} end
         local x,z=tonumber(payload.X),tonumber(payload.Z)
         local rotation=tonumber(payload.Rotation)
-        if not x or not z or not rotation or x~=x or z~=z or math.abs(x)>LIMIT or math.abs(z)>LIMIT or math.abs(rotation)>36000 then
+        if not x or not z or not rotation or x~=x or z~=z or math.abs(x)==math.huge or math.abs(z)==math.huge
+            or math.abs(x)>LIMIT or math.abs(z)>LIMIT or rotation~=rotation or math.abs(rotation)>36000 then
             return {Ok=false,Message="Некорректное положение."}
         end
         x,z=snap(x),snap(z)
