@@ -8,6 +8,7 @@ local HttpService = game:GetService("HttpService")
 
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
+local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 
 local IslandContestService = {}
 IslandContestService._lastRequest = {}
@@ -16,6 +17,7 @@ IslandContestService._standingsCache = {}
 IslandContestService._studioVotes = {}
 IslandContestService._studioScores = {}
 IslandContestService._studioHistory = {}
+IslandContestService._finalizedWeeks = {}
 
 local COOLDOWN = 2
 local LIST_COOLDOWN = 2
@@ -30,8 +32,8 @@ local CATEGORIES = {
     Nature = { Name = "Природа", Description = "Лучший сад, лес и природный ландшафт." },
     Fantasy = { Name = "Фэнтези", Description = "Самый волшебный и необычный остров." },
 }
-local function weekKey()
-    return os.date("!%Y-W%W", os.time())
+local function weekKey(timestamp)
+    return os.date("!%Y-W%W", timestamp or os.time())
 end
 
 local function studioFallback()
@@ -255,11 +257,13 @@ end
 
 function IslandContestService:FinalizePreviousWeek()
     local previousWeek = weekKey(os.time() - 7 * 24 * 60 * 60)
+    if self._finalizedWeeks[previousWeek] then return true end
     if studioFallback() then
         self._studioHistory = self._studioHistory or {}
         if not self._studioHistory[previousWeek] then
             self._studioHistory[previousWeek] = self:BuildWeekArchive(previousWeek)
         end
+        self._finalizedWeeks[previousWeek] = true
         return true
     end
 
@@ -281,6 +285,7 @@ function IslandContestService:FinalizePreviousWeek()
         warn("[NEST RAIDERS] Hall of Fame archive failed:", err)
         return false
     end
+    self._finalizedWeeks[previousWeek] = true
     return true
 end
 
