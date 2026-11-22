@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local DataStoreService = game:GetService("DataStoreService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local ProfileTemplate = require(ReplicatedStorage.Shared.Config.ProfileTemplate)
@@ -11,6 +12,7 @@ PlayerDataService._profiles = {}
 PlayerDataService._store = DataStoreService:GetDataStore(GameConfig.DataStoreName)
 PlayerDataService._saving = {}
 PlayerDataService._sessionTokens = {}
+PlayerDataService._studioFallback = {}
 local SESSION_LOCK_SECONDS = 150
 
 local function deepCopy(value)
@@ -40,11 +42,31 @@ local function validProfile(data)
         and type(data.Companions or {}) == "table"
 end
 
+local function publishProfile(player, data)
+    data._SessionLock = nil
+    PlayerDataService._profiles[player] = data
+    player:SetAttribute("Coins", data.Coins)
+    player:SetAttribute("Level", data.Level)
+    player:SetAttribute("ProfileLoaded", true)
+end
+
 function PlayerDataService:GetProfile(player)
     return self._profiles[player]
 end
 
 function PlayerDataService:Load(player)
+    -- Default Studio mode is intentionally ephemeral so anyone can press Play
+    -- without publishing a place or enabling DataStore API access.
+    if RunService:IsStudio() and not GameConfig.UseStudioDataStore then
+        local profile = deepCopy(ProfileTemplate)
+        reconcile(profile, ProfileTemplate)
+        profile.SchemaVersion = GameConfig.DataSchemaVersion
+        self._studioFallback[player] = true
+        publishProfile(player, profile)
+        warn("[NEST RAIDERS] Studio test profile active; progress will not persist.")
+        return
+    end
+
     local key = "player_" .. player.UserId
     local token = game.JobId .. ":" .. HttpService:GenerateGUID(false)
     self._sessionTokens[player] = token
@@ -78,7 +100,6 @@ function PlayerDataService:Load(player)
                 return nextData
             end)
         end)
-
         if success then break end
         task.wait(attempt * 2)
     end
@@ -97,16 +118,13 @@ function PlayerDataService:Load(player)
         return
     end
 
-    data._SessionLock = nil
-    self._profiles[player] = data
-    player:SetAttribute("Coins", data.Coins)
-    player:SetAttribute("Level", data.Level)
-    player:SetAttribute("ProfileLoaded", true)
+    publishProfile(player, data)
 end
 
 function PlayerDataService:Save(player, releaseLock)
     local profile = self._profiles[player]
     if not profile then return false end
+    if self._studioFallback[player] then return true end
 
     local waitDeadline = os.clock() + 10
     while self._saving[player] and os.clock() < waitDeadline do task.wait(0.1) end
@@ -130,9 +148,7 @@ function PlayerDataService:Save(player, releaseLock)
             end
 
             snapshot._SessionLock = nil
-            if releaseLock then
-                return snapshot
-            end
+            if releaseLock then return snapshot end
 
             local nextData = deepCopy(snapshot)
             nextData._SessionLock = {
@@ -149,9 +165,7 @@ function PlayerDataService:Save(player, releaseLock)
         return false
     end
 
-    if releaseLock then
-        self._sessionTokens[player] = nil
-    end
+    if releaseLock then self._sessionTokens[player] = nil end
     return true
 end
 
@@ -164,6 +178,7 @@ function PlayerDataService:Init()
         self:Save(player, true)
         self._profiles[player] = nil
         self._sessionTokens[player] = nil
+        self._studioFallback[player] = nil
     end)
 
     for _, player in ipairs(Players:GetPlayers()) do
