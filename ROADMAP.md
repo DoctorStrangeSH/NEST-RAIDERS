@@ -63,7 +63,11 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Species-specific companion personalities are defined in the shared catalog and shown in the nest care panel.
 - [x] Each starter species has a favorite food; the treat action serves the correct species-specific favorite automatically.
 - [x] Personality changes the mood gained from petting or playing, with all bonuses capped by the 0–100 mood limit.
-- [ ] Unlockable food inventory, craftable treats, and deeper mood-based behavior reactions.
+- [x] Add a shared catalog of three nest toys with prices, play effects, energy costs, and visual styles.
+- [x] Let players purchase and equip one toy per displayed companion with server-side ownership, balance, and cooldown validation.
+- [x] Render equipped toy props beside displayed companions and show the equipped toy in the nest panel.
+- [x] Add toy-play interactions with species favorite-toy bonuses and per-toy energy costs.
+- [ ] Add toy inventory, toy placement customization, richer pet play animations, and unlockable toy collections.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
