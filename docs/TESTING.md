@@ -275,3 +275,19 @@
 - [ ] Verify unknown ability IDs, altered client payloads, unowned pets, inactive pets, locked pets, and cooldown bypass attempts are rejected.
 - [ ] Verify the inventory UI fits on mobile and desktop, and locked / ready / cooldown labels remain readable.
 - [ ] Verify abilities do not grant rewards when the player profile is not loaded.
+
+
+## Adult breeding and genetic inheritance — Sprint 4.15
+- [ ] Verify breeding requires two different owned species and both parents are level 7 or higher.
+- [ ] Verify equipped parents and pets displayed in the nest cannot be selected; no parent is consumed by successful breeding.
+- [ ] Verify breeding cost is 250 + (parent A stars + parent B stars) × 100 coins and insufficient funds leave both parents unchanged.
+- [ ] Verify each parent receives its own 1,800-second cooldown and cooldown survives profile reload.
+- [ ] Verify inherited genetics: 90% chance to inherit one parent's trait (50/50 parent selection), 7% Luminous mutation, 3% Prismatic mutation.
+- [ ] Verify offspring species is selected from one of the two parent species and offspring starts at level 1, one star, and 0 GrowthXP.
+- [ ] Verify offspring origin and both parent species are stored and displayed in collection lineage.
+- [ ] Verify collection capacity of 100 companions blocks breeding without charging coins or setting cooldowns.
+- [ ] Verify client cannot breed with unowned IDs, the same parent twice, wrong species, under-level parents, cooldown bypass, or altered cost/trait/species values.
+- [ ] Verify rapid repeated requests cannot create duplicate offspring or charge twice; request throttling and cooldowns are effective.
+- [ ] Verify all profile state persists after leave/rejoin in a published private test experience.
+- [ ] Verify two-step parent selection and explicit confirmation work on desktop and mobile; cancellation / selecting the first parent again resets selection.
+- [ ] Verify the new offspring appears once in collection, can be equipped/trained, and retains its inherited trait after save/reload.
