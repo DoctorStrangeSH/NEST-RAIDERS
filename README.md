@@ -84,3 +84,7 @@ The social island browser now supports persistent likes and favorites. Likes are
 
 ## Weekly island contests — Sprint 4.9
 Players can vote once per category each week in three island showcases: Cozy, Nature, and Fantasy. The top-ten leaderboards use ordered DataStores and are shared across published servers. Players choose nominees from occupied islands in their current server. Local Studio testing uses temporary in-memory standings; published persistence requires DataStore access. Votes are social recognition only and do not grant gameplay power.
+
+
+## Hall of Fame
+The previous week's top-three island contest results are archived when the contest is first accessed in the new week. Winners can claim one cosmetic trophy per category/week; claims are server-verified and saved to their profile. Claimed trophies are displayed on the owner's island. Published history is shared across servers and retains the latest 12 completed weeks. Local Studio results remain temporary.
