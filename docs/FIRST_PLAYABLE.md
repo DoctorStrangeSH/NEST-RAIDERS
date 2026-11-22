@@ -173,3 +173,11 @@
 - Passive income is recalculated from species base income, star rank, level, and the trait's capped bonus (0–8%). Level adds 4% per level above 1; star multipliers remain 1× / 1.75× / 3×.
 - Training, XP, level-ups, and income updates are server-authoritative. Existing companions without genetics are reconciled to Natural.
 - Fusion preserves the selected target companion's level, XP, and genetic trait while consuming two matching companions of the same species and star rank.
+
+
+## Species-specific adult abilities — Sprint 4.14
+- MeadowFox: TrailFinder grants coins (40 + level × 10 + star rank × 15).
+- MossTurtle: RootBlessing adds nest-stored coins (100 + level × 20 + star rank × 25).
+- SproutDragon: VerdantSpark grants player XP (35 + level × 5 + star rank × 10).
+- Abilities unlock at companion level 7, require the companion to be equipped, and have a persistent 300-second per-companion cooldown.
+- The server resolves species ability and reward formula from its catalog and validates ownership, equipped state, unlock level, profile state, and cooldown. The client only displays ability metadata and sends the companion instance ID.
