@@ -82,6 +82,8 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add a translucent building footprint preview that follows the pointer or touch position on the owned island.
 - [x] Add green / red placement feedback, 2-stud snapping, 15-degree rotation, desktop and mobile confirmation / cancellation.
 - [x] Allow repositioning existing buildings through the same preview workflow; validate full footprints against island bounds on the server.
+- [x] Expand the building catalog with a Flower Arch, Crystal Pond, and Moon Fountain.
+- [x] Render the new landmarks with custom low-poly geometry, layered water, shoreline stones, flower details, and a soft crystal light.
 - [ ] Replace prototype geometry with curated Creator Store art assets and add richer building themes.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
