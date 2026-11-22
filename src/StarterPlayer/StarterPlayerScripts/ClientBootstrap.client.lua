@@ -1031,7 +1031,7 @@ local function renderDecor(data)
         label.BackgroundTransparency = 1
         label.Position = UDim2.fromOffset(10, 3)
         label.Size = UDim2.new(1, -112, 0, 30)
-        label.Text = item and ("Место " .. slot .. " · " .. item.Name) or ("Место " .. slot .. " · Свободно")
+        label.Text = item and string.format("Место %d · %s  (X:%d Z:%d · %d°)", slot, item.Name, item.X or 0, item.Z or 0, item.Rotation or 0) or ("Место " .. slot .. " · Свободно")
         label.TextColor3 = Color3.fromRGB(235, 229, 239)
         label.TextSize = 11
         label.TextXAlignment = Enum.TextXAlignment.Left
@@ -1047,11 +1047,12 @@ local function renderDecor(data)
                 { Text = "↻", X = 144, Rotate = 15 },
             }
             for _, control in ipairs(controls) do
+                local currentControl = control
                 local moveButton = Instance.new("TextButton")
-                moveButton.Position = UDim2.fromOffset(control.X, 43)
+                moveButton.Position = UDim2.fromOffset(currentControl.X, 43)
                 moveButton.Size = UDim2.fromOffset(30, 25)
-                moveButton.BackgroundColor3 = control.Rotate and Color3.fromRGB(112, 101, 164) or Color3.fromRGB(77, 119, 139)
-                moveButton.Text = control.Text
+                moveButton.BackgroundColor3 = currentControl.Rotate and Color3.fromRGB(112, 101, 164) or Color3.fromRGB(77, 119, 139)
+                moveButton.Text = currentControl.Text
                 moveButton.TextColor3 = Color3.new(1, 1, 1)
                 moveButton.TextSize = 14
                 moveButton.Font = Enum.Font.GothamBlack
@@ -1062,9 +1063,9 @@ local function renderDecor(data)
                     local updated = invokeDecor({
                         Action = "Move",
                         Slot = slot,
-                        X = (item.X or 0) + (control.DX or 0),
-                        Z = (item.Z or 0) + (control.DZ or 0),
-                        Rotation = (item.Rotation or 0) + (control.Rotate or 0),
+                        X = (item.X or 0) + (currentControl.DX or 0),
+                        Z = (item.Z or 0) + (currentControl.DZ or 0),
+                        Rotation = (item.Rotation or 0) + (currentControl.Rotate or 0),
                     })
                     if updated then renderDecor(updated) else moveButton.Active = true end
                 end)
