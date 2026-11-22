@@ -17,7 +17,10 @@
 - Place owned companions on unlocked personal nest pedestals; displayed pets are separate from the active follower team.
 - Displayed pets accumulate a separate income balance every 10 seconds, which the player collects manually from the nest UI.
 - Displayed pets animate with a gentle idle bob / turn and show a mood bubble.
-- Players can pet or play with displayed pets to raise saved mood (with server-side cooldowns); mood currently has no decay or economy bonus.
+- Players can pet or play with displayed pets to raise saved mood (with server-side cooldowns).
+- Displayed pets have persistent hunger and energy needs; both decay gradually and elapsed time is applied when the player returns.
+- Feed a pet for 10 coins to restore 35 hunger and 5 mood; tired pets can rest for 60 seconds to recover energy.
+- Playing consumes 10 energy; exhausted pets refuse play. Needs are currently personal-care flavor and do not change income.
 - Russian, touch-friendly collection panel with rarity, level, and passive income details.
 - Only equipped companions follow the player and generate passive income.
 - Minimal HUD for coins, eggs, companions, level, personal plot, and notices.
@@ -50,9 +53,11 @@
 15. Open «Улучшить гнездо», buy available upgrades, and verify decorations and display pedestals unlock.
 16. Open «Питомцы на витринах», place an available companion on an unlocked pedestal, and verify its model appears in the nest.
 17. Wait 10 seconds and collect the displayed-pet income; verify the wallet and stored balance update.
-18. Pet and play with a displayed companion; confirm mood increases and the bubble updates.
-19. Remove the displayed pet and confirm it returns to the available list.
-20. Rejoin the private test place and confirm nest level, display assignments, pet mood, and uncollected income persist.
+18. Pet and play with a displayed companion; confirm mood increases and play consumes energy.
+19. Feed the pet for 10 coins and confirm hunger / mood update; try feeding with insufficient coins.
+20. Put a tired pet to sleep and confirm energy recovers over 60 seconds.
+21. Remove the displayed pet and confirm it returns to the available list.
+22. Rejoin the private test place and confirm nest level, display assignments, pet mood, needs, and uncollected income persist.
 
 ## Known limitations
 - World geometry is a temporary scripted blockout, not final art.
