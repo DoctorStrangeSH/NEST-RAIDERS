@@ -26,6 +26,7 @@ local ProfileTemplate = {
         IslandLikesByUserId = {},
         FavoriteIslandUserIds = {},
         IslandTrophies = {},
+        EquippedTitle = "",
     },
     Settings = {
         MusicEnabled = true,
