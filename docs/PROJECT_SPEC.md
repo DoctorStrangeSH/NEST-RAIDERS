@@ -176,5 +176,5 @@ A feature is done only when:
 ## Weekly island showcase
 - The social layer includes weekly island voting in three non-power categories: Cozy, Nature, and Fantasy.
 - Each player may vote once per category per UTC week; self-votes and unavailable targets are rejected server-side.
-- Published servers share top-ten category standings through OrderedDataStore. Local Studio mode uses an explicitly temporary in-memory fallback.
+- Published servers share top-ten category standings through OrderedDataStore, backed by an idempotent per-owner vote ledger. Local Studio mode uses an explicitly temporary in-memory fallback; leaderboard reads are cached and throttled.
 - Voting is for social recognition only. Winner cosmetics, global island discovery, moderation review, and anti-alt heuristics are later release work.
