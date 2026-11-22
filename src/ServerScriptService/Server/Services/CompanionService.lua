@@ -126,7 +126,7 @@ function CompanionService:RefreshPlayer(player)
                     if pet.Parent then
                         local side = (index - (#followers + 1) / 2) * 2.6
                         local behind = 4 + math.floor((index - 1) / 2) * 2.1
-                        local target = root.CFrame * CFrame.new(side, -1.4, behind)
+                        local target = root.CFrame * CFrame.new(side, -2.2, behind)
                         pet:PivotTo(pet:GetPivot():Lerp(target, 0.35))
                     end
                 end
