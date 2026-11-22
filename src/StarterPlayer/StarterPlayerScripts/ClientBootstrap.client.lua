@@ -1011,10 +1011,23 @@ inventorySummary.TextSize = 14
 inventorySummary.TextXAlignment = Enum.TextXAlignment.Left
 inventorySummary.Parent = inventoryPanel
 
+local geneticsHint = Instance.new("TextLabel")
+geneticsHint.Name = "GeneticOdds"
+geneticsHint.BackgroundTransparency = 1
+geneticsHint.Position = UDim2.fromOffset(18, 68)
+geneticsHint.Size = UDim2.new(1, -36, 0, 24)
+geneticsHint.Font = Enum.Font.GothamMedium
+geneticsHint.Text = "ГЕНЕТИКА · Естеств. 72% · Изумруд 18% · Свет 8% · Призма 2%"
+geneticsHint.TextColor3 = Color3.fromRGB(171, 205, 191)
+geneticsHint.TextSize = 9
+geneticsHint.TextXAlignment = Enum.TextXAlignment.Left
+geneticsHint.TextWrapped = true
+geneticsHint.Parent = inventoryPanel
+
 local list = Instance.new("ScrollingFrame")
 list.Name = "CompanionList"
-list.Position = UDim2.fromOffset(12, 78)
-list.Size = UDim2.new(1, -24, 1, -92)
+list.Position = UDim2.fromOffset(12, 98)
+list.Size = UDim2.new(1, -24, 1, -112)
 list.BackgroundTransparency = 1
 list.BorderSizePixel = 0
 list.ScrollBarThickness = 6
