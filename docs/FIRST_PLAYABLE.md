@@ -5,7 +5,9 @@
 - Server-side egg collection with distance and capacity checks.
 - Server-side weighted hatch roll from a starter companion table.
 - Companion passive coin income.
-- Minimal HUD for coins, eggs, companions, level, and notices.
+- Six server-assigned personal nest plots with owner signs and owner-only hatch validation.
+- Placeholder fox, turtle, and dragon companion models follow the player (up to three visible).
+- Minimal HUD for coins, eggs, companions, level, personal plot, and notices.
 - Initial profile persistence and biome progression foundation.
 
 ## Required Studio setup
@@ -21,15 +23,18 @@
 1. Spawn on Starter Island.
 2. Walk to a glowing Meadow Egg and press E / tap the prompt.
 3. Confirm HUD egg count increments.
-4. Return to the wooden nest and use Hatch Egg.
+4. Find your assigned plot (shown in the HUD) and use its Hatch Egg prompt.
 5. Confirm one egg is consumed and one companion is added.
-6. Wait for passive income; confirm Coins increases.
-7. Rejoin the private test place and confirm data persists.
+6. Confirm the hatched companion appears and follows your character.
+7. Wait for passive income; confirm Coins increases.
+8. Rejoin the private test place and confirm data persists.
 
 ## Known limitations
 - World geometry is a temporary scripted blockout, not final art.
 - Synty Nature Pack is catalogued as a candidate but must be imported and inspected manually in Studio.
-- Egg collection and hatching are currently a shared starter-island test loop; per-player plots, carrying animation, egg inventory UI, companion models/following, and PvP raids are not implemented.
+- Plots are currently six fixed slots per server; dynamic plot expansion and polished nest customization are not implemented.
+- Companion visuals are temporary scripted blockout models, not final imported character assets. Only the first three companions are shown following a player.
+- Carrying animation, full egg inventory UI, trading, and PvP raids are not implemented.
 - Starter companion odds are prototype values and must be disclosed in hatch UI before release.
 - DataStore behavior has not been runtime-verified in Studio.
 - DataStore session locking is implemented in code but still requires runtime verification in a private published test experience. Default Studio testing uses ephemeral profiles and does not save progress.
