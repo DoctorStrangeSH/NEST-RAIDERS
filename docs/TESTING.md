@@ -193,6 +193,8 @@
 - [ ] In a published private test experience with API access enabled, vote from two different servers and verify both votes appear in the same category leaderboard.
 - [ ] Verify the leaderboard sorts by vote count descending and shows display names for offline winners.
 - [ ] Verify weekly datastore names change at the UTC week boundary and a new week's vote allowance starts.
-- [ ] Simulate DataStore read / write failure; verify the UI displays a safe error and does not claim a vote was saved when it was not.
+- [ ] Simulate vote DataStore failure; verify no vote is claimed as saved when the vote record cannot be written.
+- [ ] Simulate score projection failure after vote-record save; verify the vote remains locked and the next List request retries the idempotent score projection.
+- [ ] Verify leaderboard reads are cached and List requests are throttled to protect DataStore budgets.
 - [ ] Verify contest votes grant no coins, XP, pets, items, or PvP power.
 - [ ] Verify the Studio fallback clearly indicates that results are local and ephemeral.
