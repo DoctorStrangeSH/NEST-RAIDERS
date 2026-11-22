@@ -120,6 +120,7 @@ local function makeSnapshot(profile)
                 }
             end)(),
             TrainCost = (companion.Level or 1) < MAX_COMPANION_LEVEL and (30 + (companion.Level or 1) * 25) or 0,
+            BreedReadyIn = math.max(0, (tonumber(companion.BreedReadyAt) or 0) - os.time()),
             Stars = companion.Stars or 1,
             MergeCount = (displayed[companion.InstanceId] and 0 or speciesCounts[tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)]) or 1,
             Displayed = displayed[companion.InstanceId] == true,
@@ -149,7 +150,7 @@ function InventoryService:HandleRequest(player, payload)
     if payload.Action == "Get" then
         return { Ok = true, Data = makeSnapshot(profile) }
     end
-    if payload.Action ~= "Equip" and payload.Action ~= "Unequip" and payload.Action ~= "Merge" and payload.Action ~= "Train" and payload.Action ~= "UseAbility" then
+    if payload.Action ~= "Equip" and payload.Action ~= "Unequip" and payload.Action ~= "Merge" and payload.Action ~= "Train" and payload.Action ~= "UseAbility" and payload.Action ~= "Breed" then
         return { Ok = false, Message = "Неизвестное действие." }
     end
     if type(payload.InstanceId) ~= "string" or #payload.InstanceId > 80 then
@@ -162,6 +163,107 @@ function InventoryService:HandleRequest(player, payload)
     end
     if not owned then
         return { Ok = false, Message = "Этот питомец тебе не принадлежит." }
+    end
+
+    if payload.Action == "Breed" then
+        if type(payload.PartnerInstanceId) ~= "string" or #payload.PartnerInstanceId > 80
+            or payload.PartnerInstanceId == payload.InstanceId then
+            return { Ok = false, Message = "Выбери двух разных питомцев." }
+        end
+
+        local parentA
+        local parentB
+        for _, companion in ipairs(profile.Companions) do
+            if companion.InstanceId == payload.InstanceId then parentA = companion end
+            if companion.InstanceId == payload.PartnerInstanceId then parentB = companion end
+        end
+        if not parentA or not parentB then
+            return { Ok = false, Message = "Один из родителей не найден в коллекции." }
+        end
+        local levelA = math.clamp(math.floor(tonumber(parentA.Level) or 1), 1, MAX_COMPANION_LEVEL)
+        local levelB = math.clamp(math.floor(tonumber(parentB.Level) or 1), 1, MAX_COMPANION_LEVEL)
+        if levelA < 7 or levelB < 7 then
+            return { Ok = false, Message = "Для разведения оба питомца должны быть взрослыми (уровень 7)." }
+        end
+        if parentA.Id == parentB.Id then
+            return { Ok = false, Message = "Для выведения гибрида нужны питомцы разных видов." }
+        end
+        if activeSet(profile)[parentA.InstanceId] or activeSet(profile)[parentB.InstanceId] then
+            return { Ok = false, Message = "Сначала убери родителей из активной команды." }
+        end
+        for _, displayedId in pairs(profile.Nest and profile.Nest.DisplayedCompanions or {}) do
+            if displayedId == parentA.InstanceId or displayedId == parentB.InstanceId then
+                return { Ok = false, Message = "Сними родителей с витрины перед разведением." }
+            end
+        end
+
+        local now = os.time()
+        local readyA = math.max(0, math.floor(tonumber(parentA.BreedReadyAt) or 0))
+        local readyB = math.max(0, math.floor(tonumber(parentB.BreedReadyAt) or 0))
+        local readyIn = math.max(readyA, readyB) - now
+        if readyIn > 0 then
+            return { Ok = false, Message = "Родители отдыхают ещё " .. readyIn .. " сек." }
+        end
+
+        local starsA = math.clamp(math.floor(tonumber(parentA.Stars) or 1), 1, 3)
+        local starsB = math.clamp(math.floor(tonumber(parentB.Stars) or 1), 1, 3)
+        local cost = 250 + (starsA + starsB) * 100
+        if profile.Coins < cost then
+            return { Ok = false, Message = "Для разведения нужно " .. cost .. " монет." }
+        end
+        if #profile.Companions >= 100 then
+            return { Ok = false, Message = "Коллекция заполнена. Освободи место для нового питомца." }
+        end
+
+        local traitA = getTrait(parentA)
+        local traitB = getTrait(parentB)
+        local inheritedTrait
+        local mutationRoll = math.random()
+        if mutationRoll <= 0.03 then
+            inheritedTrait = { Id = "Prismatic", Name = "Призматический", Rarity = "Эпический", IncomeBonus = 0.08 }
+        elseif mutationRoll <= 0.10 then
+            inheritedTrait = { Id = "Luminous", Name = "Светящийся", Rarity = "Редкий", IncomeBonus = 0.05 }
+        else
+            local sourceTrait = math.random(1, 2) == 1 and traitA or traitB
+            inheritedTrait = {
+                Id = sourceTrait.Id,
+                Name = sourceTrait.Name,
+                Rarity = sourceTrait.Rarity,
+                IncomeBonus = sourceTrait.IncomeBonus,
+            }
+        end
+
+        local childDefinition = math.random(1, 2) == 1 and CompanionCatalog[parentA.Id] or CompanionCatalog[parentB.Id]
+        if not childDefinition then
+            return { Ok = false, Message = "Невозможно вывести потомство для этой пары." }
+        end
+
+        profile.Coins -= cost
+        parentA.BreedReadyAt = now + 1800
+        parentB.BreedReadyAt = now + 1800
+        local child = {
+            InstanceId = HttpService:GenerateGUID(false),
+            Id = childDefinition.Id,
+            Name = childDefinition.Name,
+            Rarity = childDefinition.Rarity,
+            Level = 1,
+            GrowthXP = 0,
+            Stars = 1,
+            GeneticTrait = inheritedTrait,
+            Income = childDefinition.Income,
+            HatchedAt = now,
+            Origin = "Breeding",
+            ParentSpecies = { parentA.Id, parentB.Id },
+        }
+        updateCompanionIncome(child)
+        table.insert(profile.Companions, child)
+
+        player:SetAttribute("Coins", profile.Coins)
+        player:SetAttribute("CompanionCount", #profile.Companions)
+        player:SetAttribute("LastNotice", "Новое поколение! " .. child.Name .. " · генетика: " .. inheritedTrait.Name)
+        CompanionService:RefreshPlayer(player)
+        DisplayPetService:RefreshPlayer(player)
+        return { Ok = true, Data = makeSnapshot(profile), Message = "Получен новый питомец: " .. child.Name .. "!" }
     end
 
     if payload.Action == "UseAbility" then
