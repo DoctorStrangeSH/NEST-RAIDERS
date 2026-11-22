@@ -5,6 +5,7 @@ local Workspace = game:GetService("Workspace")
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
+local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
 
 local EggService = {}
 local EGG_RESPAWN_SECONDS = 20
@@ -102,6 +103,7 @@ function EggService:Hatch(player, station)
 
     syncAttributes(player, profile)
     ProgressionService:AddXP(player, 15)
+    CompanionService:RefreshPlayer(player)
     player:SetAttribute("LastNotice", "You hatched a " .. definition.Rarity .. " " .. definition.Name .. "! +15 XP")
 end
 
