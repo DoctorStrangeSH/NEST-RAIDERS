@@ -217,7 +217,12 @@ function NestDecorService:HandleRequest(player, payload)
         local definition = type(id) == "string" and NestDecorCatalog[id] or nil
         if not definition then return { Ok = false, Message = "Такого украшения нет в каталоге." } end
         local owned = math.max(0, math.floor(tonumber(nest.DecorInventory[id]) or 0))
-        if owned >= MAX_DECOR_PER_TYPE then
+        local placedCount = 0
+        for _, placed in pairs(nest.PlacedDecor) do
+            local placedId = type(placed) == "table" and placed.Id or placed
+            if placedId == id then placedCount += 1 end
+        end
+        if owned + placedCount >= MAX_DECOR_PER_TYPE then
             return { Ok = false, Message = "У тебя уже достаточно таких украшений." }
         end
         if profile.Coins < definition.Cost then
@@ -259,7 +264,7 @@ function NestDecorService:HandleRequest(player, payload)
         local id = type(placement) == "table" and placement.Id or placement
         if not id or not NestDecorCatalog[id] then return { Ok = false, Message = "Это место уже свободно." } end
         nest.PlacedDecor[slotKey] = nil
-        nest.DecorInventory[id] = math.min(MAX_DECOR_PER_TYPE, math.max(0, math.floor(tonumber(nest.DecorInventory[id]) or 0)) + 1)
+        nest.DecorInventory[id] = math.max(0, math.floor(tonumber(nest.DecorInventory[id]) or 0)) + 1
         self:RefreshPlayer(player)
         player:SetAttribute("LastNotice", "Украшение возвращено в коллекцию.")
         return { Ok = true, Data = getSnapshot(profile) }
