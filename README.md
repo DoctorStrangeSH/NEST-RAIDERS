@@ -56,3 +56,11 @@ Use Creator Store assets only after checking creator, permissions, dependencies,
 - The server enforces coin costs, inventory ownership, plot proximity, grid bounds, object-footprint overlap, per-type limits, and a 100-object island cap.
 - Built models are reconstructed from saved profile data when the plot is assigned and cleared when the plot is released.
 - Current models are lightweight scripted prototypes; reviewed Creator Store assets and drag-preview placement remain future polish tasks.
+
+
+## Building placement editor — latest addition
+- Building placement now uses a translucent footprint preview rather than selecting an arbitrary free coordinate.
+- The preview follows the cursor / touch point over the player's own island, snaps to the 2-stud grid, and uses green / red feedback for valid / blocked positions.
+- Place new buildings or reposition existing ones, rotate in 15-degree increments, confirm with click / tap, or cancel without changing saved data.
+- The server validates the complete footprint against island bounds and occupied building footprints.
+- The construction catalog returns after placement or cancellation.
