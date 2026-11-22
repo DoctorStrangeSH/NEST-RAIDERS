@@ -112,3 +112,7 @@ Two different adult species can breed without being consumed. Offspring inherit 
 
 ## Lineage egg incubator
 Breeding creates a lineage egg that incubates for five minutes. Its species, genetic outcome, and parent lineage are fixed by the server at creation. Once ready, hatch it at your own nest station; the resulting companion preserves that stored inheritance.
+
+
+## Breeding-only hybrid species
+Three starter cross-species pairs now produce unique hybrids: EmberFox, Fernshell, and BriarGuardian. They have dedicated follower silhouettes, appear in the collection book as breeding-only discoveries, and cannot hatch from ordinary eggs.
