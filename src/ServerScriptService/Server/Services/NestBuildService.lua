@@ -122,7 +122,7 @@ local function renderBuilding(parent, center, item, key)
         p("WaterGlow",Vector3.new(0.05,2.55,2.55),Vector3.new(0,0.22,0),def.Accent,Enum.Material.Neon,Enum.PartType.Cylinder,CFrame.Angles(0,0,math.rad(90)))
         for i=1,8 do
             local angle=math.rad((i-1)*45)
-            local offset=Vector3.new(math.cos(angle)*1.75,0.18,math.sin(angle)*1.75)
+            local offset=Vector3.new(math.cos(angle)*1.55,0.18,math.sin(angle)*1.55)
             p("ShoreStone"..i,Vector3.new(0.65,0.38,0.55),offset,Color3.fromRGB(135,145,139),Enum.Material.Slate,Enum.PartType.Ball)
         end
         p("WaterLily",Vector3.new(0.08,0.7,0.7),Vector3.new(0.45,0.27,-0.45),Color3.fromRGB(102,185,119),Enum.Material.Grass,Enum.PartType.Cylinder,CFrame.Angles(0,0,math.rad(90)))
@@ -132,7 +132,14 @@ local function renderBuilding(parent, center, item, key)
         p("WaterBasin",Vector3.new(0.12,2.9,2.9),Vector3.new(0,0.55,0),def.Accent,Enum.Material.Neon,Enum.PartType.Cylinder,CFrame.Angles(0,0,math.rad(90)))
         p("Pedestal",Vector3.new(0.75,1.55,0.75),Vector3.new(0,1.25,0),def.Color,Enum.Material.Marble)
         p("UpperBowl",Vector3.new(0.28,1.8,1.8),Vector3.new(0,2.1,0),def.Color,Enum.Material.Marble,Enum.PartType.Cylinder,CFrame.Angles(0,0,math.rad(90)))
-        p("MoonCrystal",Vector3.new(0.72,1.0,0.72),Vector3.new(0,2.75,0),def.Accent,Enum.Material.Neon,Enum.PartType.Ball)
+        local crystal = p("MoonCrystal",Vector3.new(0.72,1.0,0.72),Vector3.new(0,2.75,0),def.Accent,Enum.Material.Neon,Enum.PartType.Ball)
+        local glow = Instance.new("PointLight")
+        glow.Name = "MoonGlow"
+        glow.Color = def.Accent
+        glow.Brightness = 1.4
+        glow.Range = 9
+        glow.Shadows = false
+        glow.Parent = crystal
         for i=1,4 do
             local angle=math.rad((i-1)*90)
             local offset=Vector3.new(math.cos(angle)*1.45,0.85,math.sin(angle)*1.45)
