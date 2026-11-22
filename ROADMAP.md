@@ -25,11 +25,11 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Hatch an egg with a server-side weighted companion roll.
 - [x] Companion passive income prototype.
 - [x] Minimal HUD for coins, eggs, companions, and level.
-- [ ] Per-player nest plots and ownership.
+- [x] Server-assigned personal nest plots with ownership labels and private hatch validation.
 - [ ] Carry animation and world egg inventory UI.
-- [ ] Companion models and follow behavior.
+- [x] First stylized placeholder companion models follow the owner (maximum 3 visible).
 - [ ] Buy a basic egg and see inventory update.
-- [ ] Save and restore progress after reconnect in Studio.
+- [ ] Save and restore progress after reconnect in a private published Studio test experience.
 - [ ] Replace blockout environment with curated Creator Store assets.
 - [ ] Full desktop and mobile playtest.
 
@@ -65,4 +65,4 @@ Status legend: [x] done · [ ] not done · [~] in progress
 A milestone is not complete until its acceptance tests pass in Roblox Studio on desktop and mobile emulation. Monetization and public launch are blocked until saving, server authority, exploit resistance, and moderation basics are verified.
 
 ## Current implementation note
-The current code is a foundation, not yet a playable game. DataStore persistence and progression logic have not been runtime-tested in Studio. The first playable loop and Creator Store asset integration remain upcoming work.
+The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, placeholder companion followers, passive income, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
