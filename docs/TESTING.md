@@ -323,3 +323,16 @@
 - [ ] Verify unknown pair combinations never grant an unrelated hybrid and still follow the documented non-hybrid fallback.
 - [ ] Verify existing saved profiles load with the expanded catalog and no loss of existing companions.
 - [ ] Verify breeding, hatching, follower rendering, and collection UI on desktop and mobile in Roblox Studio.
+
+
+## Genetic mutation appearance — Sprint 4.18
+- [ ] Verify Natural companions receive no mutation ornaments or genetic aura.
+- [ ] Verify Verdant companions render three green crystal leaves and a glowing heart gem, in addition to the green aura.
+- [ ] Verify Luminous companions render three cyan lantern orbs with PointLight instances and the cyan aura.
+- [ ] Verify Prismatic companions render three differently colored neon facets and a prismatic core, in addition to the prismatic aura.
+- [ ] Verify mutation ornaments appear consistently on equipped followers and nest display companions.
+- [ ] Verify growth scaling does not detach or leave mutation ornaments behind.
+- [ ] Verify inventory cards display trait name, trait rarity, rounded passive income bonus percentage, growth XP, and income.
+- [ ] Verify old saved companions with missing genetic data normalize to Natural without errors.
+- [ ] Verify hybrid species can render every supported genetic mutation without losing their base species silhouette.
+- [ ] Verify visual density and readability on desktop and mobile; ornaments must not block ProximityPrompts or interaction hitboxes.
