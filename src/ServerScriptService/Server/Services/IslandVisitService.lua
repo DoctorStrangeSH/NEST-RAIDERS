@@ -1,6 +1,9 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local MemoryStoreService = game:GetService("MemoryStoreService")
+local TeleportService = game:GetService("TeleportService")
+local RunService = game:GetService("RunService")
 
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
@@ -10,8 +13,16 @@ IslandVisitService._lastRequest = {}
 IslandVisitService._returnCFrames = {}
 IslandVisitService._visitingPlot = {}
 IslandVisitService._visitingOwner = {}
+IslandVisitService._directory = nil
+IslandVisitService._directoryReady = false
+IslandVisitService._lastDirectoryRefresh = 0
+IslandVisitService._pendingArrivals = {}
 local COOLDOWN = 1
 local MAX_VISITORS_PER_PLOT = 8
+local DIRECTORY_REFRESH_SECONDS = 30
+local DIRECTORY_ENTRY_TTL = 100
+local DIRECTORY_LIMIT = 50
+local ARRIVAL_TIMEOUT_SECONDS = 45
 
 local function getRoot(player)
     local character = player.Character
@@ -58,6 +69,190 @@ local function moveCharacter(player, target)
     root.AssemblyAngularVelocity = Vector3.zero
     player.Character:PivotTo(target)
     return true
+end
+
+local function getDirectory()
+    if not IslandVisitService._directory then
+        IslandVisitService._directory = MemoryStoreService:GetSortedMap("NRAidLiveIslands_v1")
+    end
+    return IslandVisitService._directory
+end
+
+local function isDirectoryAvailable()
+    return not RunService:IsStudio()
+end
+
+function IslandVisitService:PublishDirectory()
+    if not isDirectoryAvailable() or not self._directoryReady then return end
+    local directory = getDirectory()
+    for _, plot in pairs(PlotService._plots) do
+        local owner = getOwner(plot)
+        if owner and owner:GetAttribute("ProfileLoaded") then
+            local value = {
+                UserId = owner.UserId,
+                DisplayName = owner.DisplayName,
+                Level = math.clamp(math.floor(tonumber(owner:GetAttribute("Level")) or 1), 1, 100),
+                PlotId = plot.Id,
+                JobId = game.JobId,
+                PlaceId = game.PlaceId,
+                Visitors = countVisitors(plot.Id),
+                Capacity = MAX_VISITORS_PER_PLOT,
+                Likes = math.max(0, math.floor(tonumber(plot.Model:GetAttribute("IslandLikes")) or 0)),
+                UpdatedAt = os.time(),
+            }
+            local ok, err = pcall(function()
+                directory:SetAsync(tostring(owner.UserId), value, DIRECTORY_ENTRY_TTL, value.UpdatedAt)
+            end)
+            if not ok then
+                warn("[NEST RAIDERS] Live island directory publish failed:", err)
+            end
+        end
+    end
+end
+
+function IslandVisitService:ListGlobal(player)
+    local response = self:List(player)
+    if not response.Ok then return response end
+    if not isDirectoryAvailable() then
+        response.DirectoryStatus = "StudioLocalOnly"
+        return response
+    end
+
+    local ok, entries = pcall(function()
+        return getDirectory():GetRangeAsync(Enum.SortDirection.Descending, DIRECTORY_LIMIT)
+    end)
+    if not ok then
+        warn("[NEST RAIDERS] Live island directory read failed:", entries)
+        response.DirectoryStatus = "Unavailable"
+        response.DirectoryMessage = "Глобальный каталог временно недоступен. Показаны острова этого сервера."
+        return response
+    end
+
+    local viewerProfile = PlayerDataService:GetProfile(player)
+    local viewerNest = viewerProfile and ensureSocial(viewerProfile) or { FavoriteIslandUserIds = {} }
+    local byUserId = {}
+    for _, island in ipairs(response.Islands or {}) do
+        island.IsLocal = true
+        island.JobId = game.JobId
+        island.PlaceId = game.PlaceId
+        byUserId[tostring(island.UserId)] = island
+    end
+
+    for _, item in ipairs(entries) do
+        local value = item.value
+        if type(value) == "table" and type(value.UserId) == "number"
+            and value.UserId ~= player.UserId and type(value.JobId) == "string"
+            and type(value.PlaceId) == "number" and type(value.PlotId) == "string" then
+            local key = tostring(value.UserId)
+            if not byUserId[key] then
+                byUserId[key] = {
+                    UserId = value.UserId,
+                    DisplayName = tostring(value.DisplayName or ("Игрок " .. key)),
+                    Level = math.clamp(math.floor(tonumber(value.Level) or 1), 1, 100),
+                    PlotId = value.PlotId,
+                    JobId = value.JobId,
+                    PlaceId = value.PlaceId,
+                    Visitors = math.max(0, math.floor(tonumber(value.Visitors) or 0)),
+                    Capacity = MAX_VISITORS_PER_PLOT,
+                    Likes = math.max(0, math.floor(tonumber(value.Likes) or 0)),
+                    IsLikedByMe = false,
+                    IsFavoriteByMe = isFavorite(viewerNest.FavoriteIslandUserIds, value.UserId),
+                    IsLocal = value.JobId == game.JobId,
+                }
+            end
+        end
+    end
+
+    local merged = {}
+    for _, island in pairs(byUserId) do table.insert(merged, island) end
+    table.sort(merged, function(a, b)
+        if a.Likes ~= b.Likes then return a.Likes > b.Likes end
+        if a.Visitors ~= b.Visitors then return a.Visitors > b.Visitors end
+        return a.DisplayName:lower() < b.DisplayName:lower()
+    end)
+    response.Islands = merged
+    response.DirectoryStatus = "Available"
+    return response
+end
+
+function IslandVisitService:VisitGlobal(player, targetUserId, jobId, placeId)
+    if type(targetUserId) ~= "number" or targetUserId <= 0 or targetUserId == player.UserId
+        or type(jobId) ~= "string" or #jobId < 8 or type(placeId) ~= "number" then
+        return { Ok=false, Message="Некорректный адрес острова." }
+    end
+
+    if jobId == game.JobId then
+        local targetPlot
+        for _, plot in pairs(PlotService._plots) do
+            local owner = getOwner(plot)
+            if owner and owner.UserId == targetUserId then targetPlot = plot break end
+        end
+        if not targetPlot then return { Ok=false, Message="Остров больше недоступен." } end
+        return self:Visit(player, targetPlot.Id)
+    end
+
+    if not isDirectoryAvailable() then
+        return { Ok=false, Message="Переход между серверами проверяется только в опубликованной игре." }
+    end
+    local ok, entry = pcall(function()
+        return getDirectory():GetAsync(tostring(targetUserId))
+    end)
+    if not ok or type(entry) ~= "table" or entry.JobId ~= jobId
+        or entry.PlaceId ~= placeId or entry.UserId ~= targetUserId then
+        return { Ok=false, Message="Этот остров уже покинул каталог. Обнови список." }
+    end
+    if (tonumber(entry.Visitors) or 0) >= MAX_VISITORS_PER_PLOT then
+        return { Ok=false, Message="На острове сейчас слишком много гостей." }
+    end
+
+    local teleportData = {
+        VisitIsland = true,
+        TargetUserId = targetUserId,
+        TargetPlotId = entry.PlotId,
+    }
+    local teleportOk, teleportErr = pcall(function()
+        TeleportService:TeleportToPlaceInstance(placeId, jobId, player, nil, teleportData)
+    end)
+    if not teleportOk then
+        warn("[NEST RAIDERS] Cross-server island teleport failed:", teleportErr)
+        return { Ok=false, Message="Не удалось перейти на другой сервер. Попробуй ещё раз." }
+    end
+    return { Ok=true, Message="Переносим тебя на остров игрока " .. tostring(entry.DisplayName or "—") .. "..." }
+end
+
+function IslandVisitService:HandleArrival(player)
+    local joinData
+    local ok, result = pcall(function() return player:GetJoinData() end)
+    if ok then joinData = result end
+    local teleportData = joinData and joinData.TeleportData
+    if type(teleportData) ~= "table" or teleportData.VisitIsland ~= true
+        or type(teleportData.TargetUserId) ~= "number" then
+        return
+    end
+
+    task.spawn(function()
+        local deadline = os.clock() + ARRIVAL_TIMEOUT_SECONDS
+        while player.Parent and os.clock() < deadline do
+            if player:GetAttribute("ProfileLoaded") and PlotService:GetPlayerPlot(player) and getRoot(player) then
+                local targetPlotId = teleportData.TargetPlotId
+                local targetPlot = type(targetPlotId) == "string" and PlotService._plots[targetPlotId] or nil
+                local owner = targetPlot and getOwner(targetPlot)
+                if owner and owner.UserId == teleportData.TargetUserId then
+                    local result = self:Visit(player, targetPlotId)
+                    if not result.Ok then
+                        player:SetAttribute("LastNotice", result.Message or "Остров больше недоступен.")
+                    end
+                else
+                    player:SetAttribute("LastNotice", "Игрок покинул остров до твоего прибытия.")
+                end
+                return
+            end
+            task.wait(0.5)
+        end
+        if player.Parent then
+            player:SetAttribute("LastNotice", "Не удалось загрузить остров. Ты остался в своём гнезде.")
+        end
+    end)
 end
 
 function IslandVisitService:List(player)
@@ -197,6 +392,7 @@ function IslandVisitService:HandleRequest(player, payload)
         return { Ok=false, Message="Профиль ещё загружается." }
     end
     if payload.Action == "List" then return self:List(player) end
+    if payload.Action == "ListGlobal" then return self:ListGlobal(player) end
 
     local now = os.clock()
     if now - (self._lastRequest[player] or 0) < COOLDOWN then
@@ -205,6 +401,9 @@ function IslandVisitService:HandleRequest(player, payload)
     self._lastRequest[player] = now
 
     if payload.Action == "Visit" then return self:Visit(player, payload.PlotId) end
+    if payload.Action == "VisitGlobal" then
+        return self:VisitGlobal(player, payload.UserId, payload.JobId, payload.PlaceId)
+    end
     if payload.Action == "Return" then return self:Return(player) end
     if payload.Action == "Like" then return self:ToggleLike(player, payload.UserId) end
     if payload.Action == "Favorite" then return self:ToggleFavorite(player, payload.UserId) end
@@ -227,7 +426,23 @@ function IslandVisitService:Init()
     remote.OnServerInvoke = function(player, payload)
         return self:HandleRequest(player, payload)
     end
+    self._directoryReady = true
+    Players.PlayerAdded:Connect(function(player)
+        self:HandleArrival(player)
+    end)
+    for _, player in ipairs(Players:GetPlayers()) do
+        self:HandleArrival(player)
+    end
+    task.spawn(function()
+        while self._directoryReady do
+            self:PublishDirectory()
+            task.wait(DIRECTORY_REFRESH_SECONDS)
+        end
+    end)
     Players.PlayerRemoving:Connect(function(player)
+        if isDirectoryAvailable() then
+            pcall(function() getDirectory():RemoveAsync(tostring(player.UserId)) end)
+        end
         local plotId = self._visitingPlot[player]
         self._visitingPlot[player] = nil
         self._visitingOwner[player] = nil
