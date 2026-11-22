@@ -40,14 +40,6 @@ local function normalizeProfile(profile)
         end
     end
 
-    if #clean == 0 then
-        for _, companion in ipairs(profile.Companions) do
-            if #clean >= MAX_ACTIVE_COMPANIONS then break end
-            if type(companion.InstanceId) == "string" then
-                table.insert(clean, companion.InstanceId)
-            end
-        end
-    end
     profile.ActiveCompanions = clean
 end
 
