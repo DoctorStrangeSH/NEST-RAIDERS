@@ -128,3 +128,12 @@
 - Social actions are server-validated and rate-limited. Browsing the list itself is not throttled.
 - Likes and favorites are social recognition only; they grant no currency, XP, pets, or combat advantages.
 - Cross-server discovery and global weekly showcases are not part of this milestone.
+
+
+## Weekly island contests — Sprint 4.9
+- Added three weekly island categories: Cozy (Уют), Nature (Природа), and Fantasy (Фэнтези).
+- Players can cast one vote per category per UTC week for another occupied island in their current server.
+- Votes are stored per voter and category-week; scores are aggregated in cross-server OrderedDataStore leaderboards.
+- Each category shows the top ten islands and the currently available server nominees.
+- Published experience uses persistent DataStores. Default Studio mode uses an in-memory local fallback and clearly marks its results as temporary.
+- Contest votes do not grant gameplay power. Cosmetic winner rewards and cross-server island discovery remain future work.
