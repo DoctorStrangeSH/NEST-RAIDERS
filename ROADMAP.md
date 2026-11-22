@@ -20,13 +20,18 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [ ] Validate Rojo build and Luau scripts in Roblox Studio.
 
 ## Milestone 1 — First playable loop
-- [ ] Spawn on Starter Island and claim a personal nest.
-- [ ] Find and collect an egg in the world.
-- [ ] Carry egg to nest and hatch it.
-- [ ] Companion follows owner and produces coins over time.
+- [x] Generate a temporary Starter Island blockout with spawn, eggs, and hatch station.
+- [x] Collect eggs with server-side distance and capacity checks.
+- [x] Hatch an egg with a server-side weighted companion roll.
+- [x] Companion passive income prototype.
+- [x] Minimal HUD for coins, eggs, companions, and level.
+- [ ] Per-player nest plots and ownership.
+- [ ] Carry animation and world egg inventory UI.
+- [ ] Companion models and follow behavior.
 - [ ] Buy a basic egg and see inventory update.
-- [ ] Save and restore progress after reconnect.
-- [ ] Minimal mobile-friendly HUD and interaction prompts.
+- [ ] Save and restore progress after reconnect in Studio.
+- [ ] Replace blockout environment with curated Creator Store assets.
+- [ ] Full desktop and mobile playtest.
 
 ## Milestone 2 — Open-world progression
 - [ ] Seamless connected biomes with no mandatory world portals.
