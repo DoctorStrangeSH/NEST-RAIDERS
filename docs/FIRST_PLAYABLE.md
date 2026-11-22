@@ -109,3 +109,12 @@
 - Crystal Pond (190 coins): shallow glowing water feature with stone shoreline, lily pad, and bloom.
 - Moon Fountain (320 coins): layered stone fountain with a glowing moon crystal and soft point light.
 - All three objects use the same persistent build inventory, grid placement, movement, rotation, removal, and server-side footprint validation as the original catalog.
+
+
+## Social island visits — Sprint 4.7
+- Players can open a Russian-language browser of other occupied islands in the current server.
+- The list shows display name, level, and current visitor count; it never lists the player's own island.
+- Visiting teleports the character to the destination plot while preserving the exact pre-visit CFrame for Return Home.
+- A player may inspect another island but existing ownership checks continue to protect purchases and building edits.
+- Each island supports up to eight visitors. If its owner leaves, current visitors are returned to their own saved position.
+- This is an in-server social feature only; global discovery, likes, favorites, and ranking are future work.
