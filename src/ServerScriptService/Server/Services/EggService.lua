@@ -19,6 +19,32 @@ for _, definition in pairs(CompanionCatalog) do
 end
 table.sort(COMPANIONS, function(a, b) return a.Id < b.Id end)
 
+local GENETIC_TRAITS = {
+    { Id = "Natural", Name = "Естественный", Rarity = "Обычный", Weight = 72, IncomeBonus = 0 },
+    { Id = "Verdant", Name = "Изумрудный", Rarity = "Необычный", Weight = 18, IncomeBonus = 0.02 },
+    { Id = "Luminous", Name = "Светящийся", Rarity = "Редкий", Weight = 8, IncomeBonus = 0.05 },
+    { Id = "Prismatic", Name = "Призматический", Rarity = "Эпический", Weight = 2, IncomeBonus = 0.08 },
+}
+
+local function chooseGeneticTrait()
+    local totalWeight = 0
+    for _, trait in ipairs(GENETIC_TRAITS) do totalWeight += trait.Weight end
+    local roll = math.random() * totalWeight
+    local cursor = 0
+    for _, trait in ipairs(GENETIC_TRAITS) do
+        cursor += trait.Weight
+        if roll <= cursor then
+            return {
+                Id = trait.Id,
+                Name = trait.Name,
+                Rarity = trait.Rarity,
+                IncomeBonus = trait.IncomeBonus,
+            }
+        end
+    end
+    return { Id = "Natural", Name = "Естественный", Rarity = "Обычный", IncomeBonus = 0 }
+end
+
 local function syncAttributes(player, profile)
     player:SetAttribute("EggCount", #profile.EggInventory)
     player:SetAttribute("CompanionCount", #profile.Companions)
@@ -101,6 +127,8 @@ function EggService:Hatch(player, station)
         Rarity = definition.Rarity,
         Income = definition.Income,
         Level = 1,
+        GrowthXP = 0,
+        GeneticTrait = chooseGeneticTrait(),
         HatchedAt = os.time(),
     }
     table.insert(profile.Companions, companion)
