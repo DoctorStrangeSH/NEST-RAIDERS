@@ -169,7 +169,24 @@ local function makeRitualOrb(parent, name, position, color, size)
     return orb
 end
 
-function PlotService:PlayBreedingSequence(player, parentA, parentB, egg)
+local function tweenModelPivot(model, targetCFrame, duration)
+    if not model or not model.Parent then return end
+    local pivotValue = Instance.new("CFrameValue")
+    pivotValue.Value = model:GetPivot()
+    local connection = pivotValue:GetPropertyChangedSignal("Value"):Connect(function()
+        if model.Parent then model:PivotTo(pivotValue.Value) end
+    end)
+    local tween = TweenService:Create(pivotValue,
+        TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+        { Value = targetCFrame })
+    tween.Completed:Connect(function()
+        connection:Disconnect()
+        pivotValue:Destroy()
+    end)
+    tween:Play()
+end
+
+function PlotService:PlayBreedingSequence(player, parentA, parentB, egg, previewA, previewB, previewFolder)
     local plot = self._playerPlots[player]
     local station = plot and plot.BreedingStation
     if not station or not station.Parent or not parentA or not parentB or not egg then return false end
@@ -178,20 +195,41 @@ function PlotService:PlayBreedingSequence(player, parentA, parentB, egg)
     local effects = Instance.new("Folder")
     effects.Name = "BreedingRitual_" .. player.UserId
     effects.Parent = Workspace
+    if previewFolder and previewFolder.Parent then previewFolder.Parent = effects end
     Debris:AddItem(effects, 9)
 
     local center = station.Position
     local leftColor = SPECIES_COLORS[parentA.Id] or Color3.fromRGB(255, 190, 115)
     local rightColor = SPECIES_COLORS[parentB.Id] or Color3.fromRGB(125, 200, 230)
     local traitColor = TRAIT_COLORS[egg.GeneticTrait and egg.GeneticTrait.Id] or TRAIT_COLORS.Natural
-    local left = makeRitualOrb(effects, "ParentEchoA", center + Vector3.new(-5.1, -1.7, 0), leftColor, 1.25)
-    local right = makeRitualOrb(effects, "ParentEchoB", center + Vector3.new(5.1, -1.7, 0), rightColor, 1.25)
+    local left = previewA
+    local right = previewB
+    if not left or not left.PrimaryPart or not right or not right.PrimaryPart then
+        effects:Destroy()
+        return false
+    end
+    left.Parent = effects
+    right.Parent = effects
+    left:PivotTo(CFrame.new(center + Vector3.new(-5.1, -1.0, 0)))
+    right:PivotTo(CFrame.new(center + Vector3.new(5.1, -1.0, 0)))
+    local leftGlow = Instance.new("PointLight")
+    leftGlow.Color = leftColor
+    leftGlow.Brightness = 0.9
+    leftGlow.Range = 7
+    leftGlow.Parent = left.PrimaryPart
+    local rightGlow = Instance.new("PointLight")
+    rightGlow.Color = rightColor
+    rightGlow.Brightness = 0.9
+    rightGlow.Range = 7
+    rightGlow.Parent = right.PrimaryPart
     local core = makeRitualOrb(effects, "RitualCore", center + Vector3.new(0, 0.3, 0), traitColor, 0.45)
 
     local leftAttachment = Instance.new("Attachment")
-    leftAttachment.Parent = left
+    leftAttachment.Position = Vector3.new(0, 0.7, 0)
+    leftAttachment.Parent = left.PrimaryPart
     local rightAttachment = Instance.new("Attachment")
-    rightAttachment.Parent = right
+    rightAttachment.Position = Vector3.new(0, 0.7, 0)
+    rightAttachment.Parent = right.PrimaryPart
     local coreLeft = Instance.new("Attachment")
     coreLeft.Parent = core
     local coreRight = Instance.new("Attachment")
@@ -269,14 +307,8 @@ function PlotService:PlayBreedingSequence(player, parentA, parentB, egg)
     })
     particles.Parent = eggPart
 
-    TweenService:Create(left, TweenInfo.new(1.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
-        Position = center + Vector3.new(-1.15, 1.0, 0),
-        Size = Vector3.new(0.65, 0.65, 0.65),
-    }):Play()
-    TweenService:Create(right, TweenInfo.new(1.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
-        Position = center + Vector3.new(1.15, 1.0, 0),
-        Size = Vector3.new(0.65, 0.65, 0.65),
-    }):Play()
+    tweenModelPivot(left, CFrame.new(center + Vector3.new(-1.15, 0.35, 0)), 1.1)
+    tweenModelPivot(right, CFrame.new(center + Vector3.new(1.15, 0.35, 0)), 1.1)
 
     task.delay(1.1, function()
         if not effects.Parent then return end
