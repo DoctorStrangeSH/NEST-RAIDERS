@@ -67,7 +67,12 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Let players purchase and equip one toy per displayed companion with server-side ownership, balance, and cooldown validation.
 - [x] Render equipped toy props beside displayed companions and show the equipped toy in the nest panel.
 - [x] Add toy-play interactions with species favorite-toy bonuses and per-toy energy costs.
-- [ ] Add toy inventory, toy placement customization, richer pet play animations, and unlockable toy collections.
+- [x] Add a server-authoritative nest decoration catalog with four affordable cosmetic items.
+- [x] Buy decorations into a persistent inventory, place them in unlocked nest slots, and return them to inventory when removed.
+- [x] Render colorful scripted flower pots, lanterns, crystals, and mushroom seats in the player-owned plot.
+- [x] Add a Russian mobile-friendly decoration shop / placement panel with slot status and removal controls.
+- [x] Unlock additional decoration slots through nest upgrades (2 at level 1, up to 6 at level 5).
+- [ ] Add free-rotation / grid placement, Creator Store art assets, and richer decoration themes.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
@@ -91,4 +96,4 @@ Status legend: [x] done · [ ] not done · [~] in progress
 A milestone is not complete until its acceptance tests pass in Roblox Studio on desktop and mobile emulation. Monetization and public launch are blocked until saving, server authority, exploit resistance, and moderation basics are verified.
 
 ## Current implementation note
-The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, shared companion catalog, server-backed collection book, three-pet fusion with star ranks and visible evolution effects, personal nest pet displays with separately accumulated/collectible income, animated display pets with persistent mood, hunger, energy, feeding, rest, species personalities, favorite foods, and equippable nest toys with server-validated toy play, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
+The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, shared companion catalog, server-backed collection book, three-pet fusion with star ranks and visible evolution effects, personal nest pet displays with separately accumulated/collectible income, animated display pets with persistent mood, hunger, energy, feeding, rest, species personalities, favorite foods, and equippable nest toys with server-validated toy play, persistent player-owned nest decorations with buy/place/remove flow, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
