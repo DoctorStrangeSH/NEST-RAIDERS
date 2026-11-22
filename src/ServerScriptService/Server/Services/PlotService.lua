@@ -201,9 +201,13 @@ function PlotService:ReleasePlot(player)
     if not plot then return end
     self._owners[plot.Id] = nil
     self._playerPlots[player] = nil
+    local playerDecorations = plot.Model:FindFirstChild("PlayerDecorations")
+    if playerDecorations then playerDecorations:Destroy() end
+    local displayedCompanions = plot.Model:FindFirstChild("DisplayedCompanions")
+    if displayedCompanions then displayedCompanions:Destroy() end
     plot.Model:SetAttribute("OwnerUserId", nil)
     plot.Model:SetAttribute("OwnerName", nil)
-    plot.OwnerLabel.Text = "AVAILABLE NEST"
+    plot.OwnerLabel.Text = "СВОБОДНОЕ ГНЕЗДО"
     player:SetAttribute("PlotAssigned", false)
 end
 
