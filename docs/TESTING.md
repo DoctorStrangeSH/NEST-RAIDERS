@@ -92,6 +92,10 @@
 - [ ] Removing a placed decoration returns exactly one item to inventory and clears the model.
 - [ ] Move placed decorations with directional controls; positions snap to a 2-stud grid.
 - [ ] Rotate placed decorations in 15-degree steps and verify the model orientation updates.
+- [ ] Use the placement preview to move a decoration to several island locations; the preview should snap to the 2-stud grid.
+- [ ] Confirm a placement with mouse click and touch tap; only the owner's PlotGrass surface should be accepted.
+- [ ] Rotate with R on desktop and the rotate button on touch; verify the final saved rotation.
+- [ ] Cancel with Escape and the mobile cancel button; the decoration must remain at its previous position.
 - [ ] Verify movement and rotation persist after reconnect.
 - [ ] Reject coordinates outside the nest bounds, malformed / non-finite transforms, and attempts to move locked or empty slots.
 - [ ] Nest level 1 exposes two decoration slots; each upgrade unlocks one more, up to six at level 5.
