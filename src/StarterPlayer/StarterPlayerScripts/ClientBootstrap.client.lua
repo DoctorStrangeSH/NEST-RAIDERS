@@ -1024,10 +1024,23 @@ geneticsHint.TextXAlignment = Enum.TextXAlignment.Left
 geneticsHint.TextWrapped = true
 geneticsHint.Parent = inventoryPanel
 
+local incubatorSummary = Instance.new("TextLabel")
+incubatorSummary.Name = "IncubatorSummary"
+incubatorSummary.BackgroundTransparency = 1
+incubatorSummary.Position = UDim2.fromOffset(18, 94)
+incubatorSummary.Size = UDim2.new(1, -36, 0, 32)
+incubatorSummary.Font = Enum.Font.GothamMedium
+incubatorSummary.Text = "ИНКУБАТОР · Яиц пока нет"
+incubatorSummary.TextColor3 = Color3.fromRGB(255, 205, 137)
+incubatorSummary.TextSize = 10
+incubatorSummary.TextXAlignment = Enum.TextXAlignment.Left
+incubatorSummary.TextWrapped = true
+incubatorSummary.Parent = inventoryPanel
+
 local list = Instance.new("ScrollingFrame")
 list.Name = "CompanionList"
-list.Position = UDim2.fromOffset(12, 98)
-list.Size = UDim2.new(1, -24, 1, -112)
+list.Position = UDim2.fromOffset(12, 130)
+list.Size = UDim2.new(1, -24, 1, -144)
 list.BackgroundTransparency = 1
 list.BorderSizePixel = 0
 list.ScrollBarThickness = 6
@@ -1103,6 +1116,30 @@ local function renderInventory(data)
 
     if not data then return end
     inventorySummary.Text = string.format("Активные питомцы: %d / %d", data.ActiveCount or 0, data.MaxActive or 3)
+    local eggs = data.Eggs or {}
+    local breedingEggs = {}
+    local regularEggCount = 0
+    for _, egg in ipairs(eggs) do
+        if egg.Origin == "Breeding" then
+            table.insert(breedingEggs, egg)
+        else
+            regularEggCount += 1
+        end
+    end
+    if #breedingEggs > 0 then
+        local nextEgg = breedingEggs[1]
+        local remaining = math.max(0, nextEgg.ReadyIn or 0)
+        local timeText = remaining > 0
+            and string.format("%d:%02d", math.floor(remaining / 60), remaining % 60)
+            or "ГОТОВО К ВЫЛУПЛЕНИЮ"
+        incubatorSummary.Text = string.format("ИНКУБАТОР · %d яиц потомства · %s · %s",
+            #breedingEggs, timeText, nextEgg.OffspringName or "Неизвестный вид")
+        if nextEgg.GeneticTrait then
+            incubatorSummary.Text ..= " · " .. nextEgg.GeneticTrait
+        end
+    else
+        incubatorSummary.Text = string.format("ИНКУБАТОР · Обычных яиц: %d · Яиц потомства: 0", regularEggCount)
+    end
     local companions = data.Companions or {}
     emptyLabel.Visible = #companions == 0
 
