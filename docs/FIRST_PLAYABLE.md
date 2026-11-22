@@ -87,3 +87,10 @@
 - Starter companion odds are prototype values; the shop currently discloses them, but a dedicated hatch reveal screen is still required before release.
 - DataStore behavior has not been runtime-verified in Studio.
 - DataStore session locking is implemented in code but still requires runtime verification in a private published test experience. Default Studio testing uses ephemeral profiles and does not save progress.
+
+
+## Island building catalog
+- The Russian island construction panel contains five object types: Stone Path (12), Clover Bush (28), Apple Tree (85), Wooden Fence (22), and Cozy Cottage (260).
+- Buy objects into a persistent building inventory, place them on a 2-stud grid, move and rotate them, or remove them back to inventory.
+- The server validates profile readiness, plot ownership, proximity, catalog IDs, currency, inventory, plot bounds, object overlap, and the 100-object island cap.
+- Buildings are saved in the player nest profile and rebuilt when the player's plot is assigned. Rendered models are cleared when the plot is released.
