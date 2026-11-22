@@ -196,13 +196,14 @@ function IslandVisitService:HandleRequest(player, payload)
     if not player:GetAttribute("ProfileLoaded") then
         return { Ok=false, Message="Профиль ещё загружается." }
     end
+    if payload.Action == "List" then return self:List(player) end
+
     local now = os.clock()
     if now - (self._lastRequest[player] or 0) < COOLDOWN then
-        return { Ok=false, Message="Подожди немного перед следующим переходом." }
+        return { Ok=false, Message="Подожди немного перед следующим действием." }
     end
     self._lastRequest[player] = now
 
-    if payload.Action == "List" then return self:List(player) end
     if payload.Action == "Visit" then return self:Visit(player, payload.PlotId) end
     if payload.Action == "Return" then return self:Return(player) end
     if payload.Action == "Like" then return self:ToggleLike(player, payload.UserId) end
