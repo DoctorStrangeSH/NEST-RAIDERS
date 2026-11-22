@@ -29,8 +29,8 @@ local function makeEgg(parent, position, color)
     egg:SetAttribute("WorldEgg", true)
     local prompt = Instance.new("ProximityPrompt")
     prompt.Name = "CollectEggPrompt"
-    prompt.ActionText = "Collect"
-    prompt.ObjectText = "Meadow Egg"
+    prompt.ActionText = "Собрать"
+    prompt.ObjectText = "Яйцо луга"
     prompt.KeyboardKeyCode = Enum.KeyCode.E
     prompt.HoldDuration = 0.35
     prompt.MaxActivationDistance = 11
