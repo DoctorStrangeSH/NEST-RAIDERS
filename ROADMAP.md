@@ -85,6 +85,10 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Expand the building catalog with a Flower Arch, Crystal Pond, and Moon Fountain.
 - [x] Render the new landmarks with custom low-poly geometry, layered water, shoreline stones, flower details, and a soft crystal light.
 - [ ] Replace prototype geometry with curated Creator Store art assets and add richer building themes.
+- [x] Add a server-authoritative in-server island visit browser with owner name, level, and visitor count.
+- [x] Allow players to visit another occupied island and return to their previous position / own nest.
+- [x] Limit each island to eight visitors and restore guests when an island owner leaves.
+- [ ] Add island likes, favorites, weekly showcases, and cosmetic rating rewards.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
