@@ -306,6 +306,14 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
     end
 end
 
+function CompanionService:CreateRitualPreview(parent, companion, index)
+    if not parent or type(companion) ~= "table" then return nil end
+    local preview = buildPet(parent, companion, index or 1)
+    preview.Name = "BreedingParent_" .. tostring(index or 1)
+    preview:SetAttribute("RitualPreview", true)
+    return preview
+end
+
 function CompanionService:ClearPlayer(player)
     local folder = self._folders[player]
     if folder then folder:Destroy() end
