@@ -101,11 +101,17 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Archive previous-week top-three winners into a persistent Hall of Fame when the next week is first accessed.
 - [x] Verify top-three trophy claims against the archived winners and persist claimed cosmetics in player profiles.
 - [x] Display up to six claimed contest trophies on each player island and add a Hall of Fame client panel.
-- [ ] Add cross-server island discovery, scheduled week-close processing, and anti-alt vote review.
+- [x] Add cross-server island discovery and server-validated visits through a live MemoryStore directory.
+- [ ] Add scheduled week-close processing and anti-alt vote review.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
 - [ ] Economy sinks and telemetry-driven balancing.
+- [x] Add public player profile snapshots for online players on the same server.
+- [x] Derive collection, nest, popularity, contest, and progression achievements from server-owned profile data.
+- [x] Add unlockable cosmetic titles, persistent title selection, and overhead title display.
+- [x] Add a profile panel with achievement progress and title selection, plus local island profile links.
+- [ ] Add cross-server/offline profile snapshots, player privacy controls, and more achievement categories.
 
 ## Milestone 4 — Raiding and PvP
 - [ ] Opt-in / clearly signposted raid windows and protected newcomer period.
