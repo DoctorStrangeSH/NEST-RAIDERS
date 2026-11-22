@@ -213,3 +213,20 @@
 - [ ] Verify plot release removes trophy instances before the plot is assigned to another player.
 - [ ] Verify no trophy grants coins, XP, pets, income, or PvP power.
 - [ ] Verify history read / archive write failures show a safe error and do not create unverified claims.
+
+
+## Global island discovery and cross-server visits — Sprint 4.11
+- [ ] In a published private test experience, start two public server instances and join with at least one island owner in each.
+- [ ] Verify active island owners publish to the shared MemoryStore directory and appear in both servers' global island browsers.
+- [ ] Verify the same owner is listed only once when both local and directory data contain the same UserId.
+- [ ] Verify directory entries include owner display name, level, plot ID, server ID, place ID, visitor count, capacity, and likes.
+- [ ] Select an island in another server and verify the visitor is teleported to the exact listed server.
+- [ ] Verify destination arrival waits for profile, plot, and character readiness before attempting the visit.
+- [ ] Verify the destination server checks the target UserId still owns the supplied plot before moving the visitor.
+- [ ] Verify a departed / stale target fails safely and leaves the visitor at their own nest.
+- [ ] Verify full islands, self-visits, malformed user IDs, malformed server IDs, and mismatched directory records are rejected.
+- [ ] Verify visitor counts update on the destination server and the return-home flow still works after cross-server travel.
+- [ ] Verify owner departure returns all visitors and the directory entry is removed or expires.
+- [ ] Verify MemoryStore read / write failures fall back to the current-server list with a clear status message.
+- [ ] Verify Studio mode explicitly indicates that global browsing is unavailable and retains local island browsing.
+- [ ] Verify likes, favorites, profile data, and currency are unchanged by cross-server travel.
