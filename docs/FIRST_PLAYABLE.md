@@ -212,3 +212,9 @@
 - Luminous companions receive three cyan lantern orbs with soft point lights.
 - Prismatic companions receive three differently colored facets and a prismatic core.
 - Inventory cards show genetic rarity and passive-income bonus.
+
+
+## Personal nest breeding altar — Sprint 4.19
+- Each personal nest now has a glowing breeding altar with an owner-only proximity prompt.
+- The server only accepts breeding requests when the player is within 18 studs of their own altar.
+- Existing breeding validation and confirmation remain in place.
