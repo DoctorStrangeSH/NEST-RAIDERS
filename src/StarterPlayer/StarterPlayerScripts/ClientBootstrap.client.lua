@@ -432,6 +432,19 @@ dragHint.Visible = false
 dragHint.Parent = decorPanel
 addCorner(dragHint, 8)
 
+local dragRotateButton = Instance.new("TextButton")
+dragRotateButton.Name = "PlacementRotate"
+dragRotateButton.Position = UDim2.new(1, -112, 1, -62)
+dragRotateButton.Size = UDim2.fromOffset(100, 25)
+dragRotateButton.BackgroundColor3 = Color3.fromRGB(112, 101, 164)
+dragRotateButton.Text = "ПОВОРОТ ↻"
+dragRotateButton.TextColor3 = Color3.new(1, 1, 1)
+dragRotateButton.TextSize = 10
+dragRotateButton.Font = Enum.Font.GothamBlack
+dragRotateButton.Visible = false
+dragRotateButton.Parent = decorPanel
+addCorner(dragRotateButton, 8)
+
 local decorLayout = Instance.new("UIListLayout")
 decorLayout.Padding = UDim.new(0, 8)
 decorLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -1128,8 +1141,6 @@ end
 local activeDecorDrag = nil
 local dragPreview = nil
 local dragRotation = 0
-local dragHint = nil
-
 local function getOwnedPlotGrass()
     local world = Workspace:FindFirstChild("NestRaidersWorld")
     local island = world and world:FindFirstChild("StarterIsland")
@@ -1148,6 +1159,7 @@ local function stopDecorDrag()
     dragRotation = 0
     if dragPreview then dragPreview:Destroy(); dragPreview = nil end
     if dragHint then dragHint.Visible = false end
+    if dragRotateButton then dragRotateButton.Visible = false end
 end
 
 local function startDecorDrag(slot, item)
@@ -1176,6 +1188,7 @@ local function startDecorDrag(slot, item)
         dragHint.Text = "Выбери место на своём острове · R — поворот · Esc — отмена"
         dragHint.Visible = true
     end
+    if dragRotateButton then dragRotateButton.Visible = true end
     showNotice("Режим размещения: нажми на остров, чтобы переместить украшение.")
 end
 
@@ -1183,7 +1196,7 @@ local function getDecorPlacementFromScreen(screenPosition)
     if not activeDecorDrag or not activeDecorDrag.Grass then return nil end
     local camera = Workspace.CurrentCamera
     if not camera then return nil end
-    local ray = camera:ViewportPointToRay(screenPosition.X, screenPosition.Y)
+    local ray = camera:ScreenPointToRay(screenPosition.X, screenPosition.Y)
     local params = RaycastParams.new()
     params.FilterType = Enum.RaycastFilterType.Include
     params.FilterDescendantsInstances = { activeDecorDrag.Grass }
@@ -1246,7 +1259,14 @@ UserInputService.InputChanged:Connect(function(input)
     if not activeDecorDrag then return end
     if input.UserInputType == Enum.UserInputType.MouseMovement then
         updateDecorPreview(UserInputService:GetMouseLocation())
+    elseif input.UserInputType == Enum.UserInputType.Touch then
+        updateDecorPreview(input.Position)
     end
+end)
+
+dragRotateButton.Activated:Connect(function()
+    if not activeDecorDrag then return end
+    dragRotation = (dragRotation + 15) % 360
 end)
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
