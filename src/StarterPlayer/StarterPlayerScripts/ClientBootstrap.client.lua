@@ -2203,11 +2203,8 @@ local function renderContest()
                     UserId = nomineeEntry.UserId,
                 })
                 if result then
-                    local refreshed = invokeContest({ Action = "List" })
-                    if refreshed then
-                        contestData = refreshed
-                        renderContest()
-                    end
+                    category.HasVoted = true
+                    renderContest()
                 else
                     vote.Active = true
                 end
