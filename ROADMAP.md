@@ -46,7 +46,9 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [ ] World landmarks, secrets, caves, traversal routes, and discovery rewards.
 
 ## Milestone 3 — Nest, companions, and economy
-- [ ] Nest expansion and decoration.
+- [x] Five-level personal nest upgrade progression with server-side coin and ownership validation.
+- [x] Persistent nest level restores visible decorations and unlocks up to four pet display pedestals.
+- [ ] Place owned companions onto display pedestals and collect their displayed income.
 - [x] Shared companion catalog as the single source of truth for hatch weights, names, rarity, and income.
 - [x] Server-backed collection book with discovered species, duplicate counts, rarity, and collection completion.
 - [x] Three-identical-pet fusion into higher star ranks, validated on the server.
