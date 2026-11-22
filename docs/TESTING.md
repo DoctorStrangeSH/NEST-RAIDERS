@@ -141,3 +141,13 @@
 - [ ] Select an existing building's Move / Drag control and reposition it; verify it does not collide with itself or other objects.
 - [ ] Attempt to place a large cottage partly outside the plot and verify server rejection.
 - [ ] Verify the editor returns to the construction catalog after confirmation and cancellation.
+
+
+## Fantasy garden landmarks — Sprint 4.6
+- [ ] Verify Flower Arch appears with two posts, top beam, flower details, and fits within its 4-stud footprint.
+- [ ] Verify Crystal Pond renders a horizontal water surface, inner glow, shoreline stones, lily pad, and flower.
+- [ ] Verify Moon Fountain renders horizontal basins, central pedestal, crystal, and a soft PointLight.
+- [ ] Buy each new object and confirm exact prices: Flower Arch 145, Crystal Pond 190, Moon Fountain 320.
+- [ ] Place, move, rotate, remove, and rejoin with each new object; verify inventory and layout persistence.
+- [ ] Confirm each landmark respects overlap checks and full-footprint island bounds.
+- [ ] Test a plot release and verify all three new landmark models are cleared before reassignment.
