@@ -94,3 +94,11 @@
 - Buy objects into a persistent building inventory, place them on a 2-stud grid, move and rotate them, or remove them back to inventory.
 - The server validates profile readiness, plot ownership, proximity, catalog IDs, currency, inventory, plot bounds, object overlap, and the 100-object island cap.
 - Buildings are saved in the player nest profile and rebuilt when the player's plot is assigned. Rendered models are cleared when the plot is released.
+
+
+## Building placement editor
+- Selecting a building from the catalog opens a translucent footprint preview over the player's own island.
+- The preview follows the mouse or touch position, snaps to a 2-stud grid, and shows green for valid locations and red for blocked / out-of-bounds locations.
+- Confirm with click / tap; rotate in 15-degree steps with R or the on-screen control; cancel with Escape or the on-screen control.
+- Existing buildings can be repositioned with the same preview flow.
+- Server-side checks independently validate plot bounds and object overlap before saving.
