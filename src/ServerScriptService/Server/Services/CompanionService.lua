@@ -32,6 +32,24 @@ local DEFINITIONS = {
         Detail = Color3.fromRGB(106, 123, 210),
         Kind = "Dragon",
     },
+    EmberFox = {
+        Body = Color3.fromRGB(224, 105, 55),
+        Accent = Color3.fromRGB(255, 190, 93),
+        Detail = Color3.fromRGB(121, 62, 45),
+        Kind = "EmberFox",
+    },
+    Fernshell = {
+        Body = Color3.fromRGB(93, 157, 105),
+        Accent = Color3.fromRGB(155, 192, 107),
+        Detail = Color3.fromRGB(104, 119, 76),
+        Kind = "Fernshell",
+    },
+    BriarGuardian = {
+        Body = Color3.fromRGB(117, 148, 91),
+        Accent = Color3.fromRGB(183, 151, 105),
+        Detail = Color3.fromRGB(82, 102, 66),
+        Kind = "BriarGuardian",
+    },
 }
 
 local function makeShape(model, name, size, offset, color, shape)
@@ -64,7 +82,33 @@ local function buildPet(parent, companion, index)
     model.PrimaryPart = body
     makeShape(model, "Head", Vector3.new(1.35, 1.25, 1.25), Vector3.new(0, 1.85, 0.65), definition.Body)
 
-    if definition.Kind == "Fox" then
+    if definition.Kind == "EmberFox" then
+        makeShape(model, "Muzzle", Vector3.new(0.75, 0.48, 0.55), Vector3.new(0, 1.58, 1.2), definition.Accent)
+        makeShape(model, "LeftEar", Vector3.new(0.48, 0.8, 0.42), Vector3.new(-0.42, 2.55, 0.55), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "RightEar", Vector3.new(0.48, 0.8, 0.42), Vector3.new(0.42, 2.55, 0.55), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "Tail", Vector3.new(1.15, 1.15, 1.1), Vector3.new(0, 1.3, -1.15), definition.Accent)
+        makeShape(model, "LeftHorn", Vector3.new(0.25, 0.55, 0.25), Vector3.new(-0.3, 2.7, 0.3), Color3.fromRGB(255, 216, 119), Enum.PartType.Wedge)
+        makeShape(model, "RightHorn", Vector3.new(0.25, 0.55, 0.25), Vector3.new(0.3, 2.7, 0.3), Color3.fromRGB(255, 216, 119), Enum.PartType.Wedge)
+    elseif definition.Kind == "Fernshell" then
+        makeShape(model, "Shell", Vector3.new(2.1, 1.15, 1.8), Vector3.new(0, 1.75, -0.05), definition.Accent)
+        for _, x in ipairs({-0.7, 0.7}) do
+            makeShape(model, "Foot", Vector3.new(0.65, 0.45, 0.65), Vector3.new(x, 0.55, 0.55), definition.Detail)
+            makeShape(model, "Foot", Vector3.new(0.65, 0.45, 0.65), Vector3.new(x, 0.55, -0.55), definition.Detail)
+        end
+        makeShape(model, "LeftHorn", Vector3.new(0.3, 0.7, 0.3), Vector3.new(-0.4, 2.55, 0.45), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "RightHorn", Vector3.new(0.3, 0.7, 0.3), Vector3.new(0.4, 2.55, 0.45), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "LeafCrest", Vector3.new(0.75, 0.25, 0.8), Vector3.new(0, 2.45, -0.15), Color3.fromRGB(119, 204, 115), Enum.PartType.Wedge)
+    elseif definition.Kind == "BriarGuardian" then
+        makeShape(model, "Muzzle", Vector3.new(0.75, 0.48, 0.55), Vector3.new(0, 1.58, 1.2), definition.Accent)
+        makeShape(model, "Shell", Vector3.new(2.1, 1.15, 1.8), Vector3.new(0, 1.75, -0.05), definition.Detail)
+        makeShape(model, "LeftEar", Vector3.new(0.4, 0.7, 0.35), Vector3.new(-0.42, 2.55, 0.55), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "RightEar", Vector3.new(0.4, 0.7, 0.35), Vector3.new(0.42, 2.55, 0.55), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "Tail", Vector3.new(0.75, 0.75, 0.95), Vector3.new(0, 1.25, -1.15), definition.Accent)
+        for _, x in ipairs({-0.7, 0.7}) do
+            makeShape(model, "Foot", Vector3.new(0.65, 0.45, 0.65), Vector3.new(x, 0.55, 0.55), definition.Detail)
+            makeShape(model, "Foot", Vector3.new(0.65, 0.45, 0.65), Vector3.new(x, 0.55, -0.55), definition.Detail)
+        end
+    elseif definition.Kind == "Fox" then
         makeShape(model, "Muzzle", Vector3.new(0.75, 0.48, 0.55), Vector3.new(0, 1.58, 1.2), definition.Accent)
         makeShape(model, "LeftEar", Vector3.new(0.48, 0.8, 0.42), Vector3.new(-0.42, 2.55, 0.55), definition.Detail, Enum.PartType.Wedge)
         makeShape(model, "RightEar", Vector3.new(0.48, 0.8, 0.42), Vector3.new(0.42, 2.55, 0.55), definition.Detail, Enum.PartType.Wedge)
