@@ -173,6 +173,9 @@ function NestBuildService:HandleRequest(player,payload)
         end
         x,z=snap(x),snap(z)
         local footprint=def.Footprint
+        if math.abs(x) + footprint / 2 > 15 or math.abs(z) + footprint / 2 > 15 then
+            return {Ok=false,Message="Эта постройка не помещается в границах острова."}
+        end
         for _,entry in pairs(nest.PlacedBuildings) do
             local other=NestBuildCatalog[entry.Id]
             if other then
@@ -200,6 +203,9 @@ function NestBuildService:HandleRequest(player,payload)
         end
         x,z=snap(x),snap(z)
         local def=NestBuildCatalog[entry.Id]
+        if math.abs(x) + def.Footprint / 2 > 15 or math.abs(z) + def.Footprint / 2 > 15 then
+            return {Ok=false,Message="Эта постройка не помещается в границах острова."}
+        end
         for otherKey,otherEntry in pairs(nest.PlacedBuildings) do
             if otherKey~=key then
                 local other=NestBuildCatalog[otherEntry.Id]
