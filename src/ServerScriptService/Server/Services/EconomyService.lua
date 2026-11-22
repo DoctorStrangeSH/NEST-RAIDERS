@@ -19,8 +19,16 @@ end
 
 function EconomyService:GetPassiveIncome(profile)
     local total = 0
+    local ownedById = {}
     for _, companion in ipairs(profile.Companions) do
-        if type(companion.Income) == "number" then
+        if type(companion.InstanceId) == "string" then
+            ownedById[companion.InstanceId] = companion
+        end
+    end
+
+    for _, instanceId in ipairs(profile.ActiveCompanions or {}) do
+        local companion = ownedById[instanceId]
+        if companion and type(companion.Income) == "number" then
             total += math.clamp(math.floor(companion.Income), 0, 1000)
         end
     end
