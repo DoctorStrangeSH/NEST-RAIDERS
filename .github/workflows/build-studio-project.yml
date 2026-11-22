@@ -1,0 +1,38 @@
+name: Build Roblox Studio project
+
+on:
+  push:
+    branches:
+      - feature/first-playable-loop
+    paths:
+      - "src/**"
+      - "default.project.json"
+      - ".github/workflows/build-studio-project.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build NEST RAIDERS place file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Rojo
+        uses: rojo-rbx/setup-rojo@v1
+        with:
+          version: "7.5.1"
+
+      - name: Build Roblox Studio place
+        run: rojo build default.project.json --output "NEST-RAIDERS.rbxlx"
+
+      - name: Upload Studio project
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEST-RAIDERS-Studio-Project
+          path: NEST-RAIDERS.rbxlx
+          if-no-files-found: error
+          retention-days: 14
