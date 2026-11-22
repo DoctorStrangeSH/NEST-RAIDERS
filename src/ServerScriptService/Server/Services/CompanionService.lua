@@ -1,8 +1,10 @@
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local ServerScriptService = game:GetService("ServerScriptService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
+local NestToyCatalog = require(ReplicatedStorage.Shared.Config.NestToyCatalog)
 
 local CompanionService = {}
 CompanionService._folders = {}
@@ -141,6 +143,13 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local hunger = math.clamp(math.floor(tonumber(needs.Hunger) or 100), 0, 100)
             local energy = math.clamp(math.floor(tonumber(needs.Energy) or 100), 0, 100)
             local sleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
+            local toyId = profile.Nest and profile.Nest.CompanionToys and profile.Nest.CompanionToys[instanceId]
+            local toyDefinition = NestToyCatalog[toyId or ""]
+            if toyDefinition then
+                local toyPart = makeShape(model, "EquippedNestToy", Vector3.new(0.8, 0.8, 0.8), Vector3.new(1.35, 0.85, 0.75), toyDefinition.Color, toyDefinition.Shape)
+                toyPart.Material = Enum.Material.Neon
+                toyPart:SetAttribute("ToyId", toyDefinition.Id)
+            end
             local moodBillboard = Instance.new("BillboardGui")
             moodBillboard.Name = "MoodBubble"
             moodBillboard.Adornee = model.PrimaryPart
