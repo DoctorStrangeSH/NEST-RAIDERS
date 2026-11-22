@@ -9,6 +9,7 @@ local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalo
 local DisplayPetService = require(ServerScriptService.Server.Services.DisplayPetService)
 local EconomyService = require(ServerScriptService.Server.Services.EconomyService)
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
+local PlotService = require(ServerScriptService.Server.Services.PlotService)
 
 local InventoryService = {}
 local MAX_ACTIVE_COMPANIONS = 3
@@ -199,6 +200,15 @@ function InventoryService:HandleRequest(player, payload)
     end
 
     if payload.Action == "Breed" then
+        local playerPlot = PlotService:GetPlayerPlot(player)
+        local breedingStation = playerPlot and playerPlot.BreedingStation
+        local character = player.Character
+        local root = character and character:FindFirstChild("HumanoidRootPart")
+        if not breedingStation or not breedingStation.Parent or not root
+            or (root.Position - breedingStation.Position).Magnitude > 18 then
+            return { Ok = false, Message = "Для разведения подойди к алтарю в своём личном гнезде." }
+        end
+
         if type(payload.PartnerInstanceId) ~= "string" or #payload.PartnerInstanceId > 80
             or payload.PartnerInstanceId == payload.InstanceId then
             return { Ok = false, Message = "Выбери двух разных питомцев." }
