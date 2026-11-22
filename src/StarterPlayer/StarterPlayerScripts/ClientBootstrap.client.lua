@@ -1167,14 +1167,17 @@ local function renderInventory(data)
         local details = Instance.new("TextLabel")
         details.BackgroundTransparency = 1
         details.Position = UDim2.fromOffset(12, 34)
-        details.Size = UDim2.new(1, -130, 0, 58)
+        details.Size = UDim2.new(1, -130, 0, 72)
         details.Font = Enum.Font.GothamMedium
         local trait = companion.GeneticTrait or { Name = "Естественный" }
-        details.Text = string.format("%s  ·  %s  ·  %s\n%s · Опыт %d/%d\n+%d монет / 10 сек.",
+        local traitBonus = math.floor((tonumber(trait.IncomeBonus) or 0) * 100 + 0.5)
+        details.Text = string.format("%s  ·  %s  ·  %s\n%s (%s) · +%d%% дохода\nОпыт %d/%d · +%d монет / 10 сек.",
             companion.Rarity or "Обычный",
             string.rep("★", companion.Stars or 1),
             companion.GrowthStage or "Малыш",
             trait.Name or "Естественный",
+            trait.Rarity or "Обычный",
+            traitBonus,
             companion.GrowthXP or 0,
             companion.GrowthXPToNext or 0,
             companion.Income or 0)
