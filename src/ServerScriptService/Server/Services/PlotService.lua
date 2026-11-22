@@ -1,0 +1,177 @@
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local PlayerDataService = require(game:GetService("ServerScriptService").Server.Services.PlayerDataService)
+
+local PlotService = {}
+PlotService._plots = {}
+PlotService._owners = {}
+PlotService._playerPlots = {}
+
+local PLOT_DEFINITIONS = {
+    { Id = "Nest01", Position = Vector3.new(-72, 11, -72) },
+    { Id = "Nest02", Position = Vector3.new(0, 11, -84) },
+    { Id = "Nest03", Position = Vector3.new(72, 11, -72) },
+    { Id = "Nest04", Position = Vector3.new(-72, 11, 72) },
+    { Id = "Nest05", Position = Vector3.new(0, 11, 84) },
+    { Id = "Nest06", Position = Vector3.new(72, 11, 72) },
+}
+
+local function makePart(parent, name, size, cframe, color, material)
+    local part = Instance.new("Part")
+    part.Name = name
+    part.Size = size
+    part.CFrame = cframe
+    part.Anchored = true
+    part.Color = color
+    part.Material = material or Enum.Material.SmoothPlastic
+    part.TopSurface = Enum.SurfaceType.Smooth
+    part.BottomSurface = Enum.SurfaceType.Smooth
+    part.Parent = parent
+    return part
+end
+
+local function buildPlot(parent, definition)
+    local plot = Instance.new("Model")
+    plot.Name = definition.Id
+    plot:SetAttribute("PlotId", definition.Id)
+    plot.Parent = parent
+
+    local center = definition.Position
+    makePart(plot, "PlotFoundation", Vector3.new(38, 2, 38), CFrame.new(center), Color3.fromRGB(112, 91, 70), Enum.Material.WoodPlanks)
+    makePart(plot, "PlotGrass", Vector3.new(36, 0.6, 36), CFrame.new(center + Vector3.new(0, 1.3, 0)), Color3.fromRGB(119, 190, 111), Enum.Material.Grass)
+
+    local nest = makePart(plot, "NestBowl", Vector3.new(13, 2, 11), CFrame.new(center + Vector3.new(0, 3, 0)), Color3.fromRGB(153, 111, 69), Enum.Material.Wood)
+    nest.Shape = Enum.PartType.Cylinder
+    nest.CFrame = CFrame.new(center + Vector3.new(0, 3, 0)) * CFrame.Angles(0, 0, math.rad(90))
+
+    local station = makePart(plot, "HatchStation", Vector3.new(5, 5, 5), CFrame.new(center + Vector3.new(0, 7, 0)), Color3.fromRGB(255, 194, 83), Enum.Material.Neon)
+    station.Shape = Enum.PartType.Ball
+    station.Transparency = 0.15
+    station:SetAttribute("PlotId", definition.Id)
+
+    local prompt = Instance.new("ProximityPrompt")
+    prompt.Name = "HatchPrompt"
+    prompt.ActionText = "Hatch Egg"
+    prompt.ObjectText = "Personal Nest"
+    prompt.KeyboardKeyCode = Enum.KeyCode.E
+    prompt.HoldDuration = 0.5
+    prompt.MaxActivationDistance = 12
+    prompt.RequiresLineOfSight = false
+    prompt.Parent = station
+
+    local sign = makePart(plot, "OwnerSign", Vector3.new(1, 5, 9), CFrame.new(center + Vector3.new(0, 4, -14)), Color3.fromRGB(105, 72, 47), Enum.Material.Wood)
+    local surface = Instance.new("SurfaceGui")
+    surface.Face = Enum.NormalId.Front
+    surface.Parent = sign
+    local label = Instance.new("TextLabel")
+    label.Name = "OwnerLabel"
+    label.Size = UDim2.fromScale(1, 1)
+    label.BackgroundTransparency = 1
+    label.Text = "AVAILABLE NEST"
+    label.TextColor3 = Color3.fromRGB(255, 245, 210)
+    label.TextScaled = true
+    label.Font = Enum.Font.GothamBlack
+    label.Parent = surface
+
+    return plot, station, label
+end
+
+function PlotService:GetPlayerPlot(player)
+    return self._playerPlots[player]
+end
+
+function PlotService:IsOwner(player, plotId)
+    local plot = self._playerPlots[player]
+    return plot ~= nil and plot.Id == plotId
+end
+
+function PlotService:GetStation(player)
+    local plot = self._playerPlots[player]
+    return plot and plot.Station or nil
+end
+
+function PlotService:AssignPlot(player)
+    if self._playerPlots[player] or not player.Parent then return end
+    local profile = PlayerDataService:GetProfile(player)
+    if not profile then return end
+
+    local requestedId = profile.Nest and profile.Nest.PlotId
+    local selected = requestedId and self._plots[requestedId] or nil
+    if selected and self._owners[selected.Id] then selected = nil end
+
+    if not selected then
+        for _, definition in ipairs(PLOT_DEFINITIONS) do
+            local candidate = self._plots[definition.Id]
+            if candidate and not self._owners[candidate.Id] then
+                selected = candidate
+                break
+            end
+        end
+    end
+
+    if not selected then
+        player:SetAttribute("LastNotice", "All nests are occupied. Please try another server.")
+        player:Kick("This server is full. Please rejoin another server.")
+        return
+    end
+
+    self._owners[selected.Id] = player
+    self._playerPlots[player] = selected
+    profile.Nest = profile.Nest or { Level = 1 }
+    profile.Nest.PlotId = selected.Id
+    selected.Model:SetAttribute("OwnerUserId", player.UserId)
+    selected.Model:SetAttribute("OwnerName", player.DisplayName)
+    selected.OwnerLabel.Text = player.DisplayName .. "'S NEST"
+    player:SetAttribute("PlotId", selected.Id)
+    player:SetAttribute("PlotAssigned", true)
+    player:SetAttribute("LastNotice", "Your personal nest is ready!")
+end
+
+function PlotService:ReleasePlot(player)
+    local plot = self._playerPlots[player]
+    if not plot then return end
+    self._owners[plot.Id] = nil
+    self._playerPlots[player] = nil
+    plot.Model:SetAttribute("OwnerUserId", nil)
+    plot.Model:SetAttribute("OwnerName", nil)
+    plot.OwnerLabel.Text = "AVAILABLE NEST"
+    player:SetAttribute("PlotAssigned", false)
+end
+
+function PlotService:BindPlayer(player)
+    player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
+        if player:GetAttribute("ProfileLoaded") then self:AssignPlot(player) end
+    end)
+    if player:GetAttribute("ProfileLoaded") then
+        task.defer(function() self:AssignPlot(player) end)
+    end
+end
+
+function PlotService:Init()
+    local world = Workspace:WaitForChild("NestRaidersWorld", 30)
+    local island = world and world:FindFirstChild("StarterIsland")
+    if not island then
+        warn("[NEST RAIDERS] StarterIsland missing; plot assignment disabled.")
+        return
+    end
+
+    local folder = Instance.new("Folder")
+    folder.Name = "PlayerPlots"
+    folder.Parent = island
+
+    for _, definition in ipairs(PLOT_DEFINITIONS) do
+        local model, station, ownerLabel = buildPlot(folder, definition)
+        self._plots[definition.Id] = {
+            Id = definition.Id,
+            Model = model,
+            Station = station,
+            OwnerLabel = ownerLabel,
+        }
+    end
+
+    Players.PlayerAdded:Connect(function(player) self:BindPlayer(player) end)
+    Players.PlayerRemoving:Connect(function(player) self:ReleasePlot(player) end)
+    for _, player in ipairs(Players:GetPlayers()) do self:BindPlayer(player) end
+end
+
+return PlotService
