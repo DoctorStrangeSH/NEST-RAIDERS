@@ -15,11 +15,16 @@ IslandContestService._lastListRequest = {}
 IslandContestService._standingsCache = {}
 IslandContestService._studioVotes = {}
 IslandContestService._studioScores = {}
+IslandContestService._studioHistory = {}
 
 local COOLDOWN = 2
 local LIST_COOLDOWN = 2
 local STANDINGS_CACHE_SECONDS = 10
 local MAX_RESULTS = 10
+local HISTORY_LIMIT = 12
+local HISTORY_REFRESH_SECONDS = 60
+local CATEGORY_ORDER = { "Cozy", "Nature", "Fantasy" }
+local PLACE_NAMES = { "Золото", "Серебро", "Бронза" }
 local CATEGORIES = {
     Cozy = { Name = "Уют", Description = "Самый тёплый и гостеприимный остров." },
     Nature = { Name = "Природа", Description = "Лучший сад, лес и природный ландшафт." },
@@ -43,8 +48,8 @@ local function isValidCategory(category)
     return type(category) == "string" and CATEGORIES[category] ~= nil
 end
 
-local function getStores(category)
-    local week = weekKey()
+local function getStores(category, selectedWeek)
+    local week = selectedWeek or weekKey()
     local suffix = week .. "_" .. category
     return DataStoreService:GetDataStore("NRAidVotes_" .. suffix),
         DataStoreService:GetOrderedDataStore("NRAidContest_" .. suffix),
@@ -179,6 +184,168 @@ function IslandContestService:HasVoted(player, category)
     return record ~= nil
 end
 
+local function getArchiveStore()
+    return DataStoreService:GetDataStore("NRAidHallOfFame_v1")
+end
+
+local function archiveKey(week)
+    return "week_" .. week
+end
+
+local function isClaimed(profile, week, category)
+    local trophies = profile.Nest and profile.Nest.IslandTrophies
+    return type(trophies) == "table" and trophies[week .. "_" .. category] ~= nil
+end
+
+function IslandContestService:BuildWeekArchive(week)
+    local archive = { Week = week, Categories = {} }
+    for _, category in ipairs(CATEGORY_ORDER) do
+        local entries = {}
+        if studioFallback() then
+            local scores = self._studioScores[week] and self._studioScores[week][category] or {}
+            for userId, votes in pairs(scores) do
+                table.insert(entries, { UserId = tonumber(userId), Votes = votes })
+            end
+            table.sort(entries, function(a, b)
+                if a.Votes == b.Votes then return a.UserId < b.UserId end
+                return a.Votes > b.Votes
+            end)
+        else
+            local _, orderedStore = getStores(category, week)
+            local ok, pages = pcall(function()
+                return orderedStore:GetSortedAsync(false, 3)
+            end)
+            if not ok then
+                warn("[NEST RAIDERS] Previous contest standings unavailable:", pages)
+                return nil
+            end
+            for _, item in ipairs(pages:GetCurrentPage()) do
+                table.insert(entries, { UserId = tonumber(item.key), Votes = item.value })
+            end
+        end
+
+        local ids = {}
+        for _, entry in ipairs(entries) do table.insert(ids, entry.UserId) end
+        local names = {}
+        if #ids > 0 then
+            local ok, infos = pcall(function()
+                return UserService:GetUserInfosByUserIdsAsync(ids)
+            end)
+            if ok then
+                for _, info in ipairs(infos) do
+                    names[info.Id] = info.DisplayName or info.Username
+                end
+            end
+        end
+
+        local winners = {}
+        for place, entry in ipairs(entries) do
+            if place > 3 then break end
+            table.insert(winners, {
+                UserId = entry.UserId,
+                DisplayName = names[entry.UserId] or ("Игрок " .. tostring(entry.UserId)),
+                Votes = entry.Votes,
+                Place = place,
+            })
+        end
+        archive.Categories[category] = winners
+    end
+    return archive
+end
+
+function IslandContestService:FinalizePreviousWeek()
+    local previousWeek = weekKey(os.time() - 7 * 24 * 60 * 60)
+    if studioFallback() then
+        self._studioHistory = self._studioHistory or {}
+        if not self._studioHistory[previousWeek] then
+            self._studioHistory[previousWeek] = self:BuildWeekArchive(previousWeek)
+        end
+        return true
+    end
+
+    local archive = self:BuildWeekArchive(previousWeek)
+    if not archive then return false end
+    local store = getArchiveStore()
+    local ok, err = pcall(function()
+        store:UpdateAsync("history", function(current)
+            local history = type(current) == "table" and current or {}
+            for _, item in ipairs(history) do
+                if item.Week == previousWeek then return history end
+            end
+            table.insert(history, 1, archive)
+            while #history > HISTORY_LIMIT do table.remove(history) end
+            return history
+        end)
+    end)
+    if not ok then
+        warn("[NEST RAIDERS] Hall of Fame archive failed:", err)
+        return false
+    end
+    return true
+end
+
+function IslandContestService:GetHistory(player)
+    if studioFallback() then
+        local history = {}
+        for _, archive in pairs(self._studioHistory) do table.insert(history, archive) end
+        table.sort(history, function(a, b) return a.Week > b.Week end)
+        return history
+    end
+    local ok, history = pcall(function()
+        return getArchiveStore():GetAsync("history")
+    end)
+    if not ok then
+        warn("[NEST RAIDERS] Hall of Fame history read failed:", history)
+        return nil
+    end
+    return type(history) == "table" and history or {}
+end
+
+function IslandContestService:ClaimTrophy(player, week, category)
+    if type(week) ~= "string" or #week > 16 or not isValidCategory(category) then
+        return { Ok=false, Message="Некорректная награда." }
+    end
+    local profile = PlayerDataService:GetProfile(player)
+    if not profile then return { Ok=false, Message="Профиль ещё загружается." } end
+    profile.Nest = profile.Nest or {}
+    profile.Nest.IslandTrophies = profile.Nest.IslandTrophies or {}
+    local key = week .. "_" .. category
+    if profile.Nest.IslandTrophies[key] then
+        return { Ok=false, Message="Эта награда уже находится в твоём гнезде." }
+    end
+
+    local history = self:GetHistory(player)
+    if not history then
+        return { Ok=false, Message="Зал славы временно недоступен. Попробуй позже." }
+    end
+    local archive
+    for _, item in ipairs(history) do
+        if item.Week == week then archive = item break end
+    end
+    local winners = archive and archive.Categories and archive.Categories[category]
+    local place
+    for _, winner in ipairs(winners or {}) do
+        if winner.UserId == player.UserId then place = winner.Place break end
+    end
+    if not place or place < 1 or place > 3 then
+        return { Ok=false, Message="Для этого профиля нет доступной награды." }
+    end
+
+    profile.Nest.IslandTrophies[key] = {
+        Week = week,
+        Category = category,
+        Place = place,
+        ClaimedAt = os.time(),
+    }
+    if PlotService.ApplyContestTrophies then
+        PlotService:ApplyContestTrophies(player)
+    end
+    return {
+        Ok = true,
+        Message = "Награда «" .. PLACE_NAMES[place] .. "» установлена в твоём гнезде!",
+    }
+end
+
 function IslandContestService:List(player)
     local now = os.clock()
     local lastListRequest = self._lastListRequest[player]
@@ -186,6 +353,11 @@ function IslandContestService:List(player)
         return { Ok=false, Message="Список конкурса обновляется слишком часто. Подожди пару секунд." }
     end
     self._lastListRequest[player] = now
+    self:FinalizePreviousWeek()
+    local history = self:GetHistory(player)
+    if not history then
+        return { Ok=false, Message="Зал славы временно недоступен. Попробуй обновить список позже." }
+    end
     local categories = {}
     for category, definition in pairs(CATEGORIES) do
         local hasVoted = self:HasVoted(player, category)
@@ -209,6 +381,9 @@ function IslandContestService:List(player)
         Categories = categories,
         Nominees = self:GetOnlineNominees(player),
         IsLocalTest = studioFallback(),
+        History = history,
+        ClaimedTrophies = PlayerDataService:GetProfile(player).Nest
+            and PlayerDataService:GetProfile(player).Nest.IslandTrophies or {},
     }
 end
 
@@ -279,6 +454,9 @@ function IslandContestService:HandleRequest(player, payload)
     self._lastRequest[player] = now
     if payload.Action == "Vote" then
         return self:Vote(player, payload.Category, payload.UserId)
+    end
+    if payload.Action == "ClaimTrophy" then
+        return self:ClaimTrophy(player, payload.Week, payload.Category)
     end
     return { Ok=false, Message="Неизвестное действие." }
 end
