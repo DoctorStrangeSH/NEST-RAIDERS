@@ -972,26 +972,30 @@ renderDisplay = function(data)
         end)
 
         if not entry.Empty then
-            local interact = Instance.new("TextButton")
-            interact.AnchorPoint = Vector2.new(1, 1)
-            interact.Position = UDim2.new(1, -8, 1, -8)
-            interact.Size = UDim2.fromOffset(102, 34)
-            interact.BackgroundColor3 = Color3.fromRGB(89, 143, 112)
-            interact.Text = "ПОГЛАДИТЬ"
-            interact.TextColor3 = Color3.new(1, 1, 1)
-            interact.TextSize = 11
-            interact.Font = Enum.Font.GothamBlack
-            interact.Parent = card
-            addCorner(interact, 8)
-            interact.Activated:Connect(function()
-                interact.Active = false
-                local updated = invokeDisplay({
-                    Action = "Interact",
-                    Interaction = "Pet",
-                    InstanceId = entry.InstanceId,
-                })
-                if updated then renderDisplay(updated) else interact.Active = true end
-            end)
+            local function addMoodAction(label, interaction, xOffset, color)
+                local interact = Instance.new("TextButton")
+                interact.AnchorPoint = Vector2.new(1, 1)
+                interact.Position = UDim2.new(1, xOffset, 1, -8)
+                interact.Size = UDim2.fromOffset(49, 34)
+                interact.BackgroundColor3 = color
+                interact.Text = label
+                interact.TextColor3 = Color3.new(1, 1, 1)
+                interact.TextSize = 9
+                interact.Font = Enum.Font.GothamBlack
+                interact.Parent = card
+                addCorner(interact, 8)
+                interact.Activated:Connect(function()
+                    interact.Active = false
+                    local updated = invokeDisplay({
+                        Action = "Interact",
+                        Interaction = interaction,
+                        InstanceId = entry.InstanceId,
+                    })
+                    if updated then renderDisplay(updated) else interact.Active = true end
+                end)
+            end
+            addMoodAction("ЛАСКА", "Pet", -61, Color3.fromRGB(89, 143, 112))
+            addMoodAction("ИГРАТЬ", "Play", -8, Color3.fromRGB(91, 126, 174))
         end
     end
 end
