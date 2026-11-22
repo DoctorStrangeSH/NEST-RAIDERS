@@ -44,6 +44,14 @@
 - [ ] Nest upgrade rejects insufficient funds, unassigned plots, and upgrades above level 5.
 - [ ] Nest upgrade visuals update without duplicating old decorations.
 - [ ] Nest level and display pedestal count restore after reconnect.
+- [ ] Place a non-equipped owned pet on each unlocked display pedestal; its model appears on the correct pedestal.
+- [ ] Reject placing a non-owned pet, an active pet, a duplicate display assignment, or a locked slot.
+- [ ] Remove a displayed pet; it returns to the available list and its model disappears.
+- [ ] Displayed pets are excluded from active-team equip and fusion until removed.
+- [ ] Displayed-pet income accumulates separately every 10 seconds and does not enter the wallet automatically.
+- [ ] Collect displayed income; wallet increases by the exact amount and stored income resets.
+- [ ] Wallet-cap overflow remains stored instead of being discarded.
+- [ ] Display assignments and stored income persist after reconnect.
 - [ ] Player cannot upgrade another player's nest through the remote.
 - [ ] Player can equip and unequip owned companions; non-owned IDs are rejected.
 - [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
