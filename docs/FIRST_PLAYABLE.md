@@ -133,7 +133,7 @@
 ## Weekly island contests — Sprint 4.9
 - Added three weekly island categories: Cozy (Уют), Nature (Природа), and Fantasy (Фэнтези).
 - Players can cast one vote per category per UTC week for another occupied island in their current server.
-- Votes are stored per voter and category-week; scores are aggregated in cross-server OrderedDataStore leaderboards.
+- Votes are stored per voter and category-week; an idempotent per-owner vote ledger is projected into cross-server OrderedDataStore leaderboards. If the leaderboard projection fails, a later list request retries it safely.
 - Each category shows the top ten islands and the currently available server nominees.
-- Published experience uses persistent DataStores. Default Studio mode uses an in-memory local fallback and clearly marks its results as temporary.
+- Published experience uses persistent DataStores with cached standings and request throttling. Default Studio mode uses an in-memory local fallback and clearly marks its results as temporary.
 - Contest votes do not grant gameplay power. Cosmetic winner rewards and cross-server island discovery remain future work.
