@@ -53,7 +53,8 @@ local function buildPet(parent, companion, index)
     local model = Instance.new("Model")
     model.Name = string.format("%s_%d", companion.Id, index)
     model:SetAttribute("CompanionId", companion.Id)
-    model:SetAttribute("Rarity", companion.Rarity or "Common")
+    model:SetAttribute("Rarity", companion.Rarity or "Обычный")
+    model:SetAttribute("Stars", companion.Stars or 1)
     model.Parent = parent
 
     local body = makeShape(model, "Body", Vector3.new(2.2, 1.45, 1.65), Vector3.new(0, 1.05, 0), definition.Body)
@@ -82,6 +83,25 @@ local function buildPet(parent, companion, index)
 
     makeShape(model, "LeftEye", Vector3.new(0.16, 0.16, 0.12), Vector3.new(-0.28, 2.0, 1.22), Color3.fromRGB(35, 42, 48))
     makeShape(model, "RightEye", Vector3.new(0.16, 0.16, 0.12), Vector3.new(0.28, 2.0, 1.22), Color3.fromRGB(35, 42, 48))
+
+    local stars = math.clamp(math.floor(tonumber(companion.Stars) or 1), 1, 3)
+    if stars >= 2 then
+        local aura = Instance.new("Highlight")
+        aura.Name = "EvolutionAura"
+        aura.Adornee = model
+        aura.FillColor = stars == 3 and Color3.fromRGB(255, 190, 92) or Color3.fromRGB(125, 211, 255)
+        aura.OutlineColor = stars == 3 and Color3.fromRGB(255, 232, 160) or Color3.fromRGB(205, 240, 255)
+        aura.FillTransparency = stars == 3 and 0.72 or 0.84
+        aura.OutlineTransparency = 0.12
+        aura.DepthMode = Enum.HighlightDepthMode.Occluded
+        aura.Parent = model
+        local orbCount = stars == 3 and 3 or 1
+        for index = 1, orbCount do
+            local x = (index - (orbCount + 1) / 2) * 0.48
+            local orb = makeShape(model, "EvolutionStar", Vector3.new(0.3, 0.3, 0.3), Vector3.new(x, 3.0, 0.35), aura.OutlineColor)
+            orb.Material = Enum.Material.Neon
+        end
+    end
     return model
 end
 
