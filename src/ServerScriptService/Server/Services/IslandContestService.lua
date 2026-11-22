@@ -178,7 +178,8 @@ end
 
 function IslandContestService:List(player)
     local now = os.clock()
-    if now - (self._lastListRequest[player] or 0) < LIST_COOLDOWN then
+    local lastListRequest = self._lastListRequest[player]
+    if lastListRequest and now - lastListRequest < LIST_COOLDOWN then
         return { Ok=false, Message="Список конкурса обновляется слишком часто. Подожди пару секунд." }
     end
     self._lastListRequest[player] = now
@@ -268,7 +269,8 @@ function IslandContestService:HandleRequest(player, payload)
     end
     if payload.Action == "List" then return self:List(player) end
     local now = os.clock()
-    if now - (self._lastRequest[player] or 0) < COOLDOWN then
+    local lastRequest = self._lastRequest[player]
+    if lastRequest and now - lastRequest < COOLDOWN then
         return { Ok=false, Message="Подожди немного перед следующим действием." }
     end
     self._lastRequest[player] = now
