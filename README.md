@@ -64,3 +64,11 @@ Use Creator Store assets only after checking creator, permissions, dependencies,
 - Place new buildings or reposition existing ones, rotate in 15-degree increments, confirm with click / tap, or cancel without changing saved data.
 - The server validates the complete footprint against island bounds and occupied building footprints.
 - The construction catalog returns after placement or cancellation.
+
+
+## Fantasy garden building additions — Sprint 4.6
+The construction catalog now also includes:
+- Flower Arch — 145 coins; a wooden arch decorated with flowers.
+- Crystal Pond — 190 coins; a shallow luminous pond with a stone shoreline and lily detail.
+- Moon Fountain — 320 coins; a layered fountain with a softly glowing crystal.
+These landmarks share the existing server-authoritative purchase, inventory, placement, move, rotate, remove, and persistence systems.
