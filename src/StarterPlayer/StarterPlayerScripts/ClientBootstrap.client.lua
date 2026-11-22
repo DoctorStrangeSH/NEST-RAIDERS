@@ -1033,7 +1033,8 @@ local function renderDecor(data)
         label.BackgroundTransparency = 1
         label.Position = UDim2.fromOffset(10, 3)
         label.Size = UDim2.new(1, -112, 0, 30)
-        label.Text = item and string.format("Место %d · %s  (X:%d Z:%d · %d°)", slot, item.Name, currentItem.X or 0, currentItem.Z or 0, currentItem.Rotation or 0) or ("Место " .. slot .. " · Свободно")
+        label.Text = item and string.format("%s\nX:%d  Z:%d  ·  %d°", currentItem.Name, currentItem.X or 0, currentItem.Z or 0, currentItem.Rotation or 0) or ("Место " .. slot .. " · Свободно")
+        label.TextWrapped = true
         label.TextColor3 = Color3.fromRGB(235, 229, 239)
         label.TextSize = 11
         label.TextXAlignment = Enum.TextXAlignment.Left
@@ -1043,16 +1044,16 @@ local function renderDecor(data)
         if item then
             local controls = {
                 { Text = "↑", X = 8, DX = 0, DZ = -2 },
-                { Text = "←", X = 42, DX = -2, DZ = 0 },
-                { Text = "↓", X = 76, DX = 0, DZ = 2 },
-                { Text = "→", X = 110, DX = 2, DZ = 0 },
-                { Text = "↻", X = 144, Rotate = 15 },
+                { Text = "←", X = 38, DX = -2, DZ = 0 },
+                { Text = "↓", X = 68, DX = 0, DZ = 2 },
+                { Text = "→", X = 98, DX = 2, DZ = 0 },
+                { Text = "↻", X = 128, Rotate = 15 },
             }
             for _, control in ipairs(controls) do
                 local currentControl = control
                 local moveButton = Instance.new("TextButton")
                 moveButton.Position = UDim2.fromOffset(currentControl.X, 43)
-                moveButton.Size = UDim2.fromOffset(30, 25)
+                moveButton.Size = UDim2.fromOffset(26, 25)
                 moveButton.BackgroundColor3 = currentControl.Rotate and Color3.fromRGB(112, 101, 164) or Color3.fromRGB(77, 119, 139)
                 moveButton.Text = currentControl.Text
                 moveButton.TextColor3 = Color3.new(1, 1, 1)
