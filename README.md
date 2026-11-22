@@ -108,3 +108,7 @@ At level 7, equipped companions unlock a unique active ability: MeadowFox finds 
 
 ## Adult breeding and genetics
 Two different adult species can breed without being consumed. Offspring inherit one parent's species and usually one parent's genetic trait, with a small chance of Luminous or Prismatic mutation. Both parents receive a 30-minute cooldown, and lineage is recorded in the collection.
+
+
+## Lineage egg incubator
+Breeding creates a lineage egg that incubates for five minutes. Its species, genetic outcome, and parent lineage are fixed by the server at creation. Once ready, hatch it at your own nest station; the resulting companion preserves that stored inheritance.
