@@ -117,3 +117,15 @@
 - [ ] Companion income is server-authoritative and capped.
 - [ ] Raid validates range, consent/state, cooldown, and bounded loss.
 - [ ] Desktop and mobile controls work.
+
+
+## Island building system
+- [ ] Open the island building panel after profile load and verify the five catalog entries and prices.
+- [ ] Buy Stone Path (12), Clover Bush (28), Apple Tree (85), Wooden Fence (22), and Cozy Cottage (260); verify exact coin deductions and inventory counts.
+- [ ] Place each owned object; verify the expected low-poly model appears only on the player's own island.
+- [ ] Attempt placement on an occupied footprint and confirm the server rejects it.
+- [ ] Move and rotate placed objects; verify 2-stud grid snapping, 15-degree rotation, and plot bounds.
+- [ ] Remove an object and verify it returns to inventory without losing ownership.
+- [ ] Verify the 100-object cap and per-type inventory cap.
+- [ ] Rejoin and verify the inventory and complete island layout persist.
+- [ ] Leave the server and verify the released plot has no previous owner's rendered buildings.
