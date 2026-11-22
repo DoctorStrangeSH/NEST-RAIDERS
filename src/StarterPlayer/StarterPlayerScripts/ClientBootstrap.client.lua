@@ -2035,8 +2035,9 @@ local function renderPublicProfile(data, isOwnProfile)
                 return publicProfileRemote:InvokeServer({ Action = "EquipTitle", TitleId = "" })
             end)
             if success and result and result.Ok then
+                data.EquippedTitle = ""
                 showNotice(result.Message or "Титул снят.")
-                openPublicProfile(player.UserId)
+                renderPublicProfile(data, true)
             else
                 showNotice(result and result.Message or "Не удалось снять титул.")
             end
@@ -2061,8 +2062,9 @@ local function renderPublicProfile(data, isOwnProfile)
                     return publicProfileRemote:InvokeServer({ Action = "EquipTitle", TitleId = titleEntry.Id })
                 end)
                 if success and result and result.Ok then
+                    data.EquippedTitle = titleEntry.Id
                     showNotice(result.Message or "Титул установлен!")
-                    openPublicProfile(player.UserId)
+                    renderPublicProfile(data, true)
                 else
                     showNotice(result and result.Message or "Этот титул ещё не открыт.")
                 end
@@ -2073,11 +2075,12 @@ local function renderPublicProfile(data, isOwnProfile)
     profilePanel.Visible = true
 end
 
-function openPublicProfile(targetUserId)
+openPublicProfile = function(targetUserId)
     local data = invokePublicProfile({ Action = "Get", UserId = targetUserId })
     if data then renderPublicProfile(data, targetUserId == player.UserId) end
 end
 
+local openPublicProfile
 local lastVisitResponse
 local function renderVisitList(response)
     lastVisitResponse = response
