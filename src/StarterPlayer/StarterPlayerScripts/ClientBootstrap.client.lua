@@ -1,5 +1,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
 local player = Players.LocalPlayer
 local remotes = ReplicatedStorage:WaitForChild("NestRaidersRemotes")
 local inventoryRemote = remotes:WaitForChild("CompanionInventory")
@@ -414,6 +417,20 @@ decorList.BorderSizePixel = 0
 decorList.ScrollBarThickness = 6
 decorList.AutomaticCanvasSize = Enum.AutomaticSize.Y
 decorList.Parent = decorPanel
+
+local dragHint = Instance.new("TextLabel")
+dragHint.Name = "PlacementHint"
+dragHint.BackgroundColor3 = Color3.fromRGB(54, 104, 85)
+dragHint.BackgroundTransparency = 0.08
+dragHint.Position = UDim2.new(0, 12, 1, -32)
+dragHint.Size = UDim2.new(1, -24, 0, 25)
+dragHint.Font = Enum.Font.GothamBold
+dragHint.Text = "Режим размещения"
+dragHint.TextColor3 = Color3.new(1, 1, 1)
+dragHint.TextSize = 10
+dragHint.Visible = false
+dragHint.Parent = decorPanel
+addCorner(dragHint, 8)
 
 local decorLayout = Instance.new("UIListLayout")
 decorLayout.Padding = UDim.new(0, 8)
@@ -1074,6 +1091,20 @@ local function renderDecor(data)
                 end)
             end
 
+            local dragButton = Instance.new("TextButton")
+            dragButton.Position = UDim2.fromOffset(160, 43)
+            dragButton.Size = UDim2.fromOffset(82, 25)
+            dragButton.BackgroundColor3 = Color3.fromRGB(62, 145, 112)
+            dragButton.Text = "ТАЩИТЬ"
+            dragButton.TextColor3 = Color3.new(1, 1, 1)
+            dragButton.TextSize = 9
+            dragButton.Font = Enum.Font.GothamBlack
+            dragButton.Parent = row
+            addCorner(dragButton, 7)
+            dragButton.Activated:Connect(function()
+                startDecorDrag(currentSlot, currentItem)
+            end)
+
             local remove = Instance.new("TextButton")
             remove.AnchorPoint = Vector2.new(1, 0.5)
             remove.Position = UDim2.new(1, -6, 0, 7)
@@ -1094,6 +1125,114 @@ local function renderDecor(data)
     end
 end
 
+local activeDecorDrag = nil
+local dragPreview = nil
+local dragRotation = 0
+local dragHint = nil
+
+local function getOwnedPlotGrass()
+    local world = Workspace:FindFirstChild("NestRaidersWorld")
+    local island = world and world:FindFirstChild("StarterIsland")
+    local plots = island and island:FindFirstChild("PlayerPlots")
+    if not plots then return nil end
+    for _, plot in ipairs(plots:GetChildren()) do
+        if plot:GetAttribute("OwnerUserId") == player.UserId then
+            return plot:FindFirstChild("PlotGrass")
+        end
+    end
+    return nil
+end
+
+local function stopDecorDrag()
+    activeDecorDrag = nil
+    dragRotation = 0
+    if dragPreview then dragPreview:Destroy(); dragPreview = nil end
+    if dragHint then dragHint.Visible = false end
+end
+
+local function startDecorDrag(slot, item)
+    stopDecorDrag()
+    local grass = getOwnedPlotGrass()
+    if not grass then
+        showNotice("Не удалось найти твоё гнездо.")
+        return
+    end
+    activeDecorDrag = { Slot = slot, Item = item, Grass = grass }
+    dragRotation = item.Rotation or 0
+
+    dragPreview = Instance.new("Part")
+    dragPreview.Name = "NestDecorPlacementPreview"
+    dragPreview.Size = Vector3.new(2.2, 0.25, 2.2)
+    dragPreview.Anchored = true
+    dragPreview.CanCollide = false
+    dragPreview.CanTouch = false
+    dragPreview.CanQuery = false
+    dragPreview.Material = Enum.Material.Neon
+    dragPreview.Color = Color3.fromRGB(105, 238, 176)
+    dragPreview.Transparency = 0.38
+    dragPreview.Parent = Workspace
+
+    if dragHint then
+        dragHint.Text = "Выбери место на своём острове · R — поворот · Esc — отмена"
+        dragHint.Visible = true
+    end
+    showNotice("Режим размещения: нажми на остров, чтобы переместить украшение.")
+end
+
+local function getDecorPlacementFromScreen(screenPosition)
+    if not activeDecorDrag or not activeDecorDrag.Grass then return nil end
+    local camera = Workspace.CurrentCamera
+    if not camera then return nil end
+    local ray = camera:ViewportPointToRay(screenPosition.X, screenPosition.Y)
+    local params = RaycastParams.new()
+    params.FilterType = Enum.RaycastFilterType.Include
+    params.FilterDescendantsInstances = { activeDecorDrag.Grass }
+    local result = Workspace:Raycast(ray.Origin, ray.Direction * 1000, params)
+    if not result then return nil end
+
+    local center = activeDecorDrag.Grass.Position
+    local x = math.clamp(math.floor((result.Position.X - center.X) / 2 + 0.5) * 2, -14, 14)
+    local z = math.clamp(math.floor((result.Position.Z - center.Z) / 2 + 0.5) * 2, -14, 14)
+    return {
+        X = x,
+        Z = z,
+        WorldPosition = Vector3.new(center.X + x, activeDecorDrag.Grass.Position.Y + activeDecorDrag.Grass.Size.Y / 2 + 0.2, center.Z + z),
+    }
+end
+
+local function updateDecorPreview(screenPosition)
+    if not activeDecorDrag or not dragPreview then return nil end
+    local placement = getDecorPlacementFromScreen(screenPosition)
+    if placement then
+        dragPreview.CFrame = CFrame.new(placement.WorldPosition) * CFrame.Angles(0, math.rad(dragRotation), 0)
+        dragPreview.Transparency = 0.38
+        return placement
+    end
+    dragPreview.Transparency = 0.78
+    return nil
+end
+
+local function confirmDecorDrag(screenPosition)
+    if not activeDecorDrag then return end
+    local placement = getDecorPlacementFromScreen(screenPosition)
+    if not placement then
+        showNotice("Выбери поверхность своего острова.")
+        return
+    end
+    local drag = activeDecorDrag
+    local updated = invokeDecor({
+        Action = "Move",
+        Slot = drag.Slot,
+        X = placement.X,
+        Z = placement.Z,
+        Rotation = dragRotation,
+    })
+    if updated then
+        stopDecorDrag()
+        renderDecor(updated)
+    end
+end
+
 local function openDecor()
     decorPanel.Visible = true
     local data = invokeDecor({ Action = "Get" })
@@ -1101,7 +1240,41 @@ local function openDecor()
 end
 
 decorButton.Activated:Connect(openDecor)
-decorClose.Activated:Connect(function() decorPanel.Visible = false end)
+decorClose.Activated:Connect(function() stopDecorDrag(); decorPanel.Visible = false end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if not activeDecorDrag then return end
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        updateDecorPreview(UserInputService:GetMouseLocation())
+    end
+end)
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not activeDecorDrag then return end
+    if input.KeyCode == Enum.KeyCode.Escape then
+        stopDecorDrag()
+        return
+    end
+    if input.KeyCode == Enum.KeyCode.R then
+        dragRotation = (dragRotation + 15) % 360
+        return
+    end
+    if gameProcessed then return end
+
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        confirmDecorDrag(UserInputService:GetMouseLocation())
+    elseif input.UserInputType == Enum.UserInputType.Touch then
+        confirmDecorDrag(input.Position)
+    end
+end)
+
+RunService.RenderStepped:Connect(function()
+    if activeDecorDrag then
+        updateDecorPreview(UserInputService:GetMouseLocation())
+    end
+end)
+
+
 
 local selectedDisplaySlot = nil
 local latestDisplayData = nil
