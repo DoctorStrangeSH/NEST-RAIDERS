@@ -19,6 +19,9 @@
 - Displayed pets animate with a gentle idle bob / turn and show a mood bubble.
 - Players can pet or play with displayed pets to raise saved mood (with server-side cooldowns).
 - Displayed pets have persistent hunger and energy needs; both decay gradually and elapsed time is applied when the player returns.
+- Starter species have distinct personalities and favorite foods: the Meadow Fox is Curious and likes Sweet Berries, the Moss Turtle is Calm and likes Young Leaves, and the Sprout Dragon is Playful and likes Glowfruit.
+- Personality gives species-specific mood bonuses for petting or playing; the nest care panel shows each pet personality and favorite food.
+- A favorite treat costs 15 coins, restores 35 hunger, and grants 15 mood; the server selects the correct favorite food from the companion catalog.
 - Feed a pet for 10 coins to restore 35 hunger and 5 mood; tired pets can rest for 60 seconds to recover energy.
 - Playing consumes 10 energy; exhausted pets refuse play. Needs are currently personal-care flavor and do not change income.
 - Russian, touch-friendly collection panel with rarity, level, and passive income details.
@@ -55,9 +58,11 @@
 17. Wait 10 seconds and collect the displayed-pet income; verify the wallet and stored balance update.
 18. Pet and play with a displayed companion; confirm mood increases and play consumes energy.
 19. Feed the pet for 10 coins and confirm hunger / mood update; try feeding with insufficient coins.
-20. Put a tired pet to sleep and confirm energy recovers over 60 seconds.
-21. Remove the displayed pet and confirm it returns to the available list.
-22. Rejoin the private test place and confirm nest level, display assignments, pet mood, needs, and uncollected income persist.
+20. Give the pet its favorite treat for 15 coins; verify the food name, hunger and mood response.
+21. Compare petting / play mood gains for the three starter personalities.
+22. Put a tired pet to sleep and confirm energy recovers over 60 seconds.
+23. Remove the displayed pet and confirm it returns to the available list.
+24. Rejoin the private test place and confirm nest level, display assignments, pet mood, needs, and uncollected income persist.
 
 ## Known limitations
 - World geometry is a temporary scripted blockout, not final art.
