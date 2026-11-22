@@ -178,3 +178,12 @@ A feature is done only when:
 - Each player may vote once per category per UTC week; self-votes and unavailable targets are rejected server-side.
 - Published servers share top-ten category standings through OrderedDataStore, backed by an idempotent per-owner vote ledger. Local Studio mode uses an explicitly temporary in-memory fallback; leaderboard reads are cached and throttled.
 - Voting is for social recognition only. Winner cosmetics, global island discovery, moderation review, and anti-alt heuristics are later release work.
+
+
+## Hall of Fame and cosmetic contest rewards
+- Archive the previous UTC week's top three per category when the contest is accessed in the new week.
+- Retain the latest 12 completed weeks in a shared published DataStore.
+- Claims must be verified against the archived winner list on the server; each category/week can be claimed once per player.
+- Store claimed trophy records in the player's persistent profile and render the trophies on their personal island.
+- Trophy visuals are cosmetic only and grant no progression, economy, companion, or PvP advantages.
+- Studio fallback history is local and temporary. Automatic scheduled finalization is not part of this sprint.
