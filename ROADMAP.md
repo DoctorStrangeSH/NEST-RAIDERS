@@ -91,6 +91,11 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add persistent, unique per-player island likes with server-side toggle validation.
 - [x] Add up to 30 persistent favorite islands per player, stored by stable owner UserId.
 - [x] Sort the current-server island browser by likes, then visitors, and add an all / favorites filter.
+- [x] Publish active island listings to a TTL-backed cross-server MemoryStore directory.
+- [x] Merge global live-island listings with local listings and deduplicate owners by UserId.
+- [x] Validate global visit targets against live directory records and teleport visitors to the exact public server.
+- [x] Complete cross-server arrival by verifying the destination owner and plot before moving the visitor.
+- [x] Keep Studio browsing explicitly local when MemoryStore / teleport services are unavailable.
 - [x] Add weekly island contest categories (Cozy / Nature / Fantasy), one vote per player per category, and cross-server ordered leaderboards.
 - [x] Add Studio in-memory fallback, vote-state indicators, cached standings, and server-side request throttling.
 - [x] Archive previous-week top-three winners into a persistent Hall of Fame when the next week is first accessed.
