@@ -929,7 +929,7 @@ renderDisplay = function(data)
     for index, entry in ipairs(data.Displayed or {}) do
         local card = Instance.new("Frame")
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 148)
+        card.Size = UDim2.new(1, -8, 0, 210)
         card.BackgroundColor3 = Color3.fromRGB(49, 66, 83)
         card.BorderSizePixel = 0
         card.Parent = displayList
@@ -939,7 +939,7 @@ renderDisplay = function(data)
         info.BackgroundTransparency = 1
         info.Position = UDim2.fromOffset(10, 7)
         info.Size = UDim2.new(1, -160, 1, -14)
-        info.Text = entry.Empty and ("Витрина №" .. entry.Slot .. "\nСвободное место") or string.format("Витрина №%d · %s\n%s · +%d / 10 сек.\nХарактер: %s\nЛюбит: %s\n♥ %d%%  ·  🍖 %d%%  ·  ⚡ %d%%\n%s", entry.Slot, entry.Name, entry.Rarity or "Обычный", entry.Income or 0, entry.Personality or "Без характера", entry.FavoriteFood or "Обычный корм", entry.Mood or 50, entry.Hunger or 100, entry.Energy or 100, entry.IsSleeping and "Спит…" or "Бодрствует")
+        info.Text = entry.Empty and ("Витрина №" .. entry.Slot .. "\nСвободное место") or string.format("Витрина №%d · %s\n%s · +%d / 10 сек.\nХарактер: %s\nЛюбит: %s\n♥ %d%%  ·  🍖 %d%%  ·  ⚡ %d%%\n%s", entry.Slot, entry.Name, entry.Rarity or "Обычный", entry.Income or 0, entry.Personality or "Без характера", entry.FavoriteFood or "Обычный корм", entry.ToyName or "нет", entry.Mood or 50, entry.Hunger or 100, entry.Energy or 100, entry.IsSleeping and "Спит…" or "Бодрствует")
         info.TextColor3 = Color3.fromRGB(236, 241, 247)
         info.TextSize = 12
         info.TextWrapped = true
@@ -999,6 +999,36 @@ renderDisplay = function(data)
             addCareAction("КОРМ 10🪙", "Feed", -80, 77, Color3.fromRGB(183, 139, 70))
             addCareAction("СОН", "Sleep", -8, 77, Color3.fromRGB(91, 104, 153))
             addCareAction("ЛАКОМСТВО 15🪙", "Treat", -8, 110, Color3.fromRGB(180, 115, 65), 140)
+            addCareAction("ИГРАТЬ С ИГРУШКОЙ", "ToyPlay", -8, 143, Color3.fromRGB(91, 133, 173), 140)
+
+            local toyChoices = {
+                { Id = "MeadowBall", Label = "МЯЧ 25🪙", X = -152, Color = Color3.fromRGB(204, 111, 83) },
+                { Id = "CozyPlush", Label = "ПЛЮШ 40🪙", X = -80, Color = Color3.fromRGB(139, 108, 185) },
+                { Id = "WindSpinner", Label = "ВЕРТУШКА 35🪙", X = -8, Color = Color3.fromRGB(74, 159, 153) },
+            }
+            for _, toy in ipairs(toyChoices) do
+                local toyButton = Instance.new("TextButton")
+                toyButton.AnchorPoint = Vector2.new(1, 0)
+                toyButton.Position = UDim2.new(1, toy.X, 0, 176)
+                toyButton.Size = UDim2.fromOffset(68, 27)
+                toyButton.BackgroundColor3 = toy.Color
+                toyButton.Text = toy.Label
+                toyButton.TextColor3 = Color3.new(1, 1, 1)
+                toyButton.TextSize = 8
+                toyButton.Font = Enum.Font.GothamBlack
+                toyButton.Parent = card
+                addCorner(toyButton, 8)
+                toyButton.Activated:Connect(function()
+                    toyButton.Active = false
+                    local updated = invokeDisplay({
+                        Action = "Interact",
+                        Interaction = "EquipToy",
+                        InstanceId = entry.InstanceId,
+                        ToyId = toy.Id,
+                    })
+                    if updated then renderDisplay(updated) else toyButton.Active = true end
+                end)
+            end
         end
     end
 end
