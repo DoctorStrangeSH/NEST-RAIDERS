@@ -137,6 +137,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             model:PivotTo(basePivot)
 
             local mood = math.clamp(math.floor(tonumber(profile.Nest and profile.Nest.CompanionMood and profile.Nest.CompanionMood[instanceId]) or 50), 0, 100)
+            local needs = profile.Nest and profile.Nest.CompanionNeeds and profile.Nest.CompanionNeeds[instanceId] or {}
+            local hunger = math.clamp(math.floor(tonumber(needs.Hunger) or 100), 0, 100)
+            local energy = math.clamp(math.floor(tonumber(needs.Energy) or 100), 0, 100)
+            local sleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
             local moodBillboard = Instance.new("BillboardGui")
             moodBillboard.Name = "MoodBubble"
             moodBillboard.Adornee = model.PrimaryPart
@@ -152,7 +156,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             moodLabel.TextColor3 = Color3.fromRGB(240, 250, 228)
             moodLabel.TextSize = 13
             moodLabel.Font = Enum.Font.GothamBold
-            moodLabel.Text = string.format("%s %d%%", mood >= 80 and "♥" or (mood >= 50 and "☺" or "☹"), mood)
+            moodLabel.Text = sleeping and "Zzz" or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
             moodLabel.Parent = moodBillboard
             local bubbleCorner = Instance.new("UICorner")
             bubbleCorner.CornerRadius = UDim.new(0, 8)
