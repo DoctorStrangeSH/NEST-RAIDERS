@@ -13,6 +13,7 @@ local displayRemote = remotes:WaitForChild("DisplayPets")
 local decorRemote = remotes:WaitForChild("NestDecor")
 local buildRemote = remotes:WaitForChild("NestBuild")
 local visitRemote = remotes:WaitForChild("IslandVisit")
+local contestRemote = remotes:WaitForChild("IslandContest")
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
@@ -523,6 +524,93 @@ local visitLayout = Instance.new("UIListLayout")
 visitLayout.Padding = UDim.new(0, 8)
 visitLayout.SortOrder = Enum.SortOrder.LayoutOrder
 visitLayout.Parent = visitList
+
+local contestButton = Instance.new("TextButton")
+contestButton.Name = "IslandContestButton"
+contestButton.Position = UDim2.fromOffset(18, 592)
+contestButton.Size = UDim2.fromOffset(250, 44)
+contestButton.BackgroundColor3 = Color3.fromRGB(166, 119, 66)
+contestButton.Text = "КОНКУРС ОСТРОВОВ"
+contestButton.TextColor3 = Color3.fromRGB(255, 245, 220)
+contestButton.TextSize = 13
+contestButton.Font = Enum.Font.GothamBlack
+contestButton.Parent = gui
+addCorner(contestButton, 12)
+addStroke(contestButton, Color3.fromRGB(231, 190, 111), 1.5)
+
+local contestPanel = Instance.new("Frame")
+contestPanel.Name = "IslandContestPanel"
+contestPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+contestPanel.Position = UDim2.fromScale(0.5, 0.5)
+contestPanel.Size = UDim2.new(0.9, 0, 0.8, 0)
+contestPanel.BackgroundColor3 = Color3.fromRGB(44, 48, 65)
+contestPanel.BorderSizePixel = 0
+contestPanel.Visible = false
+contestPanel.Parent = gui
+addCorner(contestPanel, 18)
+addStroke(contestPanel, Color3.fromRGB(222, 184, 112), 2)
+local contestSize = Instance.new("UISizeConstraint")
+contestSize.MinSize = Vector2.new(290, 340)
+contestSize.MaxSize = Vector2.new(480, 570)
+contestSize.Parent = contestPanel
+
+local contestTitle = Instance.new("TextLabel")
+contestTitle.BackgroundTransparency = 1
+contestTitle.Position = UDim2.fromOffset(18, 12)
+contestTitle.Size = UDim2.new(1, -76, 0, 28)
+contestTitle.Font = Enum.Font.GothamBlack
+contestTitle.Text = "ЕЖЕНЕДЕЛЬНЫЙ КОНКУРС"
+contestTitle.TextColor3 = Color3.fromRGB(255, 220, 151)
+contestTitle.TextSize = 15
+contestTitle.TextXAlignment = Enum.TextXAlignment.Left
+contestTitle.Parent = contestPanel
+
+local contestClose = Instance.new("TextButton")
+contestClose.AnchorPoint = Vector2.new(1, 0)
+contestClose.Position = UDim2.new(1, -12, 0, 10)
+contestClose.Size = UDim2.fromOffset(38, 34)
+contestClose.BackgroundColor3 = Color3.fromRGB(83, 91, 108)
+contestClose.Text = "✕"
+contestClose.TextColor3 = Color3.new(1, 1, 1)
+contestClose.TextSize = 18
+contestClose.Font = Enum.Font.GothamBold
+contestClose.Parent = contestPanel
+addCorner(contestClose, 10)
+
+local contestWeek = Instance.new("TextLabel")
+contestWeek.BackgroundTransparency = 1
+contestWeek.Position = UDim2.fromOffset(18, 42)
+contestWeek.Size = UDim2.new(1, -36, 0, 22)
+contestWeek.Font = Enum.Font.GothamMedium
+contestWeek.Text = "Загрузка недели..."
+contestWeek.TextColor3 = Color3.fromRGB(213, 218, 231)
+contestWeek.TextSize = 11
+contestWeek.TextXAlignment = Enum.TextXAlignment.Left
+contestWeek.Parent = contestPanel
+
+local contestTabs = Instance.new("Frame")
+contestTabs.BackgroundTransparency = 1
+contestTabs.Position = UDim2.fromOffset(12, 70)
+contestTabs.Size = UDim2.new(1, -24, 0, 34)
+contestTabs.Parent = contestPanel
+local contestTabLayout = Instance.new("UIListLayout")
+contestTabLayout.FillDirection = Enum.FillDirection.Horizontal
+contestTabLayout.Padding = UDim.new(0, 6)
+contestTabLayout.SortOrder = Enum.SortOrder.LayoutOrder
+contestTabLayout.Parent = contestTabs
+
+local contestList = Instance.new("ScrollingFrame")
+contestList.Position = UDim2.fromOffset(12, 112)
+contestList.Size = UDim2.new(1, -24, 1, -124)
+contestList.BackgroundTransparency = 1
+contestList.BorderSizePixel = 0
+contestList.ScrollBarThickness = 6
+contestList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+contestList.Parent = contestPanel
+local contestListLayout = Instance.new("UIListLayout")
+contestListLayout.Padding = UDim.new(0, 7)
+contestListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+contestListLayout.Parent = contestList
 
 local decorPanel = Instance.new("Frame")
 decorPanel.Name = "NestDecorPanel"
@@ -1977,6 +2065,166 @@ visitButton.Activated:Connect(function()
     end
 end)
 visitClose.Activated:Connect(function() visitPanel.Visible = false end)
+
+local function invokeContest(payload)
+    local success, response = pcall(function()
+        return contestRemote:InvokeServer(payload)
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось загрузить конкурс островов.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Действие конкурса не выполнено.")
+        return nil
+    end
+    if response.Message then showNotice(response.Message) end
+    return response
+end
+
+local contestData
+local selectedContestCategory = "Cozy"
+local function clearContestList()
+    for _, child in ipairs(contestList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+end
+
+local function addContestLabel(text, order, height, color)
+    local label = Instance.new("TextLabel")
+    label.LayoutOrder = order
+    label.Size = UDim2.new(1, -8, 0, height or 28)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = color or Color3.fromRGB(226, 231, 241)
+    label.TextSize = 12
+    label.TextWrapped = true
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Font = Enum.Font.GothamBold
+    label.Parent = contestList
+    return label
+end
+
+local function renderContest()
+    if not contestData then return end
+    clearContestList()
+    for _, child in ipairs(contestTabs:GetChildren()) do
+        if child:IsA("TextButton") then child:Destroy() end
+    end
+    local category
+    for _, item in ipairs(contestData.Categories or {}) do
+        if item.Id == selectedContestCategory then category = item end
+    end
+    if not category then
+        category = (contestData.Categories or {})[1]
+        if not category then return end
+        selectedContestCategory = category.Id
+    end
+
+    for index, item in ipairs(contestData.Categories or {}) do
+        local tab = Instance.new("TextButton")
+        tab.LayoutOrder = index
+        tab.Size = UDim2.new(1/3, -5, 1, 0)
+        tab.BackgroundColor3 = item.Id == selectedContestCategory and Color3.fromRGB(155, 112, 62) or Color3.fromRGB(75, 83, 103)
+        tab.Text = item.Name
+        tab.TextColor3 = Color3.new(1, 1, 1)
+        tab.TextSize = 10
+        tab.Font = Enum.Font.GothamBlack
+        tab.Parent = contestTabs
+        addCorner(tab, 8)
+        tab.Activated:Connect(function()
+            selectedContestCategory = item.Id
+            renderContest()
+        end)
+    end
+
+    local testNote = contestData.IsLocalTest and "Локальный тест Studio · результаты не сохраняются" or "Голосование недели · таблица общая для серверов"
+    contestWeek.Text = "Неделя " .. tostring(contestData.Week or "—") .. "  ·  " .. testNote
+    addContestLabel(category.Description, 1, 34, Color3.fromRGB(235, 213, 173))
+    addContestLabel("ЛУЧШИЕ ОСТРОВА НЕДЕЛИ", 2, 24, Color3.fromRGB(255, 220, 151))
+
+    local standings = category.Standings or {}
+    if #standings == 0 then
+        addContestLabel("Пока нет голосов. Стань первым участником!", 3, 42)
+    else
+        for index, entry in ipairs(standings) do
+            local medal = index == 1 and "🥇" or (index == 2 and "🥈" or (index == 3 and "🥉" or tostring(index) .. "."))
+            addContestLabel(string.format("%s  %s  —  %d голосов", medal, entry.DisplayName, entry.Votes or 0), index + 2, 28)
+        end
+    end
+
+    local nomineeOrder = #standings + 4
+    addContestLabel("ОСТРОВА ЭТОГО СЕРВЕРА", nomineeOrder, 24, Color3.fromRGB(255, 220, 151))
+    local nominees = contestData.Nominees or {}
+    if #nominees == 0 then
+        addContestLabel("Другие игроки появятся здесь, когда присоединятся к серверу.", nomineeOrder + 1, 44)
+    else
+        for index, nominee in ipairs(nominees) do
+            local row = Instance.new("Frame")
+            row.LayoutOrder = nomineeOrder + index
+            row.Size = UDim2.new(1, -8, 0, 54)
+            row.BackgroundColor3 = Color3.fromRGB(62, 70, 88)
+            row.BorderSizePixel = 0
+            row.Parent = contestList
+            addCorner(row, 9)
+
+            local name = Instance.new("TextLabel")
+            name.BackgroundTransparency = 1
+            name.Position = UDim2.fromOffset(10, 5)
+            name.Size = UDim2.new(1, -120, 1, -10)
+            name.Text = nominee.DisplayName .. " · ур. " .. tostring(nominee.Level or 1)
+            name.TextColor3 = Color3.fromRGB(240, 242, 248)
+            name.TextSize = 11
+            name.TextWrapped = true
+            name.TextXAlignment = Enum.TextXAlignment.Left
+            name.Font = Enum.Font.GothamMedium
+            name.Parent = row
+
+            local vote = Instance.new("TextButton")
+            vote.AnchorPoint = Vector2.new(1, 0.5)
+            vote.Position = UDim2.new(1, -7, 0.5, 0)
+            vote.Size = UDim2.fromOffset(104, 36)
+            vote.BackgroundColor3 = category.HasVoted and Color3.fromRGB(83, 91, 104) or Color3.fromRGB(93, 142, 112)
+            vote.Text = category.HasVoted and "ГОЛОС ОТДАН" or "ГОЛОСОВАТЬ"
+            vote.TextColor3 = Color3.new(1, 1, 1)
+            vote.TextSize = 9
+            vote.Font = Enum.Font.GothamBlack
+            vote.Active = not category.HasVoted
+            vote.Parent = row
+            addCorner(vote, 8)
+            vote.Activated:Connect(function()
+                if category.HasVoted then return end
+                vote.Active = false
+                local result = invokeContest({
+                    Action = "Vote",
+                    Category = selectedContestCategory,
+                    UserId = nominee.UserId,
+                })
+                if result then
+                    local refreshed = invokeContest({ Action = "List" })
+                    if refreshed then
+                        contestData = refreshed
+                        renderContest()
+                    end
+                else
+                    vote.Active = true
+                end
+            end)
+        end
+    end
+end
+
+local function openContestPanel()
+    local response = invokeContest({ Action = "List" })
+    if response then
+        contestData = response
+        contestPanel.Visible = true
+        renderContest()
+    end
+end
+
+contestButton.Activated:Connect(openContestPanel)
+contestClose.Activated:Connect(function() contestPanel.Visible = false end)
 
 local activeDecorDrag = nil
 local dragPreview = nil
