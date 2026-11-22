@@ -33,3 +33,10 @@ Use Creator Store assets only after checking creator, permissions, dependencies,
 - [ ] Remove a placed item and verify it returns to inventory.
 - [ ] Verify decorations and inventory persist after reconnect.
 - [ ] Verify a plot release clears the previous owner's rendered decorations.
+
+
+## Nest decoration positioning — latest addition
+- Decorations retain their unlocked plot slot, but can be repositioned within the nest on a 2-stud grid.
+- Directional controls nudge the selected decoration; the rotate control turns it in 15-degree increments.
+- Position and rotation are stored in the player profile and restored when the plot is assigned.
+- The server rejects out-of-bounds, malformed, and non-finite transforms.
