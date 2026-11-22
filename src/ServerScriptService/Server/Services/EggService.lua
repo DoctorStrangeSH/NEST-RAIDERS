@@ -15,7 +15,9 @@ local EGG_RESPAWN_SECONDS = 20
 local EGG_CAPACITY = 20
 local COMPANIONS = {}
 for _, definition in pairs(CompanionCatalog) do
-    table.insert(COMPANIONS, definition)
+    if (tonumber(definition.Weight) or 0) > 0 then
+        table.insert(COMPANIONS, definition)
+    end
 end
 table.sort(COMPANIONS, function(a, b) return a.Id < b.Id end)
 
