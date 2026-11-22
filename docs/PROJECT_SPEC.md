@@ -216,3 +216,13 @@ A feature is done only when:
 - All training validation, coin deduction, XP progression, level-up, and income calculation are server-authoritative.
 - Legacy companions without a genetic trait default to Natural during profile normalization.
 - Fusion consumes two matching companions of the same species and star rank, preserving the selected target's level, XP, and genetic trait.
+
+
+## Species-specific adult companion abilities
+- Each starter species has one unique catalog-defined active ability, unlocked at companion level 7 (Adult stage).
+- Abilities can only be triggered for a companion currently equipped in the player's active team. The server resolves the ability from the owned companion's species catalog; clients cannot select a reward or amount.
+- MeadowFox — TrailFinder: grants coins using the server economy service. Reward formula: 40 + level × 10 + star rank × 15.
+- MossTurtle — RootBlessing: adds coins to the player's nest storage. Reward formula: 100 + level × 20 + star rank × 25; storage cap is 2,000,000,000.
+- SproutDragon — VerdantSpark: grants player progression XP. Reward formula: 35 + level × 5 + star rank × 10.
+- Each ability has a 300-second per-companion cooldown persisted in AbilityReadyAt. Cooldown validation and reward calculation are server-authoritative.
+- The inventory snapshot exposes only ability display metadata, unlock state, and remaining cooldown. It does not accept ability definitions or reward amounts from the client.
