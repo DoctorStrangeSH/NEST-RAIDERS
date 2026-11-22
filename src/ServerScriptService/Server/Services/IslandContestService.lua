@@ -47,7 +47,8 @@ local function getStores(category)
     local week = weekKey()
     local suffix = week .. "_" .. category
     return DataStoreService:GetDataStore("NRAidVotes_" .. suffix),
-        DataStoreService:GetOrderedDataStore("NRAidContest_" .. suffix)
+        DataStoreService:GetOrderedDataStore("NRAidContest_" .. suffix),
+        DataStoreService:GetDataStore("NRAidScores_" .. suffix)
 end
 
 function IslandContestService:GetOnlineNominees(player)
@@ -120,6 +121,36 @@ function IslandContestService:GetStandings(category)
     return results
 end
 
+function IslandContestService:ApplyPersistentVote(category, targetUserId, voterUserId)
+    local voteStore, orderedStore, scoreStore = getStores(category)
+    local scoreKey = "owner_" .. tostring(targetUserId)
+    local ok, scoreRecord = pcall(function()
+        return scoreStore:UpdateAsync(scoreKey, function(current)
+            local nextRecord = type(current) == "table" and current or { Votes = 0, Voters = {} }
+            nextRecord.Voters = type(nextRecord.Voters) == "table" and nextRecord.Voters or {}
+            nextRecord.Votes = math.max(0, math.floor(tonumber(nextRecord.Votes) or 0))
+            local voterKey = tostring(voterUserId)
+            if not nextRecord.Voters[voterKey] then
+                nextRecord.Voters[voterKey] = true
+                nextRecord.Votes += 1
+            end
+            return nextRecord
+        end)
+    end)
+    if not ok or type(scoreRecord) ~= "table" then
+        warn("[NEST RAIDERS] Contest score record update failed:", scoreRecord)
+        return false
+    end
+    local orderedOk, orderedErr = pcall(function()
+        orderedStore:SetAsync(tostring(targetUserId), scoreRecord.Votes)
+    end)
+    if not orderedOk then
+        warn("[NEST RAIDERS] Contest leaderboard projection failed:", orderedErr)
+        return false
+    end
+    return true
+end
+
 function IslandContestService:HasVoted(player, category)
     local week = weekKey()
     if studioFallback() then
@@ -136,6 +167,12 @@ function IslandContestService:HasVoted(player, category)
         warn("[NEST RAIDERS] Contest vote status read failed:", record)
         return nil
     end
+    if type(record) == "table" and type(record.TargetUserId) == "number" then
+        if not self:ApplyPersistentVote(category, record.TargetUserId, player.UserId) then
+            return nil
+        end
+        return true
+    end
     return record ~= nil
 end
 
@@ -147,12 +184,12 @@ function IslandContestService:List(player)
     self._lastListRequest[player] = now
     local categories = {}
     for category, definition in pairs(CATEGORIES) do
-        local standings, err = self:GetStandings(category)
-        if not standings then return { Ok=false, Message=err } end
         local hasVoted = self:HasVoted(player, category)
         if hasVoted == nil then
             return { Ok=false, Message="Не удалось проверить твой голос. Попробуй позже." }
         end
+        local standings, err = self:GetStandings(category)
+        if not standings then return { Ok=false, Message=err } end
         table.insert(categories, {
             Id = category,
             Name = definition.Name,
@@ -197,7 +234,7 @@ function IslandContestService:Vote(player, category, targetUserId)
         local scores = self._studioScores[week][category]
         scores[tostring(targetUserId)] = (scores[tostring(targetUserId)] or 0) + 1
     else
-        local voteStore, scoreStore = getStores(category)
+        local voteStore = getStores(category)
         local token = HttpService:GenerateGUID(false)
         local ok, record = pcall(function()
             return voteStore:UpdateAsync("voter_" .. tostring(player.UserId), function(current)
@@ -212,12 +249,8 @@ function IslandContestService:Vote(player, category, targetUserId)
         if type(record) ~= "table" or record.Token ~= token then
             return { Ok=false, Message="В этой номинации ты уже голосовал на этой неделе." }
         end
-        local scoreOk, scoreErr = pcall(function()
-            scoreStore:IncrementAsync(tostring(targetUserId), 1)
-        end)
-        if not scoreOk then
-            warn("[NEST RAIDERS] Contest score update failed:", scoreErr)
-            return { Ok=false, Message="Голос принят, но таблица обновится с задержкой. Не голосуй повторно." }
+        if not self:ApplyPersistentVote(category, targetUserId, player.UserId) then
+            return { Ok=true, Message="Голос сохранён. Таблица результатов обновится после повторной синхронизации." }
         end
     end
 
