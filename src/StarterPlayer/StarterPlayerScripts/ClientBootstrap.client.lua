@@ -67,7 +67,7 @@ local function updateStats()
         stats.Text = "Loading your nest..."
         return
     end
-    stats.Text = string.format("Coins: %d\nEggs: %d    Companions: %d\nLevel: %d",
+    stats.Text = string.format("Coins: %d\nEggs: %d    Companions: %d\nLevel: %d\nNest: %s",
         player:GetAttribute("Coins") or 0,
         player:GetAttribute("EggCount") or 0,
         player:GetAttribute("CompanionCount") or 0,
