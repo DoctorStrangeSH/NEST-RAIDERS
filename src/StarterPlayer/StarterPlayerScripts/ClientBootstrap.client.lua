@@ -929,7 +929,7 @@ renderDisplay = function(data)
     for index, entry in ipairs(data.Displayed or {}) do
         local card = Instance.new("Frame")
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 108)
+        card.Size = UDim2.new(1, -8, 0, 116)
         card.BackgroundColor3 = Color3.fromRGB(49, 66, 83)
         card.BorderSizePixel = 0
         card.Parent = displayList
@@ -938,8 +938,8 @@ renderDisplay = function(data)
         local info = Instance.new("TextLabel")
         info.BackgroundTransparency = 1
         info.Position = UDim2.fromOffset(10, 7)
-        info.Size = UDim2.new(1, -118, 1, -14)
-        info.Text = entry.Empty and ("Витрина №" .. entry.Slot .. "\nСвободное место") or string.format("Витрина №%d · %s\n%s · +%d / 10 сек.\nНастроение: %d%%", entry.Slot, entry.Name, entry.Rarity or "Обычный", entry.Income or 0, entry.Mood or 50)
+        info.Size = UDim2.new(1, -210, 1, -14)
+        info.Text = entry.Empty and ("Витрина №" .. entry.Slot .. "\nСвободное место") or string.format("Витрина №%d · %s\n%s · +%d / 10 сек.\n♥ %d%%  ·  🍖 %d%%  ·  ⚡ %d%%\n%s", entry.Slot, entry.Name, entry.Rarity or "Обычный", entry.Income or 0, entry.Mood or 50, entry.Hunger or 100, entry.Energy or 100, entry.IsSleeping and "Спит…" or "Бодрствует")
         info.TextColor3 = Color3.fromRGB(236, 241, 247)
         info.TextSize = 12
         info.TextWrapped = true
@@ -972,7 +972,7 @@ renderDisplay = function(data)
         end)
 
         if not entry.Empty then
-            local function addMoodAction(label, interaction, xOffset, color)
+            local function addCareAction(label, interaction, xOffset, color)
                 local interact = Instance.new("TextButton")
                 interact.AnchorPoint = Vector2.new(1, 1)
                 interact.Position = UDim2.new(1, xOffset, 1, -8)
@@ -994,8 +994,10 @@ renderDisplay = function(data)
                     if updated then renderDisplay(updated) else interact.Active = true end
                 end)
             end
-            addMoodAction("ЛАСКА", "Pet", -61, Color3.fromRGB(89, 143, 112))
-            addMoodAction("ИГРАТЬ", "Play", -8, Color3.fromRGB(91, 126, 174))
+            addCareAction("ЛАСКА", "Pet", -167, Color3.fromRGB(89, 143, 112))
+            addCareAction("ИГРА", "Play", -114, Color3.fromRGB(91, 126, 174))
+            addCareAction("КОРМ", "Feed", -61, Color3.fromRGB(183, 139, 70))
+            addCareAction("СОН", "Sleep", -8, Color3.fromRGB(91, 104, 153))
         end
     end
 end
