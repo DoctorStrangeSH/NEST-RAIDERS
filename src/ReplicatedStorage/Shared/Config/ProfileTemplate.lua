@@ -23,6 +23,8 @@ local ProfileTemplate = {
         BuildInventory = {},
         PlacedBuildings = {},
         NextBuildingId = 0,
+        IslandLikesByUserId = {},
+        FavoriteIslandUserIds = {},
     },
     Settings = {
         MusicEnabled = true,
