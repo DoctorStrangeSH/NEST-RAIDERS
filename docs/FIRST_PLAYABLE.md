@@ -12,6 +12,8 @@
 - Shared companion catalog drives hatch weights, shop odds, names, rarity, and income.
 - Collection book tracks discovered species, duplicates, and collection completion.
 - Server-authoritative companion inventory with equip / unequip and a three-pet active limit.
+- Fuse three matching pets into a two-star or three-star companion; fusion is server-validated and consumes two duplicates.
+- Higher star ranks increase passive income and add visible aura / star effects.
 - Russian, touch-friendly collection panel with rarity, level, and passive income details.
 - Only equipped companions follow the player and generate passive income.
 - Minimal HUD for coins, eggs, companions, level, personal plot, and notices.
@@ -37,9 +39,11 @@
 8. Confirm the shop displays 55% / 30% / 15% hatch odds.
 9. Open «Книга коллекционера» and confirm undiscovered species are hidden and completion counts unique species.
 10. Open «Мои питомцы», equip and unequip companions, and confirm no more than three can be active.
-11. Confirm only equipped companions follow you and generate passive income.
-12. Wait for passive income; confirm Coins increases.
-13. Rejoin the private test place and confirm data persists.
+11. Obtain three identical pets, fuse them, and confirm two duplicates are consumed and the selected pet gains a star rank.
+12. Confirm higher star ranks show an aura and increase income.
+13. Confirm only equipped companions follow you and generate passive income.
+14. Wait for passive income; confirm Coins increases.
+15. Rejoin the private test place and confirm data persists.
 
 ## Known limitations
 - World geometry is a temporary scripted blockout, not final art.
