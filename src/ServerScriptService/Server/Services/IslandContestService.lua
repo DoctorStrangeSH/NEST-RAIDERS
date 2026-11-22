@@ -107,16 +107,40 @@ function IslandContestService:GetStandings(category)
     return results
 end
 
+function IslandContestService:HasVoted(player, category)
+    local week = weekKey()
+    if studioFallback() then
+        return self._studioVotes[week]
+            and self._studioVotes[week][category]
+            and self._studioVotes[week][category][tostring(player.UserId)] ~= nil
+            or false
+    end
+    local voteStore = getStores(category)
+    local ok, record = pcall(function()
+        return voteStore:GetAsync("voter_" .. tostring(player.UserId))
+    end)
+    if not ok then
+        warn("[NEST RAIDERS] Contest vote status read failed:", record)
+        return nil
+    end
+    return record ~= nil
+end
+
 function IslandContestService:List(player)
     local categories = {}
     for category, definition in pairs(CATEGORIES) do
         local standings, err = self:GetStandings(category)
         if not standings then return { Ok=false, Message=err } end
+        local hasVoted = self:HasVoted(player, category)
+        if hasVoted == nil then
+            return { Ok=false, Message="Не удалось проверить твой голос. Попробуй позже." }
+        end
         table.insert(categories, {
             Id = category,
             Name = definition.Name,
             Description = definition.Description,
             Standings = standings,
+            HasVoted = hasVoted,
         })
     end
     table.sort(categories, function(a, b) return a.Id < b.Id end)
