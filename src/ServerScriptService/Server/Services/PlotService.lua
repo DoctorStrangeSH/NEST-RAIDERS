@@ -67,7 +67,7 @@ local function buildPlot(parent, definition)
     label.Name = "OwnerLabel"
     label.Size = UDim2.fromScale(1, 1)
     label.BackgroundTransparency = 1
-    label.Text = "AVAILABLE NEST"
+    label.Text = "СВОБОДНОЕ ГНЕЗДО"
     label.TextColor3 = Color3.fromRGB(255, 245, 210)
     label.TextScaled = true
     label.Font = Enum.Font.GothamBlack
@@ -117,6 +117,19 @@ function PlotService:ApplyNestLevel(player, level)
         decor("NestBannerPole", Vector3.new(0.7, 9, 0.7), Vector3.new(0, 5.5, -15), Color3.fromRGB(230, 197, 125), Enum.Material.Metal)
         decor("NestBanner", Vector3.new(4.5, 2.8, 0.3), Vector3.new(0, 8.5, -15), Color3.fromRGB(119, 151, 211), Enum.Material.Fabric)
     end
+    local displayPositions = {
+        Vector3.new(-12, 2.0, 12),
+        Vector3.new(12, 2.0, 12),
+        Vector3.new(-12, 2.0, -12),
+        Vector3.new(12, 2.0, -12),
+    }
+    for index = 1, math.max(0, level - 1) do
+        local offset = displayPositions[index]
+        decor("PetDisplayPedestal", Vector3.new(4, 1, 4), offset, Color3.fromRGB(164, 131, 91), Enum.Material.Wood, Enum.PartType.Cylinder)
+        local crystal = decor("PetDisplayMarker", Vector3.new(1.2, 1.2, 1.2), offset + Vector3.new(0, 1.2, 0), Color3.fromRGB(145, 225, 190), Enum.Material.Neon, Enum.PartType.Ball)
+        crystal.Transparency = 0.28
+    end
+
     if level >= 5 then
         local crown = decor("MasterNestCrown", Vector3.new(5, 5, 5), Vector3.new(0, 8.5, 0), Color3.fromRGB(255, 205, 74), Enum.Material.Neon, Enum.PartType.Ball)
         crown.Transparency = 0.22
@@ -165,8 +178,8 @@ function PlotService:AssignPlot(player)
     end
 
     if not selected then
-        player:SetAttribute("LastNotice", "All nests are occupied. Please try another server.")
-        player:Kick("This server is full. Please rejoin another server.")
+        player:SetAttribute("LastNotice", "Все личные гнёзда заняты. Попробуй другой сервер.")
+        player:Kick("Все гнёзда на сервере заняты. Попробуй подключиться ещё раз.")
         return
     end
 
@@ -176,11 +189,11 @@ function PlotService:AssignPlot(player)
     profile.Nest.PlotId = selected.Id
     selected.Model:SetAttribute("OwnerUserId", player.UserId)
     selected.Model:SetAttribute("OwnerName", player.DisplayName)
-    selected.OwnerLabel.Text = player.DisplayName .. "'S NEST"
+    selected.OwnerLabel.Text = "ГНЕЗДО: " .. player.DisplayName
     player:SetAttribute("PlotId", selected.Id)
     player:SetAttribute("PlotAssigned", true)
     self:ApplyNestLevel(player, profile.Nest.Level or 1)
-    player:SetAttribute("LastNotice", "Your personal nest is ready!")
+    player:SetAttribute("LastNotice", "Твоё личное гнездо готово!")
 end
 
 function PlotService:ReleasePlot(player)
