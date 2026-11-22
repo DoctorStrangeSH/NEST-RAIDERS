@@ -1107,7 +1107,7 @@ local function renderInventory(data)
         local card = Instance.new("Frame")
         card.Name = "CompanionCard"
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 152)
+        card.Size = UDim2.new(1, -8, 0, 184)
         card.BackgroundColor3 = Color3.fromRGB(43, 64, 72)
         card.BorderSizePixel = 0
         card.Parent = list
@@ -1219,6 +1219,44 @@ local function renderInventory(data)
                 trainButton.Text = "ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. "🪙"
             end
         end)
+
+        if companion.Ability then
+            local ability = companion.Ability
+            local abilityButton = Instance.new("TextButton")
+            abilityButton.Name = "AbilityButton"
+            abilityButton.Position = UDim2.fromOffset(12, 128)
+            abilityButton.Size = UDim2.new(1, -24, 0, 26)
+            abilityButton.BackgroundColor3 = ability.Unlocked and (ability.ReadyIn or 0) <= 0
+                and Color3.fromRGB(111, 133, 73) or Color3.fromRGB(75, 87, 96)
+            abilityButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+            abilityButton.TextSize = 10
+            abilityButton.Font = Enum.Font.GothamBlack
+            if not ability.Unlocked then
+                abilityButton.Text = (ability.Name or "СПОСОБНОСТЬ") .. " · УР. " .. tostring(ability.UnlockLevel or 7)
+            elseif (ability.ReadyIn or 0) > 0 then
+                abilityButton.Text = (ability.Name or "СПОСОБНОСТЬ") .. " · " .. tostring(ability.ReadyIn) .. " СЕК."
+            else
+                abilityButton.Text = "✦ " .. (ability.Name or "СПОСОБНОСТЬ") .. " · ИСПОЛЬЗОВАТЬ"
+            end
+            abilityButton.Active = ability.Unlocked == true and (ability.ReadyIn or 0) <= 0 and companion.Equipped == true
+            abilityButton.Parent = card
+            addCorner(abilityButton, 8)
+            abilityButton.Activated:Connect(function()
+                if not abilityButton.Active then return end
+                abilityButton.Active = false
+                abilityButton.Text = "АКТИВАЦИЯ..."
+                local updated = invokeInventory({
+                    Action = "UseAbility",
+                    InstanceId = companion.InstanceId,
+                })
+                if updated then
+                    renderInventory(updated)
+                else
+                    abilityButton.Active = true
+                    abilityButton.Text = "✦ " .. (ability.Name or "СПОСОБНОСТЬ") .. " · ИСПОЛЬЗОВАТЬ"
+                end
+            end)
+        end
 
         action.Activated:Connect(function()
             action.Active = false
