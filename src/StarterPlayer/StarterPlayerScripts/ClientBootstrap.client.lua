@@ -3184,9 +3184,15 @@ local function renderCollectionBook(data)
         details.Position = UDim2.fromOffset(12, 34)
         details.Size = UDim2.new(1, -24, 0, 34)
         details.Font = Enum.Font.GothamMedium
-        details.Text = entry.Discovered
-            and string.format("%s  ·  В коллекции: %d  ·  +%d монет / 10 сек.", entry.Rarity, entry.OwnedCount, entry.Income)
-            or string.format("Редкость: %s  ·  Шанс из яйца луга: %d%%", entry.Rarity, entry.HatchChance)
+        if entry.Discovered then
+            details.Text = string.format("%s  ·  В коллекции: %d  ·  +%d монет / 10 сек.",
+                entry.Rarity, entry.OwnedCount, entry.Income)
+        elseif entry.HybridOnly then
+            details.Text = string.format("%s  ·  Только через разведение", entry.Rarity)
+        else
+            details.Text = string.format("Редкость: %s  ·  Шанс из яйца луга: %d%%",
+                entry.Rarity, entry.HatchChance)
+        end
         details.TextColor3 = Color3.fromRGB(190, 204, 223)
         details.TextSize = 12
         details.TextXAlignment = Enum.TextXAlignment.Left
