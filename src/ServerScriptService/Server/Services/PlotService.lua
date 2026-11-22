@@ -90,6 +90,19 @@ local function buildPlot(parent, definition)
     breedingPrompt.MaxActivationDistance = 12
     breedingPrompt.RequiresLineOfSight = false
     breedingPrompt.Parent = breedingCore
+
+    for index, side in ipairs({-1, 1}) do
+        local parentPad = makePart(plot, "BreedingParentPad_" .. index,
+            Vector3.new(3.4, 0.55, 3.4),
+            CFrame.new(center + Vector3.new(11 + side * 5.1, 2.8, 0)),
+            Color3.fromRGB(100, 91, 130), Enum.Material.Slate)
+        parentPad.Shape = Enum.PartType.Cylinder
+        parentPad.CFrame = CFrame.new(center + Vector3.new(11 + side * 5.1, 2.8, 0))
+            * CFrame.Angles(0, 0, math.rad(90))
+        parentPad.CanCollide = false
+        parentPad:SetAttribute("ParentSlot", index)
+    end
+
     breedingPrompt.Triggered:Connect(function(player)
         if plot:GetAttribute("OwnerUserId") ~= player.UserId then
             player:SetAttribute("LastNotice", "Этот алтарь принадлежит другому игроку.")
@@ -113,6 +126,179 @@ local function buildPlot(parent, definition)
     label.Parent = surface
 
     return plot, station, label
+end
+
+local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
+
+local TRAIT_COLORS = {
+    Natural = Color3.fromRGB(255, 220, 145),
+    Verdant = Color3.fromRGB(111, 238, 139),
+    Luminous = Color3.fromRGB(111, 225, 255),
+    Prismatic = Color3.fromRGB(220, 132, 255),
+}
+
+local SPECIES_COLORS = {
+    MeadowFox = Color3.fromRGB(255, 164, 91),
+    MossTurtle = Color3.fromRGB(115, 191, 125),
+    SproutDragon = Color3.fromRGB(104, 194, 222),
+    EmberFox = Color3.fromRGB(255, 117, 76),
+    Fernshell = Color3.fromRGB(129, 206, 123),
+    BriarGuardian = Color3.fromRGB(177, 148, 104),
+}
+
+local function makeRitualOrb(parent, name, position, color, size)
+    local orb = Instance.new("Part")
+    orb.Name = name
+    orb.Shape = Enum.PartType.Ball
+    orb.Size = Vector3.new(size, size, size)
+    orb.Position = position
+    orb.Anchored = true
+    orb.CanCollide = false
+    orb.CanTouch = false
+    orb.CanQuery = false
+    orb.Material = Enum.Material.Neon
+    orb.Color = color
+    orb.Parent = parent
+    local light = Instance.new("PointLight")
+    light.Color = color
+    light.Brightness = 1.8
+    light.Range = 10
+    light.Shadows = false
+    light.Parent = orb
+    return orb
+end
+
+function PlotService:PlayBreedingSequence(player, parentA, parentB, egg)
+    local plot = self._playerPlots[player]
+    local station = plot and plot.BreedingStation
+    if not station or not station.Parent or not parentA or not parentB or not egg then return false end
+    if plot.Model:GetAttribute("OwnerUserId") ~= player.UserId then return false end
+
+    local effects = Instance.new("Folder")
+    effects.Name = "BreedingRitual_" .. player.UserId
+    effects.Parent = Workspace
+    Debris:AddItem(effects, 9)
+
+    local center = station.Position
+    local leftColor = SPECIES_COLORS[parentA.Id] or Color3.fromRGB(255, 190, 115)
+    local rightColor = SPECIES_COLORS[parentB.Id] or Color3.fromRGB(125, 200, 230)
+    local traitColor = TRAIT_COLORS[egg.GeneticTrait and egg.GeneticTrait.Id] or TRAIT_COLORS.Natural
+    local left = makeRitualOrb(effects, "ParentEchoA", center + Vector3.new(-5.1, -1.7, 0), leftColor, 1.25)
+    local right = makeRitualOrb(effects, "ParentEchoB", center + Vector3.new(5.1, -1.7, 0), rightColor, 1.25)
+    local core = makeRitualOrb(effects, "RitualCore", center + Vector3.new(0, 0.3, 0), traitColor, 0.45)
+
+    local leftAttachment = Instance.new("Attachment")
+    leftAttachment.Parent = left
+    local rightAttachment = Instance.new("Attachment")
+    rightAttachment.Parent = right
+    local coreLeft = Instance.new("Attachment")
+    coreLeft.Parent = core
+    local coreRight = Instance.new("Attachment")
+    coreRight.Parent = core
+
+    local function makeEnergyBeam(name, fromAttachment, color)
+        local beam = Instance.new("Beam")
+        beam.Name = name
+        beam.Attachment0 = fromAttachment
+        beam.Attachment1 = name == "EnergyFromA" and coreLeft or coreRight
+        beam.Color = ColorSequence.new(color, traitColor)
+        beam.Width0 = 0.42
+        beam.Width1 = 0.12
+        beam.LightEmission = 1
+        beam.FaceCamera = true
+        beam.CurveSize0 = 1.8
+        beam.CurveSize1 = -1.8
+        beam.Parent = effects
+        return beam
+    end
+
+    local beamA = makeEnergyBeam("EnergyFromA", leftAttachment, leftColor)
+    local beamB = makeEnergyBeam("EnergyFromB", rightAttachment, rightColor)
+    local eggPart = Instance.new("Part")
+    eggPart.Name = "NewLineageEgg"
+    eggPart.Shape = Enum.PartType.Ball
+    eggPart.Size = Vector3.new(0.12, 0.16, 0.12)
+    eggPart.Position = center + Vector3.new(0, 0.2, 0)
+    eggPart.Anchored = true
+    eggPart.CanCollide = false
+    eggPart.CanTouch = false
+    eggPart.CanQuery = false
+    eggPart.Material = Enum.Material.Neon
+    eggPart.Color = traitColor
+    eggPart.Parent = effects
+
+    local shellLight = Instance.new("PointLight")
+    shellLight.Color = traitColor
+    shellLight.Brightness = 0
+    shellLight.Range = 12
+    shellLight.Parent = eggPart
+
+    local particles = Instance.new("ParticleEmitter")
+    particles.Name = "RitualSparkles"
+    particles.Color = ColorSequence.new(leftColor, rightColor)
+    particles.LightEmission = 0.9
+    particles.Rate = 0
+    particles.Lifetime = NumberRange.new(0.45, 1.1)
+    particles.Speed = NumberRange.new(2, 5)
+    particles.SpreadAngle = Vector2.new(180, 180)
+    particles.Size = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.18),
+        NumberSequenceKeypoint.new(1, 0),
+    })
+    particles.Parent = eggPart
+
+    TweenService:Create(left, TweenInfo.new(1.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+        Position = center + Vector3.new(-1.15, 1.0, 0),
+        Size = Vector3.new(0.65, 0.65, 0.65),
+    }):Play()
+    TweenService:Create(right, TweenInfo.new(1.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+        Position = center + Vector3.new(1.15, 1.0, 0),
+        Size = Vector3.new(0.65, 0.65, 0.65),
+    }):Play()
+
+    task.delay(1.1, function()
+        if not effects.Parent then return end
+        TweenService:Create(eggPart, TweenInfo.new(0.75, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Size = Vector3.new(2.1, 2.7, 2.1),
+            Position = center + Vector3.new(0, 1.5, 0),
+        }):Play()
+        TweenService:Create(shellLight, TweenInfo.new(0.55), { Brightness = 2.2 }):Play()
+        particles:Emit(32)
+        left:Destroy()
+        right:Destroy()
+        beamA:Destroy()
+        beamB:Destroy()
+        core:Destroy()
+    end)
+
+    task.delay(2.8, function()
+        if not effects.Parent then return end
+        local burst = Instance.new("Part")
+        burst.Name = "RitualBurst"
+        burst.Shape = Enum.PartType.Ball
+        burst.Size = Vector3.new(2, 2, 2)
+        burst.Position = eggPart.Position
+        burst.Anchored = true
+        burst.CanCollide = false
+        burst.CanTouch = false
+        burst.CanQuery = false
+        burst.Material = Enum.Material.Neon
+        burst.Color = traitColor
+        burst.Transparency = 0.2
+        burst.Parent = effects
+        local burstTween = TweenService:Create(burst, TweenInfo.new(0.65, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = Vector3.new(12, 12, 12),
+            Transparency = 1,
+        })
+        burstTween:Play()
+        particles:Emit(54)
+        task.delay(0.2, function()
+            if eggPart.Parent then eggPart:Destroy() end
+        end)
+    end)
+
+    return true
 end
 
 function PlotService:ApplyNestLevel(player, level)
