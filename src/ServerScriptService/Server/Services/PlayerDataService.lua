@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local DataStoreService = game:GetService("DataStoreService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
 
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local ProfileTemplate = require(ReplicatedStorage.Shared.Config.ProfileTemplate)
@@ -9,16 +10,13 @@ local PlayerDataService = {}
 PlayerDataService._profiles = {}
 PlayerDataService._store = DataStoreService:GetDataStore(GameConfig.DataStoreName)
 PlayerDataService._saving = {}
+PlayerDataService._sessionTokens = {}
+local SESSION_LOCK_SECONDS = 150
 
 local function deepCopy(value)
-    if type(value) ~= "table" then
-        return value
-    end
-
+    if type(value) ~= "table" then return value end
     local copy = {}
-    for key, child in pairs(value) do
-        copy[key] = deepCopy(child)
-    end
+    for key, child in pairs(value) do copy[key] = deepCopy(child) end
     return copy
 end
 
@@ -38,6 +36,8 @@ local function validProfile(data)
         and type(data.XP) == "number"
         and type(data.Level) == "number"
         and type(data.UnlockedZones) == "table"
+        and type(data.EggInventory or {}) == "table"
+        and type(data.Companions or {}) == "table"
 end
 
 function PlayerDataService:GetProfile(player)
@@ -46,68 +46,100 @@ end
 
 function PlayerDataService:Load(player)
     local key = "player_" .. player.UserId
-    local success, data
+    local token = game.JobId .. ":" .. HttpService:GenerateGUID(false)
+    self._sessionTokens[player] = token
 
+    local success, data
+    local lockDenied = false
     for attempt = 1, 3 do
         success, data = pcall(function()
-            return self._store:GetAsync(key)
+            return self._store:UpdateAsync(key, function(current)
+                local now = os.time()
+                if current ~= nil and not validProfile(current) then
+                    error("Stored profile failed validation")
+                end
+
+                local existingLock = type(current) == "table" and current._SessionLock or nil
+                if existingLock
+                    and existingLock.Token ~= token
+                    and type(existingLock.ExpiresAt) == "number"
+                    and existingLock.ExpiresAt > now then
+                    lockDenied = true
+                    return current
+                end
+
+                local nextData = current and deepCopy(current) or deepCopy(ProfileTemplate)
+                reconcile(nextData, ProfileTemplate)
+                nextData.SchemaVersion = GameConfig.DataSchemaVersion
+                nextData._SessionLock = {
+                    Token = token,
+                    ExpiresAt = now + SESSION_LOCK_SECONDS,
+                }
+                return nextData
+            end)
         end)
-        if success then
-            break
-        end
+
+        if success then break end
         task.wait(attempt * 2)
     end
 
     if not success then
         warn("[NEST RAIDERS] Profile load failed for", player.UserId, data)
+        self._sessionTokens[player] = nil
         player:Kick("Your data could not be loaded safely. Please rejoin in a moment.")
         return
     end
 
-    if data == nil then
-        data = deepCopy(ProfileTemplate)
-    elseif not validProfile(data) then
-        warn("[NEST RAIDERS] Invalid profile rejected for", player.UserId)
-        player:Kick("Your save data could not be validated. Please contact support.")
+    if lockDenied or not validProfile(data) or not data._SessionLock or data._SessionLock.Token ~= token then
+        warn("[NEST RAIDERS] Profile is active in another server for", player.UserId)
+        self._sessionTokens[player] = nil
+        player:Kick("Your save is still active in another server. Please rejoin shortly.")
         return
-    else
-        reconcile(data, ProfileTemplate)
     end
 
-    data.SchemaVersion = GameConfig.DataSchemaVersion
+    data._SessionLock = nil
     self._profiles[player] = data
-
     player:SetAttribute("Coins", data.Coins)
     player:SetAttribute("Level", data.Level)
     player:SetAttribute("ProfileLoaded", true)
 end
 
-function PlayerDataService:Save(player)
+function PlayerDataService:Save(player, releaseLock)
     local profile = self._profiles[player]
-    if not profile then
-        return false
-    end
+    if not profile then return false end
 
-    -- A leave/shutdown save must not be skipped because an autosave is in flight.
     local waitDeadline = os.clock() + 10
-    while self._saving[player] and os.clock() < waitDeadline do
-        task.wait(0.1)
-    end
+    while self._saving[player] and os.clock() < waitDeadline do task.wait(0.1) end
     if self._saving[player] then
         warn("[NEST RAIDERS] Timed out waiting for an existing save for", player.UserId)
         return false
     end
 
     profile = self._profiles[player]
-    if not profile then
-        return false
-    end
+    local token = self._sessionTokens[player]
+    if not profile or not token then return false end
+
     self._saving[player] = true
     local snapshot = deepCopy(profile)
     local key = "player_" .. player.UserId
     local success, err = pcall(function()
-        self._store:UpdateAsync(key, function()
-            return snapshot
+        self._store:UpdateAsync(key, function(current)
+            local lock = type(current) == "table" and current._SessionLock or nil
+            if not lock or lock.Token ~= token then
+                error("Session lock ownership lost; refusing to overwrite profile")
+            end
+
+            snapshot._SessionLock = nil
+            if releaseLock then
+                return snapshot
+            end
+
+            local nextData = deepCopy(snapshot)
+            nextData._SessionLock = {
+                Token = token,
+                ExpiresAt = os.time() + SESSION_LOCK_SECONDS,
+            }
+            return nextData
         end)
     end)
     self._saving[player] = nil
@@ -115,6 +147,10 @@ function PlayerDataService:Save(player)
     if not success then
         warn("[NEST RAIDERS] Profile save failed for", player.UserId, err)
         return false
+    end
+
+    if releaseLock then
+        self._sessionTokens[player] = nil
     end
     return true
 end
@@ -125,14 +161,13 @@ function PlayerDataService:Init()
     end)
 
     Players.PlayerRemoving:Connect(function(player)
-        self:Save(player)
+        self:Save(player, true)
         self._profiles[player] = nil
+        self._sessionTokens[player] = nil
     end)
 
     for _, player in ipairs(Players:GetPlayers()) do
-        task.spawn(function()
-            self:Load(player)
-        end)
+        task.spawn(function() self:Load(player) end)
     end
 
     game:BindToClose(function()
@@ -140,15 +175,12 @@ function PlayerDataService:Init()
         for _, player in ipairs(Players:GetPlayers()) do
             pending += 1
             task.spawn(function()
-                self:Save(player)
+                self:Save(player, true)
                 pending -= 1
             end)
         end
-
         local deadline = os.clock() + 25
-        while pending > 0 and os.clock() < deadline do
-            task.wait(0.1)
-        end
+        while pending > 0 and os.clock() < deadline do task.wait(0.1) end
     end)
 end
 
@@ -157,9 +189,7 @@ function PlayerDataService:Start()
         while true do
             task.wait(GameConfig.AutosaveIntervalSeconds)
             for player in pairs(self._profiles) do
-                task.spawn(function()
-                    self:Save(player)
-                end)
+                task.spawn(function() self:Save(player, false) end)
             end
         end
     end)
