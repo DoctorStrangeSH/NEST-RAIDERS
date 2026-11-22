@@ -1,0 +1,58 @@
+# NEST RAIDERS — Roadmap
+
+Status legend: [x] done · [ ] not done · [~] in progress
+
+## Release principles
+- Ship a genuinely playable vertical slice before expanding content.
+- Server-authoritative economy, inventory, hatching, stealing, and progression.
+- Mobile-first controls and performance budgets from the first prototype.
+- No pay-to-win advantages; monetization must be transparent and fair.
+- Every milestone ends with a Studio test checklist and a tagged build.
+
+## Milestone 0 — Project foundation
+- [x] Create repository and product direction.
+- [x] Lock bright art direction, connected island world, balanced PvP, ambitious scope.
+- [ ] Rojo project and Luau folder structure.
+- [ ] Shared configuration and server bootstrap.
+- [ ] Data persistence and safe profile defaults.
+- [ ] Automated static checks / CI.
+
+## Milestone 1 — First playable loop
+- [ ] Spawn on Starter Island and claim a personal nest.
+- [ ] Find and collect an egg in the world.
+- [ ] Carry egg to nest and hatch it.
+- [ ] Companion follows owner and produces coins over time.
+- [ ] Buy a basic egg and see inventory update.
+- [ ] Save and restore progress after reconnect.
+- [ ] Minimal mobile-friendly HUD and interaction prompts.
+
+## Milestone 2 — Open-world progression
+- [ ] Seamless connected biomes with no mandatory world portals.
+- [ ] Level, quest, and trial requirements for biome access.
+- [ ] Server-side zone checks for egg collection and interactions.
+- [ ] Starter Island, Emerald Wilds, Frost Highlands, Emberlands, Crystal Realm, Ancient Heights, Void Frontier.
+- [ ] World landmarks, secrets, caves, traversal routes, and discovery rewards.
+
+## Milestone 3 — Nest, companions, and economy
+- [ ] Nest expansion and decoration.
+- [ ] Companion rarity, traits, passive income, and collection book.
+- [ ] Egg hatch tables with disclosed probabilities.
+- [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
+- [ ] Economy sinks and telemetry-driven balancing.
+
+## Milestone 4 — Raiding and PvP
+- [ ] Opt-in / clearly signposted raid windows and protected newcomer period.
+- [ ] Balanced raid tools, defenses, cooldowns, and recovery.
+- [ ] Anti-grief safeguards and server-side validation.
+- [ ] Matchmaking / server population tuning.
+- [ ] Abuse reporting and moderation hooks.
+
+## Milestone 5 — Live operations and launch readiness
+- [ ] Daily and weekly quests.
+- [ ] Rotating events and limited-time cosmetics (not exclusive power).
+- [ ] Tutorial, onboarding analytics, retention and funnel instrumentation.
+- [ ] Device/performance testing, exploit review, accessibility pass.
+- [ ] Store page, thumbnails, trailer, localization, launch checklist.
+
+## Release gates
+A milestone is not complete until its acceptance tests pass in Roblox Studio on desktop and mobile emulation. Monetization and public launch are blocked until saving, server authority, exploit resistance, and moderation basics are verified.
