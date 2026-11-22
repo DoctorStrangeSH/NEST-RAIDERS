@@ -133,7 +133,41 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
         if companion and offset then
             local model = buildPet(folder, companion, slot)
             model.Name = "Display_" .. tostring(companion.Id) .. "_" .. tostring(slot)
-            model:PivotTo(CFrame.new(plot.Center + offset + Vector3.new(0, 1.5, 0)))
+            local basePivot = CFrame.new(plot.Center + offset + Vector3.new(0, 1.5, 0))
+            model:PivotTo(basePivot)
+
+            local mood = math.clamp(math.floor(tonumber(profile.Nest and profile.Nest.CompanionMood and profile.Nest.CompanionMood[instanceId]) or 50), 0, 100)
+            local moodBillboard = Instance.new("BillboardGui")
+            moodBillboard.Name = "MoodBubble"
+            moodBillboard.Adornee = model.PrimaryPart
+            moodBillboard.Size = UDim2.fromOffset(104, 28)
+            moodBillboard.StudsOffset = Vector3.new(0, 2.9, 0)
+            moodBillboard.AlwaysOnTop = false
+            moodBillboard.Parent = model
+
+            local moodLabel = Instance.new("TextLabel")
+            moodLabel.Size = UDim2.fromScale(1, 1)
+            moodLabel.BackgroundColor3 = Color3.fromRGB(35, 52, 48)
+            moodLabel.BackgroundTransparency = 0.12
+            moodLabel.TextColor3 = Color3.fromRGB(240, 250, 228)
+            moodLabel.TextSize = 13
+            moodLabel.Font = Enum.Font.GothamBold
+            moodLabel.Text = string.format("%s %d%%", mood >= 80 and "♥" or (mood >= 50 and "☺" or "☹"), mood)
+            moodLabel.Parent = moodBillboard
+            local bubbleCorner = Instance.new("UICorner")
+            bubbleCorner.CornerRadius = UDim.new(0, 8)
+            bubbleCorner.Parent = moodLabel
+
+            local phase = (slot * 1.7) % (math.pi * 2)
+            task.spawn(function()
+                while model.Parent == folder and folder.Parent do
+                    local elapsed = os.clock()
+                    local bob = math.sin(elapsed * 2 + phase) * 0.12
+                    local turn = math.sin(elapsed * 1.1 + phase) * 0.06
+                    model:PivotTo(basePivot * CFrame.new(0, bob, 0) * CFrame.Angles(0, turn, 0))
+                    task.wait(0.12)
+                end
+            end)
         end
     end
 end
