@@ -76,6 +76,61 @@ local function buildPlot(parent, definition)
     return plot, station, label
 end
 
+function PlotService:ApplyNestLevel(player, level)
+    local plot = self._playerPlots[player]
+    if not plot then return false end
+
+    level = math.clamp(math.floor(tonumber(level) or 1), 1, 5)
+    local previous = plot.Model:FindFirstChild("UpgradeDecorations")
+    if previous then previous:Destroy() end
+
+    local decorations = Instance.new("Folder")
+    decorations.Name = "UpgradeDecorations"
+    decorations.Parent = plot.Model
+    local center = plot.Center
+
+    local function decor(name, size, offset, color, material, shape)
+        local part = makePart(
+            decorations,
+            name,
+            size,
+            CFrame.new(center + offset),
+            color,
+            material
+        )
+        if shape then part.Shape = shape end
+        part.CanCollide = false
+        return part
+    end
+
+    if level >= 2 then
+        for _, x in ipairs({-8, 8}) do
+            decor("NestLantern", Vector3.new(1.2, 4, 1.2), Vector3.new(x, 4, -8), Color3.fromRGB(255, 205, 105), Enum.Material.Neon)
+        end
+    end
+    if level >= 3 then
+        for _, x in ipairs({-12, 12}) do
+            decor("GardenCrystal", Vector3.new(2.2, 3.5, 2.2), Vector3.new(x, 3.2, 7), Color3.fromRGB(104, 219, 163), Enum.Material.Glass, Enum.PartType.Ball)
+        end
+    end
+    if level >= 4 then
+        decor("NestBannerPole", Vector3.new(0.7, 9, 0.7), Vector3.new(0, 5.5, -15), Color3.fromRGB(230, 197, 125), Enum.Material.Metal)
+        decor("NestBanner", Vector3.new(4.5, 2.8, 0.3), Vector3.new(0, 8.5, -15), Color3.fromRGB(119, 151, 211), Enum.Material.Fabric)
+    end
+    if level >= 5 then
+        local crown = decor("MasterNestCrown", Vector3.new(5, 5, 5), Vector3.new(0, 8.5, 0), Color3.fromRGB(255, 205, 74), Enum.Material.Neon, Enum.PartType.Ball)
+        crown.Transparency = 0.22
+        local light = Instance.new("PointLight")
+        light.Color = crown.Color
+        light.Brightness = 1.8
+        light.Range = 18
+        light.Parent = crown
+    end
+
+    plot.Model:SetAttribute("NestLevel", level)
+    return true
+end
+
 function PlotService:GetPlayerPlot(player)
     return self._playerPlots[player]
 end
@@ -124,6 +179,7 @@ function PlotService:AssignPlot(player)
     selected.OwnerLabel.Text = player.DisplayName .. "'S NEST"
     player:SetAttribute("PlotId", selected.Id)
     player:SetAttribute("PlotAssigned", true)
+    self:ApplyNestLevel(player, profile.Nest.Level or 1)
     player:SetAttribute("LastNotice", "Your personal nest is ready!")
 end
 
@@ -166,6 +222,7 @@ function PlotService:Init()
             Model = model,
             Station = station,
             OwnerLabel = ownerLabel,
+            Center = definition.Position,
         }
     end
 
