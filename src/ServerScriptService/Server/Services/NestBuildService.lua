@@ -103,6 +103,39 @@ local function renderBuilding(parent, center, item, key)
         for _,x in ipairs({-0.85,0,0.85}) do
             p("Picket",Vector3.new(0.18,1.6,0.18),Vector3.new(x,0.95,0),def.Color,Enum.Material.Wood)
         end
+    elseif def.Kind == "FlowerArch" then
+        p("PostLeft",Vector3.new(0.38,3.4,0.38),Vector3.new(-1.55,1.7,0),def.Color,Enum.Material.Wood)
+        p("PostRight",Vector3.new(0.38,3.4,0.38),Vector3.new(1.55,1.7,0),def.Color,Enum.Material.Wood)
+        p("ArchTop",Vector3.new(3.5,0.42,0.48),Vector3.new(0,3.35,0),def.Color,Enum.Material.Wood)
+        for i,offset in ipairs({
+            Vector3.new(-1.55,3.55,0),Vector3.new(-0.85,3.65,0),
+            Vector3.new(0,3.62,0),Vector3.new(0.85,3.65,0),Vector3.new(1.55,3.55,0),
+        }) do
+            p("Bloom"..i,Vector3.new(0.58,0.48,0.58),offset,def.Accent,Enum.Material.SmoothPlastic,Enum.PartType.Ball)
+        end
+        p("VineLeft",Vector3.new(0.18,1.2,0.2),Vector3.new(-1.25,2.65,0.25),Color3.fromRGB(76,151,91),Enum.Material.Grass)
+        p("VineRight",Vector3.new(0.18,1.2,0.2),Vector3.new(1.25,2.65,-0.25),Color3.fromRGB(76,151,91),Enum.Material.Grass)
+    elseif def.Kind == "Pond" then
+        p("Water",Vector3.new(0.16,3.35,3.35),Vector3.new(0,0.12,0),def.Color,Enum.Material.Glass,Enum.PartType.Cylinder)
+        p("WaterGlow",Vector3.new(0.05,2.55,2.55),Vector3.new(0,0.22,0),def.Accent,Enum.Material.Neon,Enum.PartType.Cylinder)
+        for i=1,8 do
+            local angle=math.rad((i-1)*45)
+            local offset=Vector3.new(math.cos(angle)*1.75,0.18,math.sin(angle)*1.75)
+            p("ShoreStone"..i,Vector3.new(0.65,0.38,0.55),offset,Color3.fromRGB(135,145,139),Enum.Material.Slate,Enum.PartType.Ball)
+        end
+        p("WaterLily",Vector3.new(0.7,0.08,0.7),Vector3.new(0.45,0.27,-0.45),Color3.fromRGB(102,185,119),Enum.Material.Grass,Enum.PartType.Cylinder)
+        p("LilyBloom",Vector3.new(0.32,0.2,0.32),Vector3.new(0.45,0.4,-0.45),Color3.fromRGB(244,157,198),Enum.Material.SmoothPlastic,Enum.PartType.Ball)
+    elseif def.Kind == "Fountain" then
+        p("Basin",Vector3.new(3.5,0.45,3.5),Vector3.new(0,0.28,0),def.Color,Enum.Material.Marble,Enum.PartType.Cylinder)
+        p("WaterBasin",Vector3.new(2.9,0.12,2.9),Vector3.new(0,0.55,0),def.Accent,Enum.Material.Neon,Enum.PartType.Cylinder)
+        p("Pedestal",Vector3.new(0.75,1.55,0.75),Vector3.new(0,1.25,0),def.Color,Enum.Material.Marble)
+        p("UpperBowl",Vector3.new(1.8,0.28,1.8),Vector3.new(0,2.1,0),def.Color,Enum.Material.Marble,Enum.PartType.Cylinder)
+        p("MoonCrystal",Vector3.new(0.72,1.0,0.72),Vector3.new(0,2.75,0),def.Accent,Enum.Material.Neon,Enum.PartType.Ball)
+        for i=1,4 do
+            local angle=math.rad((i-1)*90)
+            local offset=Vector3.new(math.cos(angle)*1.45,0.85,math.sin(angle)*1.45)
+            p("WaterArc"..i,Vector3.new(0.16,0.85,0.16),offset,def.Accent,Enum.Material.Glass,Enum.PartType.Ball)
+        end
     elseif def.Kind == "Cottage" then
         p("Walls",Vector3.new(5.5,3.4,5),Vector3.new(0,1.7,0),def.Color,Enum.Material.WoodPlanks)
         p("Roof",Vector3.new(6.2,1.1,5.8),Vector3.new(0,3.95,0),def.Accent,Enum.Material.Slate)
