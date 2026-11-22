@@ -102,3 +102,10 @@
 - Confirm with click / tap; rotate in 15-degree steps with R or the on-screen control; cancel with Escape or the on-screen control.
 - Existing buildings can be repositioned with the same preview flow.
 - Server-side checks independently validate plot bounds and object overlap before saving.
+
+
+## Fantasy garden landmarks — Sprint 4.6
+- Flower Arch (145 coins): wooden garden arch with flower details.
+- Crystal Pond (190 coins): shallow glowing water feature with stone shoreline, lily pad, and bloom.
+- Moon Fountain (320 coins): layered stone fountain with a glowing moon crystal and soft point light.
+- All three objects use the same persistent build inventory, grid placement, movement, rotation, removal, and server-side footprint validation as the original catalog.
