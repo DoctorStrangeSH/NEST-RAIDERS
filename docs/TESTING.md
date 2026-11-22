@@ -129,3 +129,15 @@
 - [ ] Verify the 100-object cap and per-type inventory cap.
 - [ ] Rejoin and verify the inventory and complete island layout persist.
 - [ ] Leave the server and verify the released plot has no previous owner's rendered buildings.
+
+
+## Building placement preview — Sprint 4.5
+- [ ] Buy a building, select Place, and verify the editor hides while the island remains visible.
+- [ ] Move the pointer across the island and verify the translucent footprint follows and snaps to the 2-stud grid.
+- [ ] Verify valid empty areas show green and occupied / out-of-bounds areas show red.
+- [ ] Confirm with desktop click and mobile tap; verify the correct building appears at the preview location.
+- [ ] Rotate with R and the on-screen rotate control; verify the saved orientation.
+- [ ] Cancel with Escape and the on-screen cancel control; verify no inventory or placement data changes.
+- [ ] Select an existing building's Move / Drag control and reposition it; verify it does not collide with itself or other objects.
+- [ ] Attempt to place a large cottage partly outside the plot and verify server rejection.
+- [ ] Verify the editor returns to the construction catalog after confirmation and cancellation.
