@@ -40,7 +40,7 @@ function EconomyService:Start()
         task.wait(GameConfig.Economy.PassiveIncomeIntervalSeconds)
         for _, player in ipairs(Players:GetPlayers()) do
             local profile = PlayerDataService:GetProfile(player)
-            if profile and #profile.Companions > 0 then
+            if profile and #profile.ActiveCompanions > 0 then
                 self:GrantCoins(player, self:GetPassiveIncome(profile), "Companion income")
             end
         end
