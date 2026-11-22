@@ -6,6 +6,7 @@ local PlayerDataService = require(ServerScriptService.Server.Services.PlayerData
 
 local CompanionService = {}
 CompanionService._folders = {}
+CompanionService._displayFolders = {}
 CompanionService._generations = {}
 local MAX_VISIBLE_COMPANIONS = 3
 local FOLLOW_INTERVAL = 0.15
@@ -105,6 +106,37 @@ local function buildPet(parent, companion, index)
     return model
 end
 
+function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotOffsets)
+    local previous = self._displayFolders[player]
+    if previous then previous:Destroy() end
+    self._displayFolders[player] = nil
+    if not plot or not plot.Model or not plot.Model.Parent then return end
+
+    local folder = Instance.new("Folder")
+    folder.Name = "DisplayedCompanions"
+    folder.Parent = plot.Model
+    self._displayFolders[player] = folder
+
+    local profile = PlayerDataService:GetProfile(player)
+    if not profile then return end
+    local ownedById = {}
+    for _, companion in ipairs(profile.Companions or {}) do
+        if type(companion.InstanceId) == "string" then
+            ownedById[companion.InstanceId] = companion
+        end
+    end
+
+    for slot, instanceId in pairs(displayedIds or {}) do
+        local companion = ownedById[instanceId]
+        local offset = slotOffsets[slot]
+        if companion and offset then
+            local model = buildPet(folder, companion, slot)
+            model.Name = "Display_" .. tostring(companion.Id) .. "_" .. tostring(slot)
+            model:PivotTo(CFrame.new(plot.Center + offset + Vector3.new(0, 3.45, 0)))
+        end
+    end
+end
+
 function CompanionService:ClearPlayer(player)
     local folder = self._folders[player]
     if folder then folder:Destroy() end
@@ -181,6 +213,9 @@ function CompanionService:Init()
     Players.PlayerRemoving:Connect(function(player)
         self._generations[player] = nil
         self:ClearPlayer(player)
+        local displayFolder = self._displayFolders[player]
+        if displayFolder then displayFolder:Destroy() end
+        self._displayFolders[player] = nil
     end)
 
     for _, player in ipairs(Players:GetPlayers()) do
