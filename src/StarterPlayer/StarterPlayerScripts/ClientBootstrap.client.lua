@@ -1091,6 +1091,8 @@ local function invokeInventory(payload)
     return response.Data
 end
 
+local selectedBreedingId = nil
+
 local function renderInventory(data)
     for _, child in ipairs(list:GetChildren()) do
         if child:IsA("Frame") or child == emptyLabel then
@@ -1107,7 +1109,7 @@ local function renderInventory(data)
         local card = Instance.new("Frame")
         card.Name = "CompanionCard"
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 184)
+        card.Size = UDim2.new(1, -8, 0, 218)
         card.BackgroundColor3 = Color3.fromRGB(43, 64, 72)
         card.BorderSizePixel = 0
         card.Parent = list
@@ -1254,6 +1256,55 @@ local function renderInventory(data)
                 else
                     abilityButton.Active = true
                     abilityButton.Text = "✦ " .. (ability.Name or "СПОСОБНОСТЬ") .. " · ИСПОЛЬЗОВАТЬ"
+                end
+            end)
+        end
+
+        if (companion.Level or 1) >= 7 then
+            local breedButton = Instance.new("TextButton")
+            breedButton.Name = "BreedButton"
+            breedButton.Position = UDim2.fromOffset(12, 160)
+            breedButton.Size = UDim2.new(1, -24, 0, 26)
+            breedButton.BackgroundColor3 = selectedBreedingId == companion.InstanceId
+                and Color3.fromRGB(166, 104, 75) or Color3.fromRGB(111, 101, 151)
+            breedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            breedButton.TextSize = 10
+            breedButton.Font = Enum.Font.GothamBlack
+            if (companion.BreedReadyIn or 0) > 0 then
+                breedButton.Text = "РАЗВЕДЕНИЕ · " .. tostring(companion.BreedReadyIn) .. " СЕК."
+                breedButton.Active = false
+            elseif selectedBreedingId == companion.InstanceId then
+                breedButton.Text = "ВЫБРАН · ВЫБРАТЬ ДРУГОГО"
+            else
+                breedButton.Text = "♥ " .. (selectedBreedingId and "ВЫБРАТЬ В ПАРУ" or "ВЫБРАТЬ ДЛЯ РАЗВЕДЕНИЯ")
+            end
+            breedButton.Parent = card
+            addCorner(breedButton, 8)
+            breedButton.Activated:Connect(function()
+                if (companion.BreedReadyIn or 0) > 0 then return end
+                if not selectedBreedingId then
+                    selectedBreedingId = companion.InstanceId
+                    renderInventory(data)
+                    return
+                end
+                if selectedBreedingId == companion.InstanceId then
+                    selectedBreedingId = nil
+                    renderInventory(data)
+                    return
+                end
+                breedButton.Active = false
+                breedButton.Text = "РАЗВЕДЕНИЕ..."
+                local updated = invokeInventory({
+                    Action = "Breed",
+                    InstanceId = selectedBreedingId,
+                    PartnerInstanceId = companion.InstanceId,
+                })
+                if updated then
+                    selectedBreedingId = nil
+                    renderInventory(updated)
+                else
+                    breedButton.Active = true
+                    breedButton.Text = "♥ ВЫБРАТЬ В ПАРУ"
                 end
             end)
         end
