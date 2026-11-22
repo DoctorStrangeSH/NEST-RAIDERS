@@ -4,6 +4,7 @@ local player = Players.LocalPlayer
 local remotes = ReplicatedStorage:WaitForChild("NestRaidersRemotes")
 local inventoryRemote = remotes:WaitForChild("CompanionInventory")
 local shopRemote = remotes:WaitForChild("EggShop")
+local collectionRemote = remotes:WaitForChild("CollectionBook")
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
@@ -148,6 +149,83 @@ local shopLayout = Instance.new("UIListLayout")
 shopLayout.Padding = UDim.new(0, 10)
 shopLayout.SortOrder = Enum.SortOrder.LayoutOrder
 shopLayout.Parent = shopList
+
+local collectionButton = Instance.new("TextButton")
+collectionButton.Name = "CollectionBookButton"
+collectionButton.Position = UDim2.fromOffset(18, 270)
+collectionButton.Size = UDim2.fromOffset(250, 46)
+collectionButton.BackgroundColor3 = Color3.fromRGB(91, 111, 157)
+collectionButton.Text = "КНИГА КОЛЛЕКЦИОНЕРА"
+collectionButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+collectionButton.TextSize = 14
+collectionButton.Font = Enum.Font.GothamBlack
+collectionButton.Parent = gui
+addCorner(collectionButton, 12)
+addStroke(collectionButton, Color3.fromRGB(167, 190, 238), 1.5)
+
+local bookPanel = Instance.new("Frame")
+bookPanel.Name = "CollectionBookPanel"
+bookPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+bookPanel.Position = UDim2.fromScale(0.5, 0.5)
+bookPanel.Size = UDim2.new(0.9, 0, 0.76, 0)
+bookPanel.BackgroundColor3 = Color3.fromRGB(27, 39, 58)
+bookPanel.BorderSizePixel = 0
+bookPanel.Visible = false
+bookPanel.Parent = gui
+addCorner(bookPanel, 18)
+addStroke(bookPanel, Color3.fromRGB(147, 173, 224), 2)
+
+local bookSize = Instance.new("UISizeConstraint")
+bookSize.MinSize = Vector2.new(290, 320)
+bookSize.MaxSize = Vector2.new(480, 590)
+bookSize.Parent = bookPanel
+
+local bookTitle = Instance.new("TextLabel")
+bookTitle.BackgroundTransparency = 1
+bookTitle.Position = UDim2.fromOffset(18, 12)
+bookTitle.Size = UDim2.new(1, -76, 0, 30)
+bookTitle.Font = Enum.Font.GothamBlack
+bookTitle.Text = "КНИГА КОЛЛЕКЦИОНЕРА"
+bookTitle.TextColor3 = Color3.fromRGB(226, 213, 255)
+bookTitle.TextSize = 17
+bookTitle.TextXAlignment = Enum.TextXAlignment.Left
+bookTitle.Parent = bookPanel
+
+local bookClose = Instance.new("TextButton")
+bookClose.AnchorPoint = Vector2.new(1, 0)
+bookClose.Position = UDim2.new(1, -12, 0, 10)
+bookClose.Size = UDim2.fromOffset(38, 34)
+bookClose.BackgroundColor3 = Color3.fromRGB(74, 91, 101)
+bookClose.Text = "✕"
+bookClose.TextColor3 = Color3.new(1, 1, 1)
+bookClose.TextSize = 18
+bookClose.Font = Enum.Font.GothamBold
+bookClose.Parent = bookPanel
+addCorner(bookClose, 10)
+
+local bookProgress = Instance.new("TextLabel")
+bookProgress.BackgroundTransparency = 1
+bookProgress.Position = UDim2.fromOffset(18, 46)
+bookProgress.Size = UDim2.new(1, -36, 0, 24)
+bookProgress.Font = Enum.Font.GothamBold
+bookProgress.TextColor3 = Color3.fromRGB(196, 211, 245)
+bookProgress.TextSize = 14
+bookProgress.TextXAlignment = Enum.TextXAlignment.Left
+bookProgress.Parent = bookPanel
+
+local bookList = Instance.new("ScrollingFrame")
+bookList.Position = UDim2.fromOffset(12, 78)
+bookList.Size = UDim2.new(1, -24, 1, -92)
+bookList.BackgroundTransparency = 1
+bookList.BorderSizePixel = 0
+bookList.ScrollBarThickness = 6
+bookList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+bookList.Parent = bookPanel
+
+local bookLayout = Instance.new("UIListLayout")
+bookLayout.Padding = UDim.new(0, 8)
+bookLayout.SortOrder = Enum.SortOrder.LayoutOrder
+bookLayout.Parent = bookList
 
 local inventoryPanel = Instance.new("Frame")
 inventoryPanel.Name = "CompanionInventory"
@@ -436,6 +514,74 @@ end
 
 shopButton.Activated:Connect(openShop)
 shopClose.Activated:Connect(function() shopPanel.Visible = false end)
+
+local function invokeCollectionBook()
+    local success, response = pcall(function()
+        return collectionRemote:InvokeServer({ Action = "Get" })
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось открыть книгу коллекционера.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Книга временно недоступна.")
+        return nil
+    end
+    return response.Data
+end
+
+local function renderCollectionBook(data)
+    if not data then return end
+    bookProgress.Text = string.format("Открыто видов: %d / %d   ·   %d%%",
+        data.Discovered or 0, data.Total or 0, data.CompletionPercent or 0)
+
+    for _, child in ipairs(bookList:GetChildren()) do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+
+    for index, entry in ipairs(data.Entries or {}) do
+        local card = Instance.new("Frame")
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 78)
+        card.BackgroundColor3 = entry.Discovered and Color3.fromRGB(49, 68, 91) or Color3.fromRGB(39, 48, 65)
+        card.BorderSizePixel = 0
+        card.Parent = bookList
+        addCorner(card, 11)
+
+        local name = Instance.new("TextLabel")
+        name.BackgroundTransparency = 1
+        name.Position = UDim2.fromOffset(12, 8)
+        name.Size = UDim2.new(1, -24, 0, 22)
+        name.Font = Enum.Font.GothamBold
+        name.Text = entry.Discovered and entry.Name or "???  ·  Не найден"
+        name.TextColor3 = entry.Discovered and Color3.fromRGB(255, 231, 174) or Color3.fromRGB(153, 164, 184)
+        name.TextSize = 15
+        name.TextXAlignment = Enum.TextXAlignment.Left
+        name.Parent = card
+
+        local details = Instance.new("TextLabel")
+        details.BackgroundTransparency = 1
+        details.Position = UDim2.fromOffset(12, 34)
+        details.Size = UDim2.new(1, -24, 0, 34)
+        details.Font = Enum.Font.GothamMedium
+        details.Text = entry.Discovered
+            and string.format("%s  ·  В коллекции: %d  ·  +%d монет / 10 сек.", entry.Rarity, entry.OwnedCount, entry.Income)
+            or string.format("Редкость: %s  ·  Шанс из яйца луга: %d%%", entry.Rarity, entry.HatchChance)
+        details.TextColor3 = Color3.fromRGB(190, 204, 223)
+        details.TextSize = 12
+        details.TextXAlignment = Enum.TextXAlignment.Left
+        details.Parent = card
+    end
+end
+
+local function openCollectionBook()
+    bookPanel.Visible = true
+    local data = invokeCollectionBook()
+    if data then renderCollectionBook(data) end
+end
+
+collectionButton.Activated:Connect(openCollectionBook)
+bookClose.Activated:Connect(function() bookPanel.Visible = false end)
 
 local function openInventory()
     inventoryPanel.Visible = true
