@@ -251,7 +251,6 @@ local function renderInventory(data)
                 InstanceId = companion.InstanceId,
             })
             if updated then renderInventory(updated) end
-            action.Active = true
         end)
     end
 end
