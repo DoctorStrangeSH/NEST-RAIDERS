@@ -60,7 +60,10 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Feed displayed pets for 10 coins to restore hunger and a little mood.
 - [x] Let tired displayed pets rest for 60 seconds to recover energy.
 - [x] Playing consumes energy; exhausted pets refuse play until rested.
-- [ ] Care items, species-specific preferences, and mood-based income / behavior reactions.
+- [x] Species-specific companion personalities are defined in the shared catalog and shown in the nest care panel.
+- [x] Each starter species has a favorite food; the treat action serves the correct species-specific favorite automatically.
+- [x] Personality changes the mood gained from petting or playing, with all bonuses capped by the 0–100 mood limit.
+- [ ] Unlockable food inventory, craftable treats, and deeper mood-based behavior reactions.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
