@@ -938,7 +938,7 @@ renderDisplay = function(data)
         local info = Instance.new("TextLabel")
         info.BackgroundTransparency = 1
         info.Position = UDim2.fromOffset(10, 7)
-        info.Size = UDim2.new(1, -210, 1, -14)
+        info.Size = UDim2.new(1, -160, 1, -14)
         info.Text = entry.Empty and ("Витрина №" .. entry.Slot .. "\nСвободное место") or string.format("Витрина №%d · %s\n%s · +%d / 10 сек.\n♥ %d%%  ·  🍖 %d%%  ·  ⚡ %d%%\n%s", entry.Slot, entry.Name, entry.Rarity or "Обычный", entry.Income or 0, entry.Mood or 50, entry.Hunger or 100, entry.Energy or 100, entry.IsSleeping and "Спит…" or "Бодрствует")
         info.TextColor3 = Color3.fromRGB(236, 241, 247)
         info.TextSize = 12
@@ -972,11 +972,11 @@ renderDisplay = function(data)
         end)
 
         if not entry.Empty then
-            local function addCareAction(label, interaction, xOffset, color)
+            local function addCareAction(label, interaction, xOffset, yOffset, color)
                 local interact = Instance.new("TextButton")
-                interact.AnchorPoint = Vector2.new(1, 1)
-                interact.Position = UDim2.new(1, xOffset, 1, -8)
-                interact.Size = UDim2.fromOffset(49, 34)
+                interact.AnchorPoint = Vector2.new(1, 0)
+                interact.Position = UDim2.new(1, xOffset, 0, yOffset)
+                interact.Size = UDim2.fromOffset(68, 27)
                 interact.BackgroundColor3 = color
                 interact.Text = label
                 interact.TextColor3 = Color3.new(1, 1, 1)
@@ -994,10 +994,10 @@ renderDisplay = function(data)
                     if updated then renderDisplay(updated) else interact.Active = true end
                 end)
             end
-            addCareAction("ЛАСКА", "Pet", -167, Color3.fromRGB(89, 143, 112))
-            addCareAction("ИГРА", "Play", -114, Color3.fromRGB(91, 126, 174))
-            addCareAction("КОРМ", "Feed", -61, Color3.fromRGB(183, 139, 70))
-            addCareAction("СОН", "Sleep", -8, Color3.fromRGB(91, 104, 153))
+            addCareAction("ЛАСКА", "Pet", -80, 44, Color3.fromRGB(89, 143, 112))
+            addCareAction("ИГРА", "Play", -8, 44, Color3.fromRGB(91, 126, 174))
+            addCareAction("КОРМ", "Feed", -80, 77, Color3.fromRGB(183, 139, 70))
+            addCareAction("СОН", "Sleep", -8, 77, Color3.fromRGB(91, 104, 153))
         end
     end
 end
