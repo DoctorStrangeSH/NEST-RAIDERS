@@ -25,6 +25,7 @@
 - The nest toy shop offers a Meadow Ball (25 coins), Cozy Plush (40 coins), and Wind Spinner (35 coins). Each displayed pet can equip one toy; replacing it purchases the new toy at full price.
 - The nest decoration shop offers a Flower Pot (30), Warm Lantern (55), Meadow Crystal (75), and Mushroom Seat (90). Buy decorations into inventory, place them in an unlocked empty slot, and remove them to return them to inventory.
 - Nest level 1 has two decoration slots; each nest upgrade unlocks one additional slot, up to six at level 5. Decoration changes are saved with the player profile.
+- Placed decorations can be nudged around the nest on a 2-stud grid and rotated in 15-degree steps using touch-friendly controls; server checks keep them inside the plot.
 - Playing with an equipped toy increases mood by its catalog bonus plus 10 when it is the pet’s favorite toy; energy cost is determined by the toy (the Wind Spinner costs no energy).
 - Toy models are temporary scripted props; curated Creator Store toy assets are a later visual pass.
 - Feed a pet for 10 coins to restore 35 hunger and 5 mood; tired pets can rest for 60 seconds to recover energy.
