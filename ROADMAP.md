@@ -112,7 +112,8 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add persistent lineage eggs with a five-minute incubation timer, offspring preview, inherited genetics, and hatch-at-station flow.
 - [x] Add three deterministic starter-pair hybrid species with distinct follower silhouettes and breeding-only collection entries.
 - [x] Add distinct physical mutation ornaments for Verdant, Luminous, and Prismatic companion genetics; show trait rarity and income bonus in inventory.
-- [ ] Add a dedicated nest breeding station and expanded hybrid ability kits.
+- [x] Add a glowing personal nest breeding altar with owner-only prompt guidance and server-enforced proximity for breeding.
+- [ ] Add expanded hybrid ability kits.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
 - [ ] Economy sinks and telemetry-driven balancing.
