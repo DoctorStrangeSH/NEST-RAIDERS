@@ -120,3 +120,7 @@ Three starter cross-species pairs now produce unique hybrids: EmberFox, Fernshel
 
 ## Genetic mutation appearances
 Verdant, Luminous, and Prismatic companions have distinct physical ornaments in addition to their aura: leaf crystals, glowing lantern orbs, and multi-color facets. The collection UI displays each trait's rarity and passive-income bonus.
+
+
+## Personal breeding altar
+Each player's nest includes a dedicated glowing breeding altar. Breeding requests are server-validated and only accepted near the altar in the player's own plot.
