@@ -126,9 +126,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
         end
     end
 
-    for slot, instanceId in pairs(displayedIds or {}) do
+    for rawSlot, instanceId in pairs(displayedIds or {}) do
+        local slot = tonumber(rawSlot)
         local companion = ownedById[instanceId]
-        local offset = slotOffsets[slot]
+        local offset = slot and slotOffsets[slot]
         if companion and offset then
             local model = buildPet(folder, companion, slot)
             model.Name = "Display_" .. tostring(companion.Id) .. "_" .. tostring(slot)
