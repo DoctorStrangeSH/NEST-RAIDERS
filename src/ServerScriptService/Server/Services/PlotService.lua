@@ -90,6 +90,13 @@ local function buildPlot(parent, definition)
     breedingPrompt.MaxActivationDistance = 12
     breedingPrompt.RequiresLineOfSight = false
     breedingPrompt.Parent = breedingCore
+    breedingPrompt.Triggered:Connect(function(player)
+        if plot:GetAttribute("OwnerUserId") ~= player.UserId then
+            player:SetAttribute("LastNotice", "Этот алтарь принадлежит другому игроку.")
+            return
+        end
+        player:SetAttribute("LastNotice", "Алтарь готов. Открой коллекцию и выбери двух взрослых питомцев для разведения.")
+    end)
 
     local sign = makePart(plot, "OwnerSign", Vector3.new(1, 5, 9), CFrame.new(center + Vector3.new(0, 4, -14)), Color3.fromRGB(105, 72, 47), Enum.Material.Wood)
     local surface = Instance.new("SurfaceGui")
