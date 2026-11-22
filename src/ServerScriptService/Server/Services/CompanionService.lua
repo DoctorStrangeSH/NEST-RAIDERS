@@ -133,7 +133,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
         if companion and offset then
             local model = buildPet(folder, companion, slot)
             model.Name = "Display_" .. tostring(companion.Id) .. "_" .. tostring(slot)
-            model:PivotTo(CFrame.new(plot.Center + offset + Vector3.new(0, 3.45, 0)))
+            model:PivotTo(CFrame.new(plot.Center + offset + Vector3.new(0, 1.5, 0)))
         end
     end
 end
