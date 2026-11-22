@@ -9,7 +9,7 @@ gui.Parent = player:WaitForChild("PlayerGui")
 local panel = Instance.new("Frame")
 panel.Name = "StatusPanel"
 panel.Position = UDim2.fromOffset(18, 18)
-panel.Size = UDim2.fromOffset(250, 112)
+panel.Size = UDim2.fromOffset(250, 132)
 panel.BackgroundColor3 = Color3.fromRGB(28, 45, 55)
 panel.BackgroundTransparency = 0.08
 panel.BorderSizePixel = 0
@@ -37,7 +37,7 @@ local stats = Instance.new("TextLabel")
 stats.Name = "Stats"
 stats.BackgroundTransparency = 1
 stats.Position = UDim2.fromOffset(14, 36)
-stats.Size = UDim2.new(1, -28, 0, 66)
+stats.Size = UDim2.new(1, -28, 0, 84)
 stats.Font = Enum.Font.GothamBold
 stats.TextColor3 = Color3.fromRGB(241, 247, 236)
 stats.TextSize = 15
@@ -71,10 +71,11 @@ local function updateStats()
         player:GetAttribute("Coins") or 0,
         player:GetAttribute("EggCount") or 0,
         player:GetAttribute("CompanionCount") or 0,
-        player:GetAttribute("Level") or 1)
+        player:GetAttribute("Level") or 1,
+        player:GetAttribute("PlotId") or "Assigning...")
 end
 
-for _, attribute in ipairs({"ProfileLoaded", "Coins", "EggCount", "CompanionCount", "Level"}) do
+for _, attribute in ipairs({"ProfileLoaded", "Coins", "EggCount", "CompanionCount", "Level", "PlotId"}) do
     player:GetAttributeChangedSignal(attribute):Connect(updateStats)
 end
 
