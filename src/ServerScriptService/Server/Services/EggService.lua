@@ -1,21 +1,23 @@
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
+local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 
 local EggService = {}
 local EGG_RESPAWN_SECONDS = 20
 local EGG_CAPACITY = 20
-local COMPANIONS = {
-    { Id = "MeadowFox", Name = "Луговой лис", Rarity = "Обычный", Income = 2, Weight = 55 },
-    { Id = "MossTurtle", Name = "Мшистая черепаха", Rarity = "Необычный", Income = 4, Weight = 30 },
-    { Id = "SproutDragon", Name = "Росток-дракон", Rarity = "Редкий", Income = 8, Weight = 15 },
-}
+local COMPANIONS = {}
+for _, definition in pairs(CompanionCatalog) do
+    table.insert(COMPANIONS, definition)
+end
+table.sort(COMPANIONS, function(a, b) return a.Id < b.Id end)
 
 local function syncAttributes(player, profile)
     player:SetAttribute("EggCount", #profile.EggInventory)
