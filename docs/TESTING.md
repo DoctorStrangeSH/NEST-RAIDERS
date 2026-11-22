@@ -261,3 +261,17 @@
 - [ ] Verify training does not duplicate income, companions, or active slots under rapid repeated requests.
 - [ ] Verify desktop and mobile inventory cards fit, scroll, and keep Train / Merge / Equip actions reachable.
 - [ ] Verify old profiles migrate without data loss and their companion income is recalculated safely.
+
+
+## Species-specific companion abilities — Sprint 4.14
+- [ ] Verify each species exposes only its catalog-defined ability: MeadowFox / TrailFinder, MossTurtle / RootBlessing, SproutDragon / VerdantSpark.
+- [ ] Verify ability controls remain locked below level 7 and are unavailable to non-equipped companions.
+- [ ] Verify the adult ability becomes usable at level 7 and displays its current ready / cooldown state.
+- [ ] Verify TrailFinder grants the configured coin reward through the server economy service and respects the global currency cap.
+- [ ] Verify RootBlessing adds the configured amount to Nest.StoredCoins without exceeding the nest storage cap; collected nest coins remain collectible.
+- [ ] Verify VerdantSpark grants the configured player XP through ProgressionService and updates level / zone unlock attributes.
+- [ ] Verify each ability sets a per-companion 300-second cooldown and a repeated request cannot duplicate its reward.
+- [ ] Verify cooldown persists after respawn and profile reload in a published private test experience.
+- [ ] Verify unknown ability IDs, altered client payloads, unowned pets, inactive pets, locked pets, and cooldown bypass attempts are rejected.
+- [ ] Verify the inventory UI fits on mobile and desktop, and locked / ready / cooldown labels remain readable.
+- [ ] Verify abilities do not grant rewards when the player profile is not loaded.
