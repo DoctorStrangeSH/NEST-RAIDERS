@@ -2122,24 +2122,25 @@ local function renderContest()
     end
 
     for index, item in ipairs(contestData.Categories or {}) do
+        local categoryItem = item
         local tab = Instance.new("TextButton")
         tab.LayoutOrder = index
         tab.Size = UDim2.new(1/3, -5, 1, 0)
-        tab.BackgroundColor3 = item.Id == selectedContestCategory and Color3.fromRGB(155, 112, 62) or Color3.fromRGB(75, 83, 103)
-        tab.Text = item.Name
+        tab.BackgroundColor3 = categoryItem.Id == selectedContestCategory and Color3.fromRGB(155, 112, 62) or Color3.fromRGB(75, 83, 103)
+        tab.Text = categoryItem.Name
         tab.TextColor3 = Color3.new(1, 1, 1)
         tab.TextSize = 10
         tab.Font = Enum.Font.GothamBlack
         tab.Parent = contestTabs
         addCorner(tab, 8)
         tab.Activated:Connect(function()
-            selectedContestCategory = item.Id
+            selectedContestCategory = categoryItem.Id
             renderContest()
         end)
     end
 
-    local testNote = contestData.IsLocalTest and "Локальный тест Studio · результаты не сохраняются" or "Голосование недели · таблица общая для серверов"
-    contestWeek.Text = "Неделя " .. tostring(contestData.Week or "—") .. "  ·  " .. testNote
+    local testNote = contestData.IsLocalTest and "Локальный тест" or "Общая таблица"
+    contestWeek.Text = "Неделя " .. tostring(contestData.Week or "—") .. " · " .. testNote
     addContestLabel(category.Description, 1, 34, Color3.fromRGB(235, 213, 173))
     addContestLabel("ЛУЧШИЕ ОСТРОВА НЕДЕЛИ", 2, 24, Color3.fromRGB(255, 220, 151))
 
@@ -2160,6 +2161,7 @@ local function renderContest()
         addContestLabel("Другие игроки появятся здесь, когда присоединятся к серверу.", nomineeOrder + 1, 44)
     else
         for index, nominee in ipairs(nominees) do
+            local nomineeEntry = nominee
             local row = Instance.new("Frame")
             row.LayoutOrder = nomineeOrder + index
             row.Size = UDim2.new(1, -8, 0, 54)
@@ -2172,7 +2174,7 @@ local function renderContest()
             name.BackgroundTransparency = 1
             name.Position = UDim2.fromOffset(10, 5)
             name.Size = UDim2.new(1, -120, 1, -10)
-            name.Text = nominee.DisplayName .. " · ур. " .. tostring(nominee.Level or 1)
+            name.Text = nomineeEntry.DisplayName .. " · ур. " .. tostring(nomineeEntry.Level or 1)
             name.TextColor3 = Color3.fromRGB(240, 242, 248)
             name.TextSize = 11
             name.TextWrapped = true
@@ -2198,7 +2200,7 @@ local function renderContest()
                 local result = invokeContest({
                     Action = "Vote",
                     Category = selectedContestCategory,
-                    UserId = nominee.UserId,
+                    UserId = nomineeEntry.UserId,
                 })
                 if result then
                     local refreshed = invokeContest({ Action = "List" })
