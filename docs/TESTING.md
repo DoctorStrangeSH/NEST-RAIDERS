@@ -180,3 +180,19 @@
 - [ ] Verify opening / refreshing the list is not blocked by the action cooldown; rapid like / favorite toggles are throttled.
 - [ ] Verify likes do not grant coins, XP, pets, or combat power.
 - [ ] Verify profile reconciliation adds social fields to existing saves without wiping existing nest data.
+
+
+## Weekly island contests — Sprint 4.9
+- [ ] In Studio local fallback, run a two-player server and verify all three categories appear: Cozy, Nature, Fantasy.
+- [ ] Verify each category shows its own standings and the currently occupied islands on this server as nominees.
+- [ ] Vote for another player in Cozy; verify the vote is accepted and the category locks for that voter.
+- [ ] Attempt a second Cozy vote for a different island; verify the server rejects it.
+- [ ] Verify the same player can still vote once in Nature and once in Fantasy.
+- [ ] Attempt to vote for yourself, an offline player, an invalid UserId, and an unknown category; verify rejection.
+- [ ] Verify a player leaving after the list loads causes a clear rejection rather than a phantom vote.
+- [ ] In a published private test experience with API access enabled, vote from two different servers and verify both votes appear in the same category leaderboard.
+- [ ] Verify the leaderboard sorts by vote count descending and shows display names for offline winners.
+- [ ] Verify weekly datastore names change at the UTC week boundary and a new week's vote allowance starts.
+- [ ] Simulate DataStore read / write failure; verify the UI displays a safe error and does not claim a vote was saved when it was not.
+- [ ] Verify contest votes grant no coins, XP, pets, items, or PvP power.
+- [ ] Verify the Studio fallback clearly indicates that results are local and ephemeral.
