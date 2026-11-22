@@ -4,17 +4,69 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local player = Players.LocalPlayer
-local remotes = ReplicatedStorage:WaitForChild("NestRaidersRemotes")
-local inventoryRemote = remotes:WaitForChild("CompanionInventory")
-local shopRemote = remotes:WaitForChild("EggShop")
-local collectionRemote = remotes:WaitForChild("CollectionBook")
-local nestRemote = remotes:WaitForChild("NestUpgrade")
-local displayRemote = remotes:WaitForChild("DisplayPets")
-local decorRemote = remotes:WaitForChild("NestDecor")
-local buildRemote = remotes:WaitForChild("NestBuild")
-local visitRemote = remotes:WaitForChild("IslandVisit")
-local contestRemote = remotes:WaitForChild("IslandContest")
-local publicProfileRemote = remotes:WaitForChild("PublicProfile")
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Keep a visible boot diagnostic instead of leaving players in an empty world.
+local bootGui = Instance.new("ScreenGui")
+bootGui.Name = "NestRaidersBootDiagnostic"
+bootGui.ResetOnSpawn = false
+bootGui.DisplayOrder = 1000
+bootGui.Parent = playerGui
+
+local bootCard = Instance.new("Frame")
+bootCard.AnchorPoint = Vector2.new(0.5, 0.5)
+bootCard.Position = UDim2.fromScale(0.5, 0.5)
+bootCard.Size = UDim2.fromOffset(420, 132)
+bootCard.BackgroundColor3 = Color3.fromRGB(27, 39, 48)
+bootCard.BorderSizePixel = 0
+bootCard.Parent = bootGui
+local bootCorner = Instance.new("UICorner")
+bootCorner.CornerRadius = UDim.new(0, 14)
+bootCorner.Parent = bootCard
+local bootText = Instance.new("TextLabel")
+bootText.BackgroundTransparency = 1
+bootText.Position = UDim2.fromOffset(18, 14)
+bootText.Size = UDim2.new(1, -36, 1, -28)
+bootText.Font = Enum.Font.GothamBold
+bootText.TextSize = 16
+bootText.TextWrapped = true
+bootText.TextColor3 = Color3.fromRGB(245, 242, 226)
+bootText.Text = "NEST RAIDERS\\nПодключаем игровые системы..."
+bootText.Parent = bootCard
+
+local remotes = ReplicatedStorage:WaitForChild("NestRaidersRemotes", 20)
+if not remotes then
+    bootText.Text = "NEST RAIDERS\\nСервер не запустил игровые службы. Открой View → Output в Roblox Studio и проверь красные ошибки."
+    warn("[NEST RAIDERS] Boot failed: NestRaidersRemotes was not created by the server.")
+    return
+end
+
+local function waitRemote(name)
+    local remote = remotes:WaitForChild(name, 20)
+    if not remote then
+        bootText.Text = "NEST RAIDERS\\nНе создана серверная функция: " .. name .. ". Проверь ошибки в Output."
+        warn("[NEST RAIDERS] Boot failed: missing RemoteFunction " .. name)
+    end
+    return remote
+end
+
+local inventoryRemote = waitRemote("CompanionInventory")
+local shopRemote = waitRemote("EggShop")
+local collectionRemote = waitRemote("CollectionBook")
+local nestRemote = waitRemote("NestUpgrade")
+local displayRemote = waitRemote("DisplayPets")
+local decorRemote = waitRemote("NestDecor")
+local buildRemote = waitRemote("NestBuild")
+local visitRemote = waitRemote("IslandVisit")
+local contestRemote = waitRemote("IslandContest")
+local publicProfileRemote = waitRemote("PublicProfile")
+
+if not (inventoryRemote and shopRemote and collectionRemote and nestRemote and displayRemote
+    and decorRemote and buildRemote and visitRemote and contestRemote and publicProfileRemote) then
+    return
+end
+
+bootGui:Destroy()
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
