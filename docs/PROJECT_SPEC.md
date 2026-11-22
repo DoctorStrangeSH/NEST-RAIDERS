@@ -281,7 +281,7 @@ A feature is done only when:
 
 ## Breeding ritual reveal — Sprint 4.20
 - A successful server-side Breed action triggers a short altar sequence after the lineage egg is inserted into the profile.
-- Two temporary parent-energy echoes use species-specific colors and converge toward the altar core through Beam instances.
+- Temporary preview copies of the two exact selected companion models appear on opposite altar pads. Their species silhouettes and genetic ornaments are preserved; they converge toward the altar core through species-colored Beam instances.
 - The egg appears as a small spark, grows into a visible egg, and receives a trait-colored PointLight and particle burst.
 - Genetic trait colors: Natural warm gold, Verdant green, Luminous cyan, Prismatic violet.
 - The egg stores IsHybrid based on the selected offspring catalog entry. Hybrid eggs receive four additional golden shards and a stronger reveal burst.
