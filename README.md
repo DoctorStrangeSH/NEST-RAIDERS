@@ -104,3 +104,7 @@ Companions gain growth XP through paid training and progress through Hatchling, 
 
 ## Adult companion abilities
 At level 7, equipped companions unlock a unique active ability: MeadowFox finds coin stashes, MossTurtle stores a nest blessing, and SproutDragon grants player XP. Each ability has a persistent per-companion five-minute cooldown and is validated on the server.
+
+
+## Adult breeding and genetics
+Two different adult species can breed without being consumed. Offspring inherit one parent's species and usually one parent's genetic trait, with a small chance of Luminous or Prismatic mutation. Both parents receive a 30-minute cooldown, and lineage is recorded in the collection.
