@@ -9,6 +9,8 @@
 - Placeholder fox, turtle, and dragon companion models follow the player (up to three visible).
 - Server-authoritative egg shop: buy Meadow Eggs for 50 coins, with server-side balance and bag-capacity checks.
 - Shop UI shows the exact 55% / 30% / 15% hatch probabilities.
+- Shared companion catalog drives hatch weights, shop odds, names, rarity, and income.
+- Collection book tracks discovered species, duplicates, and collection completion.
 - Server-authoritative companion inventory with equip / unequip and a three-pet active limit.
 - Russian, touch-friendly collection panel with rarity, level, and passive income details.
 - Only equipped companions follow the player and generate passive income.
@@ -33,10 +35,11 @@
 6. Confirm the hatched companion appears and follows your character.
 7. Open «Магазин яиц», buy a Meadow Egg for 50 coins, and verify both balance and egg count update.
 8. Confirm the shop displays 55% / 30% / 15% hatch odds.
-9. Open «Мои питомцы», equip and unequip companions, and confirm no more than three can be active.
-10. Confirm only equipped companions follow you and generate passive income.
-11. Wait for passive income; confirm Coins increases.
-12. Rejoin the private test place and confirm data persists.
+9. Open «Книга коллекционера» and confirm undiscovered species are hidden and completion counts unique species.
+10. Open «Мои питомцы», equip and unequip companions, and confirm no more than three can be active.
+11. Confirm only equipped companions follow you and generate passive income.
+12. Wait for passive income; confirm Coins increases.
+13. Rejoin the private test place and confirm data persists.
 
 ## Known limitations
 - World geometry is a temporary scripted blockout, not final art.
