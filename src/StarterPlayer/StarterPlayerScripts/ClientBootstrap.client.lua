@@ -414,13 +414,28 @@ local function renderInventory(data)
         mergeButton.Parent = card
         addCorner(mergeButton, 8)
 
+        local mergeArmed = false
         mergeButton.Activated:Connect(function()
+            if not mergeArmed then
+                mergeArmed = true
+                mergeButton.Text = "ТОЧНО? −2"
+                mergeButton.BackgroundColor3 = Color3.fromRGB(166, 104, 75)
+                return
+            end
             mergeButton.Active = false
+            mergeButton.Text = "СЛИЯНИЕ..."
             local updated = invokeInventory({
                 Action = "Merge",
                 InstanceId = companion.InstanceId,
             })
-            if updated then renderInventory(updated) end
+            if updated then
+                renderInventory(updated)
+            else
+                mergeButton.Active = true
+                mergeButton.Text = "СЛИЯТЬ ×3"
+                mergeButton.BackgroundColor3 = Color3.fromRGB(127, 91, 174)
+                mergeArmed = false
+            end
         end)
 
         action.Activated:Connect(function()
