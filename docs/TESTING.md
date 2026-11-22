@@ -165,3 +165,18 @@
 - [ ] Have a visitor leave while visiting; verify visitor count decreases.
 - [ ] Attempt malformed plot IDs, self-visits, unavailable plot IDs, and rapid repeated requests; verify server rejection.
 - [ ] Verify visits do not modify player profile data or grant currency / rewards.
+
+
+## Island likes and favorites — Sprint 4.8
+- [ ] Use two Studio clients; open the island browser and verify each island shows its current like count.
+- [ ] Like another player's island; verify the owner sees the count increase and the viewer sees the active like state.
+- [ ] Toggle the same like off; verify count decreases and repeated requests cannot create duplicate likes.
+- [ ] Attempt to like your own island and an offline / invalid UserId; verify rejection.
+- [ ] Add an island to favorites; close and reopen the panel and verify the saved state remains.
+- [ ] Rejoin using a published private test experience and verify favorite IDs and received likes persist across sessions.
+- [ ] Remove an island from favorites and verify it disappears from the favorites-only filter.
+- [ ] Save 30 favorites and verify the 31st is rejected with a clear message.
+- [ ] Verify the browser sorts by likes descending, then visitors, then owner name.
+- [ ] Verify opening / refreshing the list is not blocked by the action cooldown; rapid like / favorite toggles are throttled.
+- [ ] Verify likes do not grant coins, XP, pets, or combat power.
+- [ ] Verify profile reconciliation adds social fields to existing saves without wiping existing nest data.
