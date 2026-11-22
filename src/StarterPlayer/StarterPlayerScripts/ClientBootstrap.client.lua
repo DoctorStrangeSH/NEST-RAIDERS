@@ -6,6 +6,7 @@ local inventoryRemote = remotes:WaitForChild("CompanionInventory")
 local shopRemote = remotes:WaitForChild("EggShop")
 local collectionRemote = remotes:WaitForChild("CollectionBook")
 local nestRemote = remotes:WaitForChild("NestUpgrade")
+local displayRemote = remotes:WaitForChild("DisplayPets")
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
@@ -251,6 +252,144 @@ nestUpgrade.TextSize = 15
 nestUpgrade.Font = Enum.Font.GothamBlack
 nestUpgrade.Parent = nestPanel
 addCorner(nestUpgrade, 11)
+
+local displayButton = Instance.new("TextButton")
+displayButton.Name = "DisplayPetsButton"
+displayButton.Position = UDim2.fromOffset(18, 376)
+displayButton.Size = UDim2.fromOffset(250, 46)
+displayButton.BackgroundColor3 = Color3.fromRGB(104, 133, 170)
+displayButton.Text = "ПИТОМЦЫ НА ВИТРИНАХ"
+displayButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+displayButton.TextSize = 13
+displayButton.Font = Enum.Font.GothamBlack
+displayButton.Parent = gui
+addCorner(displayButton, 12)
+addStroke(displayButton, Color3.fromRGB(177, 207, 239), 1.5)
+
+local displayPanel = Instance.new("Frame")
+displayPanel.Name = "DisplayPetsPanel"
+displayPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+displayPanel.Position = UDim2.fromScale(0.5, 0.5)
+displayPanel.Size = UDim2.new(0.9, 0, 0.76, 0)
+displayPanel.BackgroundColor3 = Color3.fromRGB(31, 45, 59)
+displayPanel.BorderSizePixel = 0
+displayPanel.Visible = false
+displayPanel.Parent = gui
+addCorner(displayPanel, 18)
+addStroke(displayPanel, Color3.fromRGB(148, 190, 227), 2)
+
+local displaySize = Instance.new("UISizeConstraint")
+displaySize.MinSize = Vector2.new(290, 330)
+displaySize.MaxSize = Vector2.new(480, 580)
+displaySize.Parent = displayPanel
+
+local displayTitle = Instance.new("TextLabel")
+displayTitle.BackgroundTransparency = 1
+displayTitle.Position = UDim2.fromOffset(18, 12)
+displayTitle.Size = UDim2.new(1, -76, 0, 30)
+displayTitle.Font = Enum.Font.GothamBlack
+displayTitle.Text = "ПИТОМЦЫ В ГНЕЗДЕ"
+displayTitle.TextColor3 = Color3.fromRGB(213, 232, 255)
+displayTitle.TextSize = 18
+displayTitle.TextXAlignment = Enum.TextXAlignment.Left
+displayTitle.Parent = displayPanel
+
+local displayClose = Instance.new("TextButton")
+displayClose.AnchorPoint = Vector2.new(1, 0)
+displayClose.Position = UDim2.new(1, -12, 0, 10)
+displayClose.Size = UDim2.fromOffset(38, 34)
+displayClose.BackgroundColor3 = Color3.fromRGB(74, 91, 101)
+displayClose.Text = "✕"
+displayClose.TextColor3 = Color3.new(1, 1, 1)
+displayClose.TextSize = 18
+displayClose.Font = Enum.Font.GothamBold
+displayClose.Parent = displayPanel
+addCorner(displayClose, 10)
+
+local displayIncome = Instance.new("TextLabel")
+displayIncome.BackgroundTransparency = 1
+displayIncome.Position = UDim2.fromOffset(18, 48)
+displayIncome.Size = UDim2.new(1, -36, 0, 44)
+displayIncome.Font = Enum.Font.GothamMedium
+displayIncome.TextColor3 = Color3.fromRGB(199, 222, 212)
+displayIncome.TextSize = 13
+displayIncome.TextWrapped = true
+displayIncome.TextXAlignment = Enum.TextXAlignment.Left
+displayIncome.Parent = displayPanel
+
+local collectDisplay = Instance.new("TextButton")
+collectDisplay.Position = UDim2.fromOffset(14, 94)
+collectDisplay.Size = UDim2.new(1, -28, 0, 38)
+collectDisplay.BackgroundColor3 = Color3.fromRGB(185, 143, 65)
+collectDisplay.Text = "СОБРАТЬ МОНЕТЫ"
+collectDisplay.TextColor3 = Color3.fromRGB(255, 255, 245)
+collectDisplay.TextSize = 14
+collectDisplay.Font = Enum.Font.GothamBlack
+collectDisplay.Parent = displayPanel
+addCorner(collectDisplay, 10)
+
+local displayList = Instance.new("ScrollingFrame")
+displayList.Position = UDim2.fromOffset(12, 142)
+displayList.Size = UDim2.new(1, -24, 1, -154)
+displayList.BackgroundTransparency = 1
+displayList.BorderSizePixel = 0
+displayList.ScrollBarThickness = 6
+displayList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+displayList.Parent = displayPanel
+
+local displayLayout = Instance.new("UIListLayout")
+displayLayout.Padding = UDim.new(0, 8)
+displayLayout.SortOrder = Enum.SortOrder.LayoutOrder
+displayLayout.Parent = displayList
+
+local pickerPanel = Instance.new("Frame")
+pickerPanel.Name = "DisplayPetPicker"
+pickerPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+pickerPanel.Position = UDim2.fromScale(0.5, 0.5)
+pickerPanel.Size = UDim2.new(0.86, 0, 0.68, 0)
+pickerPanel.BackgroundColor3 = Color3.fromRGB(39, 50, 67)
+pickerPanel.BorderSizePixel = 0
+pickerPanel.Visible = false
+pickerPanel.Parent = gui
+addCorner(pickerPanel, 16)
+addStroke(pickerPanel, Color3.fromRGB(169, 194, 231), 2)
+
+local pickerTitle = Instance.new("TextLabel")
+pickerTitle.BackgroundTransparency = 1
+pickerTitle.Position = UDim2.fromOffset(16, 10)
+pickerTitle.Size = UDim2.new(1, -70, 0, 30)
+pickerTitle.Font = Enum.Font.GothamBlack
+pickerTitle.Text = "ВЫБЕРИ ПИТОМЦА"
+pickerTitle.TextColor3 = Color3.fromRGB(221, 231, 255)
+pickerTitle.TextSize = 16
+pickerTitle.TextXAlignment = Enum.TextXAlignment.Left
+pickerTitle.Parent = pickerPanel
+
+local pickerClose = Instance.new("TextButton")
+pickerClose.AnchorPoint = Vector2.new(1, 0)
+pickerClose.Position = UDim2.new(1, -10, 0, 8)
+pickerClose.Size = UDim2.fromOffset(36, 32)
+pickerClose.BackgroundColor3 = Color3.fromRGB(74, 91, 101)
+pickerClose.Text = "✕"
+pickerClose.TextColor3 = Color3.new(1, 1, 1)
+pickerClose.TextSize = 17
+pickerClose.Font = Enum.Font.GothamBold
+pickerClose.Parent = pickerPanel
+addCorner(pickerClose, 9)
+
+local pickerList = Instance.new("ScrollingFrame")
+pickerList.Position = UDim2.fromOffset(10, 48)
+pickerList.Size = UDim2.new(1, -20, 1, -58)
+pickerList.BackgroundTransparency = 1
+pickerList.BorderSizePixel = 0
+pickerList.ScrollBarThickness = 6
+pickerList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+pickerList.Parent = pickerPanel
+
+local pickerLayout = Instance.new("UIListLayout")
+pickerLayout.Padding = UDim.new(0, 7)
+pickerLayout.SortOrder = Enum.SortOrder.LayoutOrder
+pickerLayout.Parent = pickerList
 
 local bookPanel = Instance.new("Frame")
 bookPanel.Name = "CollectionBookPanel"
@@ -688,6 +827,172 @@ nestUpgrade.Activated:Connect(function()
     nestUpgrade.Active = false
     local data = invokeNest({ Action = "Upgrade" })
     if data then renderNest(data) else nestUpgrade.Active = true end
+end)
+
+local selectedDisplaySlot = nil
+local latestDisplayData = nil
+
+local function invokeDisplay(payload)
+    local success, response = pcall(function()
+        return displayRemote:InvokeServer(payload)
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось связаться с гнездом.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Действие не выполнено.")
+        return nil
+    end
+    if response.Message then showNotice(response.Message) end
+    return response.Data
+end
+
+local function makeDisplayButton(parent, text, color, callback)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, -8, 0, 36)
+    button.BackgroundColor3 = color
+    button.Text = text
+    button.TextColor3 = Color3.fromRGB(255, 255, 245)
+    button.TextSize = 12
+    button.Font = Enum.Font.GothamBold
+    button.Parent = parent
+    addCorner(button, 9)
+    button.Activated:Connect(callback)
+    return button
+end
+
+local function renderPicker(data)
+    for _, child in ipairs(pickerList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+    if #(data.Available or {}) == 0 then
+        local empty = Instance.new("TextLabel")
+        empty.Size = UDim2.new(1, -8, 0, 56)
+        empty.BackgroundTransparency = 1
+        empty.Text = "Нет свободных питомцев. Сними питомца с команды или витрины."
+        empty.TextColor3 = Color3.fromRGB(190, 204, 223)
+        empty.TextWrapped = true
+        empty.Font = Enum.Font.GothamMedium
+        empty.TextSize = 13
+        empty.Parent = pickerList
+        return
+    end
+    for index, companion in ipairs(data.Available) do
+        local card = Instance.new("Frame")
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 72)
+        card.BackgroundColor3 = Color3.fromRGB(55, 70, 88)
+        card.BorderSizePixel = 0
+        card.Parent = pickerList
+        addCorner(card, 10)
+
+        local info = Instance.new("TextLabel")
+        info.BackgroundTransparency = 1
+        info.Position = UDim2.fromOffset(10, 6)
+        info.Size = UDim2.new(1, -122, 1, -12)
+        info.Text = string.format("%s  %s\n%s · Ур. %d · +%d / 10 сек.", companion.Name, string.rep("★", companion.Stars or 1), companion.Rarity or "Обычный", companion.Level or 1, companion.Income or 0)
+        info.TextColor3 = Color3.fromRGB(235, 239, 247)
+        info.TextSize = 12
+        info.TextWrapped = true
+        info.TextXAlignment = Enum.TextXAlignment.Left
+        info.Font = Enum.Font.GothamMedium
+        info.Parent = card
+
+        local choose = Instance.new("TextButton")
+        choose.AnchorPoint = Vector2.new(1, 0.5)
+        choose.Position = UDim2.new(1, -8, 0.5, 0)
+        choose.Size = UDim2.fromOffset(104, 36)
+        choose.BackgroundColor3 = Color3.fromRGB(83, 151, 103)
+        choose.Text = "ПОСТАВИТЬ"
+        choose.TextColor3 = Color3.new(1, 1, 1)
+        choose.TextSize = 11
+        choose.Font = Enum.Font.GothamBlack
+        choose.Parent = card
+        addCorner(choose, 8)
+        choose.Activated:Connect(function()
+            choose.Active = false
+            local updated = invokeDisplay({ Action = "Place", Slot = selectedDisplaySlot, InstanceId = companion.InstanceId })
+            if updated then
+                pickerPanel.Visible = false
+                latestDisplayData = updated
+                renderDisplay(updated)
+            else
+                choose.Active = true
+            end
+        end)
+    end
+end
+
+function renderDisplay(data)
+    if not data then return end
+    latestDisplayData = data
+    displayIncome.Text = string.format("Витрины: %d / %d  ·  Доход: +%d монет каждые %d сек.\nНакоплено: %d монет", #(data.Displayed or {}), data.SlotLimit or 0, data.IncomePerTick or 0, data.TickSeconds or 10, data.StoredCoins or 0)
+    collectDisplay.Text = "СОБРАТЬ · " .. tostring(data.StoredCoins or 0) .. " 🪙"
+    collectDisplay.Active = (data.StoredCoins or 0) > 0
+    collectDisplay.AutoButtonColor = collectDisplay.Active
+    for _, child in ipairs(displayList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+    for index, entry in ipairs(data.Displayed or {}) do
+        local card = Instance.new("Frame")
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 82)
+        card.BackgroundColor3 = Color3.fromRGB(49, 66, 83)
+        card.BorderSizePixel = 0
+        card.Parent = displayList
+        addCorner(card, 10)
+
+        local info = Instance.new("TextLabel")
+        info.BackgroundTransparency = 1
+        info.Position = UDim2.fromOffset(10, 7)
+        info.Size = UDim2.new(1, -118, 1, -14)
+        info.Text = entry.Empty and ("Витрина №" .. entry.Slot .. "\nСвободное место") or string.format("Витрина №%d · %s\n%s · +%d / 10 сек.", entry.Slot, entry.Name, entry.Rarity or "Обычный", entry.Income or 0)
+        info.TextColor3 = Color3.fromRGB(236, 241, 247)
+        info.TextSize = 12
+        info.TextWrapped = true
+        info.TextXAlignment = Enum.TextXAlignment.Left
+        info.Font = Enum.Font.GothamMedium
+        info.Parent = card
+
+        local action = Instance.new("TextButton")
+        action.AnchorPoint = Vector2.new(1, 0.5)
+        action.Position = UDim2.new(1, -8, 0.5, 0)
+        action.Size = UDim2.fromOffset(102, 36)
+        action.BackgroundColor3 = entry.Empty and Color3.fromRGB(83, 151, 103) or Color3.fromRGB(154, 91, 77)
+        action.Text = entry.Empty and "ВЫБРАТЬ" or "СНЯТЬ"
+        action.TextColor3 = Color3.new(1, 1, 1)
+        action.TextSize = 11
+        action.Font = Enum.Font.GothamBlack
+        action.Parent = card
+        addCorner(action, 8)
+        action.Activated:Connect(function()
+            if entry.Empty then
+                selectedDisplaySlot = entry.Slot
+                renderPicker(latestDisplayData)
+                pickerPanel.Visible = true
+            else
+                action.Active = false
+                local updated = invokeDisplay({ Action = "Remove", Slot = entry.Slot })
+                if updated then renderDisplay(updated) else action.Active = true end
+            end
+        end)
+    end
+end
+
+local function openDisplay()
+    displayPanel.Visible = true
+    local data = invokeDisplay({ Action = "Get" })
+    if data then renderDisplay(data) end
+end
+
+displayButton.Activated:Connect(openDisplay)
+displayClose.Activated:Connect(function() displayPanel.Visible = false end)
+pickerClose.Activated:Connect(function() pickerPanel.Visible = false end)
+collectDisplay.Activated:Connect(function()
+    collectDisplay.Active = false
+    local data = invokeDisplay({ Action = "Collect" })
+    if data then renderDisplay(data) else collectDisplay.Active = true end
 end)
 
 local function invokeCollectionBook()
