@@ -6,6 +6,7 @@ local PlayerDataService = require(ServerScriptService.Server.Services.PlayerData
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
 local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
+local NestToyCatalog = require(ReplicatedStorage.Shared.Config.NestToyCatalog)
 
 local DisplayPetService = {}
 DisplayPetService._lastRequest = {}
@@ -96,6 +97,9 @@ local function getSnapshot(profile)
                 Personality = definition.Personality or "Без характера",
                 PersonalityDescription = definition.PersonalityDescription or "",
                 FavoriteFood = definition.FavoriteFood or "Обычный корм",
+                FavoriteToy = definition.FavoriteToy,
+                ToyId = (profile.Nest.CompanionToys or {})[instanceId],
+                ToyName = NestToyCatalog[(profile.Nest.CompanionToys or {})[instanceId] or ""] and NestToyCatalog[(profile.Nest.CompanionToys or {})[instanceId]].Name or nil,
             })
         else
             table.insert(displayed, { Slot = slot, Empty = true })
@@ -155,6 +159,7 @@ function DisplayPetService:HandleRequest(player, payload)
     profile.Nest.DisplayedCompanions = type(profile.Nest.DisplayedCompanions) == "table" and profile.Nest.DisplayedCompanions or {}
     profile.Nest.StoredCoins = math.max(0, math.floor(tonumber(profile.Nest.StoredCoins) or 0))
     profile.Nest.CompanionMood = type(profile.Nest.CompanionMood) == "table" and profile.Nest.CompanionMood or {}
+    profile.Nest.CompanionToys = type(profile.Nest.CompanionToys) == "table" and profile.Nest.CompanionToys or {}
 
     if payload.Action == "Get" then
         local snapshot = getSnapshot(profile)
@@ -243,7 +248,28 @@ function DisplayPetService:HandleRequest(player, payload)
         end
         local needs = getNeeds(profile, payload.InstanceId, os.time())
         local definition = CompanionCatalog[companion.Id] or {}
-        if interaction == "Feed" or interaction == "Treat" then
+        if interaction == "EquipToy" then
+            if type(payload.ToyId) ~= "string" then
+                return { Ok = false, Message = "Неизвестная игрушка." }
+            end
+            local toy = NestToyCatalog[payload.ToyId]
+            if not toy then
+                return { Ok = false, Message = "Такой игрушки нет в каталоге." }
+            end
+            if profile.Nest.CompanionToys[payload.InstanceId] == payload.ToyId then
+                return { Ok = false, Message = companion.Name .. " уже играет с этой игрушкой." }
+            end
+            if profile.Coins < toy.Cost then
+                return { Ok = false, Message = "Не хватает монет. Нужно " .. toy.Cost .. " монет." }
+            end
+            profile.Coins -= toy.Cost
+            profile.Nest.CompanionToys[payload.InstanceId] = payload.ToyId
+            player:SetAttribute("Coins", profile.Coins)
+            self._lastInteraction[interactionKey] = now
+            self:RefreshPlayer(player)
+            player:SetAttribute("LastNotice", companion.Name .. " получил игрушку: " .. toy.Name .. "!")
+            return { Ok = true, Data = getSnapshot(profile) }
+        elseif interaction == "Feed" or interaction == "Treat" then
             local isTreat = interaction == "Treat"
             local cost = isTreat and TREAT_COST or FEED_COST
             if profile.Coins < cost then
@@ -277,6 +303,28 @@ function DisplayPetService:HandleRequest(player, payload)
             self._lastInteraction[interactionKey] = now
             self:RefreshPlayer(player)
             player:SetAttribute("LastNotice", companion.Name .. " устроился отдохнуть на минутку.")
+            return { Ok = true, Data = getSnapshot(profile) }
+        elseif interaction == "ToyPlay" then
+            local toyId = profile.Nest.CompanionToys[payload.InstanceId]
+            local toy = NestToyCatalog[toyId or ""]
+            if not toy then
+                return { Ok = false, Message = companion.Name .. " пока не получил игрушку." }
+            end
+            local energyCost = math.max(0, math.floor(tonumber(toy.EnergyCost) or 0))
+            if needs.Energy < energyCost then
+                return { Ok = false, Message = companion.Name .. " слишком устал для этой игрушки." }
+            end
+            local favoriteBonus = definition.FavoriteToy == toyId and 10 or 0
+            local moodGain = 10 + math.max(0, math.floor(tonumber(toy.PlayMoodBonus) or 0)) + favoriteBonus
+            profile.Nest.CompanionMood[payload.InstanceId] = math.clamp(
+                (tonumber(profile.Nest.CompanionMood[payload.InstanceId]) or 50) + moodGain,
+                0,
+                100
+            )
+            needs.Energy = math.max(0, needs.Energy - energyCost)
+            self._lastInteraction[interactionKey] = now
+            self:RefreshPlayer(player)
+            player:SetAttribute("LastNotice", companion.Name .. " весело играет: " .. toy.Name .. "!")
             return { Ok = true, Data = getSnapshot(profile) }
         else
             local gain = MOOD_GAIN[interaction]
