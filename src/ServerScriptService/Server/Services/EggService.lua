@@ -12,9 +12,9 @@ local EggService = {}
 local EGG_RESPAWN_SECONDS = 20
 local EGG_CAPACITY = 20
 local COMPANIONS = {
-    { Id = "MeadowFox", Name = "Meadow Fox", Rarity = "Common", Income = 2, Weight = 55 },
-    { Id = "MossTurtle", Name = "Moss Turtle", Rarity = "Uncommon", Income = 4, Weight = 30 },
-    { Id = "SproutDragon", Name = "Sprout Dragon", Rarity = "Rare", Income = 8, Weight = 15 },
+    { Id = "MeadowFox", Name = "Луговой лис", Rarity = "Обычный", Income = 2, Weight = 55 },
+    { Id = "MossTurtle", Name = "Мшистая черепаха", Rarity = "Необычный", Income = 4, Weight = 30 },
+    { Id = "SproutDragon", Name = "Росток-дракон", Rarity = "Редкий", Income = 8, Weight = 15 },
 }
 
 local function syncAttributes(player, profile)
@@ -44,7 +44,7 @@ function EggService:Collect(player, egg)
 
     local profile = PlayerDataService:GetProfile(player)
     if not profile or #profile.EggInventory >= EGG_CAPACITY then
-        player:SetAttribute("LastNotice", "Egg bag is full!")
+        player:SetAttribute("LastNotice", "Сумка для яиц заполнена!")
         return
     end
 
@@ -55,7 +55,7 @@ function EggService:Collect(player, egg)
         CollectedAt = os.time(),
     })
     syncAttributes(player, profile)
-    player:SetAttribute("LastNotice", "Meadow Egg collected!")
+    player:SetAttribute("LastNotice", "Ты подобрал яйцо луга!")
 
     egg.Transparency = 1
     egg.CanCollide = false
@@ -76,13 +76,13 @@ function EggService:Hatch(player, station)
     if not player:GetAttribute("ProfileLoaded") then return end
     local profile = PlayerDataService:GetProfile(player)
     if not profile or #profile.EggInventory == 0 then
-        player:SetAttribute("LastNotice", "Find an egg before hatching!")
+        player:SetAttribute("LastNotice", "Сначала найди или купи яйцо!")
         return
     end
 
     local plotId = station and station:GetAttribute("PlotId")
     if not plotId or not PlotService:IsOwner(player, plotId) then
-        player:SetAttribute("LastNotice", "This nest belongs to another player.")
+        player:SetAttribute("LastNotice", "Это гнездо принадлежит другому игроку.")
         return
     end
 
@@ -111,7 +111,7 @@ function EggService:Hatch(player, station)
     player:SetAttribute("ActiveCompanionCount", #profile.ActiveCompanions)
     ProgressionService:AddXP(player, 15)
     CompanionService:RefreshPlayer(player)
-    player:SetAttribute("LastNotice", "You hatched a " .. definition.Rarity .. " " .. definition.Name .. "! +15 XP")
+    player:SetAttribute("LastNotice", "Вылупился питомец: " .. definition.Name .. " (" .. definition.Rarity .. ")! +15 опыта")
 end
 
 function EggService:Init()
