@@ -79,6 +79,10 @@ These are starting hypotheses, not final balance. A level alone must not unlock 
 - Each player receives a server-assigned plot.
 - Plot ownership and all placement operations are server-validated.
 - Upgrades expand capacity and cosmetic options.
+- Players can buy cosmetic decorations into a persistent inventory, place them into unlocked slots on their own plot, and remove them back into inventory.
+- Decoration purchase and placement are server-authoritative: validate profile readiness, plot ownership, proximity, catalog IDs, currency, inventory, slot unlocks, and occupancy.
+- Nest level 1 exposes two decoration slots; each upgrade adds one, up to six at level 5.
+- Cosmetics must not affect pet stats, passive income, raid outcomes, or progression power.
 - Protect offline players from destructive loss; raids should have bounded stakes and recovery.
 
 ### 5.6 Raids and PvP
