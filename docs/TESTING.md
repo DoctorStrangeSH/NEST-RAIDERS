@@ -230,3 +230,18 @@
 - [ ] Verify MemoryStore read / write failures fall back to the current-server list with a clear status message.
 - [ ] Verify Studio mode explicitly indicates that global browsing is unavailable and retains local island browsing.
 - [ ] Verify likes, favorites, profile data, and currency are unchanged by cross-server travel.
+
+
+## Player identity, public profiles, achievements, and titles — Sprint 4.12
+- [ ] In a two-player Studio server, open the other local player's island profile and verify display name, username, level, nest level, companion count, unique species, collection percent, received likes, and trophy count.
+- [ ] Verify the profile never exposes coins, inventory instance IDs, session tokens, private save fields, or other players' like voter IDs.
+- [ ] Verify achievement unlock states are derived from server profile data: first companion, 10 companions, five unique species, nest level 3, one contest trophy, 10 received likes, and level 10.
+- [ ] Verify achievements cannot be unlocked by sending modified client payloads; the profile remote accepts only Get and EquipTitle actions.
+- [ ] Verify only unlocked titles can be equipped and an arbitrary / unknown title ID is rejected.
+- [ ] Verify equipped title persists after leaving and rejoining in a published private test experience.
+- [ ] Verify the title appears above the owner's character and refreshes after respawn or title change.
+- [ ] Verify title can be removed and no title is shown above the avatar when unequipped.
+- [ ] Verify a profile request for an offline player or player on another server fails safely with a clear message.
+- [ ] Verify profile request cooldown and repeated title selection do not break the panel.
+- [ ] Verify the own-profile button, local island profile button, close button, and mobile scrolling layout.
+- [ ] Verify public profile data refreshes after earning a companion, leveling, receiving likes, or claiming a trophy.
