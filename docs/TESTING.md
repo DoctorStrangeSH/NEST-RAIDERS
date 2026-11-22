@@ -349,3 +349,19 @@
 - [ ] Verify station placement does not overlap the hatch station, nest bowl, owner sign, or display pedestals.
 - [ ] Verify the station and prompt are usable on desktop and mobile touch controls.
 - [ ] Verify prompt activation and remote invocation spam do not duplicate lineage eggs or charge coins more than once.
+
+
+## Breeding ritual reveal — Sprint 4.20
+- [ ] Verify a successful Breed action creates exactly one lineage egg and triggers one ritual sequence.
+- [ ] Verify two parent-energy echoes use distinct species colors and converge toward the altar core.
+- [ ] Verify energy beams converge on the core and disappear when the egg reveal begins.
+- [ ] Verify the lineage egg grows from a small spark to a visible egg above the altar.
+- [ ] Verify Natural, Verdant, Luminous, and Prismatic traits use their corresponding reveal colors.
+- [ ] Verify Luminous and Prismatic particles remain readable without overwhelming the scene.
+- [ ] Verify hybrid offspring store IsHybrid=true and trigger four golden reveal shards with a stronger light/particle burst.
+- [ ] Verify non-hybrid offspring store IsHybrid=false and do not display the golden hybrid burst.
+- [ ] Verify effects clean themselves up within nine seconds and do not accumulate after repeated breeding.
+- [ ] Verify the animation runs only after server validation and successful egg insertion; rejected requests do not spawn effects or charge currency.
+- [ ] Verify the ritual does not block the inventory response or delay the five-minute incubation timer.
+- [ ] Verify two players breeding simultaneously see effects only at their own personal altars.
+- [ ] Verify the altar ritual is readable on mobile and does not obstruct nearby prompts.
