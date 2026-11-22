@@ -59,6 +59,38 @@ local function buildPlot(parent, definition)
     prompt.RequiresLineOfSight = false
     prompt.Parent = station
 
+    -- Dedicated breeding altar: a clear landmark beside the hatch station.
+    local breedingBase = makePart(plot, "BreedingStationBase", Vector3.new(9, 1.2, 8),
+        CFrame.new(center + Vector3.new(11, 2.3, 0)), Color3.fromRGB(126, 91, 145), Enum.Material.WoodPlanks)
+    breedingBase.CanCollide = true
+    local breedingRing = makePart(plot, "BreedingStationRing", Vector3.new(6.8, 0.45, 6.8),
+        CFrame.new(center + Vector3.new(11, 3.05, 0)), Color3.fromRGB(177, 125, 226), Enum.Material.Neon)
+    breedingRing.Shape = Enum.PartType.Cylinder
+    breedingRing.CFrame = CFrame.new(center + Vector3.new(11, 3.05, 0)) * CFrame.Angles(0, 0, math.rad(90))
+    breedingRing.CanCollide = false
+    breedingRing.Transparency = 0.12
+    local breedingCore = makePart(plot, "BreedingStation", Vector3.new(2.8, 3.6, 2.8),
+        CFrame.new(center + Vector3.new(11, 5.0, 0)), Color3.fromRGB(202, 157, 255), Enum.Material.Glass)
+    breedingCore.Shape = Enum.PartType.Ball
+    breedingCore.Transparency = 0.18
+    breedingCore:SetAttribute("PlotId", definition.Id)
+    local breedingLight = Instance.new("PointLight")
+    breedingLight.Name = "BreedingGlow"
+    breedingLight.Color = Color3.fromRGB(194, 143, 255)
+    breedingLight.Brightness = 1.4
+    breedingLight.Range = 14
+    breedingLight.Shadows = false
+    breedingLight.Parent = breedingCore
+    local breedingPrompt = Instance.new("ProximityPrompt")
+    breedingPrompt.Name = "BreedingPrompt"
+    breedingPrompt.ActionText = "Разведение"
+    breedingPrompt.ObjectText = "Алтарь потомства"
+    breedingPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    breedingPrompt.HoldDuration = 0.35
+    breedingPrompt.MaxActivationDistance = 12
+    breedingPrompt.RequiresLineOfSight = false
+    breedingPrompt.Parent = breedingCore
+
     local sign = makePart(plot, "OwnerSign", Vector3.new(1, 5, 9), CFrame.new(center + Vector3.new(0, 4, -14)), Color3.fromRGB(105, 72, 47), Enum.Material.Wood)
     local surface = Instance.new("SurfaceGui")
     surface.Face = Enum.NormalId.Front
@@ -344,6 +376,7 @@ function PlotService:Init()
             Id = definition.Id,
             Model = model,
             Station = station,
+            BreedingStation = model:FindFirstChild("BreedingStation"),
             OwnerLabel = ownerLabel,
             Center = definition.Position,
         }
