@@ -1977,7 +1977,7 @@ local function renderVisitList(response)
         info.BackgroundTransparency = 1
         info.Position = UDim2.fromOffset(10, 6)
         info.Size = UDim2.new(1, -104, 1, -12)
-        info.Text = string.format("%s\nУровень %d · Гостей %d/%d\n★ %d отметок", entry.DisplayName, entry.Level or 1, entry.Visitors or 0, entry.Capacity or 8, entry.Likes or 0)
+        info.Text = string.format("%s\nУровень %d · Гостей %d/%d\n%s · ★ %d", entry.DisplayName, entry.Level or 1, entry.Visitors or 0, entry.Capacity or 8, entry.IsLocal and "ЭТОТ СЕРВЕР" or "ДРУГОЙ СЕРВЕР", entry.Likes or 0)
         info.TextColor3 = Color3.fromRGB(239, 241, 246)
         info.TextSize = 12
         info.TextWrapped = true
@@ -1998,7 +1998,12 @@ local function renderVisitList(response)
         addCorner(visit, 8)
         visit.Activated:Connect(function()
             visit.Active = false
-            local result = invokeVisit({ Action = "Visit", PlotId = entry.PlotId })
+            local result = invokeVisit({
+                Action = "VisitGlobal",
+                UserId = entry.UserId,
+                JobId = entry.JobId,
+                PlaceId = entry.PlaceId,
+            })
             if result then
                 visitPanel.Visible = false
                 visitButton.Text = "ВЕРНУТЬСЯ ДОМОЙ"
@@ -2062,9 +2067,14 @@ visitFilterButton.Activated:Connect(function()
 end)
 
 local function openVisitPanel()
-    local response = invokeVisit({ Action = "List" })
+    local response = invokeVisit({ Action = "ListGlobal" })
     if response then
         renderVisitList(response)
+        if response.DirectoryStatus == "Unavailable" then
+            visitStatus.Text = response.DirectoryMessage or "Глобальный каталог недоступен."
+        elseif response.DirectoryStatus == "StudioLocalOnly" then
+            visitStatus.Text = "Studio: показаны острова текущего сервера"
+        end
         visitPanel.Visible = true
     end
 end
