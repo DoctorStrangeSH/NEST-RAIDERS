@@ -40,3 +40,11 @@ Use Creator Store assets only after checking creator, permissions, dependencies,
 - Directional controls nudge the selected decoration; the rotate control turns it in 15-degree increments.
 - Position and rotation are stored in the player profile and restored when the plot is assigned.
 - The server rejects out-of-bounds, malformed, and non-finite transforms.
+
+
+## Island decoration editor — latest addition
+- Select an existing decoration and enter placement mode.
+- A local translucent preview snaps to the owned island's grass surface on a 2-stud grid.
+- Confirm with mouse click or touch tap; rotate with R on desktop or the on-screen rotate control on mobile.
+- Cancel with Escape or the on-screen cancel control. The editor panel is hidden during placement so the island remains visible.
+- The client only raycasts against the current player's own plot surface; the server still validates ownership, slot, proximity, and transform bounds.
