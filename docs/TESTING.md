@@ -90,6 +90,10 @@
 - [ ] A player can place only an owned decoration into an unlocked, empty slot on their own plot.
 - [ ] A player cannot place into another player’s plot, an occupied slot, or a slot above the nest-level limit.
 - [ ] Removing a placed decoration returns exactly one item to inventory and clears the model.
+- [ ] Move placed decorations with directional controls; positions snap to a 2-stud grid.
+- [ ] Rotate placed decorations in 15-degree steps and verify the model orientation updates.
+- [ ] Verify movement and rotation persist after reconnect.
+- [ ] Reject coordinates outside the nest bounds, malformed / non-finite transforms, and attempts to move locked or empty slots.
 - [ ] Nest level 1 exposes two decoration slots; each upgrade unlocks one more, up to six at level 5.
 - [ ] Inventory and placed decorations persist after reconnect and restore on the assigned plot.
 - [ ] Releasing a plot removes the previous owner’s rendered decorations and displayed pets before reassignment.
