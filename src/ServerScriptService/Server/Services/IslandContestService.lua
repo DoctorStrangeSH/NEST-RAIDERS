@@ -11,10 +11,14 @@ local PlotService = require(ServerScriptService.Server.Services.PlotService)
 
 local IslandContestService = {}
 IslandContestService._lastRequest = {}
+IslandContestService._lastListRequest = {}
+IslandContestService._standingsCache = {}
 IslandContestService._studioVotes = {}
 IslandContestService._studioScores = {}
 
 local COOLDOWN = 2
+local LIST_COOLDOWN = 2
+local STANDINGS_CACHE_SECONDS = 10
 local MAX_RESULTS = 10
 local CATEGORIES = {
     Cozy = { Name = "Уют", Description = "Самый тёплый и гостеприимный остров." },
@@ -64,6 +68,11 @@ end
 
 function IslandContestService:GetStandings(category)
     local week = weekKey()
+    self._standingsCache[week] = self._standingsCache[week] or {}
+    local cached = self._standingsCache[week][category]
+    if cached and cached.ExpiresAt > os.clock() then
+        return cached.Results
+    end
     local results = {}
     if studioFallback() then
         local scores = self._studioScores[week] and self._studioScores[week][category] or {}
@@ -104,6 +113,10 @@ function IslandContestService:GetStandings(category)
         entry.Rank = index
         entry.DisplayName = names[entry.UserId] or ("Игрок " .. tostring(entry.UserId))
     end
+    self._standingsCache[week][category] = {
+        Results = results,
+        ExpiresAt = os.clock() + STANDINGS_CACHE_SECONDS,
+    }
     return results
 end
 
@@ -127,6 +140,11 @@ function IslandContestService:HasVoted(player, category)
 end
 
 function IslandContestService:List(player)
+    local now = os.clock()
+    if now - (self._lastListRequest[player] or 0) < LIST_COOLDOWN then
+        return { Ok=false, Message="Список конкурса обновляется слишком часто. Подожди пару секунд." }
+    end
+    self._lastListRequest[player] = now
     local categories = {}
     for category, definition in pairs(CATEGORIES) do
         local standings, err = self:GetStandings(category)
@@ -203,6 +221,8 @@ function IslandContestService:Vote(player, category, targetUserId)
         end
     end
 
+    local weekScores = self._standingsCache[week]
+    if weekScores then weekScores[category] = nil end
     return { Ok=true, Message="Голос принят! Спасибо за участие в конкурсе." }
 end
 
@@ -243,6 +263,7 @@ function IslandContestService:Init()
     end
     Players.PlayerRemoving:Connect(function(player)
         self._lastRequest[player] = nil
+        self._lastListRequest[player] = nil
     end)
 end
 
