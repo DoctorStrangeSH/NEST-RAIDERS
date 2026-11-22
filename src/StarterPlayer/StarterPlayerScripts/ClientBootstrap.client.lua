@@ -491,13 +491,25 @@ addCorner(visitClose, 10)
 local visitStatus = Instance.new("TextLabel")
 visitStatus.BackgroundTransparency = 1
 visitStatus.Position = UDim2.fromOffset(18, 48)
-visitStatus.Size = UDim2.new(1, -36, 0, 24)
+visitStatus.Size = UDim2.new(1, -150, 0, 24)
 visitStatus.Font = Enum.Font.GothamMedium
 visitStatus.Text = "Выбери остров для посещения"
 visitStatus.TextColor3 = Color3.fromRGB(218, 225, 235)
 visitStatus.TextSize = 12
 visitStatus.TextXAlignment = Enum.TextXAlignment.Left
 visitStatus.Parent = visitPanel
+
+local showFavoriteIslandsOnly = false
+local visitFilterButton = Instance.new("TextButton")
+visitFilterButton.Position = UDim2.new(1, -128, 0, 45)
+visitFilterButton.Size = UDim2.fromOffset(110, 28)
+visitFilterButton.BackgroundColor3 = Color3.fromRGB(89, 103, 136)
+visitFilterButton.Text = "ВСЕ ОСТРОВА"
+visitFilterButton.TextColor3 = Color3.new(1, 1, 1)
+visitFilterButton.TextSize = 9
+visitFilterButton.Font = Enum.Font.GothamBlack
+visitFilterButton.Parent = visitPanel
+addCorner(visitFilterButton, 8)
 
 local visitList = Instance.new("ScrollingFrame")
 visitList.Position = UDim2.fromOffset(12, 80)
@@ -1783,10 +1795,21 @@ local function clearVisitList()
     end
 end
 
+local lastVisitResponse
 local function renderVisitList(response)
+    lastVisitResponse = response
     clearVisitList()
-    local islands = response.Islands or {}
-    visitStatus.Text = #islands > 0 and ("Доступно островов: " .. #islands) or "Пока нет других доступных островов"
+    local allIslands = response.Islands or {}
+    local islands = {}
+    for _, island in ipairs(allIslands) do
+        if not showFavoriteIslandsOnly or island.IsFavoriteByMe then
+            table.insert(islands, island)
+        end
+    end
+    visitFilterButton.Text = showFavoriteIslandsOnly and "ИЗБРАННОЕ ★" or "ВСЕ ОСТРОВА"
+    visitStatus.Text = showFavoriteIslandsOnly
+        and ("В избранном: " .. #islands)
+        or ("Доступно островов: " .. #allIslands)
 
     if response.Visiting then
         local returnCard = Instance.new("Frame")
@@ -1843,7 +1866,7 @@ local function renderVisitList(response)
         local entry = island
         local card = Instance.new("Frame")
         card.LayoutOrder = index + 1
-        card.Size = UDim2.new(1, -8, 0, 72)
+        card.Size = UDim2.new(1, -8, 0, 104)
         card.BackgroundColor3 = Color3.fromRGB(61, 70, 84)
         card.BorderSizePixel = 0
         card.Parent = visitList
@@ -1852,8 +1875,8 @@ local function renderVisitList(response)
         local info = Instance.new("TextLabel")
         info.BackgroundTransparency = 1
         info.Position = UDim2.fromOffset(10, 6)
-        info.Size = UDim2.new(1, -128, 1, -12)
-        info.Text = string.format("%s\nУровень %d · Гостей %d/%d", entry.DisplayName, entry.Level or 1, entry.Visitors or 0, entry.Capacity or 8)
+        info.Size = UDim2.new(1, -174, 1, -12)
+        info.Text = string.format("%s\nУровень %d · Гостей %d/%d\n★ %d отметок", entry.DisplayName, entry.Level or 1, entry.Visitors or 0, entry.Capacity or 8, entry.Likes or 0)
         info.TextColor3 = Color3.fromRGB(239, 241, 246)
         info.TextSize = 12
         info.TextWrapped = true
@@ -1863,12 +1886,12 @@ local function renderVisitList(response)
 
         local visit = Instance.new("TextButton")
         visit.AnchorPoint = Vector2.new(1, 0.5)
-        visit.Position = UDim2.new(1, -8, 0.5, 0)
-        visit.Size = UDim2.fromOffset(106, 38)
+        visit.Position = UDim2.new(1, -8, 0, 8)
+        visit.Size = UDim2.fromOffset(76, 28)
         visit.BackgroundColor3 = Color3.fromRGB(91, 139, 188)
         visit.Text = "В ГОСТИ"
         visit.TextColor3 = Color3.new(1, 1, 1)
-        visit.TextSize = 11
+        visit.TextSize = 9
         visit.Font = Enum.Font.GothamBlack
         visit.Parent = card
         addCorner(visit, 8)
@@ -1882,8 +1905,60 @@ local function renderVisitList(response)
                 visit.Active = true
             end
         end)
+
+        local likeButton = Instance.new("TextButton")
+        likeButton.Position = UDim2.new(1, -8, 0, 42)
+        likeButton.Size = UDim2.fromOffset(76, 25)
+        likeButton.BackgroundColor3 = entry.IsLikedByMe and Color3.fromRGB(190, 116, 102) or Color3.fromRGB(90, 100, 116)
+        likeButton.Text = entry.IsLikedByMe and "★ НРАВИТСЯ" or "☆ ЛАЙК"
+        likeButton.TextColor3 = Color3.new(1, 1, 1)
+        likeButton.TextSize = 8
+        likeButton.Font = Enum.Font.GothamBlack
+        likeButton.Parent = card
+        addCorner(likeButton, 7)
+        likeButton.Activated:Connect(function()
+            likeButton.Active = false
+            local result = invokeVisit({ Action = "Like", UserId = entry.UserId })
+            if result then
+                entry.IsLikedByMe = result.Liked
+                entry.Likes = result.Likes
+                likeButton.Text = result.Liked and "★ НРАВИТСЯ" or "☆ ЛАЙК"
+                likeButton.BackgroundColor3 = result.Liked and Color3.fromRGB(190, 116, 102) or Color3.fromRGB(90, 100, 116)
+                info.Text = string.format("%s\nУровень %d · Гостей %d/%d\n★ %d отметок", entry.DisplayName, entry.Level or 1, entry.Visitors or 0, entry.Capacity or 8, entry.Likes or 0)
+            end
+            likeButton.Active = true
+        end)
+
+        local favoriteButton = Instance.new("TextButton")
+        favoriteButton.Position = UDim2.new(1, -8, 0, 72)
+        favoriteButton.Size = UDim2.fromOffset(76, 25)
+        favoriteButton.BackgroundColor3 = entry.IsFavoriteByMe and Color3.fromRGB(184, 151, 82) or Color3.fromRGB(90, 100, 116)
+        favoriteButton.Text = entry.IsFavoriteByMe and "★ СОХРАНЁН" or "☆ В ИЗБРАННОЕ"
+        favoriteButton.TextColor3 = Color3.new(1, 1, 1)
+        favoriteButton.TextSize = 7
+        favoriteButton.Font = Enum.Font.GothamBlack
+        favoriteButton.Parent = card
+        addCorner(favoriteButton, 7)
+        favoriteButton.Activated:Connect(function()
+            favoriteButton.Active = false
+            local result = invokeVisit({ Action = "Favorite", UserId = entry.UserId })
+            if result then
+                entry.IsFavoriteByMe = result.Favorite
+                favoriteButton.Text = result.Favorite and "★ СОХРАНЁН" or "☆ В ИЗБРАННОЕ"
+                favoriteButton.BackgroundColor3 = result.Favorite and Color3.fromRGB(184, 151, 82) or Color3.fromRGB(90, 100, 116)
+                if showFavoriteIslandsOnly and not result.Favorite then
+                    renderVisitList(lastVisitResponse)
+                end
+            end
+            favoriteButton.Active = true
+        end)
     end
 end
+
+visitFilterButton.Activated:Connect(function()
+    showFavoriteIslandsOnly = not showFavoriteIslandsOnly
+    if lastVisitResponse then renderVisitList(lastVisitResponse) end
+end)
 
 local function openVisitPanel()
     local response = invokeVisit({ Action = "List" })
