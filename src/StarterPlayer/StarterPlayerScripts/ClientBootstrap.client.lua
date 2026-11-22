@@ -996,7 +996,7 @@ renderDisplay = function(data)
             end
             addCareAction("ЛАСКА", "Pet", -80, 44, Color3.fromRGB(89, 143, 112))
             addCareAction("ИГРА", "Play", -8, 44, Color3.fromRGB(91, 126, 174))
-            addCareAction("КОРМ", "Feed", -80, 77, Color3.fromRGB(183, 139, 70))
+            addCareAction("КОРМ 10🪙", "Feed", -80, 77, Color3.fromRGB(183, 139, 70))
             addCareAction("СОН", "Sleep", -8, 77, Color3.fromRGB(91, 104, 153))
         end
     end
