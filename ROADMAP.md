@@ -103,7 +103,11 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Display up to six claimed contest trophies on each player island and add a Hall of Fame client panel.
 - [x] Add cross-server island discovery and server-validated visits through a live MemoryStore directory.
 - [ ] Add scheduled week-close processing and anti-alt vote review.
-- [ ] Companion rarity traits and collection milestone rewards.
+- [x] Roll independent genetic variants at hatch with disclosed rarity weights.
+- [x] Add companion training XP, 10 levels, and Hatchling / Young / Adult growth stages.
+- [x] Scale passive income from companion level, star rank, and capped genetic bonus.
+- [x] Show genetic traits and growth stages in inventory; render trait auras and larger evolved models.
+- [ ] Add species-specific active abilities and trait inheritance through breeding.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
 - [ ] Economy sinks and telemetry-driven balancing.
