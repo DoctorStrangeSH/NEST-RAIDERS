@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local HttpService = game:GetService("HttpService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
@@ -22,6 +23,9 @@ local function normalizeProfile(profile)
     profile.ActiveCompanions = type(profile.ActiveCompanions) == "table" and profile.ActiveCompanions or {}
     local owned = {}
     for _, companion in ipairs(profile.Companions) do
+        if type(companion.InstanceId) ~= "string" then
+            companion.InstanceId = HttpService:GenerateGUID(false)
+        end
         if type(companion.InstanceId) == "string" then
             owned[companion.InstanceId] = true
         end
