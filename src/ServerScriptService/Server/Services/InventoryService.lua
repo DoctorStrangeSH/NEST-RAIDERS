@@ -269,7 +269,20 @@ function InventoryService:HandleRequest(player, payload)
             }
         end
 
-        local childDefinition = math.random(1, 2) == 1 and CompanionCatalog[parentA.Id] or CompanionCatalog[parentB.Id]
+        local hybridByPair = {
+            ["MeadowFox:SproutDragon"] = "EmberFox",
+            ["MossTurtle:SproutDragon"] = "Fernshell",
+            ["MeadowFox:MossTurtle"] = "BriarGuardian",
+        }
+        local speciesA, speciesB = parentA.Id, parentB.Id
+        if speciesA > speciesB then speciesA, speciesB = speciesB, speciesA end
+        local hybridId = hybridByPair[speciesA .. ":" .. speciesB]
+        local childDefinition
+        if hybridId then
+            childDefinition = CompanionCatalog[hybridId]
+        else
+            childDefinition = math.random(1, 2) == 1 and CompanionCatalog[parentA.Id] or CompanionCatalog[parentB.Id]
+        end
         if not childDefinition then
             return { Ok = false, Message = "Невозможно вывести потомство для этой пары." }
         end
