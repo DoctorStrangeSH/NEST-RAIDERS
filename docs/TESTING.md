@@ -307,3 +307,19 @@
 - [ ] Verify rapid hatch requests cannot consume one egg twice or duplicate a companion.
 - [ ] Verify the hatch station still validates plot ownership and player proximity for lineage eggs.
 - [ ] Verify desktop and mobile collection layout remains readable with the incubator summary.
+
+
+## Starter hybrid species — Sprint 4.17
+- [ ] Verify MeadowFox + SproutDragon always produces EmberFox, regardless of parent selection order.
+- [ ] Verify MossTurtle + SproutDragon always produces Fernshell, regardless of parent selection order.
+- [ ] Verify MeadowFox + MossTurtle always produces BriarGuardian, regardless of parent selection order.
+- [ ] Verify each hybrid egg stores the hybrid species ID and the original parent species IDs before incubation.
+- [ ] Verify ready hybrid eggs hatch into the stored hybrid species and preserve the inherited/mutated genetic trait.
+- [ ] Verify all hybrid definitions have Weight = 0 and are excluded from the natural egg hatch pool.
+- [ ] Verify hybrid species appear in the collection book with HybridOnly=true and are labelled "Только через разведение" until discovered.
+- [ ] Verify discovered hybrids show rarity, owned count, and passive income.
+- [ ] Verify EmberFox's CinderDash unlocks at level 7, requires an equipped pet, grants the server-calculated coin reward, and obeys the five-minute cooldown.
+- [ ] Verify Fernshell and BriarGuardian render distinct follower silhouettes rather than falling back to the MeadowFox model.
+- [ ] Verify unknown pair combinations never grant an unrelated hybrid and still follow the documented non-hybrid fallback.
+- [ ] Verify existing saved profiles load with the expanded catalog and no loss of existing companions.
+- [ ] Verify breeding, hatching, follower rendering, and collection UI on desktop and mobile in Roblox Studio.
