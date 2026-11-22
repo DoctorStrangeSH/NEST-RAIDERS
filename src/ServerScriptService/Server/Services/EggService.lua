@@ -1,7 +1,10 @@
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
+
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
+local PlotService = require(ServerScriptService.Server.Services.PlotService)
+local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
 
 local EggService = {}
 local EGG_RESPAWN_SECONDS = 20
@@ -67,7 +70,7 @@ function EggService:Collect(player, egg)
     end)
 end
 
-function EggService:Hatch(player)
+function EggService:Hatch(player, station)
     if not player:GetAttribute("ProfileLoaded") then return end
     local profile = PlayerDataService:GetProfile(player)
     if not profile or #profile.EggInventory == 0 then
@@ -75,22 +78,31 @@ function EggService:Hatch(player)
         return
     end
 
+    local plotId = station and station:GetAttribute("PlotId")
+    if not plotId or not PlotService:IsOwner(player, plotId) then
+        player:SetAttribute("LastNotice", "This nest belongs to another player.")
+        return
+    end
+
     local character = player.Character
     local root = character and character:FindFirstChild("HumanoidRootPart")
-    local world = Workspace:FindFirstChild("NestRaidersWorld")
-    local island = world and world:FindFirstChild("StarterIsland")
-    local nest = island and island:FindFirstChild("StarterNest")
-    local station = nest and nest:FindFirstChild("HatchStation")
-    if not root or not station or (root.Position - station.Position).Magnitude > 16 then return end
+    if not root or (root.Position - station.Position).Magnitude > 14 then return end
 
     table.remove(profile.EggInventory, 1)
     local definition = chooseCompanion()
-    table.insert(profile.Companions, {
-        Id = definition.Id, Name = definition.Name, Rarity = definition.Rarity,
-        Income = definition.Income, Level = 1, HatchedAt = os.time(),
-    })
+    local companion = {
+        Id = definition.Id,
+        Name = definition.Name,
+        Rarity = definition.Rarity,
+        Income = definition.Income,
+        Level = 1,
+        HatchedAt = os.time(),
+    }
+    table.insert(profile.Companions, companion)
+
     syncAttributes(player, profile)
-    player:SetAttribute("LastNotice", "You hatched a " .. definition.Rarity .. " " .. definition.Name .. "!")
+    ProgressionService:AddXP(player, 15)
+    player:SetAttribute("LastNotice", "You hatched a " .. definition.Rarity .. " " .. definition.Name .. "! +15 XP")
 end
 
 function EggService:Init()
@@ -99,14 +111,22 @@ function EggService:Init()
         warn("[NEST RAIDERS] World was not built before EggService initialized.")
         return
     end
-    local eggFolder = world:WaitForChild("StarterIsland"):WaitForChild("EggSpawnPoints")
+
+    local island = world:WaitForChild("StarterIsland")
+    local eggFolder = island:WaitForChild("EggSpawnPoints")
     for _, egg in ipairs(eggFolder:GetChildren()) do
         local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
         if prompt then prompt.Triggered:Connect(function(player) self:Collect(player, egg) end) end
     end
-    local station = world.StarterIsland.StarterNest:WaitForChild("HatchStation")
-    local hatchPrompt = station:FindFirstChildOfClass("ProximityPrompt")
-    hatchPrompt.Triggered:Connect(function(player) self:Hatch(player) end)
+
+    local plotsFolder = island:WaitForChild("PlayerPlots")
+    for _, plot in ipairs(plotsFolder:GetChildren()) do
+        local station = plot:FindFirstChild("HatchStation")
+        local prompt = station and station:FindFirstChildOfClass("ProximityPrompt")
+        if prompt then
+            prompt.Triggered:Connect(function(player) self:Hatch(player, station) end)
+        end
+    end
 
     Players.PlayerAdded:Connect(function(player)
         player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
