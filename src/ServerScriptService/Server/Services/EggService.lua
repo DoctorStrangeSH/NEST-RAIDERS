@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
+local HttpService = game:GetService("HttpService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
@@ -92,6 +93,7 @@ function EggService:Hatch(player, station)
     table.remove(profile.EggInventory, 1)
     local definition = chooseCompanion()
     local companion = {
+        InstanceId = HttpService:GenerateGUID(false),
         Id = definition.Id,
         Name = definition.Name,
         Rarity = definition.Rarity,
@@ -100,8 +102,13 @@ function EggService:Hatch(player, station)
         HatchedAt = os.time(),
     }
     table.insert(profile.Companions, companion)
+    profile.ActiveCompanions = profile.ActiveCompanions or {}
+    if #profile.ActiveCompanions < 3 then
+        table.insert(profile.ActiveCompanions, companion.InstanceId)
+    end
 
     syncAttributes(player, profile)
+    player:SetAttribute("ActiveCompanionCount", #profile.ActiveCompanions)
     ProgressionService:AddXP(player, 15)
     CompanionService:RefreshPlayer(player)
     player:SetAttribute("LastNotice", "You hatched a " .. definition.Rarity .. " " .. definition.Name .. "! +15 XP")
