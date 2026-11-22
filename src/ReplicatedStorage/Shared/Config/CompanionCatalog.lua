@@ -13,6 +13,13 @@ local CompanionCatalog = {
         PetMoodBonus = 0,
         PlayMoodBonus = 10,
         EggId = "MeadowEgg",
+        Ability = {
+            Id = "TrailFinder",
+            Name = "Следопыт",
+            Description = "Находит тайник с монетами.",
+            UnlockLevel = 7,
+            CooldownSeconds = 300,
+        },
     },
     MossTurtle = {
         Id = "MossTurtle",
@@ -28,6 +35,13 @@ local CompanionCatalog = {
         PetMoodBonus = 10,
         PlayMoodBonus = 0,
         EggId = "MeadowEgg",
+        Ability = {
+            Id = "RootBlessing",
+            Name = "Благословение корней",
+            Description = "Накопляет монеты для твоего гнезда.",
+            UnlockLevel = 7,
+            CooldownSeconds = 300,
+        },
     },
     SproutDragon = {
         Id = "SproutDragon",
@@ -43,6 +57,13 @@ local CompanionCatalog = {
         PetMoodBonus = 0,
         PlayMoodBonus = 10,
         EggId = "MeadowEgg",
+        Ability = {
+            Id = "VerdantSpark",
+            Name = "Искра роста",
+            Description = "Дарит опыт персонажу.",
+            UnlockLevel = 7,
+            CooldownSeconds = 300,
+        },
     },
 }
 
