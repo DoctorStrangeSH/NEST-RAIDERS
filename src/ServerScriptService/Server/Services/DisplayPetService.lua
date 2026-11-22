@@ -8,7 +8,10 @@ local CompanionService = require(ServerScriptService.Server.Services.CompanionSe
 
 local DisplayPetService = {}
 DisplayPetService._lastRequest = {}
+DisplayPetService._lastInteraction = {}
 local REQUEST_COOLDOWN = 0.35
+local INTERACTION_COOLDOWN = 3
+local MOOD_GAIN = { Pet = 15, Play = 25 }
 local SLOT_OFFSETS = {
     Vector3.new(-12, 2, 12),
     Vector3.new(12, 2, 12),
@@ -31,6 +34,7 @@ end
 local function getSnapshot(profile)
     profile.Nest = profile.Nest or { Level = 1, DisplayedCompanions = {}, StoredCoins = 0 }
     profile.Nest.DisplayedCompanions = type(profile.Nest.DisplayedCompanions) == "table" and profile.Nest.DisplayedCompanions or {}
+    profile.Nest.CompanionMood = type(profile.Nest.CompanionMood) == "table" and profile.Nest.CompanionMood or {}
     local limit = getSlotLimit(profile)
     local active = {}
     for _, id in ipairs(profile.ActiveCompanions or {}) do active[id] = true end
@@ -49,6 +53,7 @@ local function getSnapshot(profile)
                 Rarity = companion.Rarity,
                 Stars = companion.Stars or 1,
                 Income = math.max(0, math.floor(tonumber(companion.Income) or 0)),
+                Mood = math.clamp(math.floor(tonumber(profile.Nest.CompanionMood[instanceId]) or 50), 0, 100),
             })
         else
             table.insert(displayed, { Slot = slot, Empty = true })
@@ -167,6 +172,44 @@ function DisplayPetService:HandleRequest(player, payload)
         return { Ok = true, Data = getSnapshot(profile) }
     end
 
+    if payload.Action == "Interact" then
+        if not PlotService:GetPlayerPlot(player) then
+            return { Ok = false, Message = "Сначала дождись назначения личного гнезда." }
+        end
+        if type(payload.InstanceId) ~= "string" or #payload.InstanceId > 80 then
+            return { Ok = false, Message = "Некорректный питомец." }
+        end
+        local interaction = payload.Interaction
+        local gain = MOOD_GAIN[interaction]
+        if not gain then
+            return { Ok = false, Message = "Неизвестное взаимодействие." }
+        end
+        local isDisplayed = false
+        for _, id in pairs(profile.Nest.DisplayedCompanions) do
+            if id == payload.InstanceId then isDisplayed = true break end
+        end
+        if not isDisplayed then
+            return { Ok = false, Message = "Питомец сейчас не находится в гнезде." }
+        end
+        local companion = findOwned(profile, payload.InstanceId)
+        if not companion then
+            return { Ok = false, Message = "Питомец не найден в коллекции." }
+        end
+        local interactionKey = tostring(player.UserId) .. ":" .. payload.InstanceId
+        local lastInteraction = self._lastInteraction[interactionKey] or 0
+        if now - lastInteraction < INTERACTION_COOLDOWN then
+            return { Ok = false, Message = "Питомцу нужно немного времени перед новой игрой." }
+        end
+        self._lastInteraction[interactionKey] = now
+        profile.Nest.CompanionMood[payload.InstanceId] = math.clamp(
+            (tonumber(profile.Nest.CompanionMood[payload.InstanceId]) or 50) + gain,
+            0,
+            100
+        )
+        player:SetAttribute("LastNotice", interaction == "Pet" and (companion.Name .. " довольно мурлычет!") or (companion.Name .. " весело играет с тобой!"))
+        return { Ok = true, Data = getSnapshot(profile) }
+    end
+
     if payload.Action == "Collect" then
         if not PlotService:GetPlayerPlot(player) then
             return { Ok = false, Message = "Сначала дождись назначения личного гнезда." }
@@ -215,7 +258,13 @@ function DisplayPetService:Init()
         if player:GetAttribute("ProfileLoaded") then task.defer(function() self:RefreshPlayer(player) end) end
     end
     Players.PlayerAdded:Connect(bindPlayer)
-    Players.PlayerRemoving:Connect(function(player) self._lastRequest[player] = nil end)
+    Players.PlayerRemoving:Connect(function(player)
+        self._lastRequest[player] = nil
+        local prefix = tostring(player.UserId) .. ":"
+        for key in pairs(self._lastInteraction) do
+            if string.sub(key, 1, #prefix) == prefix then self._lastInteraction[key] = nil end
+        end
+    end)
     for _, player in ipairs(Players:GetPlayers()) do bindPlayer(player) end
 end
 
