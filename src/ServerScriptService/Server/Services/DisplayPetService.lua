@@ -159,10 +159,14 @@ function DisplayPetService:HandleRequest(player, payload)
         if amount <= 0 then
             return { Ok = false, Message = "Пока нечего собирать. Питомцы ещё копят монеты." }
         end
-        profile.Coins = math.clamp(profile.Coins + amount, 0, 2_000_000_000)
-        profile.Nest.StoredCoins = 0
+        local payout = math.min(amount, math.max(0, 2_000_000_000 - profile.Coins))
+        if payout <= 0 then
+            return { Ok = false, Message = "Баланс монет достиг максимума. Потрать часть монет и собери накопления позже." }
+        end
+        profile.Coins += payout
+        profile.Nest.StoredCoins = amount - payout
         player:SetAttribute("Coins", profile.Coins)
-        player:SetAttribute("LastNotice", "Собрано " .. amount .. " монет с витрин!")
+        player:SetAttribute("LastNotice", "Собрано " .. payout .. " монет с витрин!")
         return { Ok = true, Data = getSnapshot(profile) }
     end
 
