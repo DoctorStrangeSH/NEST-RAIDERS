@@ -5,6 +5,7 @@ local remotes = ReplicatedStorage:WaitForChild("NestRaidersRemotes")
 local inventoryRemote = remotes:WaitForChild("CompanionInventory")
 local shopRemote = remotes:WaitForChild("EggShop")
 local collectionRemote = remotes:WaitForChild("CollectionBook")
+local nestRemote = remotes:WaitForChild("NestUpgrade")
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
@@ -162,6 +163,94 @@ collectionButton.Font = Enum.Font.GothamBlack
 collectionButton.Parent = gui
 addCorner(collectionButton, 12)
 addStroke(collectionButton, Color3.fromRGB(167, 190, 238), 1.5)
+
+local nestButton = Instance.new("TextButton")
+nestButton.Name = "NestUpgradeButton"
+nestButton.Position = UDim2.fromOffset(18, 324)
+nestButton.Size = UDim2.fromOffset(250, 46)
+nestButton.BackgroundColor3 = Color3.fromRGB(91, 143, 111)
+nestButton.Text = "УЛУЧШИТЬ ГНЕЗДО"
+nestButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+nestButton.TextSize = 14
+nestButton.Font = Enum.Font.GothamBlack
+nestButton.Parent = gui
+addCorner(nestButton, 12)
+addStroke(nestButton, Color3.fromRGB(164, 220, 169), 1.5)
+
+local nestPanel = Instance.new("Frame")
+nestPanel.Name = "NestUpgradePanel"
+nestPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+nestPanel.Position = UDim2.fromScale(0.5, 0.5)
+nestPanel.Size = UDim2.new(0.9, 0, 0.48, 0)
+nestPanel.BackgroundColor3 = Color3.fromRGB(30, 49, 48)
+nestPanel.BorderSizePixel = 0
+nestPanel.Visible = false
+nestPanel.Parent = gui
+addCorner(nestPanel, 18)
+addStroke(nestPanel, Color3.fromRGB(143, 206, 157), 2)
+
+local nestSize = Instance.new("UISizeConstraint")
+nestSize.MinSize = Vector2.new(290, 250)
+nestSize.MaxSize = Vector2.new(440, 350)
+nestSize.Parent = nestPanel
+
+local nestTitle = Instance.new("TextLabel")
+nestTitle.BackgroundTransparency = 1
+nestTitle.Position = UDim2.fromOffset(18, 14)
+nestTitle.Size = UDim2.new(1, -76, 0, 30)
+nestTitle.Font = Enum.Font.GothamBlack
+nestTitle.Text = "РАЗВИТИЕ ГНЕЗДА"
+nestTitle.TextColor3 = Color3.fromRGB(203, 239, 190)
+nestTitle.TextSize = 18
+nestTitle.TextXAlignment = Enum.TextXAlignment.Left
+nestTitle.Parent = nestPanel
+
+local nestClose = Instance.new("TextButton")
+nestClose.AnchorPoint = Vector2.new(1, 0)
+nestClose.Position = UDim2.new(1, -12, 0, 10)
+nestClose.Size = UDim2.fromOffset(38, 34)
+nestClose.BackgroundColor3 = Color3.fromRGB(74, 91, 101)
+nestClose.Text = "✕"
+nestClose.TextColor3 = Color3.new(1, 1, 1)
+nestClose.TextSize = 18
+nestClose.Font = Enum.Font.GothamBold
+nestClose.Parent = nestPanel
+addCorner(nestClose, 10)
+
+local nestLevel = Instance.new("TextLabel")
+nestLevel.BackgroundTransparency = 1
+nestLevel.Position = UDim2.fromOffset(18, 62)
+nestLevel.Size = UDim2.new(1, -36, 0, 34)
+nestLevel.Font = Enum.Font.GothamBlack
+nestLevel.Text = "Уровень гнезда: 1 / 5"
+nestLevel.TextColor3 = Color3.fromRGB(255, 231, 176)
+nestLevel.TextSize = 21
+nestLevel.TextXAlignment = Enum.TextXAlignment.Left
+nestLevel.Parent = nestPanel
+
+local nestDescription = Instance.new("TextLabel")
+nestDescription.BackgroundTransparency = 1
+nestDescription.Position = UDim2.fromOffset(18, 104)
+nestDescription.Size = UDim2.new(1, -36, 0, 72)
+nestDescription.Font = Enum.Font.GothamMedium
+nestDescription.Text = "Улучшай своё гнездо: открывай новые украшения и места для питомцев."
+nestDescription.TextColor3 = Color3.fromRGB(203, 220, 209)
+nestDescription.TextSize = 14
+nestDescription.TextWrapped = true
+nestDescription.TextXAlignment = Enum.TextXAlignment.Left
+nestDescription.TextYAlignment = Enum.TextYAlignment.Top
+nestDescription.Parent = nestPanel
+
+local nestUpgrade = Instance.new("TextButton")
+nestUpgrade.Position = UDim2.new(0, 18, 1, -58)
+nestUpgrade.Size = UDim2.new(1, -36, 0, 42)
+nestUpgrade.BackgroundColor3 = Color3.fromRGB(83, 151, 103)
+nestUpgrade.Text = "УЛУЧШИТЬ"
+nestUpgrade.TextColor3 = Color3.fromRGB(255, 255, 245)
+nestUpgrade.TextSize = 15
+nestUpgrade.Font = Enum.Font.GothamBlack
+nestUpgrade.Parent = nestPanel
+addCorner(nestUpgrade, 11)
 
 local bookPanel = Instance.new("Frame")
 bookPanel.Name = "CollectionBookPanel"
@@ -551,6 +640,55 @@ end
 
 shopButton.Activated:Connect(openShop)
 shopClose.Activated:Connect(function() shopPanel.Visible = false end)
+
+local function invokeNest(payload)
+    local success, response = pcall(function()
+        return nestRemote:InvokeServer(payload)
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось связаться с гнездом.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Улучшение недоступно.")
+        return nil
+    end
+    if response.Message then showNotice(response.Message) end
+    return response.Data
+end
+
+local function renderNest(data)
+    if not data then return end
+    nestLevel.Text = string.format("Уровень гнезда: %d / %d", data.Level or 1, data.MaxLevel or 5)
+    if data.IsMaxLevel then
+        nestDescription.Text = string.format("Максимальный уровень! Открыто мест для питомцев: %d. Твоё гнездо сияет во всей красе.", data.DisplaySlots or 0)
+        nestUpgrade.Text = "МАКСИМАЛЬНЫЙ УРОВЕНЬ"
+        nestUpgrade.Active = false
+        nestUpgrade.AutoButtonColor = false
+        nestUpgrade.BackgroundColor3 = Color3.fromRGB(83, 101, 87)
+    else
+        nestDescription.Text = string.format("Следующее улучшение откроет новые украшения и места для питомцев. Доступно мест: %d.", data.DisplaySlots or 0)
+        nestUpgrade.Text = "УЛУЧШИТЬ · " .. tostring(data.NextCost or 0) .. " 🪙"
+        nestUpgrade.Active = true
+        nestUpgrade.AutoButtonColor = true
+        nestUpgrade.BackgroundColor3 = Color3.fromRGB(83, 151, 103)
+    end
+end
+
+local function openNest()
+    nestPanel.Visible = true
+    local data = invokeNest({ Action = "Get" })
+    if data then renderNest(data) end
+end
+
+nestButton.Activated:Connect(openNest)
+nestClose.Activated:Connect(function() nestPanel.Visible = false end)
+nestUpgrade.Activated:Connect(function()
+    if not nestUpgrade.Active then return end
+    nestUpgrade.Active = false
+    local data = invokeNest({ Action = "Upgrade" })
+    if data then renderNest(data) else nestUpgrade.Active = true end
+end)
 
 local function invokeCollectionBook()
     local success, response = pcall(function()
