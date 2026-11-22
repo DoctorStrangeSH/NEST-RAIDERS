@@ -105,6 +105,41 @@ local function buildPet(parent, companion, index)
             orb.Material = Enum.Material.Neon
         end
     end
+    local level = math.clamp(math.floor(tonumber(companion.Level) or 1), 1, 10)
+    local growthStage = level >= 7 and "Adult" or (level >= 4 and "Young" or "Hatchling")
+    local growthScale = growthStage == "Adult" and 1.16 or (growthStage == "Young" and 1.08 or 1)
+    model:SetAttribute("GrowthStage", growthStage)
+    model:SetAttribute("GrowthLevel", level)
+
+    local trait = type(companion.GeneticTrait) == "table" and companion.GeneticTrait or {}
+    local traitId = trait.Id or "Natural"
+    model:SetAttribute("GeneticTrait", traitId)
+    local traitColors = {
+        Verdant = Color3.fromRGB(113, 220, 137),
+        Luminous = Color3.fromRGB(102, 222, 255),
+        Prismatic = Color3.fromRGB(230, 132, 255),
+    }
+    local traitColor = traitColors[traitId]
+    if traitColor then
+        local geneticAura = Instance.new("Highlight")
+        geneticAura.Name = "GeneticAura"
+        geneticAura.Adornee = model
+        geneticAura.FillColor = traitColor
+        geneticAura.OutlineColor = traitColor
+        geneticAura.FillTransparency = traitId == "Prismatic" and 0.78 or 0.88
+        geneticAura.OutlineTransparency = 0.18
+        geneticAura.DepthMode = Enum.HighlightDepthMode.Occluded
+        geneticAura.Parent = model
+        local sparkCount = traitId == "Prismatic" and 3 or 1
+        for sparkIndex = 1, sparkCount do
+            local x = (sparkIndex - (sparkCount + 1) / 2) * 0.62
+            local spark = makeShape(model, "GeneticSpark", Vector3.new(0.18, 0.18, 0.18), Vector3.new(x, 3.35, -0.25), traitColor)
+            spark.Material = Enum.Material.Neon
+        end
+    end
+    if growthScale > 1 then
+        model:ScaleTo(growthScale)
+    end
     return model
 end
 
