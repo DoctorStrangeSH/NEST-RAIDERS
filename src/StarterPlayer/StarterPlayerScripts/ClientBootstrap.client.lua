@@ -1130,7 +1130,7 @@ local function renderInventory(data)
         local details = Instance.new("TextLabel")
         details.BackgroundTransparency = 1
         details.Position = UDim2.fromOffset(12, 34)
-        details.Size = UDim2.new(1, -130, 0, 42)
+        details.Size = UDim2.new(1, -130, 0, 58)
         details.Font = Enum.Font.GothamMedium
         local trait = companion.GeneticTrait or { Name = "Естественный" }
         details.Text = string.format("%s  ·  %s  ·  %s\n%s · Опыт %d/%d\n+%d монет / 10 сек.",
@@ -1141,6 +1141,9 @@ local function renderInventory(data)
             companion.GrowthXP or 0,
             companion.GrowthXPToNext or 0,
             companion.Income or 0)
+        if companion.Origin == "Breeding" then
+            details.Text ..= "\\nПотомство: " .. table.concat(companion.ParentNames or {}, " + ")
+        end
         details.TextColor3 = Color3.fromRGB(187, 211, 203)
         details.TextSize = 12
         details.TextXAlignment = Enum.TextXAlignment.Left
