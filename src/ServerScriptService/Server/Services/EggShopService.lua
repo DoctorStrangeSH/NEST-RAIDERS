@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
+local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 
 local EggShopService = {}
 local MAX_EGGS = 20
@@ -15,11 +16,20 @@ local CATALOG = {
         Description = "Первое яйцо для начинающих искателей приключений.",
         Price = 50,
         RequiredLevel = 1,
-        Odds = {
-            { Name = "Луговой лис", Rarity = "Обычный", Chance = 55 },
-            { Name = "Мшистая черепаха", Rarity = "Необычный", Chance = 30 },
-            { Name = "Росток-дракон", Rarity = "Редкий", Chance = 15 },
-        },
+        Odds = (function()
+            local odds = {}
+            for _, companion in pairs(CompanionCatalog) do
+                if companion.EggId == "MeadowEgg" then
+                    table.insert(odds, {
+                        Name = companion.Name,
+                        Rarity = companion.Rarity,
+                        Chance = companion.Weight,
+                    })
+                end
+            end
+            table.sort(odds, function(a, b) return a.Chance > b.Chance end)
+            return odds
+        end)(),
     },
 }
 
