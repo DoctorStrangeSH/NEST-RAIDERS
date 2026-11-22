@@ -2231,6 +2231,8 @@ local function openContestPanel()
     if response then
         contestData = response
         contestPanel.Visible = true
+        contestTabs.Visible = true
+        contestTitle.Text = "ЕЖЕНЕДЕЛЬНЫЙ КОНКУРС"
         renderContest()
     end
 end
@@ -2316,8 +2318,10 @@ local function openHallPanel()
                                             Category = categoryId,
                                             Place = winnerEntry.Place,
                                         }
+                                        claim.Text = "ПОЛУЧЕНО"
+                                        claim.BackgroundColor3 = Color3.fromRGB(83, 91, 104)
+                                        claim.Active = false
                                         showNotice(result.Message or "Кубок установлен в твоём гнезде!")
-                                        openHallPanel()
                                     else
                                         claim.Active = true
                                     end
