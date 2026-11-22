@@ -24,7 +24,6 @@ local LIST_COOLDOWN = 2
 local STANDINGS_CACHE_SECONDS = 10
 local MAX_RESULTS = 10
 local HISTORY_LIMIT = 12
-local HISTORY_REFRESH_SECONDS = 60
 local CATEGORY_ORDER = { "Cozy", "Nature", "Fantasy" }
 local PLACE_NAMES = { "Золото", "Серебро", "Бронза" }
 local CATEGORIES = {
@@ -188,15 +187,6 @@ end
 
 local function getArchiveStore()
     return DataStoreService:GetDataStore("NRAidHallOfFame_v1")
-end
-
-local function archiveKey(week)
-    return "week_" .. week
-end
-
-local function isClaimed(profile, week, category)
-    local trophies = profile.Nest and profile.Nest.IslandTrophies
-    return type(trophies) == "table" and trophies[week .. "_" .. category] ~= nil
 end
 
 function IslandContestService:BuildWeekArchive(week)
