@@ -206,3 +206,13 @@ A feature is done only when:
 - Achievements are derived from server-authoritative profile state: first companion, 10 companions, five unique species, nest level 3, first contest trophy, 10 received likes, and level 10.
 - Titles are cosmetic, may be equipped only after unlocking, persist in `Nest.EquippedTitle`, and render above the character.
 - Client requests cannot grant achievements or equip locked titles.
+
+
+## Companion growth, training, and genetics
+- A newly hatched companion receives one server-generated genetic trait independent of species rarity. Weights: Natural 72%, Verdant 18%, Luminous 8%, Prismatic 2%. Traits are stored per companion instance and stable through fusion.
+- Companion level cap: 10. Training grants 75 GrowthXP and costs 30 + current level × 25 coins. Next-level XP requirement: 100 + (current level − 1) × 55; XP carries over.
+- Growth stages: Hatchling (1–3), Young (4–6), Adult (7–10). Stages are visible in inventory and reflected by model scale. Non-Natural traits add distinct visual aura/spark effects.
+- Passive income = species base income × star multiplier × level multiplier × genetic multiplier, floored to integer. Star multipliers are 1 / 1.75 / 3; level multiplier is 1 + 0.04 × (level − 1); genetic bonus is capped at 8%.
+- All training validation, coin deduction, XP progression, level-up, and income calculation are server-authoritative.
+- Legacy companions without a genetic trait default to Natural during profile normalization.
+- Fusion consumes two matching companions of the same species and star rank, preserving the selected target's level, XP, and genetic trait.
