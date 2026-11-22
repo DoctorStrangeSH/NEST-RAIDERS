@@ -17,6 +17,7 @@ local ProfileTemplate = {
         StoredCoins = 0,
         CompanionMood = {},
         CompanionNeeds = {},
+        CompanionToys = {},
     },
     Settings = {
         MusicEnabled = true,
