@@ -76,3 +76,7 @@ These landmarks share the existing server-authoritative purchase, inventory, pla
 
 ## Social island visits — Sprint 4.7
 NEST RAIDERS now includes an in-server island browser. Players can see other occupied islands, visit a player's nest, inspect their pets and builds, and return to their exact previous position. Each island allows up to eight guests; guests are returned home if the island owner leaves. Existing server ownership checks prevent visitors from editing another player's island. Global discovery, favorites, and likes are not included yet.
+
+
+## Island popularity — Sprint 4.8
+The social island browser now supports persistent likes and favorites. Likes are unique per visitor and stored on the island owner's profile; favorites are stored on the visitor's profile (up to 30 islands). The browser sorts current-server islands by received likes and supports a favorites-only filter. These features are cosmetic / social and do not grant gameplay power. Cross-server discovery and weekly showcases remain future work.
