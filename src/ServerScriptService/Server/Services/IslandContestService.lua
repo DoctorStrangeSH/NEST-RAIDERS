@@ -122,7 +122,8 @@ function IslandContestService:GetStandings(category)
 end
 
 function IslandContestService:ApplyPersistentVote(category, targetUserId, voterUserId)
-    local voteStore, orderedStore, scoreStore = getStores(category)
+    local week = weekKey()
+    local _, orderedStore, scoreStore = getStores(category)
     local scoreKey = "owner_" .. tostring(targetUserId)
     local ok, scoreRecord = pcall(function()
         return scoreStore:UpdateAsync(scoreKey, function(current)
@@ -148,6 +149,8 @@ function IslandContestService:ApplyPersistentVote(category, targetUserId, voterU
         warn("[NEST RAIDERS] Contest leaderboard projection failed:", orderedErr)
         return false
     end
+    local weekScores = self._standingsCache[week]
+    if weekScores then weekScores[category] = nil end
     return true
 end
 
