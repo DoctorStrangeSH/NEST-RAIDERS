@@ -74,6 +74,15 @@
 - [ ] Treating a pet displays its actual favorite food from the shared catalog; the client cannot choose or spoof another species food.
 - [ ] Treating is rejected for insufficient coins, near-full hunger, non-displayed pets, or requests during the interaction cooldown.
 - [ ] Personality bonuses never exceed 100 mood and never modify rarity, stars, or passive income.
+- [ ] Nest toy catalog exposes Meadow Ball (25), Cozy Plush (40), and Wind Spinner (35) with matching display labels.
+- [ ] Buying a toy deducts exactly its catalog price and equips it only to the selected displayed companion.
+- [ ] Insufficient coins, invalid toy IDs, non-displayed pets, and interaction cooldown requests are rejected server-side.
+- [ ] Equipping a replacement toy charges the new toy price and updates the displayed prop / nest panel.
+- [ ] ToyPlay is rejected when the pet has no toy equipped or lacks the energy required by that toy.
+- [ ] ToyPlay grants the catalog mood bonus plus 10 mood for the species favorite toy, capped at 100.
+- [ ] ToyPlay consumes the exact energy cost from the toy catalog; Wind Spinner costs no energy.
+- [ ] Equipped toy choice persists after reconnect and is restored on the pet model.
+- [ ] Toy purchases and play do not modify rarity, stars, passive income, or other players’ profiles.
 - [ ] Player cannot upgrade another player's nest through the remote.
 - [ ] Player can equip and unequip owned companions; non-owned IDs are rejected.
 - [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
