@@ -137,7 +137,31 @@ local function makeSnapshot(profile)
             Equipped = equipped[companion.InstanceId] == true,
         })
     end
-    return { Companions = companions, ActiveCount = #profile.ActiveCompanions, MaxActive = MAX_ACTIVE_COMPANIONS }
+    local eggs = {}
+    for _, egg in ipairs(profile.EggInventory or {}) do
+        local parentNames = {}
+        for _, parentId in ipairs(type(egg.ParentSpecies) == "table" and egg.ParentSpecies or {}) do
+            local parentDefinition = CompanionCatalog[parentId]
+            table.insert(parentNames, parentDefinition and parentDefinition.Name or parentId)
+        end
+        local childDefinition = CompanionCatalog[egg.OffspringSpeciesId]
+        table.insert(eggs, {
+            InstanceId = egg.InstanceId,
+            Id = egg.Id,
+            Origin = egg.Origin or "World",
+            ReadyIn = math.max(0, (tonumber(egg.IncubatesUntil) or 0) - os.time()),
+            OffspringName = childDefinition and childDefinition.Name or nil,
+            GeneticTrait = type(egg.GeneticTrait) == "table" and egg.GeneticTrait.Name or nil,
+            ParentNames = parentNames,
+        })
+    end
+    return {
+        Companions = companions,
+        Eggs = eggs,
+        EggCount = #eggs,
+        ActiveCount = #profile.ActiveCompanions,
+        MaxActive = MAX_ACTIVE_COMPANIONS,
+    }
 end
 
 function InventoryService:HandleRequest(player, payload)
