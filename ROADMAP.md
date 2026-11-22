@@ -113,6 +113,7 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add three deterministic starter-pair hybrid species with distinct follower silhouettes and breeding-only collection entries.
 - [x] Add distinct physical mutation ornaments for Verdant, Luminous, and Prismatic companion genetics; show trait rarity and income bonus in inventory.
 - [x] Add a glowing personal nest breeding altar with owner-only prompt guidance and server-enforced proximity for breeding.
+- [x] Add a server-driven breeding ritual reveal: two parent-energy echoes, converging beams, an emerging genetic egg, trait-colored light and particles, plus a golden shard burst for hybrid offspring.
 - [ ] Add expanded hybrid ability kits.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
