@@ -12,6 +12,7 @@ local nestRemote = remotes:WaitForChild("NestUpgrade")
 local displayRemote = remotes:WaitForChild("DisplayPets")
 local decorRemote = remotes:WaitForChild("NestDecor")
 local buildRemote = remotes:WaitForChild("NestBuild")
+local visitRemote = remotes:WaitForChild("IslandVisit")
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
@@ -434,6 +435,82 @@ local buildLayout = Instance.new("UIListLayout")
 buildLayout.Padding = UDim.new(0, 8)
 buildLayout.SortOrder = Enum.SortOrder.LayoutOrder
 buildLayout.Parent = buildList
+
+local visitButton = Instance.new("TextButton")
+visitButton.Name = "VisitIslandsButton"
+visitButton.Position = UDim2.fromOffset(18, 538)
+visitButton.Size = UDim2.fromOffset(250, 46)
+visitButton.BackgroundColor3 = Color3.fromRGB(102, 130, 183)
+visitButton.Text = "ПОСЕТИТЬ ОСТРОВЫ"
+visitButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+visitButton.TextSize = 14
+visitButton.Font = Enum.Font.GothamBlack
+visitButton.Parent = gui
+addCorner(visitButton, 12)
+addStroke(visitButton, Color3.fromRGB(170, 196, 238), 1.5)
+
+local visitPanel = Instance.new("Frame")
+visitPanel.Name = "IslandVisitPanel"
+visitPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+visitPanel.Position = UDim2.fromScale(0.5, 0.5)
+visitPanel.Size = UDim2.new(0.9, 0, 0.66, 0)
+visitPanel.BackgroundColor3 = Color3.fromRGB(43, 51, 64)
+visitPanel.BorderSizePixel = 0
+visitPanel.Visible = false
+visitPanel.Parent = gui
+addCorner(visitPanel, 18)
+addStroke(visitPanel, Color3.fromRGB(150, 178, 225), 2)
+local visitSize = Instance.new("UISizeConstraint")
+visitSize.MinSize = Vector2.new(290, 280)
+visitSize.MaxSize = Vector2.new(440, 480)
+visitSize.Parent = visitPanel
+
+local visitTitle = Instance.new("TextLabel")
+visitTitle.BackgroundTransparency = 1
+visitTitle.Position = UDim2.fromOffset(18, 12)
+visitTitle.Size = UDim2.new(1, -76, 0, 30)
+visitTitle.Font = Enum.Font.GothamBlack
+visitTitle.Text = "ОСТРОВА ИГРОКОВ"
+visitTitle.TextColor3 = Color3.fromRGB(201, 218, 255)
+visitTitle.TextSize = 16
+visitTitle.TextXAlignment = Enum.TextXAlignment.Left
+visitTitle.Parent = visitPanel
+
+local visitClose = Instance.new("TextButton")
+visitClose.AnchorPoint = Vector2.new(1, 0)
+visitClose.Position = UDim2.new(1, -12, 0, 10)
+visitClose.Size = UDim2.fromOffset(38, 34)
+visitClose.BackgroundColor3 = Color3.fromRGB(83, 91, 108)
+visitClose.Text = "✕"
+visitClose.TextColor3 = Color3.new(1, 1, 1)
+visitClose.TextSize = 18
+visitClose.Font = Enum.Font.GothamBold
+visitClose.Parent = visitPanel
+addCorner(visitClose, 10)
+
+local visitStatus = Instance.new("TextLabel")
+visitStatus.BackgroundTransparency = 1
+visitStatus.Position = UDim2.fromOffset(18, 48)
+visitStatus.Size = UDim2.new(1, -36, 0, 24)
+visitStatus.Font = Enum.Font.GothamMedium
+visitStatus.Text = "Выбери остров для посещения"
+visitStatus.TextColor3 = Color3.fromRGB(218, 225, 235)
+visitStatus.TextSize = 12
+visitStatus.TextXAlignment = Enum.TextXAlignment.Left
+visitStatus.Parent = visitPanel
+
+local visitList = Instance.new("ScrollingFrame")
+visitList.Position = UDim2.fromOffset(12, 80)
+visitList.Size = UDim2.new(1, -24, 1, -94)
+visitList.BackgroundTransparency = 1
+visitList.BorderSizePixel = 0
+visitList.ScrollBarThickness = 6
+visitList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+visitList.Parent = visitPanel
+local visitLayout = Instance.new("UIListLayout")
+visitLayout.Padding = UDim.new(0, 8)
+visitLayout.SortOrder = Enum.SortOrder.LayoutOrder
+visitLayout.Parent = visitList
 
 local decorPanel = Instance.new("Frame")
 decorPanel.Name = "NestDecorPanel"
@@ -1683,6 +1760,148 @@ end
 
 buildButton.Activated:Connect(openBuild)
 buildClose.Activated:Connect(function() buildPanel.Visible = false end)
+
+local function invokeVisit(payload)
+    local success, response = pcall(function()
+        return visitRemote:InvokeServer(payload)
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось связаться со списком островов.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Переход не выполнен.")
+        return nil
+    end
+    if response.Message then showNotice(response.Message) end
+    return response
+end
+
+local function clearVisitList()
+    for _, child in ipairs(visitList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+end
+
+local function renderVisitList(response)
+    clearVisitList()
+    local islands = response.Islands or {}
+    visitStatus.Text = #islands > 0 and ("Доступно островов: " .. #islands) or "Пока нет других доступных островов"
+
+    if response.Visiting then
+        local returnCard = Instance.new("Frame")
+        returnCard.LayoutOrder = 0
+        returnCard.Size = UDim2.new(1, -8, 0, 64)
+        returnCard.BackgroundColor3 = Color3.fromRGB(73, 111, 96)
+        returnCard.BorderSizePixel = 0
+        returnCard.Parent = visitList
+        addCorner(returnCard, 10)
+        local returnLabel = Instance.new("TextLabel")
+        returnLabel.BackgroundTransparency = 1
+        returnLabel.Position = UDim2.fromOffset(10, 5)
+        returnLabel.Size = UDim2.new(1, -130, 1, -10)
+        returnLabel.Text = "Ты в гостях\nВернись в своё гнездо"
+        returnLabel.TextColor3 = Color3.new(1,1,1)
+        returnLabel.TextSize = 12
+        returnLabel.TextXAlignment = Enum.TextXAlignment.Left
+        returnLabel.Font = Enum.Font.GothamBold
+        returnLabel.Parent = returnCard
+        local returnButton = Instance.new("TextButton")
+        returnButton.AnchorPoint = Vector2.new(1, 0.5)
+        returnButton.Position = UDim2.new(1, -8, 0.5, 0)
+        returnButton.Size = UDim2.fromOffset(112, 38)
+        returnButton.BackgroundColor3 = Color3.fromRGB(218, 174, 91)
+        returnButton.Text = "МОЁ ГНЕЗДО"
+        returnButton.TextColor3 = Color3.fromRGB(45, 48, 55)
+        returnButton.TextSize = 10
+        returnButton.Font = Enum.Font.GothamBlack
+        returnButton.Parent = returnCard
+        addCorner(returnButton, 8)
+        returnButton.Activated:Connect(function()
+            local result = invokeVisit({ Action = "Return" })
+            if result then
+                visitPanel.Visible = false
+                visitButton.Text = "ПОСЕТИТЬ ОСТРОВЫ"
+            end
+        end)
+    end
+
+    if #islands == 0 then
+        local empty = Instance.new("TextLabel")
+        empty.LayoutOrder = 1
+        empty.Size = UDim2.new(1, -8, 0, 54)
+        empty.BackgroundTransparency = 1
+        empty.Text = "Когда другие игроки появятся на сервере, их острова будут здесь."
+        empty.TextColor3 = Color3.fromRGB(202, 210, 222)
+        empty.TextSize = 12
+        empty.TextWrapped = true
+        empty.Font = Enum.Font.GothamMedium
+        empty.Parent = visitList
+    end
+
+    for index, island in ipairs(islands) do
+        local entry = island
+        local card = Instance.new("Frame")
+        card.LayoutOrder = index + 1
+        card.Size = UDim2.new(1, -8, 0, 72)
+        card.BackgroundColor3 = Color3.fromRGB(61, 70, 84)
+        card.BorderSizePixel = 0
+        card.Parent = visitList
+        addCorner(card, 10)
+
+        local info = Instance.new("TextLabel")
+        info.BackgroundTransparency = 1
+        info.Position = UDim2.fromOffset(10, 6)
+        info.Size = UDim2.new(1, -128, 1, -12)
+        info.Text = string.format("%s\nУровень %d · Гостей %d/%d", entry.DisplayName, entry.Level or 1, entry.Visitors or 0, entry.Capacity or 8)
+        info.TextColor3 = Color3.fromRGB(239, 241, 246)
+        info.TextSize = 12
+        info.TextWrapped = true
+        info.TextXAlignment = Enum.TextXAlignment.Left
+        info.Font = Enum.Font.GothamMedium
+        info.Parent = card
+
+        local visit = Instance.new("TextButton")
+        visit.AnchorPoint = Vector2.new(1, 0.5)
+        visit.Position = UDim2.new(1, -8, 0.5, 0)
+        visit.Size = UDim2.fromOffset(106, 38)
+        visit.BackgroundColor3 = Color3.fromRGB(91, 139, 188)
+        visit.Text = "В ГОСТИ"
+        visit.TextColor3 = Color3.new(1, 1, 1)
+        visit.TextSize = 11
+        visit.Font = Enum.Font.GothamBlack
+        visit.Parent = card
+        addCorner(visit, 8)
+        visit.Activated:Connect(function()
+            visit.Active = false
+            local result = invokeVisit({ Action = "Visit", PlotId = entry.PlotId })
+            if result then
+                visitPanel.Visible = false
+                visitButton.Text = "ВЕРНУТЬСЯ ДОМОЙ"
+            else
+                visit.Active = true
+            end
+        end)
+    end
+end
+
+local function openVisitPanel()
+    local response = invokeVisit({ Action = "List" })
+    if response then
+        renderVisitList(response)
+        visitPanel.Visible = true
+    end
+end
+
+visitButton.Activated:Connect(function()
+    if visitButton.Text == "ВЕРНУТЬСЯ ДОМОЙ" then
+        local result = invokeVisit({ Action = "Return" })
+        if result then visitButton.Text = "ПОСЕТИТЬ ОСТРОВЫ" end
+    else
+        openVisitPanel()
+    end
+end)
+visitClose.Activated:Connect(function() visitPanel.Visible = false end)
 
 local activeDecorDrag = nil
 local dragPreview = nil
