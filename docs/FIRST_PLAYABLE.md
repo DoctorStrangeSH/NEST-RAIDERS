@@ -7,6 +7,9 @@
 - Companion passive coin income.
 - Six server-assigned personal nest plots with owner signs and owner-only hatch validation.
 - Placeholder fox, turtle, and dragon companion models follow the player (up to three visible).
+- Server-authoritative companion inventory with equip / unequip and a three-pet active limit.
+- Russian, touch-friendly collection panel with rarity, level, and passive income details.
+- Only equipped companions follow the player and generate passive income.
 - Minimal HUD for coins, eggs, companions, level, personal plot, and notices.
 - Initial profile persistence and biome progression foundation.
 
@@ -26,15 +29,17 @@
 4. Find your assigned plot (shown in the HUD) and use its Hatch Egg prompt.
 5. Confirm one egg is consumed and one companion is added.
 6. Confirm the hatched companion appears and follows your character.
-7. Wait for passive income; confirm Coins increases.
-8. Rejoin the private test place and confirm data persists.
+7. Open «Мои питомцы», equip and unequip companions, and confirm no more than three can be active.
+8. Confirm only equipped companions follow you and generate passive income.
+9. Wait for passive income; confirm Coins increases.
+10. Rejoin the private test place and confirm data persists.
 
 ## Known limitations
 - World geometry is a temporary scripted blockout, not final art.
 - Synty Nature Pack is catalogued as a candidate but must be imported and inspected manually in Studio.
 - Plots are currently six fixed slots per server; dynamic plot expansion and polished nest customization are not implemented.
 - Companion visuals are temporary scripted blockout models, not final imported character assets. Only the first three companions are shown following a player.
-- Carrying animation, full egg inventory UI, trading, and PvP raids are not implemented.
+- Carrying animation, egg carrying inventory, trading, and PvP raids are not implemented.
 - Starter companion odds are prototype values and must be disclosed in hatch UI before release.
 - DataStore behavior has not been runtime-verified in Studio.
 - DataStore session locking is implemented in code but still requires runtime verification in a private published test experience. Default Studio testing uses ephemeral profiles and does not save progress.
