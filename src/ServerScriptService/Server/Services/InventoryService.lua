@@ -99,6 +99,15 @@ local function makeSnapshot(profile)
             Id = companion.Id,
             Name = companion.Name,
             Rarity = companion.Rarity,
+            Origin = companion.Origin or "Hatch",
+            ParentNames = (function()
+                local names = {}
+                for _, parentId in ipairs(type(companion.ParentSpecies) == "table" and companion.ParentSpecies or {}) do
+                    local parentDefinition = CompanionCatalog[parentId]
+                    table.insert(names, parentDefinition and parentDefinition.Name or parentId)
+                end
+                return names
+            end)(),
             Level = companion.Level or 1,
             GrowthXP = companion.GrowthXP or 0,
             GrowthXPToNext = (companion.Level or 1) < MAX_COMPANION_LEVEL and (100 + ((companion.Level or 1) - 1) * 55) or 0,
