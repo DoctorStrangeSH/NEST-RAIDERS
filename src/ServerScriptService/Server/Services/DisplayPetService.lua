@@ -150,7 +150,9 @@ function DisplayPetService:HandleRequest(player, payload)
     profile.Nest.CompanionMood = type(profile.Nest.CompanionMood) == "table" and profile.Nest.CompanionMood or {}
 
     if payload.Action == "Get" then
-        return { Ok = true, Data = getSnapshot(profile) }
+        local snapshot = getSnapshot(profile)
+        self:RefreshPlayer(player)
+        return { Ok = true, Data = snapshot }
     end
 
     if payload.Action == "Place" then
