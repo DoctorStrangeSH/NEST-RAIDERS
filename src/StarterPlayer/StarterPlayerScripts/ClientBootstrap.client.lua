@@ -1018,7 +1018,9 @@ local function renderDecor(data)
     heading.Parent = decorList
 
     for slot = 1, data.SlotLimit or 0 do
-        local item = occupiedBySlot[slot]
+        local currentSlot = slot
+        local item = occupiedBySlot[currentSlot]
+        local currentItem = item
         local row = Instance.new("Frame")
         row.LayoutOrder = 20 + slot
         row.Size = UDim2.new(1, -8, 0, 76)
@@ -1031,7 +1033,7 @@ local function renderDecor(data)
         label.BackgroundTransparency = 1
         label.Position = UDim2.fromOffset(10, 3)
         label.Size = UDim2.new(1, -112, 0, 30)
-        label.Text = item and string.format("Место %d · %s  (X:%d Z:%d · %d°)", slot, item.Name, item.X or 0, item.Z or 0, item.Rotation or 0) or ("Место " .. slot .. " · Свободно")
+        label.Text = item and string.format("Место %d · %s  (X:%d Z:%d · %d°)", slot, item.Name, currentItem.X or 0, currentItem.Z or 0, currentItem.Rotation or 0) or ("Место " .. slot .. " · Свободно")
         label.TextColor3 = Color3.fromRGB(235, 229, 239)
         label.TextSize = 11
         label.TextXAlignment = Enum.TextXAlignment.Left
@@ -1062,10 +1064,10 @@ local function renderDecor(data)
                     moveButton.Active = false
                     local updated = invokeDecor({
                         Action = "Move",
-                        Slot = slot,
-                        X = (item.X or 0) + (currentControl.DX or 0),
-                        Z = (item.Z or 0) + (currentControl.DZ or 0),
-                        Rotation = (item.Rotation or 0) + (currentControl.Rotate or 0),
+                        Slot = currentSlot,
+                        X = (currentItem.X or 0) + (currentControl.DX or 0),
+                        Z = (currentItem.Z or 0) + (currentControl.DZ or 0),
+                        Rotation = (currentItem.Rotation or 0) + (currentControl.Rotate or 0),
                     })
                     if updated then renderDecor(updated) else moveButton.Active = true end
                 end)
@@ -1084,7 +1086,7 @@ local function renderDecor(data)
             addCorner(remove, 8)
             remove.Activated:Connect(function()
                 remove.Active = false
-                local updated = invokeDecor({ Action = "Remove", Slot = slot })
+                local updated = invokeDecor({ Action = "Remove", Slot = currentSlot })
                 if updated then renderDecor(updated) else remove.Active = true end
             end)
         end
