@@ -1142,7 +1142,7 @@ local function renderInventory(data)
             companion.GrowthXPToNext or 0,
             companion.Income or 0)
         if companion.Origin == "Breeding" then
-            details.Text ..= "\\nПотомство: " .. table.concat(companion.ParentNames or {}, " + ")
+            details.Text ..= "\nПотомство: " .. table.concat(companion.ParentNames or {}, " + ")
         end
         details.TextColor3 = Color3.fromRGB(187, 211, 203)
         details.TextSize = 12
