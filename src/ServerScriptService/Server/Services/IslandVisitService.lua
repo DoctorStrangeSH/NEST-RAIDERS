@@ -8,6 +8,7 @@ local IslandVisitService = {}
 IslandVisitService._lastRequest = {}
 IslandVisitService._returnCFrames = {}
 IslandVisitService._visitingPlot = {}
+IslandVisitService._visitingOwner = {}
 local COOLDOWN = 1
 local MAX_VISITORS_PER_PLOT = 8
 
@@ -69,12 +70,13 @@ function IslandVisitService:Return(player)
     if not target then return { Ok=false, Message="Не удалось найти твоё гнездо." } end
     if not moveCharacter(player, target) then return { Ok=false, Message="Персонаж ещё не готов." } end
     local oldPlotId = self._visitingPlot[player]
+    self._visitingPlot[player] = nil
+    self._visitingOwner[player] = nil
+    self._returnCFrames[player] = nil
     if oldPlotId then
         local oldPlot = PlotService._plots[oldPlotId]
         if oldPlot then oldPlot.Model:SetAttribute("VisitorCount", countVisitors(oldPlotId)) end
     end
-    self._visitingPlot[player] = nil
-    self._returnCFrames[player] = nil
     return { Ok=true, Message="Ты вернулся в своё гнездо." }
 end
 
@@ -104,6 +106,7 @@ function IslandVisitService:Visit(player, plotId)
     local target = CFrame.new(destination.Center + Vector3.new(0, 6, 12))
     if not moveCharacter(player, target) then return { Ok=false, Message="Не удалось перейти на остров." } end
     self._visitingPlot[player] = plotId
+    self._visitingOwner[player] = owner.UserId
     destination.Model:SetAttribute("VisitorCount", countVisitors(plotId))
     return { Ok=true, Message="Добро пожаловать на остров "..owner.DisplayName.."!" }
 end
@@ -145,18 +148,18 @@ function IslandVisitService:Init()
     end
     Players.PlayerRemoving:Connect(function(player)
         local plotId = self._visitingPlot[player]
+        self._visitingPlot[player] = nil
+        self._visitingOwner[player] = nil
         if plotId then
             local plot = PlotService._plots[plotId]
-            if plot then plot.Model:SetAttribute("VisitorCount", math.max(0, countVisitors(plotId)-1)) end
+            if plot then plot.Model:SetAttribute("VisitorCount", countVisitors(plotId)) end
         end
-        self._visitingPlot[player] = nil
         self._returnCFrames[player] = nil
         self._lastRequest[player] = nil
     end)
     Players.PlayerRemoving:Connect(function(owner)
-        for visitor, plotId in pairs(self._visitingPlot) do
-            local plot = PlotService._plots[plotId]
-            if plot and getOwner(plot) == owner then
+        for visitor, ownerUserId in pairs(self._visitingOwner) do
+            if ownerUserId == owner.UserId and visitor.Parent then
                 self:Return(visitor)
             end
         end
