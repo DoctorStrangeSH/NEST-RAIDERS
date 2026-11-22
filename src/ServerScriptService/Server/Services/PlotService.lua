@@ -144,6 +144,107 @@ function PlotService:ApplyNestLevel(player, level)
     return true
 end
 
+function PlotService:ApplyContestTrophies(player)
+    local plot = self._playerPlots[player]
+    local profile = PlayerDataService:GetProfile(player)
+    if not plot or not profile or not profile.Nest then return false end
+
+    local previous = plot.Model:FindFirstChild("ContestTrophies")
+    if previous then previous:Destroy() end
+
+    local trophies = profile.Nest.IslandTrophies or {}
+    local entries = {}
+    for _, trophy in pairs(trophies) do
+        if type(trophy) == "table"
+            and type(trophy.Week) == "string"
+            and type(trophy.Category) == "string"
+            and type(trophy.Place) == "number" then
+            table.insert(entries, trophy)
+        end
+    end
+    table.sort(entries, function(a, b)
+        if (a.ClaimedAt or 0) == (b.ClaimedAt or 0) then
+            return a.Week > b.Week
+        end
+        return (a.ClaimedAt or 0) > (b.ClaimedAt or 0)
+    end)
+
+    local folder = Instance.new("Folder")
+    folder.Name = "ContestTrophies"
+    folder.Parent = plot.Model
+
+    local medalColors = {
+        [1] = Color3.fromRGB(255, 205, 75),
+        [2] = Color3.fromRGB(196, 210, 224),
+        [3] = Color3.fromRGB(190, 126, 78),
+    }
+    local categoryNames = {
+        Cozy = "УЮТ",
+        Nature = "ПРИРОДА",
+        Fantasy = "ФЭНТЕЗИ",
+    }
+    local categoryColors = {
+        Cozy = Color3.fromRGB(245, 174, 115),
+        Nature = Color3.fromRGB(116, 207, 137),
+        Fantasy = Color3.fromRGB(166, 143, 240),
+    }
+
+    for index = 1, math.min(#entries, 6) do
+        local trophyData = entries[index]
+        local award = Instance.new("Model")
+        award.Name = "ContestTrophy_" .. tostring(index)
+        award:SetAttribute("Week", trophyData.Week)
+        award:SetAttribute("Category", trophyData.Category)
+        award:SetAttribute("Place", trophyData.Place)
+        award.Parent = folder
+
+        local color = medalColors[trophyData.Place] or medalColors[3]
+        local accent = categoryColors[trophyData.Category] or Color3.fromRGB(235, 220, 180)
+        local x = -13 + (index - 1) * 5.2
+        local origin = plot.Center + Vector3.new(x, 2.0, -13)
+
+        local function trophyPart(name, size, offset, partColor, material, shape)
+            local part = makePart(
+                award,
+                name,
+                size,
+                CFrame.new(origin + offset),
+                partColor,
+                material
+            )
+            part.CanCollide = false
+            part.CanTouch = false
+            part.CanQuery = false
+            if shape then part.Shape = shape end
+            return part
+        end
+
+        trophyPart("Pedestal", Vector3.new(3.8, 0.55, 3.2), Vector3.new(0, 0, 0), Color3.fromRGB(92, 72, 54), Enum.Material.Wood)
+        trophyPart("MedalStem", Vector3.new(0.8, 1.5, 0.8), Vector3.new(0, 1.0, 0), color, Enum.Material.Metal)
+        local cup = trophyPart("Cup", Vector3.new(2.0, 1.7, 1.5), Vector3.new(0, 2.3, 0), color, Enum.Material.Metal, Enum.PartType.Ball)
+        cup.Size = Vector3.new(2.0, 1.35, 1.5)
+        trophyPart("CategoryGem", Vector3.new(0.55, 0.55, 0.55), Vector3.new(0, 2.35, -0.9), accent, Enum.Material.Neon, Enum.PartType.Ball)
+        trophyPart("HandleLeft", Vector3.new(0.35, 1.1, 0.35), Vector3.new(-1.05, 2.25, 0), color, Enum.Material.Metal, Enum.PartType.Ball)
+        trophyPart("HandleRight", Vector3.new(0.35, 1.1, 0.35), Vector3.new(1.05, 2.25, 0), color, Enum.Material.Metal, Enum.PartType.Ball)
+
+        local plaque = trophyPart("Plaque", Vector3.new(3.2, 0.65, 0.25), Vector3.new(0, 0.35, -1.65), accent, Enum.Material.SmoothPlastic)
+        local surface = Instance.new("SurfaceGui")
+        surface.Face = Enum.NormalId.Front
+        surface.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+        surface.PixelsPerStud = 45
+        surface.Parent = plaque
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.fromScale(1, 1)
+        label.BackgroundTransparency = 1
+        label.Text = (categoryNames[trophyData.Category] or "КОНКУРС") .. " · " .. tostring(trophyData.Place)
+        label.TextColor3 = Color3.fromRGB(255, 255, 245)
+        label.TextScaled = true
+        label.Font = Enum.Font.GothamBlack
+        label.Parent = surface
+    end
+    return true
+end
+
 function PlotService:GetPlayerPlot(player)
     return self._playerPlots[player]
 end
@@ -193,6 +294,7 @@ function PlotService:AssignPlot(player)
     player:SetAttribute("PlotId", selected.Id)
     player:SetAttribute("PlotAssigned", true)
     self:ApplyNestLevel(player, profile.Nest.Level or 1)
+    self:ApplyContestTrophies(player)
     player:SetAttribute("LastNotice", "Твоё личное гнездо готово!")
 end
 
@@ -207,6 +309,8 @@ function PlotService:ReleasePlot(player)
     if displayedCompanions then displayedCompanions:Destroy() end
     local playerBuildings = plot.Model:FindFirstChild("PlayerBuildings")
     if playerBuildings then playerBuildings:Destroy() end
+    local contestTrophies = plot.Model:FindFirstChild("ContestTrophies")
+    if contestTrophies then contestTrophies:Destroy() end
     plot.Model:SetAttribute("OwnerUserId", nil)
     plot.Model:SetAttribute("OwnerName", nil)
     plot.OwnerLabel.Text = "СВОБОДНОЕ ГНЕЗДО"
