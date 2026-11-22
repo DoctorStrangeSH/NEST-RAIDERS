@@ -110,7 +110,8 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add species-specific adult abilities with server validation, persistent per-pet cooldowns, and distinct rewards.
 - [x] Add adult cross-species breeding with inherited genetics, rare mutations, lineage records, parent cooldowns, and explicit confirmation.
 - [x] Add persistent lineage eggs with a five-minute incubation timer, offspring preview, inherited genetics, and hatch-at-station flow.
-- [ ] Add distinct hybrid species models, nest breeding station, and visual mutation variants.
+- [x] Add three deterministic starter-pair hybrid species with distinct follower silhouettes and breeding-only collection entries.
+- [ ] Add a dedicated nest breeding station, expanded hybrid ability kits, and visual mutation variants.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
 - [ ] Economy sinks and telemetry-driven balancing.
