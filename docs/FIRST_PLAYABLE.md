@@ -197,3 +197,11 @@
 - Incubation lasts five minutes. The egg stores the server-selected offspring species, inherited/mutated genetic trait, and parent species IDs.
 - The collection displays incubator count, remaining time, offspring preview, and genetic trait. The player hatches the ready egg at their own plot's hatch station.
 - The hatch service uses the stored offspring outcome; it does not reroll species or genetics. Standard eggs retain their existing random hatch behavior.
+
+
+## Starter hybrid species — Sprint 4.17
+- MeadowFox + SproutDragon produces EmberFox (Пламенный лис).
+- MossTurtle + SproutDragon produces Fernshell (Папоротниковый панцирь).
+- MeadowFox + MossTurtle produces BriarGuardian (Терновый страж).
+- These three Epic species are breeding-only, excluded from natural egg drops, and shown as such in the collection book until discovered.
+- Hybrid follower silhouettes are implemented. EmberFox has the CinderDash adult ability; the other two hybrid ability kits remain future work.
