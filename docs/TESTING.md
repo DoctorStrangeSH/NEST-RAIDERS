@@ -28,6 +28,11 @@
 - [ ] When all six plots are occupied, the next player receives a clear server-full message.
 - [ ] Newly hatched companions appear and follow their owner.
 - [ ] At most three companion models are rendered per player.
+- [ ] Egg shop displays the current balance, egg capacity, price, and hatch odds.
+- [ ] Buying a Meadow Egg deducts exactly 50 coins and adds exactly one egg.
+- [ ] Purchase is rejected with insufficient coins, full egg inventory, unknown egg ID, or unmet level requirement.
+- [ ] Client cannot set a custom price or grant itself eggs through the shop remote.
+- [ ] Shop odds match the server-side hatch weights (55% / 30% / 15%).
 - [ ] Companion inventory lists every owned pet with rarity, level, and income.
 - [ ] Player can equip and unequip owned companions; non-owned IDs are rejected.
 - [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
