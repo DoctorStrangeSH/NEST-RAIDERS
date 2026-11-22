@@ -127,4 +127,4 @@ Each player's nest includes a dedicated glowing breeding altar. Breeding request
 
 
 ## Breeding ritual
-Successful breeding triggers a temporary altar animation: parent-colored energy echoes converge into a trait-colored lineage egg. Hybrid offspring receive a distinct golden reveal burst. The visual sequence does not alter server-authoritative breeding outcomes or incubation.
+Successful breeding triggers a temporary altar animation: the two selected companion models converge through species-colored energy beams into a trait-colored lineage egg. Hybrid offspring receive a distinct golden reveal burst. The visual sequence does not alter server-authoritative breeding outcomes or incubation.
