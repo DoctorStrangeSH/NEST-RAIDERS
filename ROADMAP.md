@@ -72,7 +72,9 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Render colorful scripted flower pots, lanterns, crystals, and mushroom seats in the player-owned plot.
 - [x] Add a Russian mobile-friendly decoration shop / placement panel with slot status and removal controls.
 - [x] Unlock additional decoration slots through nest upgrades (2 at level 1, up to 6 at level 5).
-- [ ] Add free-rotation / grid placement, Creator Store art assets, and richer decoration themes.
+- [x] Add persistent 2-stud grid positioning and 15-degree rotation for placed nest decorations.
+- [x] Add touch-friendly directional nudge and rotate controls; validate bounds and transforms on the server.
+- [ ] Add drag-to-place preview, Creator Store art assets, and richer decoration themes.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
