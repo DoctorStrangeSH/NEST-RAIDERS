@@ -37,7 +37,7 @@ local function getSnapshot(profile)
     local displayed = {}
     local displayedSet = {}
     for slot = 1, limit do
-        local instanceId = profile.Nest.DisplayedCompanions[slot]
+        local instanceId = profile.Nest.DisplayedCompanions[tostring(slot)] or profile.Nest.DisplayedCompanions[slot]
         local companion = instanceId and findOwned(profile, instanceId) or nil
         if companion then
             displayedSet[instanceId] = true
@@ -116,6 +116,9 @@ function DisplayPetService:HandleRequest(player, payload)
         if type(payload.InstanceId) ~= "string" or #payload.InstanceId > 80 then
             return { Ok = false, Message = "Некорректный питомец." }
         end
+        if not PlotService:GetPlayerPlot(player) then
+            return { Ok = false, Message = "Сначала дождись назначения личного гнезда." }
+        end
         local limit = getSlotLimit(profile)
         local slot = math.floor(tonumber(payload.Slot) or 0)
         if slot < 1 or slot > limit then
@@ -132,22 +135,32 @@ function DisplayPetService:HandleRequest(player, payload)
         end
         for existingSlot, id in pairs(profile.Nest.DisplayedCompanions) do
             if id == payload.InstanceId then
-                return { Ok = false, Message = "Этот питомец уже стоит на витрине №" .. existingSlot .. "." }
+                return { Ok = false, Message = "Этот питомец уже стоит на витрине №" .. tostring(existingSlot) .. "." }
             end
         end
-        profile.Nest.DisplayedCompanions[slot] = payload.InstanceId
+        local slotKey = tostring(slot)
+        if profile.Nest.DisplayedCompanions[slotKey] or profile.Nest.DisplayedCompanions[slot] then
+            return { Ok = false, Message = "Эта витрина уже занята." }
+        end
+        profile.Nest.DisplayedCompanions[slotKey] = payload.InstanceId
+        profile.Nest.DisplayedCompanions[slot] = nil
         self:RefreshPlayer(player)
         player:SetAttribute("LastNotice", companion.Name .. " теперь живёт в твоём гнезде!")
         return { Ok = true, Data = getSnapshot(profile) }
     end
 
     if payload.Action == "Remove" then
+        if not PlotService:GetPlayerPlot(player) then
+            return { Ok = false, Message = "Сначала дождись назначения личного гнезда." }
+        end
         local slot = math.floor(tonumber(payload.Slot) or 0)
         if slot < 1 or slot > getSlotLimit(profile) then
             return { Ok = false, Message = "Некорректная витрина." }
         end
-        local instanceId = profile.Nest.DisplayedCompanions[slot]
+        local slotKey = tostring(slot)
+        local instanceId = profile.Nest.DisplayedCompanions[slotKey] or profile.Nest.DisplayedCompanions[slot]
         if not instanceId then return { Ok = false, Message = "Витрина уже свободна." } end
+        profile.Nest.DisplayedCompanions[slotKey] = nil
         profile.Nest.DisplayedCompanions[slot] = nil
         self:RefreshPlayer(player)
         player:SetAttribute("LastNotice", "Питомец возвращён в коллекцию.")
@@ -155,6 +168,9 @@ function DisplayPetService:HandleRequest(player, payload)
     end
 
     if payload.Action == "Collect" then
+        if not PlotService:GetPlayerPlot(player) then
+            return { Ok = false, Message = "Сначала дождись назначения личного гнезда." }
+        end
         local amount = profile.Nest.StoredCoins
         if amount <= 0 then
             return { Ok = false, Message = "Пока нечего собирать. Питомцы ещё копят монеты." }
