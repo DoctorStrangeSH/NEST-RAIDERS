@@ -1094,7 +1094,7 @@ local function renderInventory(data)
         local card = Instance.new("Frame")
         card.Name = "CompanionCard"
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, entry.IsLocal and 136 or 104)
+        card.Size = UDim2.new(1, -8, 0, 152)
         card.BackgroundColor3 = Color3.fromRGB(43, 64, 72)
         card.BorderSizePixel = 0
         card.Parent = list
@@ -1114,18 +1114,26 @@ local function renderInventory(data)
         local details = Instance.new("TextLabel")
         details.BackgroundTransparency = 1
         details.Position = UDim2.fromOffset(12, 34)
-        details.Size = UDim2.new(1, -130, 0, 25)
+        details.Size = UDim2.new(1, -130, 0, 42)
         details.Font = Enum.Font.GothamMedium
-        details.Text = string.format("%s  ·  Ур. %d  ·  %s  ·  +%d / 10 сек.", companion.Rarity or "Обычный", companion.Level or 1, string.rep("★", companion.Stars or 1), companion.Income or 0)
+        local trait = companion.GeneticTrait or { Name = "Естественный" }
+        details.Text = string.format("%s  ·  %s  ·  %s\n%s · Опыт %d/%d\n+%d монет / 10 сек.",
+            companion.Rarity or "Обычный",
+            string.rep("★", companion.Stars or 1),
+            companion.GrowthStage or "Малыш",
+            trait.Name or "Естественный",
+            companion.GrowthXP or 0,
+            companion.GrowthXPToNext or 0,
+            companion.Income or 0)
         details.TextColor3 = Color3.fromRGB(187, 211, 203)
         details.TextSize = 12
         details.TextXAlignment = Enum.TextXAlignment.Left
         details.Parent = card
 
         local action = Instance.new("TextButton")
-        action.AnchorPoint = Vector2.new(1, 0.5)
-        action.Position = UDim2.new(1, -10, 0.5, 0)
-        action.Size = UDim2.fromOffset(104, 38)
+        action.AnchorPoint = Vector2.new(1, 0)
+        action.Position = UDim2.new(1, -10, 0, 8)
+        action.Size = UDim2.fromOffset(96, 34)
         action.BackgroundColor3 = companion.Equipped and Color3.fromRGB(115, 86, 65) or Color3.fromRGB(67, 139, 104)
         action.Text = companion.Equipped and "СНЯТЬ" or "ВЗЯТЬ"
         action.TextColor3 = Color3.fromRGB(255, 255, 245)
@@ -1136,8 +1144,8 @@ local function renderInventory(data)
 
         local mergeButton = Instance.new("TextButton")
         mergeButton.Name = "MergeButton"
-        mergeButton.Position = UDim2.fromOffset(12, 68)
-        mergeButton.Size = UDim2.fromOffset(126, 27)
+        mergeButton.Position = UDim2.fromOffset(12, 96)
+        mergeButton.Size = UDim2.fromOffset(116, 27)
         mergeButton.BackgroundColor3 = Color3.fromRGB(127, 91, 174)
         mergeButton.Text = "СЛИЯТЬ ×3"
         mergeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1168,6 +1176,34 @@ local function renderInventory(data)
                 mergeButton.Text = "СЛИЯТЬ ×3"
                 mergeButton.BackgroundColor3 = Color3.fromRGB(127, 91, 174)
                 mergeArmed = false
+            end
+        end)
+
+        local trainButton = Instance.new("TextButton")
+        trainButton.Name = "TrainButton"
+        trainButton.Position = UDim2.fromOffset(136, 96)
+        trainButton.Size = UDim2.fromOffset(116, 27)
+        trainButton.BackgroundColor3 = Color3.fromRGB(66, 137, 151)
+        trainButton.Text = (companion.Level or 1) >= 10 and "МАКС. УРОВЕНЬ" or ("ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. "🪙")
+        trainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        trainButton.TextSize = 9
+        trainButton.Font = Enum.Font.GothamBlack
+        trainButton.Parent = card
+        trainButton.Active = (companion.Level or 1) < 10
+        addCorner(trainButton, 8)
+        trainButton.Activated:Connect(function()
+            if (companion.Level or 1) >= 10 then return end
+            trainButton.Active = false
+            trainButton.Text = "ТРЕНИРОВКА..."
+            local updated = invokeInventory({
+                Action = "Train",
+                InstanceId = companion.InstanceId,
+            })
+            if updated then
+                renderInventory(updated)
+            else
+                trainButton.Active = true
+                trainButton.Text = "ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. "🪙"
             end
         end)
 
