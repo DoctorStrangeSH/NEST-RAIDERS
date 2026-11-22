@@ -5,7 +5,7 @@ local WorldBuilder = require(ServerFolder:WaitForChild("World"):WaitForChild("Wo
 
 WorldBuilder:Build()
 
-local serviceNames = { "PlayerDataService", "ProgressionService", "PlotService", "CompanionService", "InventoryService", "EggService", "EconomyService" }
+local serviceNames = { "PlayerDataService", "ProgressionService", "PlotService", "CompanionService", "InventoryService", "EggShopService", "EggService", "EconomyService" }
 local services = {}
 for _, serviceName in ipairs(serviceNames) do
     services[serviceName] = require(ServicesFolder:WaitForChild(serviceName))
