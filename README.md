@@ -92,3 +92,7 @@ The previous week's top-three island contest results are archived when the conte
 
 ## Global island discovery
 In published servers, active islands are advertised through a TTL-backed MemoryStore directory. Players can browse islands across public servers and teleport to the exact server hosting the selected owner. The destination verifies the owner and plot before moving the visitor. Studio intentionally uses local-only browsing; cross-server acceptance testing requires a published private test experience.
+
+
+## Player identity
+Players can open their own profile or inspect an island owner's public profile while both are in the same server. Profiles show progression, collection milestones, received island likes, contest trophies, and server-derived achievements. Unlocked cosmetic titles can be equipped and appear above the character. Cross-server and offline profile lookup remains planned work.
