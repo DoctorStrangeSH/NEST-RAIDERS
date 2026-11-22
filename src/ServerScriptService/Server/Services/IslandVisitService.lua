@@ -177,7 +177,8 @@ end
 
 function IslandVisitService:VisitGlobal(player, targetUserId, jobId, placeId)
     if type(targetUserId) ~= "number" or targetUserId <= 0 or targetUserId == player.UserId
-        or type(jobId) ~= "string" or #jobId < 8 or type(placeId) ~= "number" then
+        or type(jobId) ~= "string" or #jobId < 8 or type(placeId) ~= "number"
+        or placeId ~= game.PlaceId then
         return { Ok=false, Message="Некорректный адрес острова." }
     end
 
@@ -426,6 +427,12 @@ function IslandVisitService:Init()
     remote.OnServerInvoke = function(player, payload)
         return self:HandleRequest(player, payload)
     end
+    TeleportService.TeleportInitFailed:Connect(function(player, teleportResult, errorMessage)
+        if player.Parent then
+            warn("[NEST RAIDERS] Island visit teleport initialization failed:", teleportResult, errorMessage)
+            player:SetAttribute("LastNotice", "Переход не удался. Попробуй обновить список островов.")
+        end
+    end)
     self._directoryReady = true
     Players.PlayerAdded:Connect(function(player)
         self:HandleArrival(player)
