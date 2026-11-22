@@ -187,3 +187,13 @@ A feature is done only when:
 - Store claimed trophy records in the player's persistent profile and render the trophies on their personal island.
 - Trophy visuals are cosmetic only and grant no progression, economy, companion, or PvP advantages.
 - Studio fallback history is local and temporary. Automatic scheduled finalization is not part of this sprint.
+
+
+## Global island discovery and visits
+- Published servers publish active island owner records to a shared TTL-backed MemoryStore sorted map.
+- Directory records include UserId, display name, level, plot ID, JobId, PlaceId, visitor count, capacity, likes, and update timestamp.
+- Browsing merges local plots and global records, deduplicating by stable UserId.
+- Cross-server visits must validate the directory record server-side and teleport to the exact public server.
+- Destination arrival must verify that the requested owner still owns the requested plot before moving the visitor.
+- Directory unavailability degrades gracefully to local listings; Studio remains local-only.
+- Directory entries are ephemeral and refresh periodically; they are not a persistent player profile or ranking database.
