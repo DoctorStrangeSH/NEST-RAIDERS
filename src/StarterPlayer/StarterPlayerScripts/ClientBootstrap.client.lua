@@ -411,7 +411,7 @@ decorBalance.Parent = decorPanel
 
 local decorList = Instance.new("ScrollingFrame")
 decorList.Position = UDim2.fromOffset(12, 78)
-decorList.Size = UDim2.new(1, -24, 1, -90)
+decorList.Size = UDim2.new(1, -24, 1, -130)
 decorList.BackgroundTransparency = 1
 decorList.BorderSizePixel = 0
 decorList.ScrollBarThickness = 6
@@ -422,28 +422,44 @@ local dragHint = Instance.new("TextLabel")
 dragHint.Name = "PlacementHint"
 dragHint.BackgroundColor3 = Color3.fromRGB(54, 104, 85)
 dragHint.BackgroundTransparency = 0.08
-dragHint.Position = UDim2.new(0, 12, 1, -32)
-dragHint.Size = UDim2.new(1, -24, 0, 25)
+dragHint.AnchorPoint = Vector2.new(0.5, 1)
+dragHint.Position = UDim2.new(0.5, 0, 1, -58)
+dragHint.Size = UDim2.fromOffset(320, 28)
 dragHint.Font = Enum.Font.GothamBold
 dragHint.Text = "Режим размещения"
 dragHint.TextColor3 = Color3.new(1, 1, 1)
 dragHint.TextSize = 10
 dragHint.Visible = false
-dragHint.Parent = decorPanel
+dragHint.Parent = gui
 addCorner(dragHint, 8)
 
 local dragRotateButton = Instance.new("TextButton")
 dragRotateButton.Name = "PlacementRotate"
-dragRotateButton.Position = UDim2.new(1, -112, 1, -62)
-dragRotateButton.Size = UDim2.fromOffset(100, 25)
+dragRotateButton.AnchorPoint = Vector2.new(1, 1)
+dragRotateButton.Position = UDim2.new(1, -18, 1, -18)
+dragRotateButton.Size = UDim2.fromOffset(112, 34)
 dragRotateButton.BackgroundColor3 = Color3.fromRGB(112, 101, 164)
 dragRotateButton.Text = "ПОВОРОТ ↻"
 dragRotateButton.TextColor3 = Color3.new(1, 1, 1)
 dragRotateButton.TextSize = 10
 dragRotateButton.Font = Enum.Font.GothamBlack
 dragRotateButton.Visible = false
-dragRotateButton.Parent = decorPanel
+dragRotateButton.Parent = gui
 addCorner(dragRotateButton, 8)
+
+local dragCancelButton = Instance.new("TextButton")
+dragCancelButton.Name = "PlacementCancel"
+dragCancelButton.AnchorPoint = Vector2.new(0, 1)
+dragCancelButton.Position = UDim2.new(0, 18, 1, -18)
+dragCancelButton.Size = UDim2.fromOffset(112, 34)
+dragCancelButton.BackgroundColor3 = Color3.fromRGB(151, 86, 91)
+dragCancelButton.Text = "ОТМЕНА"
+dragCancelButton.TextColor3 = Color3.new(1, 1, 1)
+dragCancelButton.TextSize = 10
+dragCancelButton.Font = Enum.Font.GothamBlack
+dragCancelButton.Visible = false
+dragCancelButton.Parent = gui
+addCorner(dragCancelButton, 8)
 
 local decorLayout = Instance.new("UIListLayout")
 decorLayout.Padding = UDim.new(0, 8)
@@ -1154,12 +1170,14 @@ local function getOwnedPlotGrass()
     return nil
 end
 
-local function stopDecorDrag()
+local function stopDecorDrag(reopenPanel)
     activeDecorDrag = nil
     dragRotation = 0
     if dragPreview then dragPreview:Destroy(); dragPreview = nil end
     if dragHint then dragHint.Visible = false end
     if dragRotateButton then dragRotateButton.Visible = false end
+    if dragCancelButton then dragCancelButton.Visible = false end
+    if reopenPanel then decorPanel.Visible = true end
 end
 
 local function startDecorDrag(slot, item)
@@ -1171,6 +1189,7 @@ local function startDecorDrag(slot, item)
     end
     activeDecorDrag = { Slot = slot, Item = item, Grass = grass }
     dragRotation = item.Rotation or 0
+    decorPanel.Visible = false
 
     dragPreview = Instance.new("Part")
     dragPreview.Name = "NestDecorPlacementPreview"
@@ -1189,6 +1208,7 @@ local function startDecorDrag(slot, item)
         dragHint.Visible = true
     end
     if dragRotateButton then dragRotateButton.Visible = true end
+    if dragCancelButton then dragCancelButton.Visible = true end
     showNotice("Режим размещения: нажми на остров, чтобы переместить украшение.")
 end
 
@@ -1241,7 +1261,7 @@ local function confirmDecorDrag(screenPosition)
         Rotation = dragRotation,
     })
     if updated then
-        stopDecorDrag()
+        stopDecorDrag(true)
         renderDecor(updated)
     end
 end
@@ -1253,7 +1273,7 @@ local function openDecor()
 end
 
 decorButton.Activated:Connect(openDecor)
-decorClose.Activated:Connect(function() stopDecorDrag(); decorPanel.Visible = false end)
+decorClose.Activated:Connect(function() stopDecorDrag(false); decorPanel.Visible = false end)
 
 UserInputService.InputChanged:Connect(function(input)
     if not activeDecorDrag then return end
@@ -1269,10 +1289,14 @@ dragRotateButton.Activated:Connect(function()
     dragRotation = (dragRotation + 15) % 360
 end)
 
+dragCancelButton.Activated:Connect(function()
+    stopDecorDrag(true)
+end)
+
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if not activeDecorDrag then return end
     if input.KeyCode == Enum.KeyCode.Escape then
-        stopDecorDrag()
+        stopDecorDrag(true)
         return
     end
     if input.KeyCode == Enum.KeyCode.R then
