@@ -226,3 +226,14 @@ A feature is done only when:
 - SproutDragon — VerdantSpark: grants player progression XP. Reward formula: 35 + level × 5 + star rank × 10.
 - Each ability has a 300-second per-companion cooldown persisted in AbilityReadyAt. Cooldown validation and reward calculation are server-authoritative.
 - The inventory snapshot exposes only ability display metadata, unlock state, and remaining cooldown. It does not accept ability definitions or reward amounts from the client.
+
+
+## Adult breeding and genetic inheritance
+- Breeding requires two distinct owned companions of different species, each at level 7 or higher. Both parents must be unequipped and not displayed in the nest. Parents are not consumed.
+- Breeding costs 250 + (parent A star rank + parent B star rank) × 100 coins. Each parent receives an independent 1,800-second cooldown. The server checks ownership, level, species, equipped/displayed state, cooldown, currency, and collection capacity before changing profile data.
+- Offspring species is randomly selected from either parent's species. Offspring starts at level 1, one star, and zero GrowthXP.
+- Genetic inheritance: 90% chance to inherit one parent's existing trait (each parent equally likely); 7% chance of Luminous mutation; 3% chance of Prismatic mutation. Trait values are selected from server-defined constants, never from client payloads.
+- Offspring records Origin = Breeding and both parent species IDs. Collection snapshots resolve parent species names for lineage display.
+- Collection capacity is 100 companions. Breeding must fail without charging currency or setting cooldowns when the collection is full.
+- UI requires selecting parent A, selecting parent B, then explicitly confirming breeding before spending coins.
+- This is the first breeding loop; true hybrid species and distinct cross-species models are future work. The child retains one parent's existing species model.
