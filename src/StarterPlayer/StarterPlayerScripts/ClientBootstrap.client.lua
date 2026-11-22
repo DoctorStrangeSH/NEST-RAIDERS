@@ -848,20 +848,6 @@ local function invokeDisplay(payload)
     return response.Data
 end
 
-local function makeDisplayButton(parent, text, color, callback)
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, -8, 0, 36)
-    button.BackgroundColor3 = color
-    button.Text = text
-    button.TextColor3 = Color3.fromRGB(255, 255, 245)
-    button.TextSize = 12
-    button.Font = Enum.Font.GothamBold
-    button.Parent = parent
-    addCorner(button, 9)
-    button.Activated:Connect(callback)
-    return button
-end
-
 local renderDisplay
 
 local function renderPicker(data)
