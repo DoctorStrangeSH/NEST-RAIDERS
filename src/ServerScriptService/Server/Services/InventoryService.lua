@@ -6,11 +6,42 @@ local HttpService = game:GetService("HttpService")
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
 local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
+local DisplayPetService = require(ServerScriptService.Server.Services.DisplayPetService)
 
 local InventoryService = {}
 local MAX_ACTIVE_COMPANIONS = 3
 local REQUEST_COOLDOWN = 0.2
 InventoryService._lastRequest = {}
+
+local MAX_COMPANION_LEVEL = 10
+local TRAIN_XP = 75
+
+local function getGrowthStage(level)
+    if level >= 7 then return "Взрослый", 3 end
+    if level >= 4 then return "Юный", 2 end
+    return "Малыш", 1
+end
+
+local function getTrait(companion)
+    local trait = type(companion.GeneticTrait) == "table" and companion.GeneticTrait or nil
+    if not trait then
+        trait = { Id = "Natural", Name = "Естественный", Rarity = "Обычный", IncomeBonus = 0 }
+        companion.GeneticTrait = trait
+    end
+    trait.IncomeBonus = math.clamp(tonumber(trait.IncomeBonus) or 0, 0, 0.1)
+    return trait
+end
+
+local function updateCompanionIncome(companion)
+    local definition = CompanionCatalog[companion.Id]
+    local baseIncome = definition and definition.Income or math.max(1, tonumber(companion.Income) or 1)
+    local stars = math.clamp(math.floor(tonumber(companion.Stars) or 1), 1, 3)
+    local level = math.clamp(math.floor(tonumber(companion.Level) or 1), 1, MAX_COMPANION_LEVEL)
+    local starMultiplier = stars == 3 and 3 or (stars == 2 and 1.75 or 1)
+    local levelMultiplier = 1 + (level - 1) * 0.04
+    local trait = getTrait(companion)
+    companion.Income = math.max(1, math.floor(baseIncome * starMultiplier * levelMultiplier * (1 + trait.IncomeBonus)))
+end
 
 local function activeSet(profile)
     local result = {}
@@ -27,6 +58,10 @@ local function normalizeProfile(profile)
         if type(companion.InstanceId) ~= "string" then
             companion.InstanceId = HttpService:GenerateGUID(false)
         end
+        companion.Level = math.clamp(math.floor(tonumber(companion.Level) or 1), 1, MAX_COMPANION_LEVEL)
+        companion.GrowthXP = math.max(0, math.floor(tonumber(companion.GrowthXP) or 0))
+        getTrait(companion)
+        updateCompanionIncome(companion)
         if type(companion.InstanceId) == "string" then
             owned[companion.InstanceId] = true
         end
@@ -63,6 +98,10 @@ local function makeSnapshot(profile)
             Name = companion.Name,
             Rarity = companion.Rarity,
             Level = companion.Level or 1,
+            GrowthXP = companion.GrowthXP or 0,
+            GrowthXPToNext = (companion.Level or 1) < MAX_COMPANION_LEVEL and (100 + ((companion.Level or 1) - 1) * 55) or 0,
+            GrowthStage = getGrowthStage(companion.Level or 1),
+            GeneticTrait = getTrait(companion),
             Stars = companion.Stars or 1,
             MergeCount = (displayed[companion.InstanceId] and 0 or speciesCounts[tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)]) or 1,
             Displayed = displayed[companion.InstanceId] == true,
@@ -92,7 +131,7 @@ function InventoryService:HandleRequest(player, payload)
     if payload.Action == "Get" then
         return { Ok = true, Data = makeSnapshot(profile) }
     end
-    if payload.Action ~= "Equip" and payload.Action ~= "Unequip" and payload.Action ~= "Merge" then
+    if payload.Action ~= "Equip" and payload.Action ~= "Unequip" and payload.Action ~= "Merge" and payload.Action ~= "Train" then
         return { Ok = false, Message = "Неизвестное действие." }
     end
     if type(payload.InstanceId) ~= "string" or #payload.InstanceId > 80 then
@@ -105,6 +144,43 @@ function InventoryService:HandleRequest(player, payload)
     end
     if not owned then
         return { Ok = false, Message = "Этот питомец тебе не принадлежит." }
+    end
+
+    if payload.Action == "Train" then
+        local target
+        for _, companion in ipairs(profile.Companions) do
+            if companion.InstanceId == payload.InstanceId then target = companion break end
+        end
+        if not target then return { Ok = false, Message = "Питомец не найден." } end
+        local level = math.clamp(math.floor(tonumber(target.Level) or 1), 1, MAX_COMPANION_LEVEL)
+        if level >= MAX_COMPANION_LEVEL then
+            return { Ok = false, Message = "Питомец достиг максимального уровня." }
+        end
+        local cost = 30 + level * 25
+        if profile.Coins < cost then
+            return { Ok = false, Message = "Для тренировки нужно " .. cost .. " монет." }
+        end
+
+        profile.Coins -= cost
+        target.GrowthXP = math.max(0, math.floor(tonumber(target.GrowthXP) or 0)) + TRAIN_XP
+        local levelsGained = 0
+        while target.Level < MAX_COMPANION_LEVEL do
+            local requiredXP = 100 + (target.Level - 1) * 55
+            if target.GrowthXP < requiredXP then break end
+            target.GrowthXP -= requiredXP
+            target.Level += 1
+            levelsGained += 1
+        end
+        updateCompanionIncome(target)
+        player:SetAttribute("Coins", profile.Coins)
+        CompanionService:RefreshPlayer(player)
+        DisplayPetService:RefreshPlayer(player)
+        local stageName = getGrowthStage(target.Level)
+        local message = levelsGained > 0
+            and (target.Name .. " вырос! Стадия: " .. stageName .. " · уровень " .. target.Level)
+            or (target.Name .. " получил опыт тренировки.")
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
     end
 
     if payload.Action == "Merge" then
@@ -180,11 +256,12 @@ function InventoryService:HandleRequest(player, payload)
 
         target.Stars = currentStars + 1
         local definition = CompanionCatalog[target.Id]
-        local baseIncome = definition and definition.Income or target.Income or 1
-        target.Income = math.floor(baseIncome * (target.Stars == 2 and 1.75 or 3))
-        target.Level = target.Level or 1
+        target.Level = math.clamp(math.floor(tonumber(target.Level) or 1), 1, MAX_COMPANION_LEVEL)
+        target.GrowthXP = math.max(0, math.floor(tonumber(target.GrowthXP) or 0))
+        updateCompanionIncome(target)
 
         CompanionService:RefreshPlayer(player)
+        DisplayPetService:RefreshPlayer(player)
         player:SetAttribute("CompanionCount", #profile.Companions)
         player:SetAttribute("ActiveCompanionCount", #profile.ActiveCompanions)
         player:SetAttribute("LastNotice", target.Name .. " достиг ранга " .. target.Stars .. " звезды!")
