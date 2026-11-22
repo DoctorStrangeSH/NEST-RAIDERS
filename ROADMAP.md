@@ -111,7 +111,8 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add adult cross-species breeding with inherited genetics, rare mutations, lineage records, parent cooldowns, and explicit confirmation.
 - [x] Add persistent lineage eggs with a five-minute incubation timer, offspring preview, inherited genetics, and hatch-at-station flow.
 - [x] Add three deterministic starter-pair hybrid species with distinct follower silhouettes and breeding-only collection entries.
-- [ ] Add a dedicated nest breeding station, expanded hybrid ability kits, and visual mutation variants.
+- [x] Add distinct physical mutation ornaments for Verdant, Luminous, and Prismatic companion genetics; show trait rarity and income bonus in inventory.
+- [ ] Add a dedicated nest breeding station and expanded hybrid ability kits.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
 - [ ] Economy sinks and telemetry-driven balancing.
