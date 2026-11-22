@@ -1,7 +1,9 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
-local inventoryRemote = ReplicatedStorage:WaitForChild("NestRaidersRemotes"):WaitForChild("CompanionInventory")
+local remotes = ReplicatedStorage:WaitForChild("NestRaidersRemotes")
+local inventoryRemote = remotes:WaitForChild("CompanionInventory")
+local shopRemote = remotes:WaitForChild("EggShop")
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
@@ -69,6 +71,83 @@ inventoryButton.AutoButtonColor = true
 inventoryButton.Parent = gui
 addCorner(inventoryButton, 12)
 addStroke(inventoryButton, Color3.fromRGB(155, 226, 178), 1.5)
+
+local shopButton = Instance.new("TextButton")
+shopButton.Name = "EggShopButton"
+shopButton.Position = UDim2.fromOffset(18, 216)
+shopButton.Size = UDim2.fromOffset(250, 46)
+shopButton.BackgroundColor3 = Color3.fromRGB(197, 143, 62)
+shopButton.Text = "МАГАЗИН ЯИЦ"
+shopButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+shopButton.TextSize = 15
+shopButton.Font = Enum.Font.GothamBlack
+shopButton.Parent = gui
+addCorner(shopButton, 12)
+addStroke(shopButton, Color3.fromRGB(255, 213, 133), 1.5)
+
+local shopPanel = Instance.new("Frame")
+shopPanel.Name = "EggShopPanel"
+shopPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+shopPanel.Position = UDim2.fromScale(0.5, 0.5)
+shopPanel.Size = UDim2.new(0.9, 0, 0.62, 0)
+shopPanel.BackgroundColor3 = Color3.fromRGB(35, 43, 54)
+shopPanel.BorderSizePixel = 0
+shopPanel.Visible = false
+shopPanel.Parent = gui
+addCorner(shopPanel, 18)
+addStroke(shopPanel, Color3.fromRGB(255, 198, 105), 2)
+
+local shopSize = Instance.new("UISizeConstraint")
+shopSize.MinSize = Vector2.new(290, 280)
+shopSize.MaxSize = Vector2.new(460, 440)
+shopSize.Parent = shopPanel
+
+local shopTitle = Instance.new("TextLabel")
+shopTitle.BackgroundTransparency = 1
+shopTitle.Position = UDim2.fromOffset(18, 12)
+shopTitle.Size = UDim2.new(1, -76, 0, 30)
+shopTitle.Font = Enum.Font.GothamBlack
+shopTitle.Text = "ЛАВКА ЯИЦ"
+shopTitle.TextColor3 = Color3.fromRGB(255, 220, 145)
+shopTitle.TextSize = 19
+shopTitle.TextXAlignment = Enum.TextXAlignment.Left
+shopTitle.Parent = shopPanel
+
+local shopClose = Instance.new("TextButton")
+shopClose.AnchorPoint = Vector2.new(1, 0)
+shopClose.Position = UDim2.new(1, -12, 0, 10)
+shopClose.Size = UDim2.fromOffset(38, 34)
+shopClose.BackgroundColor3 = Color3.fromRGB(74, 91, 101)
+shopClose.Text = "✕"
+shopClose.TextColor3 = Color3.new(1, 1, 1)
+shopClose.TextSize = 18
+shopClose.Font = Enum.Font.GothamBold
+shopClose.Parent = shopPanel
+addCorner(shopClose, 10)
+
+local shopBalance = Instance.new("TextLabel")
+shopBalance.BackgroundTransparency = 1
+shopBalance.Position = UDim2.fromOffset(18, 48)
+shopBalance.Size = UDim2.new(1, -36, 0, 24)
+shopBalance.Font = Enum.Font.GothamMedium
+shopBalance.TextColor3 = Color3.fromRGB(210, 220, 211)
+shopBalance.TextSize = 14
+shopBalance.TextXAlignment = Enum.TextXAlignment.Left
+shopBalance.Parent = shopPanel
+
+local shopList = Instance.new("ScrollingFrame")
+shopList.Position = UDim2.fromOffset(12, 80)
+shopList.Size = UDim2.new(1, -24, 1, -94)
+shopList.BackgroundTransparency = 1
+shopList.BorderSizePixel = 0
+shopList.ScrollBarThickness = 6
+shopList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+shopList.Parent = shopPanel
+
+local shopLayout = Instance.new("UIListLayout")
+shopLayout.Padding = UDim.new(0, 10)
+shopLayout.SortOrder = Enum.SortOrder.LayoutOrder
+shopLayout.Parent = shopList
 
 local inventoryPanel = Instance.new("Frame")
 inventoryPanel.Name = "CompanionInventory"
@@ -254,6 +333,111 @@ local function renderInventory(data)
         end)
     end
 end
+
+local function invokeShop(payload)
+    local success, response = pcall(function()
+        return shopRemote:InvokeServer(payload)
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось связаться с магазином.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Покупка не выполнена.")
+        return nil
+    end
+    if response.Message then showNotice(response.Message) end
+    return response.Data
+end
+
+local function renderShop(data)
+    if not data then return end
+    shopBalance.Text = string.format("Монеты: %d   ·   Яйца: %d / %d",
+        data.Coins or 0, data.EggCount or 0, data.EggCapacity or 20)
+    for _, child in ipairs(shopList:GetChildren()) do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+
+    for index, item in ipairs(data.Items or {}) do
+        local card = Instance.new("Frame")
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 178)
+        card.BackgroundColor3 = Color3.fromRGB(54, 67, 77)
+        card.BorderSizePixel = 0
+        card.Parent = shopList
+        addCorner(card, 13)
+
+        local name = Instance.new("TextLabel")
+        name.BackgroundTransparency = 1
+        name.Position = UDim2.fromOffset(14, 10)
+        name.Size = UDim2.new(1, -28, 0, 24)
+        name.Font = Enum.Font.GothamBlack
+        name.Text = item.Name
+        name.TextColor3 = Color3.fromRGB(255, 229, 170)
+        name.TextSize = 17
+        name.TextXAlignment = Enum.TextXAlignment.Left
+        name.Parent = card
+
+        local description = Instance.new("TextLabel")
+        description.BackgroundTransparency = 1
+        description.Position = UDim2.fromOffset(14, 38)
+        description.Size = UDim2.new(1, -28, 0, 30)
+        description.Font = Enum.Font.Gotham
+        description.Text = item.Description or ""
+        description.TextColor3 = Color3.fromRGB(207, 218, 210)
+        description.TextSize = 12
+        description.TextWrapped = true
+        description.TextXAlignment = Enum.TextXAlignment.Left
+        description.Parent = card
+
+        local odds = Instance.new("TextLabel")
+        odds.BackgroundTransparency = 1
+        odds.Position = UDim2.fromOffset(14, 72)
+        odds.Size = UDim2.new(1, -28, 0, 60)
+        odds.Font = Enum.Font.GothamMedium
+        odds.TextColor3 = Color3.fromRGB(226, 231, 218)
+        odds.TextSize = 12
+        odds.TextXAlignment = Enum.TextXAlignment.Left
+        odds.TextYAlignment = Enum.TextYAlignment.Top
+        local oddsLines = {}
+        for _, outcome in ipairs(item.Odds or {}) do
+            table.insert(oddsLines, string.format("%s — %d%%", outcome.Name, outcome.Chance))
+        end
+        odds.Text = "Шансы вылупления:\n" .. table.concat(oddsLines, "\n")
+        odds.Parent = card
+
+        local buy = Instance.new("TextButton")
+        buy.AnchorPoint = Vector2.new(1, 1)
+        buy.Position = UDim2.new(1, -12, 1, -10)
+        buy.Size = UDim2.fromOffset(150, 34)
+        buy.BackgroundColor3 = Color3.fromRGB(190, 135, 57)
+        buy.Text = "КУПИТЬ · " .. tostring(item.Price) .. " 🪙"
+        buy.TextColor3 = Color3.fromRGB(255, 255, 245)
+        buy.TextSize = 13
+        buy.Font = Enum.Font.GothamBlack
+        buy.Parent = card
+        addCorner(buy, 9)
+
+        buy.Activated:Connect(function()
+            buy.Active = false
+            local updated = invokeShop({ Action = "Buy", EggId = item.Id })
+            if updated then
+                renderShop(updated)
+                updateStats()
+            end
+            buy.Active = true
+        end)
+    end
+end
+
+local function openShop()
+    shopPanel.Visible = true
+    local data = invokeShop({ Action = "Get" })
+    if data then renderShop(data) end
+end
+
+shopButton.Activated:Connect(openShop)
+shopClose.Activated:Connect(function() shopPanel.Visible = false end)
 
 local function openInventory()
     inventoryPanel.Visible = true
