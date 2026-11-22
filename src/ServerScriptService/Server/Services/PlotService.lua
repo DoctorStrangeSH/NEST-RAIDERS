@@ -243,6 +243,7 @@ function PlotService:PlayBreedingSequence(player, parentA, parentB, egg)
             shard.CanQuery = false
             shard.Material = Enum.Material.Neon
             shard.Color = Color3.fromRGB(255, 211, 116)
+            shard.Transparency = 1
             shard.Parent = effects
             table.insert(hybridShards, shard)
         end
@@ -287,11 +288,15 @@ function PlotService:PlayBreedingSequence(player, parentA, parentB, egg)
         particles:Emit(egg.IsHybrid and 56 or 32)
         for _, shard in ipairs(hybridShards) do
             local direction = (shard.Position - eggPart.Position).Unit
-            TweenService:Create(shard, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                Position = shard.Position + direction * 3.5,
-                Transparency = 1,
-                Size = Vector3.new(0.05, 0.05, 0.05),
-            }):Play()
+            TweenService:Create(shard, TweenInfo.new(0.18), { Transparency = 0.12 }):Play()
+            task.delay(0.22, function()
+                if not shard.Parent then return end
+                TweenService:Create(shard, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                    Position = shard.Position + direction * 3.5,
+                    Transparency = 1,
+                    Size = Vector3.new(0.05, 0.05, 0.05),
+                }):Play()
+            end)
         end
         left:Destroy()
         right:Destroy()
