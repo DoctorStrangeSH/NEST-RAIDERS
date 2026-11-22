@@ -12,6 +12,10 @@ DisplayPetService._lastInteraction = {}
 local REQUEST_COOLDOWN = 0.35
 local INTERACTION_COOLDOWN = 3
 local MOOD_GAIN = { Pet = 15, Play = 25 }
+local FEED_COST = 10
+local FEED_HUNGER = 35
+local SLEEP_DURATION = 60
+local NEEDS_DECAY = { Hunger = 300, Energy = 480, Mood = 600 }
 local SLOT_OFFSETS = {
     Vector3.new(-12, 2, 12),
     Vector3.new(12, 2, 12),
@@ -31,10 +35,37 @@ local function findOwned(profile, instanceId)
     return nil
 end
 
+local function getNeeds(profile, instanceId, now)
+    profile.Nest.CompanionNeeds = type(profile.Nest.CompanionNeeds) == "table" and profile.Nest.CompanionNeeds or {}
+    local needs = profile.Nest.CompanionNeeds[instanceId]
+    if type(needs) ~= "table" then
+        needs = { Hunger = 100, Energy = 100, LastUpdated = now }
+        profile.Nest.CompanionNeeds[instanceId] = needs
+    end
+
+    local lastUpdated = math.min(tonumber(needs.LastUpdated) or now, now)
+    local elapsed = math.max(0, now - lastUpdated)
+    local restingUntil = tonumber(needs.RestingUntil) or 0
+    local restedSeconds = math.clamp(math.min(now, restingUntil) - lastUpdated, 0, elapsed)
+
+    needs.Hunger = math.clamp((tonumber(needs.Hunger) or 100) - elapsed / NEEDS_DECAY.Hunger, 0, 100)
+    needs.Energy = math.clamp((tonumber(needs.Energy) or 100) - elapsed / NEEDS_DECAY.Energy + restedSeconds / 2, 0, 100)
+    profile.Nest.CompanionMood[instanceId] = math.clamp(
+        (tonumber(profile.Nest.CompanionMood[instanceId]) or 50) - elapsed / NEEDS_DECAY.Mood,
+        0,
+        100
+    )
+    needs.LastUpdated = now
+    if restingUntil <= now then needs.RestingUntil = nil end
+    return needs
+end
+
 local function getSnapshot(profile)
     profile.Nest = profile.Nest or { Level = 1, DisplayedCompanions = {}, StoredCoins = 0 }
     profile.Nest.DisplayedCompanions = type(profile.Nest.DisplayedCompanions) == "table" and profile.Nest.DisplayedCompanions or {}
     profile.Nest.CompanionMood = type(profile.Nest.CompanionMood) == "table" and profile.Nest.CompanionMood or {}
+    profile.Nest.CompanionNeeds = type(profile.Nest.CompanionNeeds) == "table" and profile.Nest.CompanionNeeds or {}
+    local now = os.time()
     local limit = getSlotLimit(profile)
     local active = {}
     for _, id in ipairs(profile.ActiveCompanions or {}) do active[id] = true end
@@ -53,7 +84,10 @@ local function getSnapshot(profile)
                 Rarity = companion.Rarity,
                 Stars = companion.Stars or 1,
                 Income = math.max(0, math.floor(tonumber(companion.Income) or 0)),
-                Mood = math.clamp(math.floor(tonumber(profile.Nest.CompanionMood[instanceId]) or 50), 0, 100),
+                Mood = math.floor(profile.Nest.CompanionMood[instanceId] or 50),
+                Hunger = math.floor(getNeeds(profile, instanceId, now).Hunger),
+                Energy = math.floor(profile.Nest.CompanionNeeds[instanceId].Energy),
+                IsSleeping = (tonumber(profile.Nest.CompanionNeeds[instanceId].RestingUntil) or 0) > now,
             })
         else
             table.insert(displayed, { Slot = slot, Empty = true })
@@ -181,10 +215,6 @@ function DisplayPetService:HandleRequest(player, payload)
             return { Ok = false, Message = "Некорректный питомец." }
         end
         local interaction = payload.Interaction
-        local gain = MOOD_GAIN[interaction]
-        if not gain then
-            return { Ok = false, Message = "Неизвестное взаимодействие." }
-        end
         local isDisplayed = false
         for _, id in pairs(profile.Nest.DisplayedCompanions) do
             if id == payload.InstanceId then isDisplayed = true break end
@@ -201,15 +231,59 @@ function DisplayPetService:HandleRequest(player, payload)
         if now - lastInteraction < INTERACTION_COOLDOWN then
             return { Ok = false, Message = "Питомцу нужно немного времени перед новой игрой." }
         end
-        self._lastInteraction[interactionKey] = now
-        profile.Nest.CompanionMood[payload.InstanceId] = math.clamp(
-            (tonumber(profile.Nest.CompanionMood[payload.InstanceId]) or 50) + gain,
-            0,
-            100
-        )
-        self:RefreshPlayer(player)
-        player:SetAttribute("LastNotice", interaction == "Pet" and (companion.Name .. " довольно мурлычет!") or (companion.Name .. " весело играет с тобой!"))
-        return { Ok = true, Data = getSnapshot(profile) }
+        local needs = getNeeds(profile, payload.InstanceId, os.time())
+        if interaction == "Feed" then
+            if profile.Coins < FEED_COST then
+                return { Ok = false, Message = "Не хватает монет на корм. Нужно " .. FEED_COST .. " монет." }
+            end
+            if needs.Hunger >= 95 then
+                return { Ok = false, Message = companion.Name .. " пока не голоден." }
+            end
+            profile.Coins -= FEED_COST
+            needs.Hunger = math.clamp(needs.Hunger + FEED_HUNGER, 0, 100)
+            profile.Nest.CompanionMood[payload.InstanceId] = math.clamp(
+                (tonumber(profile.Nest.CompanionMood[payload.InstanceId]) or 50) + 5,
+                0,
+                100
+            )
+            player:SetAttribute("Coins", profile.Coins)
+            self._lastInteraction[interactionKey] = now
+            self:RefreshPlayer(player)
+            player:SetAttribute("LastNotice", companion.Name .. " с удовольствием поел!")
+            return { Ok = true, Data = getSnapshot(profile) }
+        elseif interaction == "Sleep" then
+            if (tonumber(needs.RestingUntil) or 0) > os.time() then
+                return { Ok = false, Message = companion.Name .. " уже отдыхает." }
+            end
+            if needs.Energy >= 95 then
+                return { Ok = false, Message = companion.Name .. " полон энергии." }
+            end
+            needs.RestingUntil = os.time() + SLEEP_DURATION
+            self._lastInteraction[interactionKey] = now
+            self:RefreshPlayer(player)
+            player:SetAttribute("LastNotice", companion.Name .. " устроился отдохнуть на минутку.")
+            return { Ok = true, Data = getSnapshot(profile) }
+        else
+            local gain = MOOD_GAIN[interaction]
+            if not gain then
+                return { Ok = false, Message = "Неизвестное взаимодействие." }
+            end
+            if interaction == "Play" and needs.Energy < 10 then
+                return { Ok = false, Message = companion.Name .. " устал. Дай ему отдохнуть." }
+            end
+            profile.Nest.CompanionMood[payload.InstanceId] = math.clamp(
+                (tonumber(profile.Nest.CompanionMood[payload.InstanceId]) or 50) + gain,
+                0,
+                100
+            )
+            if interaction == "Play" then
+                needs.Energy = math.max(0, needs.Energy - 10)
+            end
+            self._lastInteraction[interactionKey] = now
+            self:RefreshPlayer(player)
+            player:SetAttribute("LastNotice", interaction == "Pet" and (companion.Name .. " довольно мурлычет!") or (companion.Name .. " весело играет с тобой!"))
+            return { Ok = true, Data = getSnapshot(profile) }
+        end
     end
 
     if payload.Action == "Collect" then
