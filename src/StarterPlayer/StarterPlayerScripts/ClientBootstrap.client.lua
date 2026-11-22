@@ -537,7 +537,7 @@ dragCancelButton.Visible = false
 dragCancelButton.Parent = gui
 addCorner(dragCancelButton, 8)
 
-local buildHint = Instance.new("TextLabel")
+buildHint = Instance.new("TextLabel")
 buildHint.Name = "BuildPlacementHint"
 buildHint.AnchorPoint = Vector2.new(0.5, 1)
 buildHint.Position = UDim2.new(0.5, 0, 1, -58)
@@ -552,7 +552,7 @@ buildHint.Visible = false
 buildHint.Parent = gui
 addCorner(buildHint, 8)
 
-local buildRotateButton = Instance.new("TextButton")
+buildRotateButton = Instance.new("TextButton")
 buildRotateButton.Name = "BuildPlacementRotate"
 buildRotateButton.AnchorPoint = Vector2.new(1, 1)
 buildRotateButton.Position = UDim2.new(1, -138, 1, -18)
@@ -569,7 +569,7 @@ buildRotateButton.Activated:Connect(function()
     if activeBuildPlacement then buildRotation = (buildRotation + 15) % 360 end
 end)
 
-local buildCancelButton = Instance.new("TextButton")
+buildCancelButton = Instance.new("TextButton")
 buildCancelButton.Name = "BuildPlacementCancel"
 buildCancelButton.AnchorPoint = Vector2.new(0, 1)
 buildCancelButton.Position = UDim2.new(0, 18, 1, -18)
@@ -1295,6 +1295,8 @@ local function invokeBuild(payload)
     return response.Data
 end
 
+local renderBuild
+local buildHint, buildRotateButton, buildCancelButton
 local activeBuildPlacement = nil
 local buildPreview = nil
 local buildRotation = 0
@@ -1493,7 +1495,7 @@ local function findBuildPosition(data, footprint)
     return nil, nil
 end
 
-local function renderBuild(data)
+renderBuild = function(data)
     if not data then return end
     buildBalance.Text = string.format("Монеты: %d  ·  Построек: %d / 100", data.Coins or 0, #(data.Placed or {}))
     clearBuildList()
