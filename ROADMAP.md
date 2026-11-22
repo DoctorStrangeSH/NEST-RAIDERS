@@ -93,7 +93,10 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Sort the current-server island browser by likes, then visitors, and add an all / favorites filter.
 - [x] Add weekly island contest categories (Cozy / Nature / Fantasy), one vote per player per category, and cross-server ordered leaderboards.
 - [x] Add Studio in-memory fallback, vote-state indicators, cached standings, and server-side request throttling.
-- [ ] Add cross-server island discovery, weekly cosmetic winner rewards, and anti-alt vote review.
+- [x] Archive previous-week top-three winners into a persistent Hall of Fame when the next week is first accessed.
+- [x] Verify top-three trophy claims against the archived winners and persist claimed cosmetics in player profiles.
+- [x] Display up to six claimed contest trophies on each player island and add a Hall of Fame client panel.
+- [ ] Add cross-server island discovery, scheduled week-close processing, and anti-alt vote review.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
