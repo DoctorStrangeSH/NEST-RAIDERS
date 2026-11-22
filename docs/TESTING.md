@@ -43,6 +43,13 @@
 - [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
 - [ ] Only equipped companions follow the player and generate passive income.
 - [ ] Legacy companion saves without instance IDs are migrated without losing pets.
+- [ ] Fusion is available only when the player owns three pets of the same species and star rank.
+- [ ] Fusion consumes exactly two duplicates and upgrades the selected pet by one star.
+- [ ] Fusion rejects a non-owned pet, fewer than three matching pets, and pets already at three stars.
+- [ ] Active slots are preserved correctly when an equipped duplicate is consumed by fusion.
+- [ ] Fused pet income is recalculated from the catalog base income and the new star multiplier.
+- [ ] Star rank is saved and restored after reconnect.
+- [ ] Two-star and three-star pets show the correct evolution aura and star visuals.
 - [ ] Companion models disappear when their owner leaves.
 - [ ] Companion income is server-authoritative and capped.
 - [ ] Raid validates range, consent/state, cooldown, and bounded loss.
