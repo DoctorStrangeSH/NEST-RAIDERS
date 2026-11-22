@@ -33,6 +33,11 @@
 - [ ] Purchase is rejected with insufficient coins, full egg inventory, unknown egg ID, or unmet level requirement.
 - [ ] Client cannot set a custom price or grant itself eggs through the shop remote.
 - [ ] Shop odds match the server-side hatch weights (55% / 30% / 15%).
+- [ ] Collection book lists every catalog species and hides undiscovered species names.
+- [ ] Discovery progress counts unique species, not total pet duplicates.
+- [ ] Collection book duplicate counts match the owned companion inventory.
+- [ ] Collection book is read-only; client cannot grant discoveries or edit odds.
+- [ ] Shop hatch odds and server hatch weights both come from the shared catalog.
 - [ ] Companion inventory lists every owned pet with rarity, level, and income.
 - [ ] Player can equip and unequip owned companions; non-owned IDs are rejected.
 - [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
