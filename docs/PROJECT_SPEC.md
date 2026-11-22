@@ -277,3 +277,13 @@ A feature is done only when:
 - A ProximityPrompt displays "Разведение" / "Алтарь потомства". Only the plot owner receives the prompt guidance notice.
 - The server validates the player's assigned plot and character root position; the Breed inventory action is rejected unless the player is within 18 studs of their own BreedingStation.
 - Proximity is an additional gate, not a replacement for existing checks: both parents must be owned, adult, distinct species, unequipped, undisplayed, off cooldown, and fit within collection/egg capacity. Costs and parent cooldowns are applied only after validation.
+
+
+## Breeding ritual reveal — Sprint 4.20
+- A successful server-side Breed action triggers a short altar sequence after the lineage egg is inserted into the profile.
+- Two temporary parent-energy echoes use species-specific colors and converge toward the altar core through Beam instances.
+- The egg appears as a small spark, grows into a visible egg, and receives a trait-colored PointLight and particle burst.
+- Genetic trait colors: Natural warm gold, Verdant green, Luminous cyan, Prismatic violet.
+- The egg stores IsHybrid based on the selected offspring catalog entry. Hybrid eggs receive four additional golden shards and a stronger reveal burst.
+- Ritual effects are temporary, automatically cleaned up, and never run for rejected breeding requests.
+- The animation is cosmetic only: offspring species, genetic trait, parent lineage, currency cost, parent cooldown, and five-minute incubation remain server-authoritative and unchanged.
