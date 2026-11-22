@@ -361,7 +361,7 @@ local function renderInventory(data)
         local card = Instance.new("Frame")
         card.Name = "CompanionCard"
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 82)
+        card.Size = UDim2.new(1, -8, 0, 104)
         card.BackgroundColor3 = Color3.fromRGB(43, 64, 72)
         card.BorderSizePixel = 0
         card.Parent = list
@@ -381,9 +381,9 @@ local function renderInventory(data)
         local details = Instance.new("TextLabel")
         details.BackgroundTransparency = 1
         details.Position = UDim2.fromOffset(12, 34)
-        details.Size = UDim2.new(1, -130, 0, 32)
+        details.Size = UDim2.new(1, -130, 0, 25)
         details.Font = Enum.Font.GothamMedium
-        details.Text = string.format("%s  ·  Ур. %d  ·  +%d монет / 10 сек.", companion.Rarity or "Обычный", companion.Level or 1, companion.Income or 0)
+        details.Text = string.format("%s  ·  Ур. %d  ·  %s  ·  +%d / 10 сек.", companion.Rarity or "Обычный", companion.Level or 1, string.rep("★", companion.Stars or 1), companion.Income or 0)
         details.TextColor3 = Color3.fromRGB(187, 211, 203)
         details.TextSize = 12
         details.TextXAlignment = Enum.TextXAlignment.Left
@@ -400,6 +400,28 @@ local function renderInventory(data)
         action.Font = Enum.Font.GothamBlack
         action.Parent = card
         addCorner(action, 9)
+
+        local mergeButton = Instance.new("TextButton")
+        mergeButton.Name = "MergeButton"
+        mergeButton.Position = UDim2.fromOffset(12, 68)
+        mergeButton.Size = UDim2.fromOffset(126, 27)
+        mergeButton.BackgroundColor3 = Color3.fromRGB(127, 91, 174)
+        mergeButton.Text = "СЛИЯТЬ ×3"
+        mergeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        mergeButton.TextSize = 12
+        mergeButton.Font = Enum.Font.GothamBlack
+        mergeButton.Visible = (companion.MergeCount or 0) >= 3 and (companion.Stars or 1) < 3
+        mergeButton.Parent = card
+        addCorner(mergeButton, 8)
+
+        mergeButton.Activated:Connect(function()
+            mergeButton.Active = false
+            local updated = invokeInventory({
+                Action = "Merge",
+                InstanceId = companion.InstanceId,
+            })
+            if updated then renderInventory(updated) end
+        end)
 
         action.Activated:Connect(function()
             action.Active = false
