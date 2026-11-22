@@ -79,7 +79,10 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add a persistent island building catalog with stone paths, clover bushes, apple trees, wooden fences, and a cozy cottage.
 - [x] Add server-authoritative building purchases, inventory, grid placement, movement, rotation, removal, collision checks, and a 100-object island cap.
 - [x] Render building pieces as lightweight anchored models and clear them when a plot is released.
-- [ ] Add drag-to-move previews for building pieces, Creator Store art assets, and richer building themes.
+- [x] Add a translucent building footprint preview that follows the pointer or touch position on the owned island.
+- [x] Add green / red placement feedback, 2-stud snapping, 15-degree rotation, desktop and mobile confirmation / cancellation.
+- [x] Allow repositioning existing buildings through the same preview workflow; validate full footprints against island bounds on the server.
+- [ ] Replace prototype geometry with curated Creator Store art assets and add richer building themes.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
