@@ -116,3 +116,7 @@ Breeding creates a lineage egg that incubates for five minutes. Its species, gen
 
 ## Breeding-only hybrid species
 Three starter cross-species pairs now produce unique hybrids: EmberFox, Fernshell, and BriarGuardian. They have dedicated follower silhouettes, appear in the collection book as breeding-only discoveries, and cannot hatch from ordinary eggs.
+
+
+## Genetic mutation appearances
+Verdant, Luminous, and Prismatic companions have distinct physical ornaments in addition to their aura: leaf crystals, glowing lantern orbs, and multi-color facets. The collection UI displays each trait's rarity and passive-income bonus.
