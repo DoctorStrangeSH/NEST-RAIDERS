@@ -15,6 +15,7 @@ local ProfileTemplate = {
         PlotId = nil,
         DisplayedCompanions = {},
         StoredCoins = 0,
+        CompanionMood = {},
     },
     Settings = {
         MusicEnabled = true,
