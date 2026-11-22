@@ -47,7 +47,9 @@ Status legend: [x] done · [ ] not done · [~] in progress
 
 ## Milestone 3 — Nest, companions, and economy
 - [ ] Nest expansion and decoration.
-- [ ] Companion rarity, traits, passive income, and collection book.
+- [x] Shared companion catalog as the single source of truth for hatch weights, names, rarity, and income.
+- [x] Server-backed collection book with discovered species, duplicate counts, rarity, and collection completion.
+- [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
 - [ ] Economy sinks and telemetry-driven balancing.
@@ -70,4 +72,4 @@ Status legend: [x] done · [ ] not done · [~] in progress
 A milestone is not complete until its acceptance tests pass in Roblox Studio on desktop and mobile emulation. Monetization and public launch are blocked until saving, server authority, exploit resistance, and moderation basics are verified.
 
 ## Current implementation note
-The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
+The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, shared companion catalog, server-backed collection book, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
