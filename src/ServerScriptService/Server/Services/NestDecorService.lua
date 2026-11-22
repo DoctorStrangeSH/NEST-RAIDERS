@@ -23,6 +23,29 @@ local function ensureNest(profile)
     profile.Nest = profile.Nest or { Level = 1 }
     profile.Nest.DecorInventory = type(profile.Nest.DecorInventory) == "table" and profile.Nest.DecorInventory or {}
     profile.Nest.PlacedDecor = type(profile.Nest.PlacedDecor) == "table" and profile.Nest.PlacedDecor or {}
+    for rawSlot, value in pairs(profile.Nest.PlacedDecor) do
+        local slot = tonumber(rawSlot)
+        if type(value) == "string" and NestDecorCatalog[value] and slot and SLOT_OFFSETS[slot] then
+            local legacyOffset = SLOT_OFFSETS[slot]
+            profile.Nest.PlacedDecor[rawSlot] = {
+                Id = value,
+                X = legacyOffset.X,
+                Z = legacyOffset.Z,
+                Rotation = 0,
+            }
+        elseif type(value) == "table" then
+            local id = value.Id
+            if not NestDecorCatalog[id] then
+                profile.Nest.PlacedDecor[rawSlot] = nil
+            else
+                value.X = math.clamp(math.floor((tonumber(value.X) or 0) / 2 + 0.5) * 2, -14, 14)
+                value.Z = math.clamp(math.floor((tonumber(value.Z) or 0) / 2 + 0.5) * 2, -14, 14)
+                value.Rotation = (math.floor((tonumber(value.Rotation) or 0) / 15 + 0.5) * 15) % 360
+            end
+        else
+            profile.Nest.PlacedDecor[rawSlot] = nil
+        end
+    end
     return profile.Nest
 end
 
@@ -45,9 +68,17 @@ local function getSnapshot(profile)
     local placed = {}
     for rawSlot, id in pairs(nest.PlacedDecor) do
         local slot = tonumber(rawSlot)
-        local definition = NestDecorCatalog[id]
+        local placement = type(id) == "table" and id or nil
+        local definition = placement and NestDecorCatalog[placement.Id] or nil
         if slot and definition then
-            table.insert(placed, { Slot = slot, Id = id, Name = definition.Name })
+            table.insert(placed, {
+                Slot = slot,
+                Id = placement.Id,
+                Name = definition.Name,
+                X = placement.X,
+                Z = placement.Z,
+                Rotation = placement.Rotation,
+            })
         end
     end
     table.sort(placed, function(a, b) return a.Slot < b.Slot end)
@@ -66,7 +97,7 @@ local function getSnapshot(profile)
     }
 end
 
-local function buildDecoration(parent, definition, center, offset, slot)
+local function buildDecoration(parent, definition, center, offset, slot, rotation)
     local model = Instance.new("Model")
     model.Name = "Decor_" .. definition.Id .. "_" .. tostring(slot)
     model:SetAttribute("DecorId", definition.Id)
@@ -77,7 +108,8 @@ local function buildDecoration(parent, definition, center, offset, slot)
         local item = Instance.new("Part")
         item.Name = name
         item.Size = size
-        item.CFrame = CFrame.new(center + offset + position)
+        local base = CFrame.new(center + offset) * CFrame.Angles(0, math.rad(rotation or 0), 0)
+        item.CFrame = base * CFrame.new(position)
         if shape == Enum.PartType.Cylinder then
             item.CFrame *= CFrame.Angles(0, 0, math.rad(90))
         end
@@ -141,10 +173,11 @@ function NestDecorService:RefreshPlayer(player)
 
     for rawSlot, id in pairs(nest.PlacedDecor) do
         local slot = tonumber(rawSlot)
-        local definition = NestDecorCatalog[id]
-        local offset = slot and SLOT_OFFSETS[slot]
-        if definition and offset and slot <= getSlotLimit(profile) then
-            buildDecoration(folder, definition, plot.Center, offset, slot)
+        local placement = type(id) == "table" and id or nil
+        local definition = placement and NestDecorCatalog[placement.Id] or nil
+        if definition and slot and slot <= getSlotLimit(profile) then
+            local offset = Vector3.new(placement.X, 1.7, placement.Z)
+            buildDecoration(folder, definition, plot.Center, offset, slot, placement.Rotation)
         end
     end
 end
@@ -211,17 +244,49 @@ function NestDecorService:HandleRequest(player, payload)
         local owned = math.max(0, math.floor(tonumber(nest.DecorInventory[id]) or 0))
         if owned < 1 then return { Ok = false, Message = "Сначала купи это украшение." } end
         nest.DecorInventory[id] = owned - 1
-        nest.PlacedDecor[slotKey] = id
+        local defaultOffset = SLOT_OFFSETS[slot]
+        nest.PlacedDecor[slotKey] = {
+            Id = id,
+            X = defaultOffset.X,
+            Z = defaultOffset.Z,
+            Rotation = 0,
+        }
         self:RefreshPlayer(player)
         player:SetAttribute("LastNotice", definition.Name .. " украшает твоё гнездо!")
         return { Ok = true, Data = getSnapshot(profile) }
     elseif payload.Action == "Remove" then
-        local id = nest.PlacedDecor[slotKey]
+        local placement = nest.PlacedDecor[slotKey]
+        local id = type(placement) == "table" and placement.Id or placement
         if not id or not NestDecorCatalog[id] then return { Ok = false, Message = "Это место уже свободно." } end
         nest.PlacedDecor[slotKey] = nil
         nest.DecorInventory[id] = math.min(MAX_DECOR_PER_TYPE, math.max(0, math.floor(tonumber(nest.DecorInventory[id]) or 0)) + 1)
         self:RefreshPlayer(player)
         player:SetAttribute("LastNotice", "Украшение возвращено в коллекцию.")
+        return { Ok = true, Data = getSnapshot(profile) }
+    end
+
+    if payload.Action == "Move" then
+        local placement = nest.PlacedDecor[slotKey]
+        if type(placement) ~= "table" or not NestDecorCatalog[placement.Id] then
+            return { Ok = false, Message = "Сначала размести украшение." }
+        end
+        local requestedX = tonumber(payload.X)
+        local requestedZ = tonumber(payload.Z)
+        local requestedRotation = tonumber(payload.Rotation)
+        if not requestedX or not requestedZ or not requestedRotation then
+            return { Ok = false, Message = "Некорректные координаты украшения." }
+        end
+        if math.abs(requestedX) > 15 or math.abs(requestedZ) > 15 then
+            return { Ok = false, Message = "Нельзя размещать декор за границами гнезда." }
+        end
+        local snappedX = math.clamp(math.floor(requestedX / 2 + 0.5) * 2, -14, 14)
+        local snappedZ = math.clamp(math.floor(requestedZ / 2 + 0.5) * 2, -14, 14)
+        local snappedRotation = (math.floor(requestedRotation / 15 + 0.5) * 15) % 360
+        placement.X = snappedX
+        placement.Z = snappedZ
+        placement.Rotation = snappedRotation
+        self:RefreshPlayer(player)
+        player:SetAttribute("LastNotice", "Положение украшения обновлено.")
         return { Ok = true, Data = getSnapshot(profile) }
     end
 
