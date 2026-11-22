@@ -14,6 +14,8 @@
 - Server-authoritative companion inventory with equip / unequip and a three-pet active limit.
 - Fuse three matching pets into a two-star or three-star companion; fusion is server-validated and consumes two duplicates.
 - Higher star ranks increase passive income and add visible aura / star effects.
+- Place owned companions on unlocked personal nest pedestals; displayed pets are separate from the active follower team.
+- Displayed pets accumulate a separate income balance every 10 seconds, which the player collects manually from the nest UI.
 - Russian, touch-friendly collection panel with rarity, level, and passive income details.
 - Only equipped companions follow the player and generate passive income.
 - Minimal HUD for coins, eggs, companions, level, personal plot, and notices.
@@ -44,13 +46,16 @@
 13. Confirm only equipped companions follow you and generate passive income.
 14. Wait for passive income; confirm Coins increases.
 15. Open «Улучшить гнездо», buy available upgrades, and verify decorations and display pedestals unlock.
-16. Rejoin the private test place and confirm nest level, decorations, and display pedestal count persist.
+16. Open «Питомцы на витринах», place an available companion on an unlocked pedestal, and verify its model appears in the nest.
+17. Wait 10 seconds and collect the displayed-pet income; verify the wallet and stored balance update.
+18. Remove the displayed pet and confirm it returns to the available list.
+19. Rejoin the private test place and confirm nest level, display assignments, and uncollected income persist.
 
 ## Known limitations
 - World geometry is a temporary scripted blockout, not final art.
 - Synty Nature Pack is catalogued as a candidate but must be imported and inspected manually in Studio.
 - Plots are currently six fixed slots per server; dynamic plot expansion and polished nest customization are not implemented.
-- Companion visuals are temporary scripted blockout models, not final imported character assets. Only the first three companions are shown following a player.
+- Companion visuals are temporary scripted blockout models, not final imported character assets. Only the first three companions are shown following a player; displayed pets are rendered separately on personal nest pedestals.
 - Carrying animation, egg carrying inventory, trading, and PvP raids are not implemented.
 - Starter companion odds are prototype values; the shop currently discloses them, but a dedicated hatch reveal screen is still required before release.
 - DataStore behavior has not been runtime-verified in Studio.
