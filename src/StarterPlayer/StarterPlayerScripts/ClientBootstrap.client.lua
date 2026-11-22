@@ -537,6 +537,55 @@ dragCancelButton.Visible = false
 dragCancelButton.Parent = gui
 addCorner(dragCancelButton, 8)
 
+local buildHint = Instance.new("TextLabel")
+buildHint.Name = "BuildPlacementHint"
+buildHint.AnchorPoint = Vector2.new(0.5, 1)
+buildHint.Position = UDim2.new(0.5, 0, 1, -58)
+buildHint.Size = UDim2.fromOffset(320, 28)
+buildHint.BackgroundColor3 = Color3.fromRGB(54, 104, 85)
+buildHint.BackgroundTransparency = 0.08
+buildHint.Font = Enum.Font.GothamBold
+buildHint.Text = "Режим строительства"
+buildHint.TextColor3 = Color3.new(1, 1, 1)
+buildHint.TextSize = 10
+buildHint.Visible = false
+buildHint.Parent = gui
+addCorner(buildHint, 8)
+
+local buildRotateButton = Instance.new("TextButton")
+buildRotateButton.Name = "BuildPlacementRotate"
+buildRotateButton.AnchorPoint = Vector2.new(1, 1)
+buildRotateButton.Position = UDim2.new(1, -138, 1, -18)
+buildRotateButton.Size = UDim2.fromOffset(112, 34)
+buildRotateButton.BackgroundColor3 = Color3.fromRGB(112, 101, 164)
+buildRotateButton.Text = "ПОВОРОТ ↻"
+buildRotateButton.TextColor3 = Color3.new(1, 1, 1)
+buildRotateButton.TextSize = 10
+buildRotateButton.Font = Enum.Font.GothamBlack
+buildRotateButton.Visible = false
+buildRotateButton.Parent = gui
+addCorner(buildRotateButton, 8)
+buildRotateButton.Activated:Connect(function()
+    if activeBuildPlacement then buildRotation = (buildRotation + 15) % 360 end
+end)
+
+local buildCancelButton = Instance.new("TextButton")
+buildCancelButton.Name = "BuildPlacementCancel"
+buildCancelButton.AnchorPoint = Vector2.new(0, 1)
+buildCancelButton.Position = UDim2.new(0, 18, 1, -18)
+buildCancelButton.Size = UDim2.fromOffset(112, 34)
+buildCancelButton.BackgroundColor3 = Color3.fromRGB(151, 86, 91)
+buildCancelButton.Text = "ОТМЕНА"
+buildCancelButton.TextColor3 = Color3.new(1, 1, 1)
+buildCancelButton.TextSize = 10
+buildCancelButton.Font = Enum.Font.GothamBlack
+buildCancelButton.Visible = false
+buildCancelButton.Parent = gui
+addCorner(buildCancelButton, 8)
+buildCancelButton.Activated:Connect(function()
+    if activeBuildPlacement then stopBuildPlacement(true) end
+end)
+
 local decorLayout = Instance.new("UIListLayout")
 decorLayout.Padding = UDim.new(0, 8)
 decorLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -1246,6 +1295,174 @@ local function invokeBuild(payload)
     return response.Data
 end
 
+local activeBuildPlacement = nil
+local buildPreview = nil
+local buildRotation = 0
+local buildScreenPosition = nil
+local buildInputConnections = {}
+
+local function getBuildGrass()
+    local world = Workspace:FindFirstChild("NestRaidersWorld")
+    local island = world and world:FindFirstChild("StarterIsland")
+    local plots = island and island:FindFirstChild("PlayerPlots")
+    if not plots then return nil end
+    for _, plot in ipairs(plots:GetChildren()) do
+        if plot:GetAttribute("OwnerUserId") == player.UserId then
+            return plot:FindFirstChild("PlotGrass")
+        end
+    end
+    return nil
+end
+
+local function stopBuildPlacement(reopen)
+    activeBuildPlacement = nil
+    buildScreenPosition = nil
+    if buildPreview then buildPreview:Destroy(); buildPreview = nil end
+    for _, connection in ipairs(buildInputConnections) do connection:Disconnect() end
+    table.clear(buildInputConnections)
+    buildHint.Visible = false
+    buildRotateButton.Visible = false
+    buildCancelButton.Visible = false
+    if reopen then
+        buildPanel.Visible = true
+        local latest = invokeBuild({ Action = "Get" })
+        if latest then renderBuild(latest) end
+    end
+end
+
+local function getBuildPlacement(screenPosition)
+    if not activeBuildPlacement then return nil end
+    local grass = activeBuildPlacement.Grass
+    local camera = Workspace.CurrentCamera
+    if not grass or not camera then return nil end
+    local ray = camera:ScreenPointToRay(screenPosition.X, screenPosition.Y)
+    local params = RaycastParams.new()
+    params.FilterType = Enum.RaycastFilterType.Include
+    params.FilterDescendantsInstances = { grass }
+    local result = Workspace:Raycast(ray.Origin, ray.Direction * 1000, params)
+    if not result then return nil end
+
+    local center = grass.Position
+    local x = math.clamp(math.floor((result.Position.X - center.X) / 2 + 0.5) * 2, -14, 14)
+    local z = math.clamp(math.floor((result.Position.Z - center.Z) / 2 + 0.5) * 2, -14, 14)
+    local footprint = activeBuildPlacement.Footprint
+    local valid = math.abs(x) + footprint / 2 <= 15 and math.abs(z) + footprint / 2 <= 15
+    for _, other in ipairs(activeBuildPlacement.Placed or {}) do
+        if not (activeBuildPlacement.Mode == "Move" and other.Key == activeBuildPlacement.Key) then
+            local gap = (footprint + (other.Footprint or 2)) / 2
+            if math.abs(x - other.X) < gap and math.abs(z - other.Z) < gap then
+                valid = false
+                break
+            end
+        end
+    end
+    return {
+        X = x, Z = z, Valid = valid,
+        WorldPosition = Vector3.new(center.X + x, grass.Position.Y + grass.Size.Y / 2 + 0.16, center.Z + z),
+    }
+end
+
+local function updateBuildPreview(screenPosition)
+    if not activeBuildPlacement or not buildPreview then return end
+    local placement = getBuildPlacement(screenPosition)
+    if not placement then
+        buildPreview.Transparency = 0.82
+        return
+    end
+    buildPreview.CFrame = CFrame.new(placement.WorldPosition) * CFrame.Angles(0, math.rad(buildRotation), 0)
+    buildPreview.Color = placement.Valid and Color3.fromRGB(93, 231, 153) or Color3.fromRGB(238, 91, 91)
+    buildPreview.Transparency = 0.35
+end
+
+local function confirmBuildPlacement(screenPosition)
+    if not activeBuildPlacement then return end
+    local placement = getBuildPlacement(screenPosition)
+    if not placement or not placement.Valid then
+        showNotice("Это место занято или выходит за границы острова.")
+        return
+    end
+    local state = activeBuildPlacement
+    local payload = {
+        Action = state.Mode,
+        X = placement.X,
+        Z = placement.Z,
+        Rotation = buildRotation,
+    }
+    if state.Mode == "Place" then
+        payload.BuildId = state.BuildId
+    else
+        payload.Key = state.Key
+    end
+    local updated = invokeBuild(payload)
+    if updated then
+        stopBuildPlacement(true)
+        renderBuild(updated)
+    end
+end
+
+local function startBuildPlacement(state)
+    stopBuildPlacement(false)
+    local grass = getBuildGrass()
+    if not grass then
+        showNotice("Не удалось найти твой остров.")
+        return
+    end
+    activeBuildPlacement = state
+    activeBuildPlacement.Grass = grass
+    buildRotation = state.Rotation or 0
+    buildScreenPosition = UserInputService:GetMouseLocation()
+    buildPanel.Visible = false
+
+    buildPreview = Instance.new("Part")
+    buildPreview.Name = "IslandBuildPlacementPreview"
+    buildPreview.Size = Vector3.new(state.Footprint, 0.22, state.Footprint)
+    buildPreview.Anchored = true
+    buildPreview.CanCollide = false
+    buildPreview.CanTouch = false
+    buildPreview.CanQuery = false
+    buildPreview.Material = Enum.Material.Neon
+    buildPreview.Color = Color3.fromRGB(93, 231, 153)
+    buildPreview.Transparency = 0.35
+    buildPreview.Parent = Workspace
+
+    buildHint.Text = "Выбери место · R — поворот · Esc — отмена"
+    buildHint.Visible = true
+    buildRotateButton.Visible = true
+    buildCancelButton.Visible = true
+
+    table.insert(buildInputConnections, UserInputService.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            buildScreenPosition = input.Position
+            updateBuildPreview(buildScreenPosition)
+        end
+    end))
+    table.insert(buildInputConnections, UserInputService.InputBegan:Connect(function(input, processed)
+        if not activeBuildPlacement then return end
+        if input.KeyCode == Enum.KeyCode.Escape then
+            stopBuildPlacement(true)
+            return
+        elseif input.KeyCode == Enum.KeyCode.R then
+            buildRotation = (buildRotation + 15) % 360
+            return
+        end
+        if processed then return end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            confirmBuildPlacement(UserInputService:GetMouseLocation())
+        elseif input.UserInputType == Enum.UserInputType.Touch then
+            confirmBuildPlacement(input.Position)
+        end
+    end))
+    table.insert(buildInputConnections, RunService.RenderStepped:Connect(function()
+        if activeBuildPlacement then
+            if UserInputService.MouseEnabled then
+                buildScreenPosition = UserInputService:GetMouseLocation()
+            end
+            if buildScreenPosition then updateBuildPreview(buildScreenPosition) end
+        end
+    end))
+    showNotice(state.Mode == "Place" and "Выбери место для новой постройки." or "Перемести постройку на острове.")
+end
+
 local function clearBuildList()
     for _, child in ipairs(buildList:GetChildren()) do
         if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
@@ -1347,11 +1564,12 @@ local function renderBuild(data)
         place.AutoButtonColor = place.Active
         place.Activated:Connect(function()
             if not place.Active then return end
-            local x, z = findBuildPosition(data, item.Footprint or 2)
-            if not x then showNotice("На острове нет свободного места."); return end
-            place.Active = false
-            local updated = invokeBuild({ Action = "Place", BuildId = item.Id, X = x, Z = z, Rotation = 0 })
-            if updated then renderBuild(updated) else place.Active = true end
+            startBuildPlacement({
+                Mode = "Place",
+                BuildId = item.Id,
+                Footprint = item.Footprint or 2,
+                Placed = data.Placed or {},
+            })
         end)
     end
 
@@ -1416,6 +1634,26 @@ local function renderBuild(data)
                 if updated then renderBuild(updated) end
             end)
         end
+
+        local movePlacement = Instance.new("TextButton")
+        movePlacement.Position = UDim2.fromOffset(168, 40)
+        movePlacement.Size = UDim2.fromOffset(76, 25)
+        movePlacement.BackgroundColor3 = Color3.fromRGB(62, 145, 112)
+        movePlacement.Text = "ТАЩИТЬ"
+        movePlacement.TextColor3 = Color3.new(1, 1, 1)
+        movePlacement.TextSize = 9
+        movePlacement.Font = Enum.Font.GothamBlack
+        movePlacement.Parent = row
+        addCorner(movePlacement, 7)
+        movePlacement.Activated:Connect(function()
+            startBuildPlacement({
+                Mode = "Move",
+                Key = currentItem.Key,
+                Footprint = currentItem.Footprint or 2,
+                Rotation = currentItem.Rotation or 0,
+                Placed = data.Placed or {},
+            })
+        end)
 
         local remove = Instance.new("TextButton")
         remove.AnchorPoint = Vector2.new(1, 0)
