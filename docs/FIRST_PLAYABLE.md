@@ -164,3 +164,12 @@
 - Achievements are derived from profile milestones and cannot be granted by the client.
 - Cosmetic titles can be equipped only after their achievement is unlocked. The selected title is stored in `Nest.EquippedTitle` and displayed above the character.
 - Studio uses ephemeral profile data; persistence of equipped titles must be verified in a published private test.
+
+
+## Companion growth and genetics — Sprint 4.13
+- Newly hatched companions receive a server-rolled genetic trait independent of species and egg rarity: Natural (72%), Verdant (18%), Luminous (8%), or Prismatic (2%). The trait is stored on the companion instance and remains stable through fusion.
+- Companions can be trained with coins. Each training grants 75 GrowthXP and costs 30 + current level × 25 coins. Level cap is 10; each next level requires 100 + (current level − 1) × 55 XP, with XP carry-over.
+- Growth stages are Hatchling (levels 1–3), Young (4–6), and Adult (7–10). Models scale up at stage boundaries and show genetic aura/spark effects for non-Natural traits.
+- Passive income is recalculated from species base income, star rank, level, and the trait's capped bonus (0–8%). Level adds 4% per level above 1; star multipliers remain 1× / 1.75× / 3×.
+- Training, XP, level-ups, and income updates are server-authoritative. Existing companions without genetics are reconciled to Natural.
+- Fusion preserves the selected target companion's level, XP, and genetic trait while consuming two matching companions of the same species and star rank.
