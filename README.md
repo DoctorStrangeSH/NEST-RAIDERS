@@ -96,3 +96,7 @@ In published servers, active islands are advertised through a TTL-backed MemoryS
 
 ## Player identity
 Players can open their own profile or inspect an island owner's public profile while both are in the same server. Profiles show progression, collection milestones, received island likes, contest trophies, and server-derived achievements. Unlocked cosmetic titles can be equipped and appear above the character. Cross-server and offline profile lookup remains planned work.
+
+
+## Companion growth
+Companions gain growth XP through paid training and progress through Hatchling, Young, and Adult stages. Every hatch also rolls an independent genetic variant (Natural, Verdant, Luminous, or Prismatic) with disclosed odds. Genetics add cosmetic effects and a small capped passive-income bonus. Training and all progression calculations are validated server-side.
