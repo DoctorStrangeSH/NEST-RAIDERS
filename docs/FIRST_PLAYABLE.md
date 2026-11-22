@@ -15,7 +15,7 @@
 4. From the repository root, run `rojo serve`.
 5. In Studio, create/open a test place and connect the Rojo plugin.
 6. Confirm mapped services appear in Explorer, then press Play.
-7. For DataStore tests, publish a separate private test experience and enable Studio Access to API Services. Never point development tests at the production experience.
+7. Default Studio mode uses an in-memory profile, so the gameplay loop can be tested immediately without publishing. Progress resets when the Studio session ends. For persistence/session-lock tests, publish a separate private test experience, set GameConfig.UseStudioDataStore = true, and enable Studio Access to API Services. Never point development tests at the production experience.
 
 ## Player test
 1. Spawn on Starter Island.
@@ -32,4 +32,4 @@
 - Egg collection and hatching are currently a shared starter-island test loop; per-player plots, carrying animation, egg inventory UI, companion models/following, and PvP raids are not implemented.
 - Starter companion odds are prototype values and must be disclosed in hatch UI before release.
 - DataStore behavior has not been runtime-verified in Studio.
-- DataStore session locking is implemented in code but still requires runtime verification in a private published test experience. Do not treat this prototype as production-ready until that test and failure-path review pass.
+- DataStore session locking is implemented in code but still requires runtime verification in a private published test experience. Default Studio testing uses ephemeral profiles and does not save progress.
