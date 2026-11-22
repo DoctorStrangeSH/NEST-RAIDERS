@@ -74,7 +74,9 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Unlock additional decoration slots through nest upgrades (2 at level 1, up to 6 at level 5).
 - [x] Add persistent 2-stud grid positioning and 15-degree rotation for placed nest decorations.
 - [x] Add touch-friendly directional nudge and rotate controls; validate bounds and transforms on the server.
-- [ ] Add drag-to-place preview, Creator Store art assets, and richer decoration themes.
+- [x] Add a local placement preview that snaps to the player-owned island surface before confirmation.
+- [x] Add click / tap-to-place confirmation, keyboard rotation, mobile rotate and cancel controls, and a clear return to the decoration panel.
+- [ ] Add drag-to-move while holding the pointer, Creator Store art assets, and richer decoration themes.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
