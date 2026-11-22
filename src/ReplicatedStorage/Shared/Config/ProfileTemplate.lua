@@ -25,6 +25,7 @@ local ProfileTemplate = {
         NextBuildingId = 0,
         IslandLikesByUserId = {},
         FavoriteIslandUserIds = {},
+        IslandTrophies = {},
     },
     Settings = {
         MusicEnabled = true,
