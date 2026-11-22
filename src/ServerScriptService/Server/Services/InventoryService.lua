@@ -341,6 +341,12 @@ function InventoryService:HandleRequest(player, payload)
                 return { Ok = false, Message = "Не удалось выдать награду." }
             end
             message = target.Name .. " нашёл тайник: +" .. reward .. " монет!"
+        elseif ability.Id == "CinderDash" then
+            local reward = 60 + level * 12 + stars * 20
+            if not EconomyService:GrantCoins(player, reward, "Угольный рывок") then
+                return { Ok = false, Message = "Не удалось выдать награду." }
+            end
+            message = target.Name .. " нашёл огненный тайник: +" .. reward .. " монет!"
         elseif ability.Id == "RootBlessing" then
             profile.Nest = type(profile.Nest) == "table" and profile.Nest or {}
             local reward = 100 + level * 20 + stars * 25
