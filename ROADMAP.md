@@ -56,7 +56,11 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Star-rank income multipliers and visible evolution aura / star effects.
 - [x] Displayed pets have gentle idle bob / turn animations and visible mood bubbles.
 - [x] Server-validated affection and play interactions increase saved pet mood with per-pet cooldowns.
-- [ ] Mood decay, sleep / hunger needs, care items, and mood-based reactions.
+- [x] Displayed pets have persistent hunger and energy needs that decay gradually, including elapsed time between sessions.
+- [x] Feed displayed pets for 10 coins to restore hunger and a little mood.
+- [x] Let tired displayed pets rest for 60 seconds to recover energy.
+- [x] Playing consumes energy; exhausted pets refuse play until rested.
+- [ ] Care items, species-specific preferences, and mood-based income / behavior reactions.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
@@ -80,4 +84,4 @@ Status legend: [x] done · [ ] not done · [~] in progress
 A milestone is not complete until its acceptance tests pass in Roblox Studio on desktop and mobile emulation. Monetization and public launch are blocked until saving, server authority, exploit resistance, and moderation basics are verified.
 
 ## Current implementation note
-The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, shared companion catalog, server-backed collection book, three-pet fusion with star ranks and visible evolution effects, personal nest pet displays with separately accumulated/collectible income, animated display pets with persistent mood and care interactions, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
+The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, shared companion catalog, server-backed collection book, three-pet fusion with star ranks and visible evolution effects, personal nest pet displays with separately accumulated/collectible income, animated display pets with persistent mood, hunger, energy, feeding, and rest interactions, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
