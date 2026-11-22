@@ -52,6 +52,12 @@
 - [ ] Collect displayed income; wallet increases by the exact amount and stored income resets.
 - [ ] Wallet-cap overflow remains stored instead of being discarded.
 - [ ] Display assignments and stored income persist after reconnect.
+- [ ] Displayed pets idle with a gentle bob and turn without drifting away from their pedestal.
+- [ ] Each displayed pet shows its saved mood above the model.
+- [ ] Petting increases mood by 15, capped at 100; playing increases mood by 25, capped at 100.
+- [ ] Mood interactions reject non-displayed pets, unknown interaction names, and requests during the per-pet cooldown.
+- [ ] Mood values persist after reconnect and the mood bubble refreshes after interaction.
+- [ ] Mood interactions do not grant coins or modify companion rarity, level, or income.
 - [ ] Player cannot upgrade another player's nest through the remote.
 - [ ] Player can equip and unequip owned companions; non-owned IDs are rejected.
 - [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
