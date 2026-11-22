@@ -83,6 +83,16 @@
 - [ ] ToyPlay consumes the exact energy cost from the toy catalog; Wind Spinner costs no energy.
 - [ ] Equipped toy choice persists after reconnect and is restored on the pet model.
 - [ ] Toy purchases and play do not modify rarity, stars, passive income, or other players’ profiles.
+- [ ] Nest decoration shop is available only after profile load and while near the player-owned plot.
+- [ ] Catalog exposes Flower Pot (30), Warm Lantern (55), Meadow Crystal (75), and Mushroom Seat (90).
+- [ ] Buying a decoration deducts exactly its catalog price and increments only the buyer inventory.
+- [ ] Unknown decoration IDs, insufficient coins, and inventory count above 20 are rejected.
+- [ ] A player can place only an owned decoration into an unlocked, empty slot on their own plot.
+- [ ] A player cannot place into another player’s plot, an occupied slot, or a slot above the nest-level limit.
+- [ ] Removing a placed decoration returns exactly one item to inventory and clears the model.
+- [ ] Nest level 1 exposes two decoration slots; each upgrade unlocks one more, up to six at level 5.
+- [ ] Inventory and placed decorations persist after reconnect and restore on the assigned plot.
+- [ ] Releasing a plot removes the previous owner’s rendered decorations and displayed pets before reassignment.
 - [ ] Player cannot upgrade another player's nest through the remote.
 - [ ] Player can equip and unequip owned companions; non-owned IDs are rejected.
 - [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
