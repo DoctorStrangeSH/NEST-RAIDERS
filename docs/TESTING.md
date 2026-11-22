@@ -28,6 +28,11 @@
 - [ ] When all six plots are occupied, the next player receives a clear server-full message.
 - [ ] Newly hatched companions appear and follow their owner.
 - [ ] At most three companion models are rendered per player.
+- [ ] Companion inventory lists every owned pet with rarity, level, and income.
+- [ ] Player can equip and unequip owned companions; non-owned IDs are rejected.
+- [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
+- [ ] Only equipped companions follow the player and generate passive income.
+- [ ] Legacy companion saves without instance IDs are migrated without losing pets.
 - [ ] Companion models disappear when their owner leaves.
 - [ ] Companion income is server-authoritative and capped.
 - [ ] Raid validates range, consent/state, cooldown, and bounded loss.
