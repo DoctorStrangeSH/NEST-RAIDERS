@@ -205,6 +205,8 @@ function PlotService:ReleasePlot(player)
     if playerDecorations then playerDecorations:Destroy() end
     local displayedCompanions = plot.Model:FindFirstChild("DisplayedCompanions")
     if displayedCompanions then displayedCompanions:Destroy() end
+    local playerBuildings = plot.Model:FindFirstChild("PlayerBuildings")
+    if playerBuildings then playerBuildings:Destroy() end
     plot.Model:SetAttribute("OwnerUserId", nil)
     plot.Model:SetAttribute("OwnerName", nil)
     plot.OwnerLabel.Text = "СВОБОДНОЕ ГНЕЗДО"
