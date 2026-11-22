@@ -220,8 +220,11 @@ function InventoryService:HandleRequest(player, payload)
         if profile.Coins < cost then
             return { Ok = false, Message = "Для разведения нужно " .. cost .. " монет." }
         end
-        if #profile.Companions >= 100 then
-            return { Ok = false, Message = "Коллекция заполнена. Освободи место для нового питомца." }
+        if #profile.Companions + #profile.EggInventory >= 100 then
+            return { Ok = false, Message = "Коллекция и инкубатор заполнены. Освободи место перед разведением." }
+        end
+        if #profile.EggInventory >= 20 then
+            return { Ok = false, Message = "Инкубатор заполнен. Сначала вылупи готовые яйца." }
         end
 
         local traitA = getTrait(parentA)
@@ -250,29 +253,22 @@ function InventoryService:HandleRequest(player, payload)
         profile.Coins -= cost
         parentA.BreedReadyAt = now + 1800
         parentB.BreedReadyAt = now + 1800
-        local child = {
+        local egg = {
             InstanceId = HttpService:GenerateGUID(false),
-            Id = childDefinition.Id,
-            Name = childDefinition.Name,
-            Rarity = childDefinition.Rarity,
-            Level = 1,
-            GrowthXP = 0,
-            Stars = 1,
-            GeneticTrait = inheritedTrait,
-            Income = childDefinition.Income,
-            HatchedAt = now,
+            Id = "LineageEgg",
+            CollectedAt = now,
             Origin = "Breeding",
+            IncubatesUntil = now + 300,
+            OffspringSpeciesId = childDefinition.Id,
+            GeneticTrait = inheritedTrait,
             ParentSpecies = { parentA.Id, parentB.Id },
         }
-        updateCompanionIncome(child)
-        table.insert(profile.Companions, child)
+        table.insert(profile.EggInventory, egg)
 
         player:SetAttribute("Coins", profile.Coins)
-        player:SetAttribute("CompanionCount", #profile.Companions)
-        player:SetAttribute("LastNotice", "Новое поколение! " .. child.Name .. " · генетика: " .. inheritedTrait.Name)
-        CompanionService:RefreshPlayer(player)
-        DisplayPetService:RefreshPlayer(player)
-        return { Ok = true, Data = makeSnapshot(profile), Message = "Получен новый питомец: " .. child.Name .. "!" }
+        player:SetAttribute("EggCount", #profile.EggInventory)
+        player:SetAttribute("LastNotice", "Родилось яйцо потомства! Инкубация займёт 5 минут.")
+        return { Ok = true, Data = makeSnapshot(profile), Message = "Яйцо потомства помещено в инкубатор!" }
     end
 
     if payload.Action == "UseAbility" then
