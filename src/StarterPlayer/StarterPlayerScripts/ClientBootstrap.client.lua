@@ -1092,6 +1092,7 @@ local function invokeInventory(payload)
 end
 
 local selectedBreedingId = nil
+local selectedBreedingPartnerId = nil
 
 local function renderInventory(data)
     for _, child in ipairs(list:GetChildren()) do
@@ -1273,6 +1274,8 @@ local function renderInventory(data)
             if (companion.BreedReadyIn or 0) > 0 then
                 breedButton.Text = "РАЗВЕДЕНИЕ · " .. tostring(companion.BreedReadyIn) .. " СЕК."
                 breedButton.Active = false
+            elseif selectedBreedingPartnerId == companion.InstanceId then
+                breedButton.Text = "ПОДТВЕРДИТЬ РАЗВЕДЕНИЕ"
             elseif selectedBreedingId == companion.InstanceId then
                 breedButton.Text = "ВЫБРАН · ВЫБРАТЬ ДРУГОГО"
             else
@@ -1284,11 +1287,18 @@ local function renderInventory(data)
                 if (companion.BreedReadyIn or 0) > 0 then return end
                 if not selectedBreedingId then
                     selectedBreedingId = companion.InstanceId
+                    selectedBreedingPartnerId = nil
                     renderInventory(data)
                     return
                 end
                 if selectedBreedingId == companion.InstanceId then
                     selectedBreedingId = nil
+                    selectedBreedingPartnerId = nil
+                    renderInventory(data)
+                    return
+                end
+                if selectedBreedingPartnerId ~= companion.InstanceId then
+                    selectedBreedingPartnerId = companion.InstanceId
                     renderInventory(data)
                     return
                 end
@@ -1297,14 +1307,15 @@ local function renderInventory(data)
                 local updated = invokeInventory({
                     Action = "Breed",
                     InstanceId = selectedBreedingId,
-                    PartnerInstanceId = companion.InstanceId,
+                    PartnerInstanceId = selectedBreedingPartnerId,
                 })
                 if updated then
                     selectedBreedingId = nil
+                    selectedBreedingPartnerId = nil
                     renderInventory(updated)
                 else
                     breedButton.Active = true
-                    breedButton.Text = "♥ ВЫБРАТЬ В ПАРУ"
+                    breedButton.Text = "ПОДТВЕРДИТЬ РАЗВЕДЕНИЕ"
                 end
             end)
         end
