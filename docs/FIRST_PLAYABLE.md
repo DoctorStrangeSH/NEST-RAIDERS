@@ -218,3 +218,10 @@
 - Each personal nest now has a glowing breeding altar with an owner-only proximity prompt.
 - The server only accepts breeding requests when the player is within 18 studs of their own altar.
 - Existing breeding validation and confirmation remain in place.
+
+
+## Breeding ritual reveal — Sprint 4.20
+- Two parent-energy echoes converge through colored beams into the personal altar.
+- A lineage egg grows from a spark above the altar and receives trait-colored light and particles.
+- Hybrid offspring receive a distinct golden shard burst.
+- Effects are cosmetic; breeding results and incubation remain server-authoritative.
