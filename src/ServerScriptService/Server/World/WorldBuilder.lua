@@ -19,7 +19,7 @@ end
 
 local function makeTree(parent, position, scale)
     part(parent, "TreeTrunk", Vector3.new(2, 9, 2) * scale, position + Vector3.new(0, 4.5, 0), Color3.fromRGB(112, 76, 48), Enum.Material.Wood)
-    local crown = part(parent, "TreeCrown", Vector3.new(9, 9, 9) * scale, position + Vector3.new(0, 10, 0), Color3.fromRGB(83, 177, 105), Enum.Material.Grass, Enum.PartType.Ball)
+    part(parent, "TreeCrown", Vector3.new(9, 9, 9) * scale, position + Vector3.new(0, 10, 0), Color3.fromRGB(83, 177, 105), Enum.Material.Grass, Enum.PartType.Ball)
     local accent = part(parent, "TreeCrownAccent", Vector3.new(5, 5, 5) * scale, position + Vector3.new(2, 12, 0), Color3.fromRGB(118, 207, 121), Enum.Material.Grass, Enum.PartType.Ball)
     accent.CanCollide = false
 end
@@ -58,7 +58,8 @@ function WorldBuilder:Build()
     island.Parent = world
 
     part(island, "FloatingRockFoundation", Vector3.new(330, 46, 330), Vector3.new(0, -19, 0), Color3.fromRGB(111, 91, 75), Enum.Material.Slate, Enum.PartType.Ball)
-    part(island, "GrassTop", Vector3.new(300, 12, 300), Vector3.new(0, 4, 0), Color3.fromRGB(103, 190, 112), Enum.Material.Grass, Enum.PartType.Cylinder)
+    local grassTop = part(island, "GrassTop", Vector3.new(300, 12, 300), Vector3.new(0, 4, 0), Color3.fromRGB(103, 190, 112), Enum.Material.Grass, Enum.PartType.Cylinder)
+    grassTop.CFrame = CFrame.new(0, 4, 0) * CFrame.Angles(0, 0, math.rad(90))
     part(island, "CentralClearing", Vector3.new(104, 1, 82), Vector3.new(0, 10.2, 8), Color3.fromRGB(145, 205, 128), Enum.Material.Grass)
 
     for index = 1, 7 do
