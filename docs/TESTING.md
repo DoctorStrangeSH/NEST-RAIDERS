@@ -39,6 +39,12 @@
 - [ ] Collection book is read-only; client cannot grant discoveries or edit odds.
 - [ ] Shop hatch odds and server hatch weights both come from the shared catalog.
 - [ ] Companion inventory lists every owned pet with rarity, level, and income.
+- [ ] Nest upgrade panel displays current level, next cost, and unlocked display pedestals.
+- [ ] Nest upgrade deducts exactly 250 / 750 / 2000 / 5000 coins for levels 2–5.
+- [ ] Nest upgrade rejects insufficient funds, unassigned plots, and upgrades above level 5.
+- [ ] Nest upgrade visuals update without duplicating old decorations.
+- [ ] Nest level and display pedestal count restore after reconnect.
+- [ ] Player cannot upgrade another player's nest through the remote.
 - [ ] Player can equip and unequip owned companions; non-owned IDs are rejected.
 - [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
 - [ ] Only equipped companions follow the player and generate passive income.
