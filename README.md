@@ -72,3 +72,7 @@ The construction catalog now also includes:
 - Crystal Pond — 190 coins; a shallow luminous pond with a stone shoreline and lily detail.
 - Moon Fountain — 320 coins; a layered fountain with a softly glowing crystal.
 These landmarks share the existing server-authoritative purchase, inventory, placement, move, rotate, remove, and persistence systems.
+
+
+## Social island visits — Sprint 4.7
+NEST RAIDERS now includes an in-server island browser. Players can see other occupied islands, visit a player's nest, inspect their pets and builds, and return to their exact previous position. Each island allows up to eight guests; guests are returned home if the island owner leaves. Existing server ownership checks prevent visitors from editing another player's island. Global discovery, favorites, and likes are not included yet.
