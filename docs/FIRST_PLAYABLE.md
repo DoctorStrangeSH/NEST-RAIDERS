@@ -181,3 +181,12 @@
 - SproutDragon: VerdantSpark grants player XP (35 + level × 5 + star rank × 10).
 - Abilities unlock at companion level 7, require the companion to be equipped, and have a persistent 300-second per-companion cooldown.
 - The server resolves species ability and reward formula from its catalog and validates ownership, equipped state, unlock level, profile state, and cooldown. The client only displays ability metadata and sends the companion instance ID.
+
+
+## Adult breeding and genetic inheritance — Sprint 4.15
+- Pair two different adult species (level 7+) to produce offspring; parents remain in the collection and receive a 30-minute cooldown.
+- Breeding cost: 250 + combined parent star ranks × 100 coins.
+- Offspring randomly takes one parent's species. Genetic outcome: 90% inherit one parent's trait, 7% Luminous mutation, 3% Prismatic mutation.
+- Offspring starts at level 1 / one star and records both parent species for collection lineage.
+- The collection UI uses a two-parent selection flow followed by explicit confirmation. Breeding is server-authoritative and blocked for active/displayed parents or a full collection.
+- Distinct hybrid species models remain future work; current offspring uses one parent's existing species model.
