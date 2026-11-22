@@ -32,4 +32,4 @@
 - Egg collection and hatching are currently a shared starter-island test loop; per-player plots, carrying animation, egg inventory UI, companion models/following, and PvP raids are not implemented.
 - Starter companion odds are prototype values and must be disclosed in hatch UI before release.
 - DataStore behavior has not been runtime-verified in Studio.
-- Profile session locking is not implemented yet; do not treat this as a production-ready save system.
+- DataStore session locking is implemented in code but still requires runtime verification in a private published test experience. Do not treat this prototype as production-ready until that test and failure-path review pass.
