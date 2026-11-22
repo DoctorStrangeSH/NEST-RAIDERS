@@ -118,3 +118,13 @@
 - A player may inspect another island but existing ownership checks continue to protect purchases and building edits.
 - Each island supports up to eight visitors. If its owner leaves, current visitors are returned to their own saved position.
 - This is an in-server social feature only; global discovery, likes, favorites, and ranking are future work.
+
+
+## Island likes and favorites — Sprint 4.8
+- The in-server island browser displays received likes and sorts islands by popularity.
+- Players can toggle one unique like per island owner; likes are stored in the owner's profile keyed by the visitor's stable UserId.
+- Players can save up to 30 other islands to favorites; favorites are stored in their own profile keyed by owner UserId.
+- The browser includes an all-islands / favorites-only filter.
+- Social actions are server-validated and rate-limited. Browsing the list itself is not throttled.
+- Likes and favorites are social recognition only; they grant no currency, XP, pets, or combat advantages.
+- Cross-server discovery and global weekly showcases are not part of this milestone.
