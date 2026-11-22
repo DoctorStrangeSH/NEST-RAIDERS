@@ -273,7 +273,10 @@ function NestDecorService:HandleRequest(player, payload)
         local requestedX = tonumber(payload.X)
         local requestedZ = tonumber(payload.Z)
         local requestedRotation = tonumber(payload.Rotation)
-        if not requestedX or not requestedZ or not requestedRotation then
+        if not requestedX or not requestedZ or not requestedRotation
+            or requestedX ~= requestedX or requestedZ ~= requestedZ or requestedRotation ~= requestedRotation
+            or math.abs(requestedX) == math.huge or math.abs(requestedZ) == math.huge
+            or math.abs(requestedRotation) > 36000 then
             return { Ok = false, Message = "Некорректные координаты украшения." }
         end
         if math.abs(requestedX) > 15 or math.abs(requestedZ) > 15 then
