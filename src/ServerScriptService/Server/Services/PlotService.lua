@@ -228,6 +228,26 @@ function PlotService:PlayBreedingSequence(player, parentA, parentB, egg)
     eggPart.Color = traitColor
     eggPart.Parent = effects
 
+    local hybridShards = {}
+    if egg.IsHybrid then
+        for shardIndex = 1, 4 do
+            local angle = (math.pi * 2 / 4) * shardIndex
+            local shard = Instance.new("Part")
+            shard.Name = "HybridRevealShard_" .. shardIndex
+            shard.Shape = Enum.PartType.Wedge
+            shard.Size = Vector3.new(0.28, 0.9, 0.28)
+            shard.Position = center + Vector3.new(math.cos(angle) * 1.8, 1.5, math.sin(angle) * 1.8)
+            shard.Anchored = true
+            shard.CanCollide = false
+            shard.CanTouch = false
+            shard.CanQuery = false
+            shard.Material = Enum.Material.Neon
+            shard.Color = Color3.fromRGB(255, 211, 116)
+            shard.Parent = effects
+            table.insert(hybridShards, shard)
+        end
+    end
+
     local shellLight = Instance.new("PointLight")
     shellLight.Color = traitColor
     shellLight.Brightness = 0
@@ -263,8 +283,16 @@ function PlotService:PlayBreedingSequence(player, parentA, parentB, egg)
             Size = Vector3.new(2.1, 2.7, 2.1),
             Position = center + Vector3.new(0, 1.5, 0),
         }):Play()
-        TweenService:Create(shellLight, TweenInfo.new(0.55), { Brightness = 2.2 }):Play()
-        particles:Emit(32)
+        TweenService:Create(shellLight, TweenInfo.new(0.55), { Brightness = egg.IsHybrid and 3.2 or 2.2 }):Play()
+        particles:Emit(egg.IsHybrid and 56 or 32)
+        for _, shard in ipairs(hybridShards) do
+            local direction = (shard.Position - eggPart.Position).Unit
+            TweenService:Create(shard, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                Position = shard.Position + direction * 3.5,
+                Transparency = 1,
+                Size = Vector3.new(0.05, 0.05, 0.05),
+            }):Play()
+        end
         left:Destroy()
         right:Destroy()
         beamA:Destroy()
