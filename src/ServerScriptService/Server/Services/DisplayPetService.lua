@@ -76,6 +76,7 @@ local function getSnapshot(profile)
         local companion = instanceId and findOwned(profile, instanceId) or nil
         if companion then
             displayedSet[instanceId] = true
+            local needs = getNeeds(profile, instanceId, now)
             table.insert(displayed, {
                 Slot = slot,
                 InstanceId = instanceId,
@@ -85,9 +86,9 @@ local function getSnapshot(profile)
                 Stars = companion.Stars or 1,
                 Income = math.max(0, math.floor(tonumber(companion.Income) or 0)),
                 Mood = math.floor(profile.Nest.CompanionMood[instanceId] or 50),
-                Hunger = math.floor(getNeeds(profile, instanceId, now).Hunger),
-                Energy = math.floor(profile.Nest.CompanionNeeds[instanceId].Energy),
-                IsSleeping = (tonumber(profile.Nest.CompanionNeeds[instanceId].RestingUntil) or 0) > now,
+                Hunger = math.floor(needs.Hunger),
+                Energy = math.floor(needs.Energy),
+                IsSleeping = (tonumber(needs.RestingUntil) or 0) > now,
             })
         else
             table.insert(displayed, { Slot = slot, Empty = true })
