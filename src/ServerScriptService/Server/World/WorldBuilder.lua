@@ -108,22 +108,7 @@ function WorldBuilder:Build()
     makeEgg(eggFolder, Vector3.new(25, 14, 24), Color3.fromRGB(255, 222, 113))
     makeEgg(eggFolder, Vector3.new(0, 14, 65), Color3.fromRGB(255, 222, 113))
 
-    local nest = Instance.new("Folder")
-    nest.Name = "StarterNest"
-    nest.Parent = island
-    part(nest, "NestPlatform", Vector3.new(34, 2, 28), Vector3.new(0, 12, -28), Color3.fromRGB(117, 81, 55), Enum.Material.WoodPlanks)
-    part(nest, "NestBowl", Vector3.new(18, 3, 16), Vector3.new(0, 14, -28), Color3.fromRGB(157, 112, 67), Enum.Material.Wood)
-    local station = part(nest, "HatchStation", Vector3.new(7, 5, 7), Vector3.new(0, 16, -28), Color3.fromRGB(255, 194, 83), Enum.Material.Neon, Enum.PartType.Ball)
-    station.Transparency = 0.2
-    local hatchPrompt = Instance.new("ProximityPrompt")
-    hatchPrompt.Name = "HatchPrompt"
-    hatchPrompt.ActionText = "Hatch Egg"
-    hatchPrompt.ObjectText = "Your Nest"
-    hatchPrompt.KeyboardKeyCode = Enum.KeyCode.E
-    hatchPrompt.HoldDuration = 0.5
-    hatchPrompt.MaxActivationDistance = 12
-    hatchPrompt.RequiresLineOfSight = false
-    hatchPrompt.Parent = station
+    -- Personal nests are created and assigned by PlotService.
 
     local sign = part(island, "WelcomeSign", Vector3.new(1, 10, 18), Vector3.new(0, 16, -91), Color3.fromRGB(105, 72, 47), Enum.Material.Wood)
     local surface = Instance.new("SurfaceGui")
