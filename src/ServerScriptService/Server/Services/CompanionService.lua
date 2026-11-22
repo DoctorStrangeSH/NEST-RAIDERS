@@ -174,10 +174,52 @@ local function buildPet(parent, companion, index)
         geneticAura.OutlineTransparency = 0.18
         geneticAura.DepthMode = Enum.HighlightDepthMode.Occluded
         geneticAura.Parent = model
-        local sparkCount = traitId == "Prismatic" and 3 or 1
-        for sparkIndex = 1, sparkCount do
-            local x = (sparkIndex - (sparkCount + 1) / 2) * 0.62
-            local spark = makeShape(model, "GeneticSpark", Vector3.new(0.18, 0.18, 0.18), Vector3.new(x, 3.35, -0.25), traitColor)
+        if traitId == "Verdant" then
+            -- Leaf-like crystal growths make Verdant visibly different from a simple aura.
+            for leafIndex, offset in ipairs({
+                Vector3.new(-0.62, 2.72, -0.35),
+                Vector3.new(0, 2.94, -0.48),
+                Vector3.new(0.62, 2.72, -0.35),
+            }) do
+                local leaf = makeShape(model, "VerdantCrystal_" .. leafIndex,
+                    Vector3.new(0.34, 0.82, 0.22), offset, traitColor, Enum.PartType.Wedge)
+                leaf.Material = Enum.Material.Neon
+            end
+            local gem = makeShape(model, "VerdantHeart", Vector3.new(0.38, 0.38, 0.38),
+                Vector3.new(0, 2.05, 0.98), Color3.fromRGB(184, 255, 193))
+            gem.Material = Enum.Material.Neon
+        elseif traitId == "Luminous" then
+            -- Soft cyan lantern orbs are attached around the pet's silhouette.
+            for orbIndex, offset in ipairs({
+                Vector3.new(-1.12, 2.35, 0),
+                Vector3.new(1.12, 2.35, 0),
+                Vector3.new(0, 2.92, -0.55),
+            }) do
+                local orb = makeShape(model, "LuminousOrb_" .. orbIndex,
+                    Vector3.new(0.24, 0.24, 0.24), offset, traitColor)
+                orb.Material = Enum.Material.Neon
+                local light = Instance.new("PointLight")
+                light.Name = "GeneticGlow"
+                light.Color = traitColor
+                light.Range = 5
+                light.Brightness = 0.65
+                light.Shadows = false
+                light.Parent = orb
+            end
+        elseif traitId == "Prismatic" then
+            -- Three colored facets communicate the rare multi-color mutation.
+            local facets = {
+                { Offset = Vector3.new(-0.58, 2.82, -0.35), Color = Color3.fromRGB(255, 111, 126) },
+                { Offset = Vector3.new(0, 3.02, -0.42), Color = Color3.fromRGB(112, 226, 255) },
+                { Offset = Vector3.new(0.58, 2.82, -0.35), Color = Color3.fromRGB(218, 143, 255) },
+            }
+            for facetIndex, facet in ipairs(facets) do
+                local shard = makeShape(model, "PrismaticFacet_" .. facetIndex,
+                    Vector3.new(0.28, 0.72, 0.2), facet.Offset, facet.Color, Enum.PartType.Wedge)
+                shard.Material = Enum.Material.Neon
+            end
+            local spark = makeShape(model, "PrismaticCore", Vector3.new(0.3, 0.3, 0.3),
+                Vector3.new(0, 2.05, 1.02), traitColor)
             spark.Material = Enum.Material.Neon
         end
     end
