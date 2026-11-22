@@ -307,6 +307,7 @@ function InventoryService:HandleRequest(player, payload)
             Origin = "Breeding",
             IncubatesUntil = now + 300,
             OffspringSpeciesId = childDefinition.Id,
+            IsHybrid = childDefinition.Hybrid == true,
             GeneticTrait = inheritedTrait,
             ParentSpecies = { parentA.Id, parentB.Id },
         }
