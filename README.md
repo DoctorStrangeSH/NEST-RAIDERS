@@ -124,3 +124,7 @@ Verdant, Luminous, and Prismatic companions have distinct physical ornaments in 
 
 ## Personal breeding altar
 Each player's nest includes a dedicated glowing breeding altar. Breeding requests are server-validated and only accepted near the altar in the player's own plot.
+
+
+## Breeding ritual
+Successful breeding triggers a temporary altar animation: parent-colored energy echoes converge into a trait-colored lineage egg. Hybrid offspring receive a distinct golden reveal burst. The visual sequence does not alter server-authoritative breeding outcomes or incubation.
