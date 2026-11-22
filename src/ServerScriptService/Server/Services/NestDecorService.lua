@@ -78,6 +78,9 @@ local function buildDecoration(parent, definition, center, offset, slot)
         item.Name = name
         item.Size = size
         item.CFrame = CFrame.new(center + offset + position)
+        if shape == Enum.PartType.Cylinder then
+            item.CFrame *= CFrame.Angles(0, 0, math.rad(90))
+        end
         item.Anchored = true
         item.CanCollide = false
         item.CanTouch = false
