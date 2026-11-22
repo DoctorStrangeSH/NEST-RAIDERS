@@ -441,7 +441,13 @@ function IslandVisitService:Init()
     end)
     Players.PlayerRemoving:Connect(function(player)
         if isDirectoryAvailable() then
-            pcall(function() getDirectory():RemoveAsync(tostring(player.UserId)) end)
+            local directory = getDirectory()
+            local ok, entry = pcall(function()
+                return directory:GetAsync(tostring(player.UserId))
+            end)
+            if ok and type(entry) == "table" and entry.JobId == game.JobId then
+                pcall(function() directory:RemoveAsync(tostring(player.UserId)) end)
+            end
         end
         local plotId = self._visitingPlot[player]
         self._visitingPlot[player] = nil
