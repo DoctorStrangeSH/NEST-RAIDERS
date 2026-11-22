@@ -1021,7 +1021,7 @@ local function renderDecor(data)
         local item = occupiedBySlot[slot]
         local row = Instance.new("Frame")
         row.LayoutOrder = 20 + slot
-        row.Size = UDim2.new(1, -8, 0, 42)
+        row.Size = UDim2.new(1, -8, 0, 76)
         row.BackgroundColor3 = Color3.fromRGB(58, 54, 72)
         row.BorderSizePixel = 0
         row.Parent = decorList
@@ -1029,8 +1029,8 @@ local function renderDecor(data)
 
         local label = Instance.new("TextLabel")
         label.BackgroundTransparency = 1
-        label.Position = UDim2.fromOffset(10, 0)
-        label.Size = UDim2.new(1, -112, 1, 0)
+        label.Position = UDim2.fromOffset(10, 3)
+        label.Size = UDim2.new(1, -112, 0, 30)
         label.Text = item and ("Место " .. slot .. " · " .. item.Name) or ("Место " .. slot .. " · Свободно")
         label.TextColor3 = Color3.fromRGB(235, 229, 239)
         label.TextSize = 11
@@ -1039,9 +1039,40 @@ local function renderDecor(data)
         label.Parent = row
 
         if item then
+            local controls = {
+                { Text = "↑", X = 8, DX = 0, DZ = -2 },
+                { Text = "←", X = 42, DX = -2, DZ = 0 },
+                { Text = "↓", X = 76, DX = 0, DZ = 2 },
+                { Text = "→", X = 110, DX = 2, DZ = 0 },
+                { Text = "↻", X = 144, Rotate = 15 },
+            }
+            for _, control in ipairs(controls) do
+                local moveButton = Instance.new("TextButton")
+                moveButton.Position = UDim2.fromOffset(control.X, 43)
+                moveButton.Size = UDim2.fromOffset(30, 25)
+                moveButton.BackgroundColor3 = control.Rotate and Color3.fromRGB(112, 101, 164) or Color3.fromRGB(77, 119, 139)
+                moveButton.Text = control.Text
+                moveButton.TextColor3 = Color3.new(1, 1, 1)
+                moveButton.TextSize = 14
+                moveButton.Font = Enum.Font.GothamBlack
+                moveButton.Parent = row
+                addCorner(moveButton, 7)
+                moveButton.Activated:Connect(function()
+                    moveButton.Active = false
+                    local updated = invokeDecor({
+                        Action = "Move",
+                        Slot = slot,
+                        X = (item.X or 0) + (control.DX or 0),
+                        Z = (item.Z or 0) + (control.DZ or 0),
+                        Rotation = (item.Rotation or 0) + (control.Rotate or 0),
+                    })
+                    if updated then renderDecor(updated) else moveButton.Active = true end
+                end)
+            end
+
             local remove = Instance.new("TextButton")
             remove.AnchorPoint = Vector2.new(1, 0.5)
-            remove.Position = UDim2.new(1, -6, 0.5, 0)
+            remove.Position = UDim2.new(1, -6, 0, 7)
             remove.Size = UDim2.fromOffset(92, 30)
             remove.BackgroundColor3 = Color3.fromRGB(151, 86, 91)
             remove.Text = "УБРАТЬ"
