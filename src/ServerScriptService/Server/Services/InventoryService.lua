@@ -50,8 +50,10 @@ local function makeSnapshot(profile)
     local displayed = {}
     for _, instanceId in pairs(profile.Nest and profile.Nest.DisplayedCompanions or {}) do displayed[instanceId] = true end
     for _, companion in ipairs(profile.Companions) do
-        local key = tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)
-        speciesCounts[key] = (speciesCounts[key] or 0) + 1
+        if not displayed[companion.InstanceId] then
+            local key = tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)
+            speciesCounts[key] = (speciesCounts[key] or 0) + 1
+        end
     end
     local companions = {}
     for _, companion in ipairs(profile.Companions) do
