@@ -226,7 +226,7 @@ local function renderInventory(data)
         details.Position = UDim2.fromOffset(12, 34)
         details.Size = UDim2.new(1, -130, 0, 32)
         details.Font = Enum.Font.GothamMedium
-        details.Text = string.format("%s  ·  Ур. %d  ·  +%d монет", companion.Rarity or "Обычный", companion.Level or 1, companion.Income or 0)
+        details.Text = string.format("%s  ·  Ур. %d  ·  +%d монет / 10 сек.", companion.Rarity or "Обычный", companion.Level or 1, companion.Income or 0)
         details.TextColor3 = Color3.fromRGB(187, 211, 203)
         details.TextSize = 12
         details.TextXAlignment = Enum.TextXAlignment.Left
