@@ -31,6 +31,7 @@ local function buildSnapshot(profile)
             Description = definition.Description,
             Income = definition.Income,
             HatchChance = definition.Weight,
+            HybridOnly = definition.Hybrid == true,
             OwnedCount = count,
             Discovered = count > 0,
         })
