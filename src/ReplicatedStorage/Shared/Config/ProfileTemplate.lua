@@ -18,6 +18,8 @@ local ProfileTemplate = {
         CompanionMood = {},
         CompanionNeeds = {},
         CompanionToys = {},
+        DecorInventory = {},
+        PlacedDecor = {},
     },
     Settings = {
         MusicEnabled = true,
