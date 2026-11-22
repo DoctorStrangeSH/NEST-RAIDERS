@@ -1,0 +1,17 @@
+# Rojo / Roblox Studio
+*.rbxl
+*.rbxlx
+*.rbxm
+*.rbxmx
+*.rbxplace
+*.rbxmodel
+*.lock
+.sourcemap.json
+
+# Tooling
+node_modules/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
