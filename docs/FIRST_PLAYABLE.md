@@ -205,3 +205,10 @@
 - MeadowFox + MossTurtle produces BriarGuardian (Терновый страж).
 - These three Epic species are breeding-only, excluded from natural egg drops, and shown as such in the collection book until discovered.
 - Hybrid follower silhouettes are implemented. EmberFox has the CinderDash adult ability; the other two hybrid ability kits remain future work.
+
+
+## Genetic mutation appearance — Sprint 4.18
+- Verdant companions receive leaf-crystal ornaments and a glowing heart gem.
+- Luminous companions receive three cyan lantern orbs with soft point lights.
+- Prismatic companions receive three differently colored facets and a prismatic core.
+- Inventory cards show genetic rarity and passive-income bonus.
