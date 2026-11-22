@@ -66,6 +66,14 @@
 - [ ] Playing consumes 10 energy and is rejected when energy is below 10.
 - [ ] Pet needs persist across reconnect; a completed rest period does not continue regenerating energy after its end.
 - [ ] Opening the nest care panel refreshes the pet model bubble and displayed need values.
+- [ ] Meadow Fox displays the Curious personality and Sweet Berries as its favorite food.
+- [ ] Moss Turtle displays the Calm personality and Young Leaves as its favorite food.
+- [ ] Sprout Dragon displays the Playful personality and Glowfruit as its favorite food.
+- [ ] Petting grants the catalog-defined personality bonus; playing grants its own catalog-defined bonus.
+- [ ] A favorite treat costs exactly 15 coins, restores 35 hunger, and grants 15 mood.
+- [ ] Treating a pet displays its actual favorite food from the shared catalog; the client cannot choose or spoof another species food.
+- [ ] Treating is rejected for insufficient coins, near-full hunger, non-displayed pets, or requests during the interaction cooldown.
+- [ ] Personality bonuses never exceed 100 mood and never modify rarity, stars, or passive income.
 - [ ] Player cannot upgrade another player's nest through the remote.
 - [ ] Player can equip and unequip owned companions; non-owned IDs are rejected.
 - [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
