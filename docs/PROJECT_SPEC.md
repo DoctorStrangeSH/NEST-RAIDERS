@@ -247,3 +247,16 @@ A feature is done only when:
 - Normal world/shop eggs keep the existing random hatch flow.
 - The collection UI shows an incubator summary with lineage egg count, next egg countdown, species preview, and genetic trait.
 - Breeding checks both companion and egg inventory capacity before charging currency or setting parent cooldowns.
+
+
+## Starter hybrid species
+- The first three cross-species pairs produce deterministic breeding-only hybrids, independent of parent selection order:
+  - MeadowFox + SproutDragon → EmberFox (Пламенный лис), Epic, base income 13.
+  - MossTurtle + SproutDragon → Fernshell (Папоротниковый панцирь), Epic, base income 14.
+  - MeadowFox + MossTurtle → BriarGuardian (Терновый страж), Epic, base income 12.
+- Hybrid catalog entries have Weight = 0 and are excluded from the natural egg hatch pool. They can only be obtained through their corresponding breeding pair.
+- Lineage eggs store the hybrid species ID and parent species IDs. Incubation/hatching continues to use the stored offspring result.
+- Collection book entries flag HybridOnly and display "Только через разведение" while undiscovered.
+- Companion follower models have dedicated hybrid silhouettes and color palettes; they do not fall back to the starter fox model.
+- EmberFox has the CinderDash adult ability, unlocked at level 7, requiring an equipped companion, with server-side reward formula 60 + level × 12 + star rank × 20 and the catalog cooldown.
+- Fernshell and BriarGuardian currently have no active ability; their ability kits are future balancing work.
