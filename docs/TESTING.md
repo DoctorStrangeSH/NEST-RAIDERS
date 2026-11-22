@@ -58,6 +58,14 @@
 - [ ] Mood interactions reject non-displayed pets, unknown interaction names, and requests during the per-pet cooldown.
 - [ ] Mood values persist after reconnect and the mood bubble refreshes after interaction.
 - [ ] Mood interactions do not grant coins or modify companion rarity, level, or income.
+- [ ] Hunger, energy, and mood decay at their documented rates while time passes, including elapsed offline time.
+- [ ] Feed costs exactly 10 coins, restores 35 hunger (capped at 100), and grants 5 mood; insufficient funds are rejected.
+- [ ] Feeding is rejected when hunger is already at least 95 and never creates negative currency.
+- [ ] Sleep starts a 60-second rest; energy recovers while resting and does not exceed 100.
+- [ ] A second sleep request while already resting is rejected; a pet at 95+ energy cannot start resting.
+- [ ] Playing consumes 10 energy and is rejected when energy is below 10.
+- [ ] Pet needs persist across reconnect; a completed rest period does not continue regenerating energy after its end.
+- [ ] Opening the nest care panel refreshes the pet model bubble and displayed need values.
 - [ ] Player cannot upgrade another player's nest through the remote.
 - [ ] Player can equip and unequip owned companions; non-owned IDs are rejected.
 - [ ] Equipping a fourth companion is rejected; unequipping frees a slot.
