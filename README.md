@@ -88,3 +88,7 @@ Players can vote once per category each week in three island showcases: Cozy, Na
 
 ## Hall of Fame
 The previous week's top-three island contest results are archived when the contest is first accessed in the new week. Winners can claim one cosmetic trophy per category/week; claims are server-verified and saved to their profile. Claimed trophies are displayed on the owner's island. Published history is shared across servers and retains the latest 12 completed weeks. Local Studio results remain temporary.
+
+
+## Global island discovery
+In published servers, active islands are advertised through a TTL-backed MemoryStore directory. Players can browse islands across public servers and teleport to the exact server hosting the selected owner. The destination verifies the owner and plot before moving the visitor. Studio intentionally uses local-only browsing; cross-server acceptance testing requires a published private test experience.
