@@ -151,3 +151,17 @@
 - [ ] Place, move, rotate, remove, and rejoin with each new object; verify inventory and layout persistence.
 - [ ] Confirm each landmark respects overlap checks and full-footprint island bounds.
 - [ ] Test a plot release and verify all three new landmark models are cleared before reassignment.
+
+
+## Social island visits — Sprint 4.7
+- [ ] Run a two-player Studio server and open the island browser from both clients.
+- [ ] Verify each player sees the other occupied island with the correct display name and level; own island is not listed.
+- [ ] Visit another player's island and verify the visitor appears at the destination without changing ownership.
+- [ ] Verify visitors can inspect decorations, buildings, and displayed companions but cannot buy, move, or remove the owner's objects.
+- [ ] Use Return Home and verify the player returns to their exact pre-visit position.
+- [ ] Visit a second island while already visiting; verify the original return position is preserved.
+- [ ] Verify an island refuses a ninth visitor and shows a clear message.
+- [ ] Have an island owner leave while visitors are present; verify guests are returned safely.
+- [ ] Have a visitor leave while visiting; verify visitor count decreases.
+- [ ] Attempt malformed plot IDs, self-visits, unavailable plot IDs, and rapid repeated requests; verify server rejection.
+- [ ] Verify visits do not modify player profile data or grant currency / rewards.
