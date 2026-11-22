@@ -5,6 +5,7 @@ local HttpService = game:GetService("HttpService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
+local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 
 local InventoryService = {}
 local MAX_ACTIVE_COMPANIONS = 3
@@ -45,6 +46,11 @@ end
 
 local function makeSnapshot(profile)
     local equipped = activeSet(profile)
+    local speciesCounts = {}
+    for _, companion in ipairs(profile.Companions) do
+        local key = tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)
+        speciesCounts[key] = (speciesCounts[key] or 0) + 1
+    end
     local companions = {}
     for _, companion in ipairs(profile.Companions) do
         table.insert(companions, {
@@ -53,6 +59,8 @@ local function makeSnapshot(profile)
             Name = companion.Name,
             Rarity = companion.Rarity,
             Level = companion.Level or 1,
+            Stars = companion.Stars or 1,
+            MergeCount = speciesCounts[tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)] or 1,
             Income = companion.Income or 0,
             Equipped = equipped[companion.InstanceId] == true,
         })
@@ -79,7 +87,7 @@ function InventoryService:HandleRequest(player, payload)
     if payload.Action == "Get" then
         return { Ok = true, Data = makeSnapshot(profile) }
     end
-    if payload.Action ~= "Equip" and payload.Action ~= "Unequip" then
+    if payload.Action ~= "Equip" and payload.Action ~= "Unequip" and payload.Action ~= "Merge" then
         return { Ok = false, Message = "Неизвестное действие." }
     end
     if type(payload.InstanceId) ~= "string" or #payload.InstanceId > 80 then
@@ -92,6 +100,78 @@ function InventoryService:HandleRequest(player, payload)
     end
     if not owned then
         return { Ok = false, Message = "Этот питомец тебе не принадлежит." }
+    end
+
+    if payload.Action == "Merge" then
+        local target
+        for _, companion in ipairs(profile.Companions) do
+            if companion.InstanceId == payload.InstanceId then
+                target = companion
+                break
+            end
+        end
+        if not target then
+            return { Ok = false, Message = "Питомец не найден." }
+        end
+
+        local currentStars = math.clamp(math.floor(tonumber(target.Stars) or 1), 1, 3)
+        if currentStars >= 3 then
+            return { Ok = false, Message = "У этого питомца уже максимальный ранг." }
+        end
+
+        local consumed = {}
+        for _, companion in ipairs(profile.Companions) do
+            if companion ~= target
+                and companion.Id == target.Id
+                and (companion.Stars or 1) == currentStars
+                and #consumed < 2 then
+                table.insert(consumed, companion)
+            end
+        end
+        if #consumed < 2 then
+            return { Ok = false, Message = "Для слияния нужны 3 одинаковых питомца одного ранга." }
+        end
+
+        local removedIds = {}
+        for _, companion in ipairs(consumed) do
+            removedIds[companion.InstanceId] = true
+        end
+
+        local nextActive = {}
+        local targetWasActive = equipped[target.InstanceId] == true
+        local transferSlot = false
+        for _, instanceId in ipairs(profile.ActiveCompanions) do
+            if removedIds[instanceId] then
+                transferSlot = true
+            elseif instanceId == target.InstanceId then
+                targetWasActive = true
+                table.insert(nextActive, instanceId)
+            else
+                table.insert(nextActive, instanceId)
+            end
+        end
+        if transferSlot and not targetWasActive and #nextActive < MAX_ACTIVE_COMPANIONS then
+            table.insert(nextActive, target.InstanceId)
+        end
+        profile.ActiveCompanions = nextActive
+
+        for index = #profile.Companions, 1, -1 do
+            if removedIds[profile.Companions[index].InstanceId] then
+                table.remove(profile.Companions, index)
+            end
+        end
+
+        target.Stars = currentStars + 1
+        local definition = CompanionCatalog[target.Id]
+        local baseIncome = definition and definition.Income or target.Income or 1
+        target.Income = math.floor(baseIncome * (target.Stars == 2 and 1.75 or 3))
+        target.Level = target.Level or 1
+
+        CompanionService:RefreshPlayer(player)
+        player:SetAttribute("CompanionCount", #profile.Companions)
+        player:SetAttribute("ActiveCompanionCount", #profile.ActiveCompanions)
+        player:SetAttribute("LastNotice", target.Name .. " достиг ранга " .. target.Stars .. " звезды!")
+        return { Ok = true, Data = makeSnapshot(profile) }
     end
 
     local equipped = activeSet(profile)
