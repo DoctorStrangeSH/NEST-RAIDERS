@@ -270,3 +270,10 @@ A feature is done only when:
 - Genetic ornaments are built into the same companion model used for followers and nest displays, so the trait appearance is consistent across contexts.
 - Inventory cards show trait name, rarity, rounded passive-income bonus percentage, growth XP, and passive income.
 - Existing profile compatibility: missing or malformed genetic traits normalize to Natural.
+
+
+## Personal nest breeding altar — Sprint 4.19
+- Every personal plot builds a dedicated BreedingStation next to its hatch station. The altar uses a wooden base, neon ring, translucent purple core, and soft PointLight.
+- A ProximityPrompt displays "Разведение" / "Алтарь потомства". Only the plot owner receives the prompt guidance notice.
+- The server validates the player's assigned plot and character root position; the Breed inventory action is rejected unless the player is within 18 studs of their own BreedingStation.
+- Proximity is an additional gate, not a replacement for existing checks: both parents must be owned, adult, distinct species, unequipped, undisplayed, off cooldown, and fit within collection/egg capacity. Costs and parent cooldowns are applied only after validation.
