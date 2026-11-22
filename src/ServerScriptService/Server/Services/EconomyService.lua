@@ -13,7 +13,7 @@ function EconomyService:GrantCoins(player, amount, reason)
     local safeAmount = math.floor(math.min(amount, MAX_TICK_REWARD))
     profile.Coins = math.clamp(profile.Coins + safeAmount, 0, GameConfig.Economy.MaxCoins)
     player:SetAttribute("Coins", profile.Coins)
-    player:SetAttribute("LastNotice", "+" .. safeAmount .. " Coins" .. (reason and (" · " .. reason) or ""))
+    player:SetAttribute("LastNotice", "+" .. safeAmount .. " монет" .. (reason and (" · " .. reason) or ""))
     return true
 end
 
