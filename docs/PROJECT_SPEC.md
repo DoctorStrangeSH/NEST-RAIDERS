@@ -171,3 +171,10 @@ A feature is done only when:
 - Data migrations and save behavior are tested when applicable.
 - Documentation and ROADMAP are updated.
 - Acceptance checklist is recorded.
+
+
+## Weekly island showcase
+- The social layer includes weekly island voting in three non-power categories: Cozy, Nature, and Fantasy.
+- Each player may vote once per category per UTC week; self-votes and unavailable targets are rejected server-side.
+- Published servers share top-ten category standings through OrderedDataStore. Local Studio mode uses an explicitly temporary in-memory fallback.
+- Voting is for social recognition only. Winner cosmetics, global island discovery, moderation review, and anti-alt heuristics are later release work.
