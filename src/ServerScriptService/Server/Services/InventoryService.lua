@@ -7,6 +7,8 @@ local PlayerDataService = require(ServerScriptService.Server.Services.PlayerData
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
 local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 local DisplayPetService = require(ServerScriptService.Server.Services.DisplayPetService)
+local EconomyService = require(ServerScriptService.Server.Services.EconomyService)
+local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
 
 local InventoryService = {}
 local MAX_ACTIVE_COMPANIONS = 3
@@ -102,6 +104,21 @@ local function makeSnapshot(profile)
             GrowthXPToNext = (companion.Level or 1) < MAX_COMPANION_LEVEL and (100 + ((companion.Level or 1) - 1) * 55) or 0,
             GrowthStage = getGrowthStage(companion.Level or 1),
             GeneticTrait = getTrait(companion),
+            Ability = (function()
+                local definition = CompanionCatalog[companion.Id]
+                local ability = definition and definition.Ability
+                if not ability then return nil end
+                local level = math.clamp(math.floor(tonumber(companion.Level) or 1), 1, MAX_COMPANION_LEVEL)
+                return {
+                    Id = ability.Id,
+                    Name = ability.Name,
+                    Description = ability.Description,
+                    UnlockLevel = ability.UnlockLevel or 7,
+                    CooldownSeconds = ability.CooldownSeconds or 300,
+                    Unlocked = level >= (ability.UnlockLevel or 7),
+                    ReadyIn = math.max(0, (tonumber(companion.AbilityReadyAt) or 0) - os.time()),
+                }
+            end)(),
             TrainCost = (companion.Level or 1) < MAX_COMPANION_LEVEL and (30 + (companion.Level or 1) * 25) or 0,
             Stars = companion.Stars or 1,
             MergeCount = (displayed[companion.InstanceId] and 0 or speciesCounts[tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)]) or 1,
@@ -132,7 +149,7 @@ function InventoryService:HandleRequest(player, payload)
     if payload.Action == "Get" then
         return { Ok = true, Data = makeSnapshot(profile) }
     end
-    if payload.Action ~= "Equip" and payload.Action ~= "Unequip" and payload.Action ~= "Merge" and payload.Action ~= "Train" then
+    if payload.Action ~= "Equip" and payload.Action ~= "Unequip" and payload.Action ~= "Merge" and payload.Action ~= "Train" and payload.Action ~= "UseAbility" then
         return { Ok = false, Message = "Неизвестное действие." }
     end
     if type(payload.InstanceId) ~= "string" or #payload.InstanceId > 80 then
@@ -145,6 +162,60 @@ function InventoryService:HandleRequest(player, payload)
     end
     if not owned then
         return { Ok = false, Message = "Этот питомец тебе не принадлежит." }
+    end
+
+    if payload.Action == "UseAbility" then
+        local target
+        for _, companion in ipairs(profile.Companions) do
+            if companion.InstanceId == payload.InstanceId then target = companion break end
+        end
+        if not target then return { Ok = false, Message = "Питомец не найден." } end
+        if not activeSet(profile)[target.InstanceId] then
+            return { Ok = false, Message = "Способность доступна только активному питомцу." }
+        end
+
+        local definition = CompanionCatalog[target.Id]
+        local ability = definition and definition.Ability
+        if not ability then return { Ok = false, Message = "У этого питомца пока нет способности." } end
+        local level = math.clamp(math.floor(tonumber(target.Level) or 1), 1, MAX_COMPANION_LEVEL)
+        local unlockLevel = math.max(1, math.floor(tonumber(ability.UnlockLevel) or 7))
+        if level < unlockLevel then
+            return { Ok = false, Message = "Способность откроется на уровне " .. unlockLevel .. "." }
+        end
+
+        local now = os.time()
+        local readyAt = math.max(0, math.floor(tonumber(target.AbilityReadyAt) or 0))
+        if readyAt > now then
+            return { Ok = false, Message = "Способность восстановится через " .. (readyAt - now) .. " сек." }
+        end
+
+        local stars = math.clamp(math.floor(tonumber(target.Stars) or 1), 1, 3)
+        local message
+        if ability.Id == "TrailFinder" then
+            local reward = 40 + level * 10 + stars * 15
+            if not EconomyService:GrantCoins(player, reward, "Следопыт") then
+                return { Ok = false, Message = "Не удалось выдать награду." }
+            end
+            message = target.Name .. " нашёл тайник: +" .. reward .. " монет!"
+        elseif ability.Id == "RootBlessing" then
+            profile.Nest = type(profile.Nest) == "table" and profile.Nest or {}
+            local reward = 100 + level * 20 + stars * 25
+            local stored = math.max(0, math.floor(tonumber(profile.Nest.StoredCoins) or 0))
+            profile.Nest.StoredCoins = math.min(2_000_000_000, stored + reward)
+            message = target.Name .. " напитал корни: +" .. reward .. " монет в гнездо!"
+        elseif ability.Id == "VerdantSpark" then
+            local reward = 35 + level * 5 + stars * 10
+            if not ProgressionService:AddXP(player, reward) then
+                return { Ok = false, Message = "Не удалось начислить опыт." }
+            end
+            message = target.Name .. " поделился искрой роста: +" .. reward .. " XP!"
+        else
+            return { Ok = false, Message = "Неизвестная способность питомца." }
+        end
+
+        target.AbilityReadyAt = now + math.max(30, math.floor(tonumber(ability.CooldownSeconds) or 300))
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
     end
 
     if payload.Action == "Train" then
