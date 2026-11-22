@@ -291,3 +291,19 @@
 - [ ] Verify all profile state persists after leave/rejoin in a published private test experience.
 - [ ] Verify two-step parent selection and explicit confirmation work on desktop and mobile; cancellation / selecting the first parent again resets selection.
 - [ ] Verify the new offspring appears once in collection, can be equipped/trained, and retains its inherited trait after save/reload.
+
+
+## Lineage egg incubation — Sprint 4.16
+- [ ] Verify successful breeding creates one persistent LineageEgg in EggInventory, not an immediate companion.
+- [ ] Verify the egg stores server-selected offspring species, inherited/mutated genetic trait, and both parent species IDs.
+- [ ] Verify the egg cannot hatch before IncubatesUntil and the player receives a remaining minutes/seconds notice.
+- [ ] Verify the egg becomes hatchable at or after its five-minute incubation deadline.
+- [ ] Verify hatching a lineage egg creates exactly one companion with the stored species, genetics, and lineage; it must not reroll any of these values.
+- [ ] Verify normal world/shop eggs retain their existing random species and genetic trait behavior.
+- [ ] Verify an invalid lineage egg with unknown species or missing genetic data is not consumed.
+- [ ] Verify egg inventory capacity and collection capacity are checked before breeding costs or parent cooldowns are applied.
+- [ ] Verify the incubator summary shows lineage egg count, countdown, offspring species preview, and genetic trait.
+- [ ] Verify egg and parent cooldown state persists after leave/rejoin in a published private test experience.
+- [ ] Verify rapid hatch requests cannot consume one egg twice or duplicate a companion.
+- [ ] Verify the hatch station still validates plot ownership and player proximity for lineage eggs.
+- [ ] Verify desktop and mobile collection layout remains readable with the incubator summary.
