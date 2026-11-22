@@ -1875,7 +1875,7 @@ local function renderVisitList(response)
         local info = Instance.new("TextLabel")
         info.BackgroundTransparency = 1
         info.Position = UDim2.fromOffset(10, 6)
-        info.Size = UDim2.new(1, -174, 1, -12)
+        info.Size = UDim2.new(1, -104, 1, -12)
         info.Text = string.format("%s\nУровень %d · Гостей %d/%d\n★ %d отметок", entry.DisplayName, entry.Level or 1, entry.Visitors or 0, entry.Capacity or 8, entry.Likes or 0)
         info.TextColor3 = Color3.fromRGB(239, 241, 246)
         info.TextSize = 12
