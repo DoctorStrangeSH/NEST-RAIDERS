@@ -198,3 +198,18 @@
 - [ ] Verify leaderboard reads are cached and List requests are throttled to protect DataStore budgets.
 - [ ] Verify contest votes grant no coins, XP, pets, items, or PvP power.
 - [ ] Verify the Studio fallback clearly indicates that results are local and ephemeral.
+
+
+## Hall of Fame and island trophies — Sprint 4.10
+- [ ] In Studio, use a test harness / temporary prior-week scores and verify the Hall of Fame shows the previous week's top three in all categories.
+- [ ] Verify finalization is idempotent: opening the contest repeatedly does not duplicate a weekly archive.
+- [ ] In a published private test experience, verify the first contest list request after the UTC week changes archives the previous week's top three from OrderedDataStore.
+- [ ] Verify the Hall of Fame history is shared between separate servers and retains at most the latest 12 completed weeks.
+- [ ] Verify a player outside the top three cannot claim a trophy by changing the client payload.
+- [ ] Verify first-, second-, and third-place winners can each claim only their own category/week award.
+- [ ] Verify a claimed award persists after leaving and rejoining, and duplicate claim requests are rejected.
+- [ ] Verify a successful claim creates a visible trophy on the winner's own island and that it is restored on next join.
+- [ ] Verify visitors can see trophies but cannot move, remove, or claim another player's trophies.
+- [ ] Verify plot release removes trophy instances before the plot is assigned to another player.
+- [ ] Verify no trophy grants coins, XP, pets, income, or PvP power.
+- [ ] Verify history read / archive write failures show a safe error and do not create unverified claims.
