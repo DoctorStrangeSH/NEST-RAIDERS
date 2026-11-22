@@ -80,3 +80,7 @@ NEST RAIDERS now includes an in-server island browser. Players can see other occ
 
 ## Island popularity — Sprint 4.8
 The social island browser now supports persistent likes and favorites. Likes are unique per visitor and stored on the island owner's profile; favorites are stored on the visitor's profile (up to 30 islands). The browser sorts current-server islands by received likes and supports a favorites-only filter. These features are cosmetic / social and do not grant gameplay power. Cross-server discovery and weekly showcases remain future work.
+
+
+## Weekly island contests — Sprint 4.9
+Players can vote once per category each week in three island showcases: Cozy, Nature, and Fantasy. The top-ten leaderboards use ordered DataStores and are shared across published servers. Players choose nominees from occupied islands in their current server. Local Studio testing uses temporary in-memory standings; published persistence requires DataStore access. Votes are social recognition only and do not grant gameplay power.
