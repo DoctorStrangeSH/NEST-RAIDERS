@@ -47,6 +47,13 @@ end
 
 local function syncAttributes(player, profile)
     player:SetAttribute("EggCount", #profile.EggInventory)
+    player:SetAttribute("BreedingEggCount", (function()
+        local count = 0
+        for _, egg in ipairs(profile.EggInventory) do
+            if egg.Origin == "Breeding" then count += 1 end
+        end
+        return count
+    end)())
     player:SetAttribute("CompanionCount", #profile.Companions)
     player:SetAttribute("Coins", profile.Coins)
 end
@@ -118,8 +125,34 @@ function EggService:Hatch(player, station)
     local root = character and character:FindFirstChild("HumanoidRootPart")
     if not root or (root.Position - station.Position).Magnitude > 14 then return end
 
+    local egg = profile.EggInventory[1]
+    if type(egg) ~= "table" then
+        player:SetAttribute("LastNotice", "Яйцо повреждено. Обратись к поддержке.")
+        return
+    end
+    local now = os.time()
+    if egg.Origin == "Breeding" and (tonumber(egg.IncubatesUntil) or 0) > now then
+        local remaining = math.max(1, math.floor(egg.IncubatesUntil - now))
+        local minutes = math.floor(remaining / 60)
+        local seconds = remaining % 60
+        player:SetAttribute("LastNotice", string.format("Яйцо ещё инкубируется: %d мин. %d сек.", minutes, seconds))
+        return
+    end
+
+    local definition
+    local geneticTrait
+    if egg.Origin == "Breeding" then
+        definition = CompanionCatalog[egg.OffspringSpeciesId]
+        if not definition or type(egg.GeneticTrait) ~= "table" then
+            player:SetAttribute("LastNotice", "Не удалось определить наследство яйца.")
+            return
+        end
+        geneticTrait = egg.GeneticTrait
+    else
+        definition = chooseCompanion()
+        geneticTrait = chooseGeneticTrait()
+    end
     table.remove(profile.EggInventory, 1)
-    local definition = chooseCompanion()
     local companion = {
         InstanceId = HttpService:GenerateGUID(false),
         Id = definition.Id,
@@ -128,8 +161,11 @@ function EggService:Hatch(player, station)
         Income = definition.Income,
         Level = 1,
         GrowthXP = 0,
-        GeneticTrait = chooseGeneticTrait(),
-        HatchedAt = os.time(),
+        Stars = 1,
+        GeneticTrait = geneticTrait,
+        HatchedAt = now,
+        Origin = egg.Origin or "Hatch",
+        ParentSpecies = type(egg.ParentSpecies) == "table" and egg.ParentSpecies or nil,
     }
     table.insert(profile.Companions, companion)
     profile.ActiveCompanions = profile.ActiveCompanions or {}
@@ -141,7 +177,8 @@ function EggService:Hatch(player, station)
     player:SetAttribute("ActiveCompanionCount", #profile.ActiveCompanions)
     ProgressionService:AddXP(player, 15)
     CompanionService:RefreshPlayer(player)
-    player:SetAttribute("LastNotice", "Вылупился питомец: " .. definition.Name .. " (" .. definition.Rarity .. ")! +15 опыта")
+    local originMessage = egg.Origin == "Breeding" and " · наследие родителей" or ""
+    player:SetAttribute("LastNotice", "Вылупился питомец: " .. definition.Name .. " (" .. definition.Rarity .. ") · " .. geneticTrait.Name .. originMessage .. "! +15 опыта")
 end
 
 function EggService:Init()
