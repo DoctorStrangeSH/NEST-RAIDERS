@@ -311,6 +311,7 @@ function InventoryService:HandleRequest(player, payload)
             ParentSpecies = { parentA.Id, parentB.Id },
         }
         table.insert(profile.EggInventory, egg)
+        PlotService:PlayBreedingSequence(player, parentA, parentB, egg)
 
         player:SetAttribute("Coins", profile.Coins)
         player:SetAttribute("EggCount", #profile.EggInventory)
