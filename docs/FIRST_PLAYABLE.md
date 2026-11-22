@@ -146,3 +146,12 @@
 - Claimed trophies are displayed on the player's island and rebuilt when their plot is assigned.
 - Local Studio mode uses an in-memory archive; it is temporary and does not represent published cross-server persistence.
 - Week closure is lazy (triggered by contest access), not a scheduled background job. A scheduled finalizer is a future live-operations task.
+
+
+## Global island discovery — Sprint 4.11
+- Published servers advertise each occupied island in a shared TTL-backed MemoryStore sorted map. Entries refresh every 30 seconds and expire after 100 seconds.
+- The island browser merges current-server plots with cross-server directory entries and deduplicates by owner UserId.
+- A cross-server visit validates the current directory record and teleports the player to the exact public server.
+- Destination arrival waits for profile, plot, and character readiness, then verifies the target player still owns the expected plot before moving the visitor.
+- If the directory is unavailable, the browser retains local results and displays a degraded-status message.
+- Studio mode intentionally remains local-only; cross-server behavior requires a published private test experience with MemoryStore and teleport access.
