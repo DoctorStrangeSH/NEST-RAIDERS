@@ -47,6 +47,8 @@ end
 local function makeSnapshot(profile)
     local equipped = activeSet(profile)
     local speciesCounts = {}
+    local displayed = {}
+    for _, instanceId in pairs(profile.Nest and profile.Nest.DisplayedCompanions or {}) do displayed[instanceId] = true end
     for _, companion in ipairs(profile.Companions) do
         local key = tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)
         speciesCounts[key] = (speciesCounts[key] or 0) + 1
@@ -60,7 +62,8 @@ local function makeSnapshot(profile)
             Rarity = companion.Rarity,
             Level = companion.Level or 1,
             Stars = companion.Stars or 1,
-            MergeCount = speciesCounts[tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)] or 1,
+            MergeCount = (displayed[companion.InstanceId] and 0 or speciesCounts[tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)]) or 1,
+            Displayed = displayed[companion.InstanceId] == true,
             Income = companion.Income or 0,
             Equipped = equipped[companion.InstanceId] == true,
         })
@@ -115,6 +118,11 @@ function InventoryService:HandleRequest(player, payload)
             return { Ok = false, Message = "Питомец не найден." }
         end
 
+        for _, displayedId in pairs(profile.Nest and profile.Nest.DisplayedCompanions or {}) do
+            if displayedId == target.InstanceId then
+                return { Ok = false, Message = "Сними питомца с витрины перед слиянием." }
+            end
+        end
         local currentStars = math.clamp(math.floor(tonumber(target.Stars) or 1), 1, 3)
         if currentStars >= 3 then
             return { Ok = false, Message = "У этого питомца уже максимальный ранг." }
@@ -125,6 +133,12 @@ function InventoryService:HandleRequest(player, payload)
             if companion ~= target
                 and companion.Id == target.Id
                 and (companion.Stars or 1) == currentStars
+                and not (function()
+                    for _, displayedId in pairs(profile.Nest and profile.Nest.DisplayedCompanions or {}) do
+                        if displayedId == companion.InstanceId then return true end
+                    end
+                    return false
+                end)()
                 and #consumed < 2 then
                 table.insert(consumed, companion)
             end
@@ -177,6 +191,11 @@ function InventoryService:HandleRequest(player, payload)
 
     local equipped = activeSet(profile)
     if payload.Action == "Equip" then
+        for _, displayedId in pairs(profile.Nest and profile.Nest.DisplayedCompanions or {}) do
+            if displayedId == payload.InstanceId then
+                return { Ok = false, Message = "Сначала сними питомца с витрины." }
+            end
+        end
         if equipped[payload.InstanceId] then
             return { Ok = true, Data = makeSnapshot(profile) }
         end
