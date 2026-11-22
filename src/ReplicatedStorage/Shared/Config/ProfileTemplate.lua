@@ -20,6 +20,9 @@ local ProfileTemplate = {
         CompanionToys = {},
         DecorInventory = {},
         PlacedDecor = {},
+        BuildInventory = {},
+        PlacedBuildings = {},
+        NextBuildingId = 0,
     },
     Settings = {
         MusicEnabled = true,
