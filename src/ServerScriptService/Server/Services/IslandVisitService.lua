@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
+local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 
 local IslandVisitService = {}
 IslandVisitService._lastRequest = {}
@@ -31,6 +32,25 @@ local function countVisitors(plotId)
     return count
 end
 
+local function ensureSocial(profile)
+    profile.Nest = profile.Nest or {}
+    profile.Nest.IslandLikesByUserId = profile.Nest.IslandLikesByUserId or {}
+    profile.Nest.FavoriteIslandUserIds = profile.Nest.FavoriteIslandUserIds or {}
+    return profile.Nest
+end
+
+local function countLikes(likes)
+    local count = 0
+    for _, liked in pairs(likes) do
+        if liked == true then count += 1 end
+    end
+    return count
+end
+
+local function isFavorite(favorites, userId)
+    return favorites[tostring(userId)] == true
+end
+
 local function moveCharacter(player, target)
     local root = getRoot(player)
     if not root or not player.Character then return false end
@@ -42,23 +62,81 @@ end
 
 function IslandVisitService:List(player)
     local entries = {}
+    local viewerProfile = PlayerDataService:GetProfile(player)
+    if not viewerProfile then return { Ok=false, Message="Профиль ещё загружается." } end
+    local viewerNest = ensureSocial(viewerProfile)
+
     for _, plot in pairs(PlotService._plots) do
         local owner = getOwner(plot)
         if owner and owner ~= player and owner:GetAttribute("ProfileLoaded") then
+            local ownerProfile = PlayerDataService:GetProfile(owner)
+            local ownerNest = ownerProfile and ensureSocial(ownerProfile)
+            local likes = ownerNest and ownerNest.IslandLikesByUserId or {}
             table.insert(entries, {
                 PlotId = plot.Id,
+                UserId = owner.UserId,
                 DisplayName = owner.DisplayName,
                 Level = math.clamp(math.floor(tonumber(owner:GetAttribute("Level")) or 1), 1, 100),
                 Visitors = countVisitors(plot.Id),
                 Capacity = MAX_VISITORS_PER_PLOT,
+                Likes = countLikes(likes),
+                IsLikedByMe = likes[tostring(player.UserId)] == true,
+                IsFavoriteByMe = isFavorite(viewerNest.FavoriteIslandUserIds, owner.UserId),
             })
         end
     end
     table.sort(entries, function(a,b)
-        if a.Visitors == b.Visitors then return a.DisplayName:lower() < b.DisplayName:lower() end
-        return a.Visitors > b.Visitors
+        if a.Likes ~= b.Likes then return a.Likes > b.Likes end
+        if a.Visitors ~= b.Visitors then return a.Visitors > b.Visitors end
+        return a.DisplayName:lower() < b.DisplayName:lower()
     end)
     return { Ok = true, Islands = entries, Visiting = self._visitingPlot[player] ~= nil }
+end
+
+function IslandVisitService:ToggleLike(player, targetUserId)
+    if type(targetUserId) ~= "number" or targetUserId <= 0 or targetUserId == player.UserId then
+        return { Ok=false, Message="Нельзя поставить отметку этому острову." }
+    end
+    local owner = Players:GetPlayerByUserId(targetUserId)
+    if not owner or not owner:GetAttribute("ProfileLoaded") then
+        return { Ok=false, Message="Владелец острова больше недоступен." }
+    end
+    local targetPlot = PlotService:GetPlayerPlot(owner)
+    if not targetPlot then return { Ok=false, Message="Остров сейчас недоступен." } end
+
+    local ownerProfile = PlayerDataService:GetProfile(owner)
+    if not ownerProfile then return { Ok=false, Message="Профиль владельца недоступен." } end
+    local ownerNest = ensureSocial(ownerProfile)
+    local key = tostring(player.UserId)
+    ownerNest.IslandLikesByUserId[key] = not (ownerNest.IslandLikesByUserId[key] == true)
+    local liked = ownerNest.IslandLikesByUserId[key]
+    targetPlot.Model:SetAttribute("IslandLikes", countLikes(ownerNest.IslandLikesByUserId))
+    return { Ok=true, Liked=liked, Likes=countLikes(ownerNest.IslandLikesByUserId), Message=liked and "Остров добавлен в понравившиеся!" or "Отметка «Нравится» снята." }
+end
+
+function IslandVisitService:ToggleFavorite(player, targetUserId)
+    if type(targetUserId) ~= "number" or targetUserId <= 0 or targetUserId == player.UserId then
+        return { Ok=false, Message="Нельзя добавить этот остров в избранное." }
+    end
+    local owner = Players:GetPlayerByUserId(targetUserId)
+    if not owner or not owner:GetAttribute("ProfileLoaded") or not PlotService:GetPlayerPlot(owner) then
+        return { Ok=false, Message="Остров сейчас недоступен." }
+    end
+    local profile = PlayerDataService:GetProfile(player)
+    if not profile then return { Ok=false, Message="Профиль ещё загружается." } end
+    local nest = ensureSocial(profile)
+    local key = tostring(targetUserId)
+    local isSaved = nest.FavoriteIslandUserIds[key] == true
+    if not isSaved then
+        local total = 0
+        for _, saved in pairs(nest.FavoriteIslandUserIds) do
+            if saved == true then total += 1 end
+        end
+        if total >= 30 then return { Ok=false, Message="В избранном уже 30 островов. Удали один, чтобы добавить новый." } end
+    end
+    nest.FavoriteIslandUserIds[key] = not isSaved
+    local saved = nest.FavoriteIslandUserIds[key]
+    return { Ok=true, Favorite=saved, Message=saved and "Остров добавлен в избранное." or "Остров удалён из избранного." }
 end
 
 function IslandVisitService:Return(player)
@@ -127,6 +205,8 @@ function IslandVisitService:HandleRequest(player, payload)
     if payload.Action == "List" then return self:List(player) end
     if payload.Action == "Visit" then return self:Visit(player, payload.PlotId) end
     if payload.Action == "Return" then return self:Return(player) end
+    if payload.Action == "Like" then return self:ToggleLike(player, payload.UserId) end
+    if payload.Action == "Favorite" then return self:ToggleFavorite(player, payload.UserId) end
     return { Ok=false, Message="Неизвестное действие." }
 end
 
