@@ -48,7 +48,8 @@ Status legend: [x] done · [ ] not done · [~] in progress
 ## Milestone 3 — Nest, companions, and economy
 - [x] Five-level personal nest upgrade progression with server-side coin and ownership validation.
 - [x] Persistent nest level restores visible decorations and unlocks up to four pet display pedestals.
-- [ ] Place owned companions onto display pedestals and collect their displayed income.
+- [x] Place and remove owned companions on unlocked display pedestals with server-side ownership and active-team validation.
+- [x] Accumulate separate displayed-pet income and collect it from the nest; preserve overflow at the wallet cap.
 - [x] Shared companion catalog as the single source of truth for hatch weights, names, rarity, and income.
 - [x] Server-backed collection book with discovered species, duplicate counts, rarity, and collection completion.
 - [x] Three-identical-pet fusion into higher star ranks, validated on the server.
@@ -76,4 +77,4 @@ Status legend: [x] done · [ ] not done · [~] in progress
 A milestone is not complete until its acceptance tests pass in Roblox Studio on desktop and mobile emulation. Monetization and public launch are blocked until saving, server authority, exploit resistance, and moderation basics are verified.
 
 ## Current implementation note
-The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, shared companion catalog, server-backed collection book, three-pet fusion with star ranks and visible evolution effects, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
+The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, shared companion catalog, server-backed collection book, three-pet fusion with star ranks and visible evolution effects, personal nest pet displays with separately accumulated/collectible income, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
