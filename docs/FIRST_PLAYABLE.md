@@ -22,6 +22,9 @@
 - Starter species have distinct personalities and favorite foods: the Meadow Fox is Curious and likes Sweet Berries, the Moss Turtle is Calm and likes Young Leaves, and the Sprout Dragon is Playful and likes Glowfruit.
 - Personality gives species-specific mood bonuses for petting or playing; the nest care panel shows each pet personality and favorite food.
 - A favorite treat costs 15 coins, restores 35 hunger, and grants 15 mood; the server selects the correct favorite food from the companion catalog.
+- The nest toy shop offers a Meadow Ball (25 coins), Cozy Plush (40 coins), and Wind Spinner (35 coins). Each displayed pet can equip one toy; replacing it purchases the new toy at full price.
+- Playing with an equipped toy increases mood by its catalog bonus plus 10 when it is the pet’s favorite toy; energy cost is determined by the toy (the Wind Spinner costs no energy).
+- Toy models are temporary scripted props; curated Creator Store toy assets are a later visual pass.
 - Feed a pet for 10 coins to restore 35 hunger and 5 mood; tired pets can rest for 60 seconds to recover energy.
 - Playing consumes 10 energy; exhausted pets refuse play. Needs are currently personal-care flavor and do not change income.
 - Russian, touch-friendly collection panel with rarity, level, and passive income details.
@@ -60,9 +63,11 @@
 19. Feed the pet for 10 coins and confirm hunger / mood update; try feeding with insufficient coins.
 20. Give the pet its favorite treat for 15 coins; verify the food name, hunger and mood response.
 21. Compare petting / play mood gains for the three starter personalities.
-22. Put a tired pet to sleep and confirm energy recovers over 60 seconds.
-23. Remove the displayed pet and confirm it returns to the available list.
-24. Rejoin the private test place and confirm nest level, display assignments, pet mood, needs, and uncollected income persist.
+22. Equip each toy type on a displayed pet; confirm its coin cost, model prop, and nest panel label.
+23. Play with the equipped toy; verify mood and energy changes, including the favorite-toy bonus.
+24. Put a tired pet to sleep and confirm energy recovers over 60 seconds.
+25. Remove the displayed pet and confirm it returns to the available list.
+26. Rejoin the private test place and confirm nest level, display assignments, pet mood, needs, equipped toys, and uncollected income persist.
 
 ## Known limitations
 - World geometry is a temporary scripted blockout, not final art.
