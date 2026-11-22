@@ -11,6 +11,7 @@ local collectionRemote = remotes:WaitForChild("CollectionBook")
 local nestRemote = remotes:WaitForChild("NestUpgrade")
 local displayRemote = remotes:WaitForChild("DisplayPets")
 local decorRemote = remotes:WaitForChild("NestDecor")
+local buildRemote = remotes:WaitForChild("NestBuild")
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
@@ -358,6 +359,81 @@ decorButton.Font = Enum.Font.GothamBlack
 decorButton.Parent = gui
 addCorner(decorButton, 12)
 addStroke(decorButton, Color3.fromRGB(226, 174, 214), 1.5)
+
+local buildButton = Instance.new("TextButton")
+buildButton.Name = "IslandBuildButton"
+buildButton.Position = UDim2.fromOffset(18, 484)
+buildButton.Size = UDim2.fromOffset(250, 46)
+buildButton.BackgroundColor3 = Color3.fromRGB(77, 132, 165)
+buildButton.Text = "СТРОИТЬ ОСТРОВ"
+buildButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+buildButton.TextSize = 14
+buildButton.Font = Enum.Font.GothamBlack
+buildButton.Parent = gui
+addCorner(buildButton, 12)
+addStroke(buildButton, Color3.fromRGB(153, 207, 234), 1.5)
+
+local buildPanel = Instance.new("Frame")
+buildPanel.Name = "IslandBuildPanel"
+buildPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+buildPanel.Position = UDim2.fromScale(0.5, 0.5)
+buildPanel.Size = UDim2.new(0.9, 0, 0.76, 0)
+buildPanel.BackgroundColor3 = Color3.fromRGB(43, 51, 64)
+buildPanel.BorderSizePixel = 0
+buildPanel.Visible = false
+buildPanel.Parent = gui
+addCorner(buildPanel, 18)
+addStroke(buildPanel, Color3.fromRGB(135, 190, 220), 2)
+local buildSize = Instance.new("UISizeConstraint")
+buildSize.MinSize = Vector2.new(290, 340)
+buildSize.MaxSize = Vector2.new(480, 570)
+buildSize.Parent = buildPanel
+
+local buildTitle = Instance.new("TextLabel")
+buildTitle.BackgroundTransparency = 1
+buildTitle.Position = UDim2.fromOffset(18, 12)
+buildTitle.Size = UDim2.new(1, -76, 0, 30)
+buildTitle.Font = Enum.Font.GothamBlack
+buildTitle.Text = "СТРОИТЕЛЬСТВО ОСТРОВА"
+buildTitle.TextColor3 = Color3.fromRGB(191, 226, 248)
+buildTitle.TextSize = 16
+buildTitle.TextXAlignment = Enum.TextXAlignment.Left
+buildTitle.Parent = buildPanel
+
+local buildClose = Instance.new("TextButton")
+buildClose.AnchorPoint = Vector2.new(1, 0)
+buildClose.Position = UDim2.new(1, -12, 0, 10)
+buildClose.Size = UDim2.fromOffset(38, 34)
+buildClose.BackgroundColor3 = Color3.fromRGB(83, 91, 108)
+buildClose.Text = "✕"
+buildClose.TextColor3 = Color3.new(1, 1, 1)
+buildClose.TextSize = 18
+buildClose.Font = Enum.Font.GothamBold
+buildClose.Parent = buildPanel
+addCorner(buildClose, 10)
+
+local buildBalance = Instance.new("TextLabel")
+buildBalance.BackgroundTransparency = 1
+buildBalance.Position = UDim2.fromOffset(18, 48)
+buildBalance.Size = UDim2.new(1, -36, 0, 24)
+buildBalance.Font = Enum.Font.GothamMedium
+buildBalance.TextColor3 = Color3.fromRGB(218, 225, 235)
+buildBalance.TextSize = 13
+buildBalance.TextXAlignment = Enum.TextXAlignment.Left
+buildBalance.Parent = buildPanel
+
+local buildList = Instance.new("ScrollingFrame")
+buildList.Position = UDim2.fromOffset(12, 80)
+buildList.Size = UDim2.new(1, -24, 1, -94)
+buildList.BackgroundTransparency = 1
+buildList.BorderSizePixel = 0
+buildList.ScrollBarThickness = 6
+buildList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+buildList.Parent = buildPanel
+local buildLayout = Instance.new("UIListLayout")
+buildLayout.Padding = UDim.new(0, 8)
+buildLayout.SortOrder = Enum.SortOrder.LayoutOrder
+buildLayout.Parent = buildList
 
 local decorPanel = Instance.new("Frame")
 decorPanel.Name = "NestDecorPanel"
@@ -1153,6 +1229,220 @@ local function renderDecor(data)
         end
     end
 end
+
+local function invokeBuild(payload)
+    local success, response = pcall(function()
+        return buildRemote:InvokeServer(payload)
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось связаться со строительством.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Действие не выполнено.")
+        return nil
+    end
+    if response.Message then showNotice(response.Message) end
+    return response.Data
+end
+
+local function clearBuildList()
+    for _, child in ipairs(buildList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+end
+
+local function findBuildPosition(data, footprint)
+    local occupied = {}
+    for _, item in ipairs(data.Placed or {}) do
+        occupied[#occupied + 1] = {
+            X = item.X, Z = item.Z,
+            Footprint = (item.Footprint or 2),
+        }
+    end
+    for z = -14, 14, 2 do
+        for x = -14, 14, 2 do
+            local free = true
+            for _, item in ipairs(occupied) do
+                local gap = (footprint + item.Footprint) / 2
+                if math.abs(x - item.X) < gap and math.abs(z - item.Z) < gap then
+                    free = false
+                    break
+                end
+            end
+            if free then return x, z end
+        end
+    end
+    return nil, nil
+end
+
+local function renderBuild(data)
+    if not data then return end
+    buildBalance.Text = string.format("Монеты: %d  ·  Построек: %d / 100", data.Coins or 0, #(data.Placed or {}))
+    clearBuildList()
+    local inventory = {}
+    for _, item in ipairs(data.Inventory or {}) do inventory[item.Id] = item.Count end
+
+    local section = Instance.new("TextLabel")
+    section.LayoutOrder = 0
+    section.Size = UDim2.new(1, -8, 0, 26)
+    section.BackgroundTransparency = 1
+    section.Text = "КАТАЛОГ"
+    section.TextColor3 = Color3.fromRGB(191, 226, 248)
+    section.TextSize = 13
+    section.Font = Enum.Font.GothamBlack
+    section.TextXAlignment = Enum.TextXAlignment.Left
+    section.Parent = buildList
+
+    for index, item in ipairs(data.Catalog or {}) do
+        local card = Instance.new("Frame")
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 82)
+        card.BackgroundColor3 = Color3.fromRGB(61, 70, 84)
+        card.BorderSizePixel = 0
+        card.Parent = buildList
+        addCorner(card, 10)
+
+        local info = Instance.new("TextLabel")
+        info.BackgroundTransparency = 1
+        info.Position = UDim2.fromOffset(10, 6)
+        info.Size = UDim2.new(1, -170, 1, -12)
+        info.Text = string.format("%s\n%s\nВ наличии: %d", item.Name, item.Description or "", inventory[item.Id] or 0)
+        info.TextColor3 = Color3.fromRGB(239, 241, 246)
+        info.TextSize = 11
+        info.TextWrapped = true
+        info.TextXAlignment = Enum.TextXAlignment.Left
+        info.Font = Enum.Font.GothamMedium
+        info.Parent = card
+
+        local buy = Instance.new("TextButton")
+        buy.AnchorPoint = Vector2.new(1, 0)
+        buy.Position = UDim2.new(1, -8, 0, 8)
+        buy.Size = UDim2.fromOffset(102, 30)
+        buy.BackgroundColor3 = Color3.fromRGB(183, 137, 67)
+        buy.Text = "КУПИТЬ " .. tostring(item.Cost) .. "🪙"
+        buy.TextColor3 = Color3.new(1, 1, 1)
+        buy.TextSize = 10
+        buy.Font = Enum.Font.GothamBlack
+        buy.Parent = card
+        addCorner(buy, 8)
+        buy.Activated:Connect(function()
+            buy.Active = false
+            local updated = invokeBuild({ Action = "Buy", BuildId = item.Id })
+            if updated then renderBuild(updated) else buy.Active = true end
+        end)
+
+        local place = Instance.new("TextButton")
+        place.AnchorPoint = Vector2.new(1, 0)
+        place.Position = UDim2.new(1, -8, 0, 44)
+        place.Size = UDim2.fromOffset(102, 30)
+        place.BackgroundColor3 = Color3.fromRGB(67, 143, 112)
+        place.Text = "ПОСТАВИТЬ"
+        place.TextColor3 = Color3.new(1, 1, 1)
+        place.TextSize = 10
+        place.Font = Enum.Font.GothamBlack
+        place.Parent = card
+        addCorner(place, 8)
+        place.Active = (inventory[item.Id] or 0) > 0
+        place.AutoButtonColor = place.Active
+        place.Activated:Connect(function()
+            if not place.Active then return end
+            local x, z = findBuildPosition(data, item.Footprint or 2)
+            if not x then showNotice("На острове нет свободного места."); return end
+            place.Active = false
+            local updated = invokeBuild({ Action = "Place", BuildId = item.Id, X = x, Z = z, Rotation = 0 })
+            if updated then renderBuild(updated) else place.Active = true end
+        end)
+    end
+
+    local placedTitle = Instance.new("TextLabel")
+    placedTitle.LayoutOrder = 20
+    placedTitle.Size = UDim2.new(1, -8, 0, 26)
+    placedTitle.BackgroundTransparency = 1
+    placedTitle.Text = "ТВОИ ПОСТРОЙКИ"
+    placedTitle.TextColor3 = Color3.fromRGB(191, 226, 248)
+    placedTitle.TextSize = 13
+    placedTitle.Font = Enum.Font.GothamBlack
+    placedTitle.TextXAlignment = Enum.TextXAlignment.Left
+    placedTitle.Parent = buildList
+
+    for index, item in ipairs(data.Placed or {}) do
+        local currentItem = item
+        local row = Instance.new("Frame")
+        row.LayoutOrder = 20 + index
+        row.Size = UDim2.new(1, -8, 0, 74)
+        row.BackgroundColor3 = Color3.fromRGB(55, 63, 77)
+        row.BorderSizePixel = 0
+        row.Parent = buildList
+        addCorner(row, 9)
+
+        local label = Instance.new("TextLabel")
+        label.BackgroundTransparency = 1
+        label.Position = UDim2.fromOffset(10, 5)
+        label.Size = UDim2.new(1, -120, 0, 27)
+        label.Text = string.format("%s · X:%d Z:%d", item.Name, item.X, item.Z)
+        label.TextColor3 = Color3.fromRGB(238, 239, 245)
+        label.TextSize = 10
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.Font = Enum.Font.GothamMedium
+        label.Parent = row
+
+        local controls = {
+            { Text = "←", X = 8, DX = -2 },
+            { Text = "→", X = 40, DX = 2 },
+            { Text = "↑", X = 72, DZ = -2 },
+            { Text = "↓", X = 104, DZ = 2 },
+            { Text = "↻", X = 136, Rotate = 15 },
+        }
+        for _, control in ipairs(controls) do
+            local currentControl = control
+            local move = Instance.new("TextButton")
+            move.Position = UDim2.fromOffset(currentControl.X, 40)
+            move.Size = UDim2.fromOffset(27, 25)
+            move.BackgroundColor3 = Color3.fromRGB(76, 119, 145)
+            move.Text = currentControl.Text
+            move.TextColor3 = Color3.new(1, 1, 1)
+            move.TextSize = 12
+            move.Font = Enum.Font.GothamBlack
+            move.Parent = row
+            addCorner(move, 7)
+            move.Activated:Connect(function()
+                local updated = invokeBuild({
+                    Action = "Move", Key = currentItem.Key,
+                    X = currentItem.X + (currentControl.DX or 0),
+                    Z = currentItem.Z + (currentControl.DZ or 0),
+                    Rotation = (currentItem.Rotation or 0) + (currentControl.Rotate or 0),
+                })
+                if updated then renderBuild(updated) end
+            end)
+        end
+
+        local remove = Instance.new("TextButton")
+        remove.AnchorPoint = Vector2.new(1, 0)
+        remove.Position = UDim2.new(1, -7, 0, 7)
+        remove.Size = UDim2.fromOffset(92, 27)
+        remove.BackgroundColor3 = Color3.fromRGB(151, 86, 91)
+        remove.Text = "УБРАТЬ"
+        remove.TextColor3 = Color3.new(1, 1, 1)
+        remove.TextSize = 10
+        remove.Font = Enum.Font.GothamBlack
+        remove.Parent = row
+        addCorner(remove, 7)
+        remove.Activated:Connect(function()
+            local updated = invokeBuild({ Action = "Remove", Key = currentItem.Key })
+            if updated then renderBuild(updated) end
+        end)
+    end
+end
+
+local function openBuild()
+    buildPanel.Visible = true
+    local data = invokeBuild({ Action = "Get" })
+    if data then renderBuild(data) end
+end
+
+buildButton.Activated:Connect(openBuild)
+buildClose.Activated:Connect(function() buildPanel.Visible = false end)
 
 local activeDecorDrag = nil
 local dragPreview = nil
