@@ -91,7 +91,9 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add persistent, unique per-player island likes with server-side toggle validation.
 - [x] Add up to 30 persistent favorite islands per player, stored by stable owner UserId.
 - [x] Sort the current-server island browser by likes, then visitors, and add an all / favorites filter.
-- [ ] Add cross-server discovery, weekly showcases, and cosmetic rating rewards.
+- [x] Add weekly island contest categories (Cozy / Nature / Fantasy), one vote per player per category, and cross-server ordered leaderboards.
+- [x] Add Studio in-memory fallback, vote-state indicators, cached standings, and server-side request throttling.
+- [ ] Add cross-server island discovery, weekly cosmetic winner rewards, and anti-alt vote review.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
