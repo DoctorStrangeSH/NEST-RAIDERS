@@ -137,3 +137,12 @@
 - Each category shows the top ten islands and the currently available server nominees.
 - Published experience uses persistent DataStores with cached standings and request throttling. Default Studio mode uses an in-memory local fallback and clearly marks its results as temporary.
 - Contest votes do not grant gameplay power. Cosmetic winner rewards and cross-server island discovery remain future work.
+
+
+## Hall of Fame and island trophies — Sprint 4.10
+- The first contest list request after a new UTC week attempts to archive the previous week's top three in each category.
+- Published servers store a shared 12-week Hall of Fame history; archive writes are idempotent per week.
+- Only verified top-three winners may claim their category/week trophy. Claims are saved in the player's profile.
+- Claimed trophies are displayed on the player's island and rebuilt when their plot is assigned.
+- Local Studio mode uses an in-memory archive; it is temporary and does not represent published cross-server persistence.
+- Week closure is lazy (triggered by contest access), not a scheduled background job. A scheduled finalizer is a future live-operations task.
