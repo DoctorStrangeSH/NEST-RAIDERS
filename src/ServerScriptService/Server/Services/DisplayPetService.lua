@@ -112,6 +112,7 @@ function DisplayPetService:HandleRequest(player, payload)
     profile.Nest = profile.Nest or { Level = 1, DisplayedCompanions = {}, StoredCoins = 0 }
     profile.Nest.DisplayedCompanions = type(profile.Nest.DisplayedCompanions) == "table" and profile.Nest.DisplayedCompanions or {}
     profile.Nest.StoredCoins = math.max(0, math.floor(tonumber(profile.Nest.StoredCoins) or 0))
+    profile.Nest.CompanionMood = type(profile.Nest.CompanionMood) == "table" and profile.Nest.CompanionMood or {}
 
     if payload.Action == "Get" then
         return { Ok = true, Data = getSnapshot(profile) }
@@ -206,6 +207,7 @@ function DisplayPetService:HandleRequest(player, payload)
             0,
             100
         )
+        self:RefreshPlayer(player)
         player:SetAttribute("LastNotice", interaction == "Pet" and (companion.Name .. " довольно мурлычет!") or (companion.Name .. " весело играет с тобой!"))
         return { Ok = true, Data = getSnapshot(profile) }
     end
