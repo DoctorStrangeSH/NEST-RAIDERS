@@ -102,6 +102,7 @@ local function makeSnapshot(profile)
             GrowthXPToNext = (companion.Level or 1) < MAX_COMPANION_LEVEL and (100 + ((companion.Level or 1) - 1) * 55) or 0,
             GrowthStage = getGrowthStage(companion.Level or 1),
             GeneticTrait = getTrait(companion),
+            TrainCost = (companion.Level or 1) < MAX_COMPANION_LEVEL and (30 + (companion.Level or 1) * 25) or 0,
             Stars = companion.Stars or 1,
             MergeCount = (displayed[companion.InstanceId] and 0 or speciesCounts[tostring(companion.Id) .. ":" .. tostring(companion.Stars or 1)]) or 1,
             Displayed = displayed[companion.InstanceId] == true,
