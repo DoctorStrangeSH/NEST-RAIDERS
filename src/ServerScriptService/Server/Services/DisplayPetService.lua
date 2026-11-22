@@ -130,7 +130,7 @@ function DisplayPetService:HandleRequest(player, payload)
                 return { Ok = false, Message = "Сначала сними питомца с активной команды." }
             end
         end
-        for existingSlot, id in ipairs(profile.Nest.DisplayedCompanions) do
+        for existingSlot, id in pairs(profile.Nest.DisplayedCompanions) do
             if id == payload.InstanceId then
                 return { Ok = false, Message = "Этот питомец уже стоит на витрине №" .. existingSlot .. "." }
             end
