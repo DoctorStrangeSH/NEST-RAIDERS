@@ -423,9 +423,7 @@ local function renderShop(data)
             local updated = invokeShop({ Action = "Buy", EggId = item.Id })
             if updated then
                 renderShop(updated)
-                updateStats()
             end
-            buy.Active = true
         end)
     end
 end
