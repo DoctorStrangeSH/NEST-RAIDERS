@@ -2255,10 +2255,12 @@ local function openHallPanel()
             for _, archive in ipairs(history) do
                 addContestLabel("НЕДЕЛЯ " .. tostring(archive.Week), order, 25, Color3.fromRGB(255, 220, 151))
                 order += 1
+                local archiveWeek = archive.Week
                 for _, categoryId in ipairs({"Cozy", "Nature", "Fantasy"}) do
-                    local winners = archive.Categories and archive.Categories[categoryId] or {}
+                    local awardCategoryId = categoryId
+                    local winners = archive.Categories and archive.Categories[awardCategoryId] or {}
                     local categoryNames = { Cozy = "Уют", Nature = "Природа", Fantasy = "Фэнтези" }
-                    addContestLabel(categoryNames[categoryId] or categoryId, order, 21, Color3.fromRGB(208, 218, 238))
+                    addContestLabel(categoryNames[awardCategoryId] or awardCategoryId, order, 21, Color3.fromRGB(208, 218, 238))
                     order += 1
                     if #winners == 0 then
                         addContestLabel("Нет призёров", order, 22)
@@ -2267,7 +2269,7 @@ local function openHallPanel()
                         for _, winner in ipairs(winners) do
                             local winnerEntry = winner
                             local medal = winnerEntry.Place == 1 and "🥇" or (winnerEntry.Place == 2 and "🥈" or "🥉")
-                            local awardKey = archive.Week .. "_" .. categoryId
+                            local awardKey = archiveWeek .. "_" .. awardCategoryId
                             local alreadyClaimed = response.ClaimedTrophies
                                 and response.ClaimedTrophies[awardKey] ~= nil
                             local row = Instance.new("Frame")
@@ -2308,14 +2310,14 @@ local function openHallPanel()
                                     claim.Active = false
                                     local result = invokeContest({
                                         Action = "ClaimTrophy",
-                                        Week = archive.Week,
-                                        Category = categoryId,
+                                        Week = archiveWeek,
+                                        Category = awardCategoryId,
                                     })
                                     if result then
                                         response.ClaimedTrophies = response.ClaimedTrophies or {}
                                         response.ClaimedTrophies[awardKey] = {
-                                            Week = archive.Week,
-                                            Category = categoryId,
+                                            Week = archiveWeek,
+                                            Category = awardCategoryId,
                                             Place = winnerEntry.Place,
                                         }
                                         claim.Text = "ПОЛУЧЕНО"
