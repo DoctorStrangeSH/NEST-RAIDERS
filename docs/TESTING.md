@@ -245,3 +245,19 @@
 - [ ] Verify profile request cooldown and repeated title selection do not break the panel.
 - [ ] Verify the own-profile button, local island profile button, close button, and mobile scrolling layout.
 - [ ] Verify public profile data refreshes after earning a companion, leveling, receiving likes, or claiming a trophy.
+
+
+## Companion growth, training, and genetics — Sprint 4.13
+- [ ] Hatch companions repeatedly and verify the genetic trait is rolled server-side independently of species rarity.
+- [ ] Verify disclosed genetic weights: Natural 72%, Verdant 18%, Luminous 8%, Prismatic 2%.
+- [ ] Verify existing saves without GeneticTrait safely receive the Natural trait when normalized.
+- [ ] Verify inventory shows each companion's level, growth XP, next-level requirement, growth stage, genetic trait, star rank, and income.
+- [ ] Verify training costs are calculated server-side as 30 + (current level × 25), and each training grants 75 growth XP.
+- [ ] Verify insufficient coins, unknown InstanceId, malformed payloads, and level-10 training are rejected without changing profile data.
+- [ ] Verify XP carries over between levels and stage boundaries are correct: Hatchling levels 1–3, Young 4–6, Adult 7–10.
+- [ ] Verify stage scale and genetic visual effects appear on active followers and displayed nest pets after training.
+- [ ] Verify passive income recalculates from species base income, star rank, level, and capped genetic bonus.
+- [ ] Verify fusion preserves the selected target's level, XP, and genetic trait while increasing its star rank; consumed companions are removed once.
+- [ ] Verify training does not duplicate income, companions, or active slots under rapid repeated requests.
+- [ ] Verify desktop and mobile inventory cards fit, scroll, and keep Train / Merge / Equip actions reachable.
+- [ ] Verify old profiles migrate without data loss and their companion income is recalculated safely.
