@@ -76,7 +76,10 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add touch-friendly directional nudge and rotate controls; validate bounds and transforms on the server.
 - [x] Add a local placement preview that snaps to the player-owned island surface before confirmation.
 - [x] Add click / tap-to-place confirmation, keyboard rotation, mobile rotate and cancel controls, and a clear return to the decoration panel.
-- [ ] Add drag-to-move while holding the pointer, Creator Store art assets, and richer decoration themes.
+- [x] Add a persistent island building catalog with stone paths, clover bushes, apple trees, wooden fences, and a cozy cottage.
+- [x] Add server-authoritative building purchases, inventory, grid placement, movement, rotation, removal, collision checks, and a 100-object island cap.
+- [x] Render building pieces as lightweight anchored models and clear them when a plot is released.
+- [ ] Add drag-to-move previews for building pieces, Creator Store art assets, and richer building themes.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
