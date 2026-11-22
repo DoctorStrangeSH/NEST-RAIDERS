@@ -103,6 +103,7 @@ function InventoryService:HandleRequest(player, payload)
     end
 
     if payload.Action == "Merge" then
+        local equipped = activeSet(profile)
         local target
         for _, companion in ipairs(profile.Companions) do
             if companion.InstanceId == payload.InstanceId then
