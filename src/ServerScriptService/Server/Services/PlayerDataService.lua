@@ -84,10 +84,24 @@ end
 
 function PlayerDataService:Save(player)
     local profile = self._profiles[player]
-    if not profile or self._saving[player] then
+    if not profile then
         return false
     end
 
+    -- A leave/shutdown save must not be skipped because an autosave is in flight.
+    local waitDeadline = os.clock() + 10
+    while self._saving[player] and os.clock() < waitDeadline do
+        task.wait(0.1)
+    end
+    if self._saving[player] then
+        warn("[NEST RAIDERS] Timed out waiting for an existing save for", player.UserId)
+        return false
+    end
+
+    profile = self._profiles[player]
+    if not profile then
+        return false
+    end
     self._saving[player] = true
     local snapshot = deepCopy(profile)
     local key = "player_" .. player.UserId
