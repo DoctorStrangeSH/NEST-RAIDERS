@@ -14,6 +14,7 @@ local decorRemote = remotes:WaitForChild("NestDecor")
 local buildRemote = remotes:WaitForChild("NestBuild")
 local visitRemote = remotes:WaitForChild("IslandVisit")
 local contestRemote = remotes:WaitForChild("IslandContest")
+local publicProfileRemote = remotes:WaitForChild("PublicProfile")
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
@@ -551,6 +552,71 @@ hallButton.Parent = gui
 addCorner(hallButton, 12)
 addStroke(hallButton, Color3.fromRGB(171, 184, 230), 1.5)
 
+local profileButton = Instance.new("TextButton")
+profileButton.Name = "MyPublicProfileButton"
+profileButton.Position = UDim2.fromOffset(18, 692)
+profileButton.Size = UDim2.fromOffset(250, 42)
+profileButton.BackgroundColor3 = Color3.fromRGB(91, 132, 119)
+profileButton.Text = "МОЙ ПРОФИЛЬ"
+profileButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+profileButton.TextSize = 13
+profileButton.Font = Enum.Font.GothamBlack
+profileButton.Parent = gui
+addCorner(profileButton, 12)
+addStroke(profileButton, Color3.fromRGB(160, 220, 192), 1.5)
+
+local profilePanel = Instance.new("Frame")
+profilePanel.Name = "PublicProfilePanel"
+profilePanel.AnchorPoint = Vector2.new(0.5, 0.5)
+profilePanel.Position = UDim2.fromScale(0.5, 0.5)
+profilePanel.Size = UDim2.new(0.9, 0, 0.78, 0)
+profilePanel.BackgroundColor3 = Color3.fromRGB(38, 51, 62)
+profilePanel.BorderSizePixel = 0
+profilePanel.Visible = false
+profilePanel.Parent = gui
+addCorner(profilePanel, 18)
+addStroke(profilePanel, Color3.fromRGB(150, 213, 183), 2)
+local profileSize = Instance.new("UISizeConstraint")
+profileSize.MinSize = Vector2.new(290, 340)
+profileSize.MaxSize = Vector2.new(470, 560)
+profileSize.Parent = profilePanel
+
+local profileTitle = Instance.new("TextLabel")
+profileTitle.BackgroundTransparency = 1
+profileTitle.Position = UDim2.fromOffset(18, 12)
+profileTitle.Size = UDim2.new(1, -76, 0, 30)
+profileTitle.Font = Enum.Font.GothamBlack
+profileTitle.Text = "ПРОФИЛЬ ИГРОКА"
+profileTitle.TextColor3 = Color3.fromRGB(191, 239, 210)
+profileTitle.TextSize = 16
+profileTitle.TextXAlignment = Enum.TextXAlignment.Left
+profileTitle.Parent = profilePanel
+
+local profileClose = Instance.new("TextButton")
+profileClose.AnchorPoint = Vector2.new(1, 0)
+profileClose.Position = UDim2.new(1, -12, 0, 10)
+profileClose.Size = UDim2.fromOffset(38, 34)
+profileClose.BackgroundColor3 = Color3.fromRGB(83, 91, 108)
+profileClose.Text = "✕"
+profileClose.TextColor3 = Color3.new(1, 1, 1)
+profileClose.TextSize = 18
+profileClose.Font = Enum.Font.GothamBold
+profileClose.Parent = profilePanel
+addCorner(profileClose, 10)
+
+local profileList = Instance.new("ScrollingFrame")
+profileList.Position = UDim2.fromOffset(12, 52)
+profileList.Size = UDim2.new(1, -24, 1, -64)
+profileList.BackgroundTransparency = 1
+profileList.BorderSizePixel = 0
+profileList.ScrollBarThickness = 6
+profileList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+profileList.Parent = profilePanel
+local profileLayout = Instance.new("UIListLayout")
+profileLayout.Padding = UDim.new(0, 7)
+profileLayout.SortOrder = Enum.SortOrder.LayoutOrder
+profileLayout.Parent = profileList
+
 local contestPanel = Instance.new("Frame")
 contestPanel.Name = "IslandContestPanel"
 contestPanel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -1028,7 +1094,7 @@ local function renderInventory(data)
         local card = Instance.new("Frame")
         card.Name = "CompanionCard"
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 104)
+        card.Size = UDim2.new(1, -8, 0, entry.IsLocal and 136 or 104)
         card.BackgroundColor3 = Color3.fromRGB(43, 64, 72)
         card.BorderSizePixel = 0
         card.Parent = list
@@ -1896,6 +1962,122 @@ local function clearVisitList()
     end
 end
 
+local function invokePublicProfile(payload)
+    local success, response = pcall(function()
+        return publicProfileRemote:InvokeServer(payload)
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось загрузить профиль.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Профиль недоступен.")
+        return nil
+    end
+    return response.Data
+end
+
+local function clearProfileList()
+    for _, child in ipairs(profileList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+end
+
+local function addProfileLine(textValue, order, height, color, size)
+    local label = Instance.new("TextLabel")
+    label.LayoutOrder = order
+    label.Size = UDim2.new(1, -8, 0, height or 28)
+    label.BackgroundTransparency = 1
+    label.Text = textValue
+    label.TextColor3 = color or Color3.fromRGB(230, 237, 239)
+    label.TextSize = size or 12
+    label.TextWrapped = true
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Font = Enum.Font.GothamMedium
+    label.Parent = profileList
+    return label
+end
+
+local function renderPublicProfile(data, isOwnProfile)
+    clearProfileList()
+    profileTitle.Text = data.DisplayName .. (isOwnProfile and " · МОЙ ПРОФИЛЬ" or "")
+    local order = 1
+    addProfileLine("@" .. tostring(data.Username) .. "   ·   Уровень " .. tostring(data.Level), order, 28, Color3.fromRGB(255, 222, 153), 14)
+    order += 1
+    addProfileLine(string.format("Питомцы: %d   ·   Виды: %d/%d (%d%%)", data.CompanionCount, data.UniqueCompanions, data.TotalSpecies, data.CollectionPercent), order, 30)
+    order += 1
+    addProfileLine(string.format("Гнездо: %d уровень   ·   Лайки: %d   ·   Кубки: %d", data.NestLevel, data.LikesReceived, data.TrophyCount), order, 30)
+    order += 1
+    addProfileLine("ДОСТИЖЕНИЯ", order, 24, Color3.fromRGB(174, 225, 195), 13)
+    order += 1
+    for _, achievement in ipairs(data.Achievements or {}) do
+        local state = achievement.Unlocked and "✓" or "🔒"
+        local color = achievement.Unlocked and Color3.fromRGB(255, 224, 151) or Color3.fromRGB(142, 153, 166)
+        addProfileLine(state .. "  " .. achievement.Icon .. "  " .. achievement.Name .. " — " .. achievement.Description, order, 38, color, 11)
+        order += 1
+    end
+
+    if isOwnProfile then
+        addProfileLine("ТИТУЛ НАД ПЕРСОНАЖЕМ", order, 25, Color3.fromRGB(174, 225, 195), 13)
+        order += 1
+        local unequip = Instance.new("TextButton")
+        unequip.LayoutOrder = order
+        unequip.Size = UDim2.new(1, -8, 0, 34)
+        unequip.BackgroundColor3 = data.EquippedTitle == "" and Color3.fromRGB(78, 116, 97) or Color3.fromRGB(75, 86, 99)
+        unequip.Text = data.EquippedTitle == "" and "БЕЗ ТИТУЛА · ВЫБРАНО" or "СНЯТЬ ТИТУЛ"
+        unequip.TextColor3 = Color3.new(1, 1, 1)
+        unequip.TextSize = 10
+        unequip.Font = Enum.Font.GothamBlack
+        unequip.Parent = profileList
+        addCorner(unequip, 8)
+        unequip.Activated:Connect(function()
+            local success, result = pcall(function()
+                return publicProfileRemote:InvokeServer({ Action = "EquipTitle", TitleId = "" })
+            end)
+            if success and result and result.Ok then
+                showNotice(result.Message or "Титул снят.")
+                openPublicProfile(player.UserId)
+            else
+                showNotice(result and result.Message or "Не удалось снять титул.")
+            end
+        end)
+        order += 1
+
+        for _, titleData in ipairs(data.AvailableTitles or {}) do
+            local titleEntry = titleData
+            local equipped = data.EquippedTitle == titleEntry.Id
+            local button = Instance.new("TextButton")
+            button.LayoutOrder = order
+            button.Size = UDim2.new(1, -8, 0, 36)
+            button.BackgroundColor3 = equipped and Color3.fromRGB(78, 116, 97) or Color3.fromRGB(72, 91, 108)
+            button.Text = titleEntry.Icon .. "  " .. titleEntry.Name .. (equipped and " · ВЫБРАН" or " · НАДЕТЬ")
+            button.TextColor3 = Color3.new(1, 1, 1)
+            button.TextSize = 11
+            button.Font = Enum.Font.GothamBold
+            button.Parent = profileList
+            addCorner(button, 8)
+            button.Activated:Connect(function()
+                local success, result = pcall(function()
+                    return publicProfileRemote:InvokeServer({ Action = "EquipTitle", TitleId = titleEntry.Id })
+                end)
+                if success and result and result.Ok then
+                    showNotice(result.Message or "Титул установлен!")
+                    openPublicProfile(player.UserId)
+                else
+                    showNotice(result and result.Message or "Этот титул ещё не открыт.")
+                end
+            end)
+            order += 1
+        end
+    end
+    profilePanel.Visible = true
+end
+
+function openPublicProfile(targetUserId)
+    local data = invokePublicProfile({ Action = "Get", UserId = targetUserId })
+    if data then renderPublicProfile(data, targetUserId == player.UserId) end
+end
+
 local lastVisitResponse
 local function renderVisitList(response)
     lastVisitResponse = response
@@ -2035,6 +2217,22 @@ local function renderVisitList(response)
             likeButton.Active = true
         end)
 
+        if entry.IsLocal then
+            local publicProfile = Instance.new("TextButton")
+            publicProfile.Position = UDim2.new(1, -8, 0, 100)
+            publicProfile.Size = UDim2.fromOffset(76, 25)
+            publicProfile.BackgroundColor3 = Color3.fromRGB(76, 126, 105)
+            publicProfile.Text = "ПРОФИЛЬ"
+            publicProfile.TextColor3 = Color3.new(1, 1, 1)
+            publicProfile.TextSize = 8
+            publicProfile.Font = Enum.Font.GothamBlack
+            publicProfile.Parent = card
+            addCorner(publicProfile, 7)
+            publicProfile.Activated:Connect(function()
+                openPublicProfile(entry.UserId)
+            end)
+        end
+
         local favoriteButton = Instance.new("TextButton")
         favoriteButton.Position = UDim2.new(1, -8, 0, 72)
         favoriteButton.Size = UDim2.fromOffset(76, 25)
@@ -2065,6 +2263,9 @@ visitFilterButton.Activated:Connect(function()
     showFavoriteIslandsOnly = not showFavoriteIslandsOnly
     if lastVisitResponse then renderVisitList(lastVisitResponse) end
 end)
+
+profileButton.Activated:Connect(function() openPublicProfile(player.UserId) end)
+profileClose.Activated:Connect(function() profilePanel.Visible = false end)
 
 local function openVisitPanel()
     local response = invokeVisit({ Action = "ListGlobal" })
