@@ -23,6 +23,8 @@
 - Personality gives species-specific mood bonuses for petting or playing; the nest care panel shows each pet personality and favorite food.
 - A favorite treat costs 15 coins, restores 35 hunger, and grants 15 mood; the server selects the correct favorite food from the companion catalog.
 - The nest toy shop offers a Meadow Ball (25 coins), Cozy Plush (40 coins), and Wind Spinner (35 coins). Each displayed pet can equip one toy; replacing it purchases the new toy at full price.
+- The nest decoration shop offers a Flower Pot (30), Warm Lantern (55), Meadow Crystal (75), and Mushroom Seat (90). Buy decorations into inventory, place them in an unlocked empty slot, and remove them to return them to inventory.
+- Nest level 1 has two decoration slots; each nest upgrade unlocks one additional slot, up to six at level 5. Decoration changes are saved with the player profile.
 - Playing with an equipped toy increases mood by its catalog bonus plus 10 when it is the pet’s favorite toy; energy cost is determined by the toy (the Wind Spinner costs no energy).
 - Toy models are temporary scripted props; curated Creator Store toy assets are a later visual pass.
 - Feed a pet for 10 coins to restore 35 hunger and 5 mood; tired pets can rest for 60 seconds to recover energy.
@@ -66,8 +68,13 @@
 22. Equip each toy type on a displayed pet; confirm its coin cost, model prop, and nest panel label.
 23. Play with the equipped toy; verify mood and energy changes, including the favorite-toy bonus.
 24. Put a tired pet to sleep and confirm energy recovers over 60 seconds.
-25. Remove the displayed pet and confirm it returns to the available list.
-26. Rejoin the private test place and confirm nest level, display assignments, pet mood, needs, equipped toys, and uncollected income persist.
+25. Open the decoration shop while standing near your own nest.
+26. Buy a Flower Pot and a Warm Lantern; verify coin deductions and inventory counts.
+27. Place each decoration in a free slot and verify the correct models appear in your plot.
+28. Remove one decoration and verify it returns to inventory; try placing into an occupied or locked slot.
+29. Upgrade the nest and confirm one additional decoration slot unlocks.
+30. Remove the displayed pet and confirm it returns to the available list.
+31. Rejoin the private test place and confirm nest level, display assignments, pet mood, needs, equipped toys, decoration inventory, placed decorations, and uncollected income persist.
 
 ## Known limitations
 - World geometry is a temporary scripted blockout, not final art.
