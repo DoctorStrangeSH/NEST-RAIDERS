@@ -100,3 +100,7 @@ Players can open their own profile or inspect an island owner's public profile w
 
 ## Companion growth
 Companions gain growth XP through paid training and progress through Hatchling, Young, and Adult stages. Every hatch also rolls an independent genetic variant (Natural, Verdant, Luminous, or Prismatic) with disclosed odds. Genetics add cosmetic effects and a small capped passive-income bonus. Training and all progression calculations are validated server-side.
+
+
+## Adult companion abilities
+At level 7, equipped companions unlock a unique active ability: MeadowFox finds coin stashes, MossTurtle stores a nest blessing, and SproutDragon grants player XP. Each ability has a persistent per-companion five-minute cooldown and is validated on the server.
