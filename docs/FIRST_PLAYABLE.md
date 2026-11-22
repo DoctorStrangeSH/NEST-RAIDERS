@@ -155,3 +155,12 @@
 - Destination arrival waits for profile, plot, and character readiness, then verifies the target player still owns the expected plot before moving the visitor.
 - If the directory is unavailable, the browser retains local results and displays a degraded-status message.
 - Studio mode intentionally remains local-only; cross-server behavior requires a published private test experience with MemoryStore and teleport access.
+
+
+## Player identity and public profiles — Sprint 4.12
+- Public profiles are available for players currently present in the same server. Cross-server and offline profile lookup is not implemented yet.
+- Profile data is assembled server-side from the target player's loaded profile and exposes display name, username, level, nest level, companion totals, unique species count, collection completion, received island likes, trophy count, achievement states, and available titles.
+- The profile does not expose currency, item instance IDs, session tokens, or raw save data.
+- Achievements are derived from profile milestones and cannot be granted by the client.
+- Cosmetic titles can be equipped only after their achievement is unlocked. The selected title is stored in `Nest.EquippedTitle` and displayed above the character.
+- Studio uses ephemeral profile data; persistence of equipped titles must be verified in a published private test.
