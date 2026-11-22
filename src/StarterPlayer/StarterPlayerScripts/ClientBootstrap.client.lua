@@ -862,6 +862,8 @@ local function makeDisplayButton(parent, text, color, callback)
     return button
 end
 
+local renderDisplay
+
 local function renderPicker(data)
     for _, child in ipairs(pickerList:GetChildren()) do
         if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
@@ -924,7 +926,7 @@ local function renderPicker(data)
     end
 end
 
-function renderDisplay(data)
+renderDisplay = function(data)
     if not data then return end
     latestDisplayData = data
     displayIncome.Text = string.format("Витрины: %d / %d  ·  Доход: +%d монет каждые %d сек.\nНакоплено: %d монет", #(data.Displayed or {}), data.SlotLimit or 0, data.IncomePerTick or 0, data.TickSeconds or 10, data.StoredCoins or 0)
