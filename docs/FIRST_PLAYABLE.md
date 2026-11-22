@@ -43,7 +43,8 @@
 12. Confirm higher star ranks show an aura and increase income.
 13. Confirm only equipped companions follow you and generate passive income.
 14. Wait for passive income; confirm Coins increases.
-15. Rejoin the private test place and confirm data persists.
+15. Open «Улучшить гнездо», buy available upgrades, and verify decorations and display pedestals unlock.
+16. Rejoin the private test place and confirm nest level, decorations, and display pedestal count persist.
 
 ## Known limitations
 - World geometry is a temporary scripted blockout, not final art.
