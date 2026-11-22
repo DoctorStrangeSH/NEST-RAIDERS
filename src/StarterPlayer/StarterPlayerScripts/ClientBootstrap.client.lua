@@ -7,6 +7,7 @@ local shopRemote = remotes:WaitForChild("EggShop")
 local collectionRemote = remotes:WaitForChild("CollectionBook")
 local nestRemote = remotes:WaitForChild("NestUpgrade")
 local displayRemote = remotes:WaitForChild("DisplayPets")
+local decorRemote = remotes:WaitForChild("NestDecor")
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
@@ -341,6 +342,83 @@ local displayLayout = Instance.new("UIListLayout")
 displayLayout.Padding = UDim.new(0, 8)
 displayLayout.SortOrder = Enum.SortOrder.LayoutOrder
 displayLayout.Parent = displayList
+
+local decorButton = Instance.new("TextButton")
+decorButton.Name = "NestDecorButton"
+decorButton.Position = UDim2.fromOffset(18, 430)
+decorButton.Size = UDim2.fromOffset(250, 46)
+decorButton.BackgroundColor3 = Color3.fromRGB(169, 111, 157)
+decorButton.Text = "УКРАСИТЬ ГНЕЗДО"
+decorButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+decorButton.TextSize = 14
+decorButton.Font = Enum.Font.GothamBlack
+decorButton.Parent = gui
+addCorner(decorButton, 12)
+addStroke(decorButton, Color3.fromRGB(226, 174, 214), 1.5)
+
+local decorPanel = Instance.new("Frame")
+decorPanel.Name = "NestDecorPanel"
+decorPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+decorPanel.Position = UDim2.fromScale(0.5, 0.5)
+decorPanel.Size = UDim2.new(0.9, 0, 0.76, 0)
+decorPanel.BackgroundColor3 = Color3.fromRGB(48, 43, 61)
+decorPanel.BorderSizePixel = 0
+decorPanel.Visible = false
+decorPanel.Parent = gui
+addCorner(decorPanel, 18)
+addStroke(decorPanel, Color3.fromRGB(222, 165, 208), 2)
+
+local decorSize = Instance.new("UISizeConstraint")
+decorSize.MinSize = Vector2.new(290, 330)
+decorSize.MaxSize = Vector2.new(470, 560)
+decorSize.Parent = decorPanel
+
+local decorTitle = Instance.new("TextLabel")
+decorTitle.BackgroundTransparency = 1
+decorTitle.Position = UDim2.fromOffset(18, 12)
+decorTitle.Size = UDim2.new(1, -76, 0, 30)
+decorTitle.Font = Enum.Font.GothamBlack
+decorTitle.Text = "УЮТНОЕ ГНЕЗДО"
+decorTitle.TextColor3 = Color3.fromRGB(255, 213, 237)
+decorTitle.TextSize = 18
+decorTitle.TextXAlignment = Enum.TextXAlignment.Left
+decorTitle.Parent = decorPanel
+
+local decorClose = Instance.new("TextButton")
+decorClose.AnchorPoint = Vector2.new(1, 0)
+decorClose.Position = UDim2.new(1, -12, 0, 10)
+decorClose.Size = UDim2.fromOffset(38, 34)
+decorClose.BackgroundColor3 = Color3.fromRGB(83, 75, 99)
+decorClose.Text = "✕"
+decorClose.TextColor3 = Color3.new(1, 1, 1)
+decorClose.TextSize = 18
+decorClose.Font = Enum.Font.GothamBold
+decorClose.Parent = decorPanel
+addCorner(decorClose, 10)
+
+local decorBalance = Instance.new("TextLabel")
+decorBalance.BackgroundTransparency = 1
+decorBalance.Position = UDim2.fromOffset(18, 48)
+decorBalance.Size = UDim2.new(1, -36, 0, 24)
+decorBalance.Font = Enum.Font.GothamMedium
+decorBalance.TextColor3 = Color3.fromRGB(224, 213, 232)
+decorBalance.TextSize = 13
+decorBalance.TextXAlignment = Enum.TextXAlignment.Left
+decorBalance.Parent = decorPanel
+
+local decorList = Instance.new("ScrollingFrame")
+decorList.Position = UDim2.fromOffset(12, 78)
+decorList.Size = UDim2.new(1, -24, 1, -90)
+decorList.BackgroundTransparency = 1
+decorList.BorderSizePixel = 0
+decorList.ScrollBarThickness = 6
+decorList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+decorList.Parent = decorPanel
+
+local decorLayout = Instance.new("UIListLayout")
+decorLayout.Padding = UDim.new(0, 8)
+decorLayout.SortOrder = Enum.SortOrder.LayoutOrder
+decorLayout.Parent = decorList
 
 local pickerPanel = Instance.new("Frame")
 pickerPanel.Name = "DisplayPetPicker"
@@ -828,6 +906,167 @@ nestUpgrade.Activated:Connect(function()
     local data = invokeNest({ Action = "Upgrade" })
     if data then renderNest(data) else nestUpgrade.Active = true end
 end)
+
+local function invokeDecor(payload)
+    local success, response = pcall(function()
+        return decorRemote:InvokeServer(payload)
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось связаться с гнездом.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Действие не выполнено.")
+        return nil
+    end
+    if response.Message then showNotice(response.Message) end
+    return response.Data
+end
+
+local function clearDecorList()
+    for _, child in ipairs(decorList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+end
+
+local function renderDecor(data)
+    if not data then return end
+    decorBalance.Text = string.format("Монеты: %d  ·  Открыто мест: %d", data.Coins or 0, data.SlotLimit or 0)
+    clearDecorList()
+
+    local inventoryById = {}
+    for _, item in ipairs(data.Inventory or {}) do inventoryById[item.Id] = item.Count end
+    local occupiedBySlot = {}
+    for _, item in ipairs(data.Placed or {}) do occupiedBySlot[item.Slot] = item end
+
+    for index, item in ipairs(data.Catalog or {}) do
+        local card = Instance.new("Frame")
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 76)
+        card.BackgroundColor3 = Color3.fromRGB(66, 57, 78)
+        card.BorderSizePixel = 0
+        card.Parent = decorList
+        addCorner(card, 10)
+
+        local info = Instance.new("TextLabel")
+        info.BackgroundTransparency = 1
+        info.Position = UDim2.fromOffset(10, 6)
+        info.Size = UDim2.new(1, -158, 1, -12)
+        info.Text = string.format("%s\n%s\nВ наличии: %d", item.Name, item.Description or "", inventoryById[item.Id] or 0)
+        info.TextColor3 = Color3.fromRGB(246, 237, 247)
+        info.TextSize = 11
+        info.TextWrapped = true
+        info.TextXAlignment = Enum.TextXAlignment.Left
+        info.Font = Enum.Font.GothamMedium
+        info.Parent = card
+
+        local buy = Instance.new("TextButton")
+        buy.AnchorPoint = Vector2.new(1, 0)
+        buy.Position = UDim2.new(1, -8, 0, 7)
+        buy.Size = UDim2.fromOffset(92, 28)
+        buy.BackgroundColor3 = Color3.fromRGB(181, 132, 69)
+        buy.Text = "КУПИТЬ " .. tostring(item.Cost) .. "🪙"
+        buy.TextColor3 = Color3.new(1, 1, 1)
+        buy.TextSize = 9
+        buy.Font = Enum.Font.GothamBlack
+        buy.Parent = card
+        addCorner(buy, 8)
+        buy.Activated:Connect(function()
+            buy.Active = false
+            local updated = invokeDecor({ Action = "Buy", DecorId = item.Id })
+            if updated then renderDecor(updated) else buy.Active = true end
+        end)
+
+        local place = Instance.new("TextButton")
+        place.AnchorPoint = Vector2.new(1, 0)
+        place.Position = UDim2.new(1, -8, 0, 41)
+        place.Size = UDim2.fromOffset(92, 28)
+        place.BackgroundColor3 = Color3.fromRGB(83, 151, 103)
+        place.Text = "ПОСТАВИТЬ"
+        place.TextColor3 = Color3.new(1, 1, 1)
+        place.TextSize = 9
+        place.Font = Enum.Font.GothamBlack
+        place.Parent = card
+        addCorner(place, 8)
+        place.Active = (inventoryById[item.Id] or 0) > 0
+        place.AutoButtonColor = place.Active
+        place.Activated:Connect(function()
+            if not place.Active then return end
+            local freeSlot = nil
+            for slot = 1, data.SlotLimit or 0 do
+                if not occupiedBySlot[slot] then freeSlot = slot break end
+            end
+            if not freeSlot then
+                showNotice("Все места заняты. Сними украшение или улучши гнездо.")
+                return
+            end
+            place.Active = false
+            local updated = invokeDecor({ Action = "Place", DecorId = item.Id, Slot = freeSlot })
+            if updated then renderDecor(updated) else place.Active = true end
+        end)
+    end
+
+    local heading = Instance.new("TextLabel")
+    heading.LayoutOrder = 20
+    heading.Size = UDim2.new(1, -8, 0, 28)
+    heading.BackgroundTransparency = 1
+    heading.Text = "ТВОИ УКРАШЕНИЯ"
+    heading.TextColor3 = Color3.fromRGB(255, 213, 237)
+    heading.TextSize = 13
+    heading.Font = Enum.Font.GothamBlack
+    heading.TextXAlignment = Enum.TextXAlignment.Left
+    heading.Parent = decorList
+
+    for slot = 1, data.SlotLimit or 0 do
+        local item = occupiedBySlot[slot]
+        local row = Instance.new("Frame")
+        row.LayoutOrder = 20 + slot
+        row.Size = UDim2.new(1, -8, 0, 42)
+        row.BackgroundColor3 = Color3.fromRGB(58, 54, 72)
+        row.BorderSizePixel = 0
+        row.Parent = decorList
+        addCorner(row, 8)
+
+        local label = Instance.new("TextLabel")
+        label.BackgroundTransparency = 1
+        label.Position = UDim2.fromOffset(10, 0)
+        label.Size = UDim2.new(1, -112, 1, 0)
+        label.Text = item and ("Место " .. slot .. " · " .. item.Name) or ("Место " .. slot .. " · Свободно")
+        label.TextColor3 = Color3.fromRGB(235, 229, 239)
+        label.TextSize = 11
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.Font = Enum.Font.GothamMedium
+        label.Parent = row
+
+        if item then
+            local remove = Instance.new("TextButton")
+            remove.AnchorPoint = Vector2.new(1, 0.5)
+            remove.Position = UDim2.new(1, -6, 0.5, 0)
+            remove.Size = UDim2.fromOffset(92, 30)
+            remove.BackgroundColor3 = Color3.fromRGB(151, 86, 91)
+            remove.Text = "УБРАТЬ"
+            remove.TextColor3 = Color3.new(1, 1, 1)
+            remove.TextSize = 10
+            remove.Font = Enum.Font.GothamBlack
+            remove.Parent = row
+            addCorner(remove, 8)
+            remove.Activated:Connect(function()
+                remove.Active = false
+                local updated = invokeDecor({ Action = "Remove", Slot = slot })
+                if updated then renderDecor(updated) else remove.Active = true end
+            end)
+        end
+    end
+end
+
+local function openDecor()
+    decorPanel.Visible = true
+    local data = invokeDecor({ Action = "Get" })
+    if data then renderDecor(data) end
+end
+
+decorButton.Activated:Connect(openDecor)
+decorClose.Activated:Connect(function() decorPanel.Visible = false end)
 
 local selectedDisplaySlot = nil
 local latestDisplayData = nil
