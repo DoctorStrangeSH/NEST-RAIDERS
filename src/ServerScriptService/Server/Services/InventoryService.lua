@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local HttpService = game:GetService("HttpService")
+local Workspace = game:GetService("Workspace")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
@@ -312,7 +313,12 @@ function InventoryService:HandleRequest(player, payload)
             ParentSpecies = { parentA.Id, parentB.Id },
         }
         table.insert(profile.EggInventory, egg)
-        PlotService:PlayBreedingSequence(player, parentA, parentB, egg)
+        local previewFolder = Instance.new("Folder")
+        previewFolder.Name = "BreedingPreview_" .. player.UserId
+        previewFolder.Parent = Workspace
+        local parentPreviewA = CompanionService:CreateRitualPreview(previewFolder, parentA, 1)
+        local parentPreviewB = CompanionService:CreateRitualPreview(previewFolder, parentB, 2)
+        PlotService:PlayBreedingSequence(player, parentA, parentB, egg, parentPreviewA, parentPreviewB, previewFolder)
 
         player:SetAttribute("Coins", profile.Coins)
         player:SetAttribute("EggCount", #profile.EggInventory)
