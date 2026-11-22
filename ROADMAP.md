@@ -88,7 +88,10 @@ Status legend: [x] done · [ ] not done · [~] in progress
 - [x] Add a server-authoritative in-server island visit browser with owner name, level, and visitor count.
 - [x] Allow players to visit another occupied island and return to their previous position / own nest.
 - [x] Limit each island to eight visitors and restore guests when an island owner leaves.
-- [ ] Add island likes, favorites, weekly showcases, and cosmetic rating rewards.
+- [x] Add persistent, unique per-player island likes with server-side toggle validation.
+- [x] Add up to 30 persistent favorite islands per player, stored by stable owner UserId.
+- [x] Sort the current-server island browser by likes, then visitors, and add an all / favorites filter.
+- [ ] Add cross-server discovery, weekly showcases, and cosmetic rating rewards.
 - [ ] Companion rarity traits and collection milestone rewards.
 - [ ] Egg hatch tables with disclosed probabilities.
 - [ ] Trading with confirmation, cooldowns, and scam-resistant UI.
