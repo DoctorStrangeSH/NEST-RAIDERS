@@ -9,6 +9,7 @@ local ProfileTemplate = {
     CompletedQuests = {},
     QuestProgress = {
         EmeraldTrialRunes = {},
+        FrostTrialRunes = {},
     },
     EggInventory = {},
     Companions = {},
