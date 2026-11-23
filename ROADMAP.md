@@ -806,7 +806,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify passive income changes only while artifacts are equipped and remains correct after rejoin.
 - [ ] Test collection panel on 375px mobile and desktop; verify workshop range and biome restrictions.
 
-**Scope note:** Artifact effects currently boost passive income from active companions. Gathering bonuses are now implemented in Sprint 4.44; hatch-rate bonuses remain reserved for a later balance-tested artifact family.
+**Scope note:** Artifact effects currently include passive-income bonuses and the Sprint 4.44 gathering bonuses. Hatch-rate bonuses remain reserved for a later balance-tested artifact family.
 
 ### Sprint 4.43 — Artifact upgrades and merging (2026-11-23)
 
