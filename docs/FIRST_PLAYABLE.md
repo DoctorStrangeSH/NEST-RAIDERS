@@ -320,3 +320,11 @@
 - Read the clue and activate the three runes in order: Root → River → Dawn.
 - A wrong rune resets your own sequence; other players' progress is unaffected.
 - Once all three runes are lit, open the treasure chest for a one-time reward of 500 coins, 300 XP, and 20 Elderwood.
+
+
+## Heartwood Guardian
+- First solve Root → River → Dawn and claim the temple treasure.
+- Attack the Guardian with E. Each successful hit deals 24 damage.
+- Watch for two warnings: the heavy Vine Slam is short-range but deals 30 damage; the wide Root Wave reaches farther but deals 18 damage.
+- Move out of the attack radius before the warning ends.
+- Victory grants 600 XP and the legendary Heartwood Guardian companion, a boss-exclusive collection discovery.
