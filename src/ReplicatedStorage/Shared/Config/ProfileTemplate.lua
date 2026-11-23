@@ -15,6 +15,7 @@ local ProfileTemplate = {
         CrystalTrialPrisms = {},
         CrystalTrialBossHealth = 160,
         AncientTempleRunes = {},
+        AncientTempleBossHealth = 240,
     },
     EggInventory = {},
     Companions = {},
