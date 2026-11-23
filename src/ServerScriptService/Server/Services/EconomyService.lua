@@ -3,6 +3,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
+local ArtifactCatalog = require(ReplicatedStorage.Shared.Config.ArtifactCatalog)
 
 local EconomyService = {}
 local MAX_TICK_REWARD = 5000
@@ -39,6 +40,18 @@ function EconomyService:GetPassiveIncome(profile)
             total += getCompanionIncome(companion)
         end
     end
+    local artifactBonus = 0
+    local artifactsById = {}
+    for _, artifact in ipairs(profile.Artifacts or {}) do
+        if type(artifact.InstanceId) == "string" then artifactsById[artifact.InstanceId] = artifact end
+    end
+    for _, instanceId in ipairs(profile.EquippedArtifacts or {}) do
+        local artifact = artifactsById[instanceId]
+        local definition = artifact and ArtifactCatalog[artifact.Id]
+        if definition then artifactBonus += math.clamp(tonumber(definition.IncomeBonus) or 0, 0, 0.10) end
+    end
+    artifactBonus = math.clamp(artifactBonus, 0, 0.20)
+    total *= (1 + artifactBonus)
     local accumulated = total + math.clamp(tonumber(profile.CompanionIncomeRemainder) or 0, 0, 0.999999)
     local payout = math.min(math.floor(accumulated), MAX_TICK_REWARD)
     profile.CompanionIncomeRemainder = accumulated - payout
