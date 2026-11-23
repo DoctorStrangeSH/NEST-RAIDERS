@@ -139,7 +139,7 @@ local function getSnapshot(profile)
                 local companion = findOwned(profile, item.InstanceId)
                 if companion then total += getCompanionIncome(companion) end
             end
-            return math.floor(total + 0.5)
+            return math.floor(total * 100 + 0.5) / 100
         end)(),
         TickSeconds = 10,
     }
@@ -434,8 +434,11 @@ function DisplayPetService:Start()
                         total += getCompanionIncome(companion)
                     end
                 end
+                local accumulated = total + math.clamp(tonumber(profile.Nest.StoredIncomeRemainder) or 0, 0, 0.999999)
+                local payout = math.floor(accumulated)
+                profile.Nest.StoredIncomeRemainder = accumulated - payout
                 profile.Nest.StoredCoins = math.min(
-                    (tonumber(profile.Nest.StoredCoins) or 0) + math.floor(total + 0.5),
+                    (tonumber(profile.Nest.StoredCoins) or 0) + payout,
                     2_000_000_000
                 )
             end
