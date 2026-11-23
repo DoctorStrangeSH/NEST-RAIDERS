@@ -202,6 +202,34 @@ local CompanionCatalog = {
         },
     },
 
+    PrismFox = {
+        Id = "PrismFox", Name = "Призматический лис", Rarity = "Эпический",
+        Income = 34, Weight = 0,
+        Description = "Лис, чья шерсть переливается всеми цветами кристального света.",
+        Personality = "Любознательный", PersonalityDescription = "Ищет редкие отражения и тайные проходы.",
+        FavoriteFood = "Кристальные ягоды", FavoriteToy = "WindSpinner",
+        PetMoodBonus = 8, PlayMoodBonus = 8, EggId = "CrystalEgg",
+        Ability = { Id = "PrismTrail", Name = "Призматический след", Description = "Помогает находить дополнительные кристальные жилы.", UnlockLevel = 7, CooldownSeconds = 300 },
+    },
+    CrystalDeer = {
+        Id = "CrystalDeer", Name = "Кристальный оленёнок", Rarity = "Легендарный",
+        Income = 42, Weight = 0,
+        Description = "Грациозный хранитель сияющих садов королевства.",
+        Personality = "Добрый", PersonalityDescription = "Любит спокойствие и мерцание северного сияния.",
+        FavoriteFood = "Лунные груши", FavoriteToy = "CozyPlush",
+        PetMoodBonus = 12, PlayMoodBonus = 2, EggId = "CrystalEgg",
+        Ability = { Id = "CrystalWard", Name = "Кристальный оберег", Description = "Временно увеличивает награду за добычу кристаллов.", UnlockLevel = 7, CooldownSeconds = 360 },
+    },
+    AuroraDragon = {
+        Id = "AuroraDragon", Name = "Дракон авроры", Rarity = "Мифический",
+        Income = 58, Weight = 0,
+        Description = "Древний дракон, рождённый на стыке кристального света и северного сияния.",
+        Personality = "Гордый", PersonalityDescription = "Охраняет самые редкие сокровища королевства.",
+        FavoriteFood = "Звёздный нектар", FavoriteToy = "WindSpinner",
+        PetMoodBonus = 6, PlayMoodBonus = 10, EggId = "CrystalEgg",
+        Ability = { Id = "AuroraFortune", Name = "Удача авроры", Description = "Повышает шанс получить дополнительный кристалл.", UnlockLevel = 7, CooldownSeconds = 420 },
+    },
+
     -- Hybrid species are breeding-only. Weight = 0 keeps them out of natural hatches.
     EmberFox = {
         Id = "EmberFox",
