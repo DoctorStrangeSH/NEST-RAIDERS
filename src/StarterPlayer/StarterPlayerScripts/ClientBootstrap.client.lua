@@ -4064,6 +4064,16 @@ player:GetAttributeChangedSignal("ForgottenHeartBossCompleted"):Connect(function
 end)
 updateForgottenBossPhaseVisual()
 
+local function filterForgottenBossWarning(instance)
+    if instance:IsA("BasePart") and instance.Name == "ForgottenHeartAttackWarning" then
+        instance.LocalTransparencyModifier = instance:GetAttribute("TargetUserId") == player.UserId and 0 or 1
+    end
+end
+for _, descendant in ipairs(Workspace:GetDescendants()) do
+    filterForgottenBossWarning(descendant)
+end
+Workspace.DescendantAdded:Connect(filterForgottenBossWarning)
+
 
 -- Volcanic heat HUD: values are replicated from the server, never client-authoritative.
 local heatPanel = Instance.new("Frame")
