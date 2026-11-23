@@ -180,14 +180,16 @@ function ForgottenHeartBossService:Init()
         player:SetAttribute("ForgottenHeartBossAttackType", attack.Id)
         player:SetAttribute("LastNotice", attack.Warning)
         local markers = {}
+        local floorY = 19.45
+        local targetOnFloor = Vector3.new(targetPosition.X, floorY, targetPosition.Z)
         if attack.Pattern == "Boss" then
-            table.insert(markers, corePosition)
+            table.insert(markers, Vector3.new(corePosition.X, floorY, corePosition.Z))
         elseif attack.Pattern == "Triple" then
-            table.insert(markers, targetPosition)
-            table.insert(markers, targetPosition + Vector3.new(8, 0, 0))
-            table.insert(markers, targetPosition + Vector3.new(-8, 0, 0))
+            table.insert(markers, targetOnFloor)
+            table.insert(markers, targetOnFloor + Vector3.new(8, 0, 0))
+            table.insert(markers, targetOnFloor + Vector3.new(-8, 0, 0))
         else
-            table.insert(markers, targetPosition)
+            table.insert(markers, targetOnFloor)
         end
         for _, markerPosition in ipairs(markers) do
             createWarning(markerPosition, attack.Radius, Color3.fromRGB(109, 220, 255), attack.Windup)
@@ -297,6 +299,7 @@ function ForgottenHeartBossService:Init()
             if profile then publish(player, profile, progress) end
         end
         player:GetAttributeChangedSignal("ProfileLoaded"):Connect(sync)
+        player:GetAttributeChangedSignal("ForgottenCaveCacheOpened"):Connect(sync)
         sync()
     end
     Players.PlayerAdded:Connect(bindPlayer)
