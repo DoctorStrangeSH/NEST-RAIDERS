@@ -14,7 +14,7 @@ GameConfig.Progression = {
     Zones = {
         { Id = "StarterIsland", DisplayName = "Starter Island", RequiredLevel = 1, RequiredQuest = nil },
         { Id = "EmeraldWilds", DisplayName = "Изумрудный лес", RequiredLevel = 5, RequiredQuest = nil },
-        { Id = "FrostHighlands", DisplayName = "Frost Highlands", RequiredLevel = 12, RequiredQuest = "emerald_trial" },
+        { Id = "FrostHighlands", DisplayName = "Ледяные нагорья", RequiredLevel = 12, RequiredQuest = "emerald_trial" },
         { Id = "Emberlands", DisplayName = "Emberlands", RequiredLevel = 22, RequiredQuest = "frost_trial" },
         { Id = "CrystalRealm", DisplayName = "Crystal Realm", RequiredLevel = 35, RequiredQuest = "ember_trial" },
         { Id = "AncientHeights", DisplayName = "Ancient Heights", RequiredLevel = 50, RequiredQuest = "crystal_trial" },
