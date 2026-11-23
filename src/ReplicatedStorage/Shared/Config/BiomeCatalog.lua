@@ -35,6 +35,23 @@ local BiomeCatalog = {
             },
         },
     },
+    Emberlands = {
+        Id = "Emberlands",
+        Name = "Пепельные земли",
+        DefaultEggId = "EmberEgg",
+        Eggs = {
+            EmberEgg = {
+                Id = "EmberEgg",
+                Name = "Яйцо пепельного пламени",
+                Rarity = "Эпическое",
+                SpeciesWeights = {
+                    CinderFox = 60,
+                    MagmaWhelp = 30,
+                    AshPhoenix = 10,
+                },
+            },
+        },
+    },
     EmeraldWilds = {
         Id = "EmeraldWilds",
         Name = "Изумрудный лес",
