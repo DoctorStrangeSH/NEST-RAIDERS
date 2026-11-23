@@ -415,7 +415,9 @@ assert 'AncientHeights = {' in Path("src/ServerScriptService/Server/Services/Egg
 assert 'AncientHeights' in world and 'ElderCanopy' in world and 'ElderRuins' in world
 assert 'AncientEggOddsSign' in world and 'Яйцо древнего древа' in world
 assert 'AncientHeights' in world_health and 'Яйца Древних высот:' in world_health
-assert 'Kind = "AncientStag"' in Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
-assert 'definition.Kind == "AncientStag"' in Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+ancient_models = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+for kind in ("AncientStag", "RootSprite", "SkySerpent"):
+    assert f'Kind = "{kind}"' in ancient_models
+    assert f'definition.Kind == "{kind}"' in ancient_models
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
