@@ -264,3 +264,13 @@
 - Guardian health persists per player. Defeating it completes ember_trial and awards +250 XP once.
 - The existing Crystal Realm gate remains level 35 plus ember_trial.
 - The trial has scripted placeholder visuals and prompt-based attacks. Studio playtesting and mobile/performance acceptance remain outstanding.
+
+
+## Crystal Realm foundation — Sprint 4.24
+- Reach level 35 and complete the Heart of Fire trial to unlock Crystal Realm.
+- Travel from Emberlands through the Crystal Portal or cross the Crystal Skyway. A return portal leads back to Emberlands.
+- Explore the prismatic plateau and mine eight crystal veins. Each vein can be mined once per player every three minutes; each successful mine grants 2–4 Crystal Shards.
+- Active Prism Fox and Crystal Fawn companions each add one shard. Aurora Dragon has a 35% chance to add two extra shards.
+- Collect the Prismatic Radiance Egg. Hatch odds: Prism Fox 60%, Crystal Fawn 30%, Aurora Dragon 10%.
+- Crystal Shards, mining cooldowns and egg/pet progress are saved through the existing profile system.
+- Studio playtesting, balance, mobile and performance acceptance remain outstanding.
