@@ -431,4 +431,13 @@ assert 'ElderwoodNodeId' in world and 'HarvestElderwoodPrompt' in world
 assert 'AncientHarvestPanel' in client and 'Elderwood' in client
 assert 'Древние корни:' in world_health
 
+
+# Whispering Grove: secret traversal and a persistent one-time server reward.
+ancient_secret = Path("src/ServerScriptService/Server/Services/AncientSecretService.lua").read_text()
+assert '"AncientSecretService"' in server and 'function AncientSecretService:Init()' in ancient_secret
+assert 'ancient_grove_secret' in ancient_secret and 'EconomyService:GrantCoins(player, 250' in ancient_secret
+assert 'ProgressionService:AddXP(player, 150)' in ancient_secret
+assert 'WhisperingGrove' in world and 'GroveStep_' in world and 'ElderHeartAltar' in world
+assert 'ElderHeartPrompt' in world_health and 'Тайная тропа рощи:' in world_health
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
