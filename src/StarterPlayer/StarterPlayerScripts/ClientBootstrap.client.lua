@@ -3847,6 +3847,63 @@ for _, attribute in ipairs({"CurrentBiome", "AshfallPhase", "AshfallSeconds", "A
 end
 updateAshfallPanel()
 
+-- Crystal Realm mining HUD: the saved shard balance is replicated by the server.
+local crystalPanel = Instance.new("Frame")
+crystalPanel.Name = "CrystalMiningPanel"
+crystalPanel.AnchorPoint = Vector2.new(1, 0)
+crystalPanel.Position = UDim2.new(1, -24, 0, 110)
+crystalPanel.Size = UDim2.fromOffset(260, 78)
+crystalPanel.BackgroundColor3 = Color3.fromRGB(48, 40, 68)
+crystalPanel.BackgroundTransparency = 0.08
+crystalPanel.Visible = false
+crystalPanel.Parent = gui
+addCorner(crystalPanel, 14)
+addStroke(crystalPanel, Color3.fromRGB(190, 157, 255), 1.5)
+
+local crystalTitle = Instance.new("TextLabel")
+crystalTitle.BackgroundTransparency = 1
+crystalTitle.Position = UDim2.fromOffset(14, 8)
+crystalTitle.Size = UDim2.new(1, -28, 0, 22)
+crystalTitle.Font = Enum.Font.GothamBold
+crystalTitle.Text = "ХРУСТАЛЬНОЕ КОРОЛЕВСТВО"
+crystalTitle.TextColor3 = Color3.fromRGB(225, 205, 255)
+crystalTitle.TextSize = 13
+crystalTitle.TextXAlignment = Enum.TextXAlignment.Left
+crystalTitle.Parent = crystalPanel
+
+local crystalBalance = Instance.new("TextLabel")
+crystalBalance.BackgroundTransparency = 1
+crystalBalance.Position = UDim2.fromOffset(14, 33)
+crystalBalance.Size = UDim2.new(1, -28, 0, 18)
+crystalBalance.Font = Enum.Font.GothamBold
+crystalBalance.TextColor3 = Color3.fromRGB(206, 229, 255)
+crystalBalance.TextSize = 12
+crystalBalance.TextXAlignment = Enum.TextXAlignment.Left
+crystalBalance.Parent = crystalPanel
+
+local crystalHint = Instance.new("TextLabel")
+crystalHint.BackgroundTransparency = 1
+crystalHint.Position = UDim2.fromOffset(14, 53)
+crystalHint.Size = UDim2.new(1, -28, 0, 16)
+crystalHint.Font = Enum.Font.GothamMedium
+crystalHint.Text = "Ищи сияющие жилы и добывай осколки"
+crystalHint.TextColor3 = Color3.fromRGB(190, 180, 215)
+crystalHint.TextSize = 10
+crystalHint.TextXAlignment = Enum.TextXAlignment.Left
+crystalHint.Parent = crystalPanel
+
+local function updateCrystalPanel()
+    local visible = player:GetAttribute("CurrentBiome") == "CrystalRealm"
+    crystalPanel.Visible = visible
+    if visible then
+        crystalBalance.Text = "Кристальные осколки: " .. math.max(0, tonumber(player:GetAttribute("CrystalShards")) or 0)
+    end
+end
+for _, attribute in ipairs({"CurrentBiome", "CrystalShards"}) do
+    player:GetAttributeChangedSignal(attribute):Connect(updateCrystalPanel)
+end
+updateCrystalPanel()
+
 local guideHighlight = Instance.new("Highlight")
 guideHighlight.Name = "FirstPlayTarget"
 guideHighlight.FillColor = Color3.fromRGB(255, 216, 129)
