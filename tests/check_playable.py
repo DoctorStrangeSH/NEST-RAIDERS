@@ -308,7 +308,7 @@ if path.exists():
 ember_biomes = Path("src/ReplicatedStorage/Shared/Config/BiomeCatalog.lua").read_text()
 ember_companions = Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
 heat_service = Path("src/ServerScriptService/Server/Services/HeatService.lua").read_text()
-assert 'Emberlands = {' in game_config and 'RequiredQuest = "frost_trial"' in game_config
+assert '{ Id = "Emberlands", DisplayName = "Пепельные земли", RequiredLevel = 22, RequiredQuest = "frost_trial" }' in game_config
 assert 'EmberEgg' in ember_biomes and 'CinderFox = 60' in ember_biomes
 assert 'MagmaWhelp = 30' in ember_biomes and 'AshPhoenix = 10' in ember_biomes
 assert 'CinderFox = {' in ember_companions and 'MagmaWhelp = {' in ember_companions and 'AshPhoenix = {' in ember_companions
