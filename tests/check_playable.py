@@ -385,4 +385,25 @@ assert 'CrystalMiningPanel' in client and 'CrystalShards' in client
 assert 'CrystalRealm' in world_health and 'Кристальные жилы:' in world_health
 assert 'Enum.Material.Crystal' not in world and 'Enum.PartType.Crystal' not in world
 
+
+# Crystal Prism Trial: ordered puzzle, per-player persistent boss, reward and next biome gate.
+crystal_trial = Path("src/ServerScriptService/Server/Services/CrystalTrialService.lua").read_text()
+assert '"CrystalTrialService"' in server and 'function CrystalTrialService:Init()' in crystal_trial
+assert 'PRISM_SEQUENCE = { "Azure", "Rose", "Crown" }' in crystal_trial
+assert 'table.clear(progress.CrystalTrialPrisms)' in crystal_trial
+assert 'CrystalTrialPrisms = {}' in profile_template and 'CrystalTrialBossHealth = 160' in profile_template
+assert 'CrystalTrialBossHealth' in crystal_trial and 'CrystalTrialBossWindup' in crystal_trial
+assert 'REWARD_XP = 500' in crystal_trial and 'ProgressionService:AddXP(player, REWARD_XP)' in crystal_trial
+assert 'profile.CompletedQuests.crystal_trial = true' in crystal_trial
+assert 'CrystalPrismPrompt' in crystal_trial and 'CrystalTrialBossPrompt' in crystal_trial
+assert 'PrismTrial' in world and 'PrismGem_Azure' in world and 'PrismGem_Rose' in world and 'PrismGem_Crown' in world
+assert 'PrismLightBeam_1' in world and 'PrismLightBeam_2' in world and 'PrismGuardian' in world
+assert 'CrystalTrialBossPrompt' in world and 'Лазурный → Розовый → Золотой' in world
+assert 'AncientHeights' in game_config and 'RequiredLevel = 50, RequiredQuest = "crystal_trial"' in game_config
+assert 'AncientHeightsPortal' in world and 'AncientReturnPortal' in world
+assert 'AncientLanding' in world and 'AncientWelcomeSign' in world
+assert 'CrystalTrialProgress' in client and 'CrystalTrialBossWindup' in client
+assert 'ИСПЫТАНИЕ ПРИЗМЫ' in client and 'ХРАНИТЕЛЯ' in client
+assert 'CrystalTrial' in world_health and 'AncientLanding' in world_health
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
