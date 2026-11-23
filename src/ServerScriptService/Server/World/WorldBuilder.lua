@@ -1391,8 +1391,9 @@ function WorldBuilder:Build()
     roof.CanCollide = false
 
     local templeHeader = part(ancientTemple, "TempleWelcomeInscription",
-        Vector3.new(25, 7, 1), Vector3.new(78, 27, 2578),
+        Vector3.new(25, 7, 1), Vector3.new(54.8, 29, 2600),
         Color3.fromRGB(65, 78, 57), Enum.Material.WoodPlanks)
+    templeHeader.CFrame *= CFrame.Angles(0, math.rad(90), 0)
     templeHeader.CanCollide = false
     local headerGui = Instance.new("SurfaceGui")
     headerGui.Face = Enum.NormalId.Front
@@ -1442,8 +1443,9 @@ function WorldBuilder:Build()
     end
 
     local templeClue = part(ancientTemple, "AncientTempleClueSign",
-        Vector3.new(17, 6, 1), Vector3.new(78, 25, 2584),
+        Vector3.new(17, 6, 1), Vector3.new(61, 26, 2603),
         Color3.fromRGB(65, 78, 57), Enum.Material.WoodPlanks)
+    templeClue.CFrame *= CFrame.Angles(0, math.rad(90), 0)
     templeClue.CanCollide = false
     local clueGui = Instance.new("SurfaceGui")
     clueGui.Face = Enum.NormalId.Front
