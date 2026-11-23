@@ -231,3 +231,16 @@ The readiness marker only proves client script completion; **it does not prove t
 - [ ] Roblox Studio: verify the entire gameplay loop and persistence before accepting Sprint 4.20.
 
 Successful CI packaging remains separate from real play testing.
+
+### Playable-first island wayfinding & scenery (2026-11-23)
+
+- [x] Fix front-facing proportions of the welcome sign and all owner nest signs; readable surfaces face the walking paths.
+- [x] Translate the hatch interaction to Russian (`Вылупить` / `Твоё гнездо`).
+- [x] Add central stone wayfinding path and garden decorations for all three existing egg locations.
+- [x] Add non-colliding egg-site beacons, stone borders, and two Russian guide signs; egg parts and prompt handlers remain unchanged.
+- [x] Expand CI static tests for egg landmarks, readable signs, and collectible prompts.
+- [ ] Inspect island scenery, path visibility and performance in Roblox Studio (desktop and mobile).
+- [ ] Verify each egg collection prompt and hatch prompt in Play, with and without nearby decorative objects.
+- [ ] Replace temporary block-based props with curated Roblox-licensed models after actual Play verification.
+
+**Playable First:** This is a visual/wayfinding source update, not confirmation of runtime functionality.
