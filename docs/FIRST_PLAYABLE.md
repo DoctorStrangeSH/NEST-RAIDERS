@@ -382,3 +382,10 @@ Each boss attack has its own warning color: cyan for Crystal Slam, violet for Ec
 - The Ancient Heights workshop recipe is 10 Elderwood + 5 Moonpetals + 3 Starshards + 300 coins.
 - Moonpetals come from the Whispering Grove cache; Starshards come from the Forgotten Heart Cave rewards.
 - All requirements are shown on the workshop sign. Crafting produces a normal Ancient Egg in the saved egg bag and uses the standard hatch station.
+
+## Artifact collection and equipment
+- Open **АРТЕФАКТЫ** from the feature menu to view owned artifacts and equipped slots.
+- Crafting requires standing within 16 studs of the Ancient Heights workshop, while in Ancient Heights.
+- Recipe: 4 Moonpetals + 2 Starshards + 2 Crystal Shards + 1 Ash Crystal + 250 coins.
+- A crafted artifact is randomly selected: Root Sigil (60%), Moon Pendant (30%), Star Prism (10%).
+- Equip up to two artifacts. Their passive-income bonuses stack additively, up to +20% total.
