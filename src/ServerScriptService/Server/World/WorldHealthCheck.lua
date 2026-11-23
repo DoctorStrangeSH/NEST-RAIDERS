@@ -42,7 +42,7 @@ function WorldHealthCheck:Check()
 
     local plots = island:FindFirstChild("PlayerPlots")
     if not plots then
-        fail("Участки игроков не созданы")
+        fail("Папка PlayerPlots не создана службой PlotService")
     else
         local count = 0
         for _, plot in ipairs(plots:GetChildren()) do
@@ -60,7 +60,7 @@ function WorldHealthCheck:Check()
             end
         end
         if count < 6 then
-            fail("Участков игроков: " .. count .. " из 6")
+            fail(string.format("Создано участков: %d из 6 (PlotService: %s)", count, tostring(plots:GetAttribute("CreatedCount") or "нет отчёта")))
         end
     end
 
