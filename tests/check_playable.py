@@ -675,7 +675,7 @@ assert 'TweenInfo.new(0.28, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)' in
 assert 'Size = UDim2.fromScale(caveBossHealth / 360, 1)' in client
 
 # Unified material inventory: profile load publishes every saved resource and UI binds all balances.
-assert 'MaterialsInventoryButton' in client and 'materialsButton, profileButton' in client
+assert 'MaterialsInventoryButton' in client and 'materialsButton, artifactsButton, profileButton' in client
 assert 'MaterialsInventoryPanel' in client and 'local materialDefinitions = {' in client
 for material_attribute in ("Elderwood", "Moonpetal", "Starshard", "CrystalShards", "AshCrystals"):
     assert f'Attribute = "{material_attribute}"' in client
