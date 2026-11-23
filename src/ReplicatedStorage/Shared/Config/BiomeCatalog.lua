@@ -18,6 +18,23 @@ local BiomeCatalog = {
             },
         },
     },
+    FrostHighlands = {
+        Id = "FrostHighlands",
+        Name = "Ледяные нагорья",
+        DefaultEggId = "FrostEgg",
+        Eggs = {
+            FrostEgg = {
+                Id = "FrostEgg",
+                Name = "Яйцо вечной зимы",
+                Rarity = "Редкое",
+                SpeciesWeights = {
+                    FrostFox = 60,
+                    SnowOwl = 30,
+                    GlacierBear = 10,
+                },
+            },
+        },
+    },
     EmeraldWilds = {
         Id = "EmeraldWilds",
         Name = "Изумрудный лес",
