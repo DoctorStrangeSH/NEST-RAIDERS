@@ -316,3 +316,12 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - After the surges, four ash-crystal nodes appear for 75 seconds. Each player may claim each node once per event. Ash crystals are stored in the persistent profile material inventory and replicated to the client HUD.
 - The Russian HUD displays the warning countdown, active eruption, aftermath timer, and saved ash-crystal balance.
 - Static CI checks cover event wiring and safety conditions. Studio runtime, multiplayer claims, reward persistence, balance, and mobile acceptance remain outstanding.
+
+
+## Heart of Fire trial — Sprint 4.23
+- The Emberlands summit now contains a raised basalt altar, a twelve-step approach, three rune pedestals, and the Heart of Fire Guardian.
+- Players activate the Ember, Cinder, and Inferno runes. Rune progress is stored per player. All three runes unlock the guardian encounter for that player.
+- Guardian health is tracked per player and saved in QuestProgress.EmberTrialBossHealth. Each valid strike removes 25 health. The guardian telegraphs a counterattack for 1.4 seconds; a player who leaves its 23-stud attack radius avoids the 18-damage hit.
+- Defeating the guardian completes ember_trial and grants +250 XP once. The existing progression configuration already gates Crystal Realm behind level 35 and ember_trial.
+- The Russian HUD shows rune progress, guardian health, and the dodge warning. Static CI and world-health checks cover the arena structure and service wiring.
+- This is a scripted combat prototype. Roblox Studio collision, combat feel, multiplayer, persistence, balance, and mobile acceptance are still required.
