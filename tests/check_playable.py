@@ -513,5 +513,13 @@ assert 'GuardianWindupBurst' in client and 'AncientTempleBossPhase' in client
 assert 'ШИПЫ ДРЕВА! ОТОЙДИ ОТ СТРАЖА!' in client
 assert 'Size = Vector3.new(4, 4, 2)' in client
 assert 'Шипы Древа пронзили арену!' in ancient_boss
+assert 'TweenService = game:GetService("TweenService")' in ancient_boss
+assert 'playGuardianAttackAnimation(attack.Id)' in ancient_boss
+assert 'GuardianArm_-1' in ancient_boss and 'GuardianArm_1' in ancient_boss
+assert 'GuardianBranch_-1' in ancient_boss and 'GuardianBranch_1' in ancient_boss
+assert 'Id = "VineSlam"' in ancient_boss and 'Id = "RootWave"' in ancient_boss and 'Id = "ThornBurst"' in ancient_boss
+assert 'local function playGuardianVictoryEffect()' in client
+assert 'burst:Emit(84)' in client and 'AncientTempleBossCompleted' in client
+assert 'Нет анимируемой части Стража:' in world_health
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
