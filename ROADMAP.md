@@ -641,3 +641,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend profile defaults, world health checks, and static regression coverage.
 - [ ] Roblox Studio: test causeway traversal, collision, roof clearance, rune order/reset, solo/multiplayer isolation, one-time rewards, and rejoin persistence.
 - [ ] Add temple boss encounter and unique boss-exclusive companion in the next slice.
+
+
+### Sprint 4.30 — Heartwood Guardian boss encounter (2026-11-23)
+- [x] Add the dormant Heartwood Guardian model and server-owned attack prompt to the Ancient Tree Temple.
+- [x] Add per-player persistent boss health (240 HP), independent of other players' encounters.
+- [x] Add two alternating telegraphed attacks: Vine Slam (30 damage, 15-stud radius, 1.8s warning) and Root Wave (18 damage, 26-stud radius, 1.25s warning).
+- [x] Allow attacks only after the player's own temple rune trial and treasure claim are complete.
+- [x] Persist the one-time boss victory and grant +600 XP plus the exclusive Heartwood Guardian companion.
+- [x] Add a distinct follower model, collection-book acquisition label, and automatic equip when an active slot is available.
+- [x] Add boss health / attack warning HUD and extend world health checks and static regression coverage.
+- [ ] Roblox Studio: verify solo/multiplayer health isolation, alternating attack cadence, dodge radii, damage, death/respawn, rejoin persistence, unique companion ownership, follower appearance, and collection-book label.
+- [ ] Tune boss HP, attack timing, damage and companion income after live playtesting.
