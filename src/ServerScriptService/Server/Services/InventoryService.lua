@@ -196,6 +196,7 @@ local function makeSnapshot(profile)
                 Rarity = definition.Rarity, Level = level, TierName = tierNames[level],
                 Description = definition.Description, IncomeBonus = incomeBonus,
                 GatherBonus = math.min(0.50, (tonumber(definition.GatherBonus) or 0) * (1 + (level - 1) * 0.25)),
+                DevOnly = artifact.DevOnly == true,
                 Equipped = equippedArtifacts[artifact.InstanceId] == true,
             })
         end
@@ -249,7 +250,7 @@ function InventoryService:HandleRequest(player, payload)
         for _, artifactId in ipairs(gathererIds) do
             local count = 0
             for _, artifact in ipairs(profile.Artifacts) do
-                if artifact.Id == artifactId and artifact.Level == 1 then count += 1 end
+                if artifact.Id == artifactId and artifact.Level == 1 and artifact.DevOnly == true then count += 1 end
             end
             missingById[artifactId] = math.max(0, 3 - count)
             requiredSlots += missingById[artifactId]
