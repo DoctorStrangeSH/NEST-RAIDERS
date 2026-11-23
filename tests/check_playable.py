@@ -24,7 +24,7 @@ assert 'folder:SetAttribute("CreatedCount", created)' in plots
 assert 'folder:SetAttribute("ExpectedCount", #PLOT_DEFINITIONS)' in plots
 assert 'return self._initialized, created' in plots
 world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
-assert 'FrostHighlands' in health and 'FrostRunePrompt' in health
+assert 'FrostHighlands' in world_health and 'FrostRunePrompt' in world_health
 assert 'Создано участков: %d из 6' in world_health
 assert 'Папка PlayerPlots не создана службой PlotService' in world_health
 
