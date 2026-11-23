@@ -103,6 +103,28 @@ assert 'Vector3.new(0, 16, 520)' in world and 'Vector3.new(0, 11, -112)' in worl
 
 assert 'CurrentBiome' in client and 'ПРОБУЖДЕНО РУН' in client
 
+# Frost Highlands: biome-specific egg table, collection gate, world content and trial.
+assert 'FrostHighlands = {' in biomes and 'FrostEgg' in biomes
+assert 'FrostFox = 60' in biomes and 'SnowOwl = 30' in biomes and 'GlacierBear = 10' in biomes
+assert 'FrostFox = {' in Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+assert 'SnowOwl = {' in Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+assert 'GlacierBear = {' in Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+assert 'FrostHighlands = {' in eggs and 'Vector3.new(-22, 20, 1020)' in eggs
+assert 'player:GetAttribute("CurrentBiome") ~= requiredZone' in eggs
+assert 'ProgressionService:CanEnterZone(player, requiredZone)' in eggs
+assert 'frost.Name = "FrostHighlands"' in world
+assert 'FrostSnowTop' in world and 'FrostPineTrunk' in world and 'GlacierCrystal' in world
+assert 'FrostRunePrompt' in world and 'Руна сияния' in world and 'Руна ледника' in world and 'Руна зимы' in world
+assert 'FrostPortal' in world and 'FrostReturnPortal' in world
+assert 'FrostTrialRunes = {}' in profile_template
+assert 'profile.QuestProgress.FrostTrialRunes' in progression
+assert 'profile.CompletedQuests.frost_trial = true' in progression
+assert 'self:AddXP(player, 180)' in progression
+assert 'FrostTrialProgress' in progression and 'FrostTrialCompleted' in progression
+assert 'updateBiomeTrialPanel' in client and 'FrostTrialProgress' in client
+assert 'FrostHighlands' in health and 'FrostRunePrompt' in health
+
+
 assert 'for _, player in ipairs(Players:GetPlayers()) do' in progression
 assert 'if boundPlayers[player] then return end' in progression
 assert 'self:RefreshZoneUnlocks(player)' in progression
