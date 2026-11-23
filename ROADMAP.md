@@ -378,3 +378,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add CI regression checks for the guard and protected hatch execution.
 - [ ] Roblox Studio: trigger hatch rapidly several times and verify each egg produces at most one companion.
 - [ ] Verify normal hatch, corrupted legacy egg, follower refresh error, collection update and save/rejoin in Studio.
+
+### Critical Studio report fix — missing PlayerPlots (2026-11-23)
+
+- [x] Investigate screenshot showing `Участки игроков не созданы`: issue is in PlotService initialization/build path, not the HUD.
+- [x] Make PlotService folder creation idempotent; reuse an existing folder instead of blindly creating a duplicate.
+- [x] Build each of six plots in an isolated protected call so one malformed plot cannot silently abort the entire batch.
+- [x] Publish actual and expected plot counts as folder attributes and log the exact failed plot.
+- [x] Improve WorldHealthCheck to report exact count and missing PlotService folder.
+- [x] Add CI checks for resilient creation and actionable diagnostics.
+- [ ] Import newest artifact into Roblox Studio and confirm WorldHealth becomes READY and six plots are visible.
+- [ ] If still degraded, capture Output: `[NEST RAIDERS] Plot build failed`, `Service Init failed: PlotService`, and the new created-count diagnostic.
