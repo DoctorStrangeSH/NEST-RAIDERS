@@ -356,6 +356,19 @@ function CompanionService:RefreshPlayer(player)
         end
     end
 
+    -- Newly hatched followers should appear beside their owner immediately.
+    -- Otherwise each model starts around world origin and slowly lerps across
+    -- the entire island, looking as though the hatch did nothing.
+    local character = player.Character
+    local spawnRoot = character and character:FindFirstChild("HumanoidRootPart")
+    if spawnRoot then
+        for index, pet in ipairs(followers) do
+            local side = (index - (#followers + 1) / 2) * 2.6
+            local behind = 4 + math.floor((index - 1) / 2) * 2.1
+            pet:PivotTo(spawnRoot.CFrame * CFrame.new(side, -2.2, behind))
+        end
+    end
+
     task.spawn(function()
         while player.Parent and self._generations[player] == generation do
             local character = player.Character
