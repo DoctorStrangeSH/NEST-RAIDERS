@@ -10,6 +10,7 @@ local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
 local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
+local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)
 
 local EggService = {}
 local EGG_RESPAWN_SECONDS = 20
@@ -74,14 +75,30 @@ local function syncAttributes(player, profile)
     player:SetAttribute("Coins", profile.Coins)
 end
 
-local function chooseCompanion()
+local function chooseCompanion(eggId)
+    local eggDefinition
+    for _, biome in pairs(BiomeCatalog) do
+        for _, egg in pairs(biome.Eggs or {}) do
+            if egg.Id == eggId then eggDefinition = egg break end
+        end
+        if eggDefinition then break end
+    end
+    if not eggDefinition then return COMPANIONS[1] end
+
     local totalWeight = 0
-    for _, companion in ipairs(COMPANIONS) do totalWeight += companion.Weight end
+    for speciesId, weight in pairs(eggDefinition.SpeciesWeights or {}) do
+        if CompanionCatalog[speciesId] and weight > 0 then totalWeight += weight end
+    end
+    if totalWeight <= 0 then return COMPANIONS[1] end
+
     local roll = math.random() * totalWeight
     local cursor = 0
-    for _, companion in ipairs(COMPANIONS) do
-        cursor += companion.Weight
-        if roll <= cursor then return companion end
+    for speciesId, weight in pairs(eggDefinition.SpeciesWeights) do
+        local definition = CompanionCatalog[speciesId]
+        if definition and weight > 0 then
+            cursor += weight
+            if roll <= cursor then return definition end
+        end
     end
     return COMPANIONS[1]
 end
@@ -101,7 +118,8 @@ function EggService:Collect(player, egg)
 
     egg:SetAttribute("Collected", true)
     table.insert(profile.EggInventory, {
-        Id = "MeadowEgg",
+        Id = egg:GetAttribute("EggId") or "MeadowEgg",
+        BiomeId = egg:GetAttribute("BiomeId") or "Meadow",
         InstanceId = tostring(os.time()) .. "_" .. tostring(math.random(100000, 999999)),
         CollectedAt = os.time(),
     })
@@ -144,6 +162,9 @@ function EggService:Collect(player, egg)
         local slot = available[math.random(1, #available)]
         egg.CFrame = CFrame.new(EGG_SPAWN_POSITIONS[slot])
         egg:SetAttribute("SpawnSlot", slot)
+        local spawnDefinition = BiomeCatalog.Meadow
+        egg:SetAttribute("BiomeId", spawnDefinition.Id)
+        egg:SetAttribute("EggId", spawnDefinition.DefaultEggId)
         egg.Size = originalSize
         egg.Transparency = 1
         egg:SetAttribute("Collected", false)
@@ -214,7 +235,7 @@ function EggService:_HatchUnlocked(player, station)
         end
         geneticTrait = egg.GeneticTrait
     else
-        definition = chooseCompanion()
+        definition = chooseCompanion(egg.Id or "MeadowEgg")
         geneticTrait = chooseGeneticTrait()
     end
 
@@ -322,6 +343,9 @@ function EggService:Init()
             local slot = shuffledSlots[index]
             egg.CFrame = CFrame.new(EGG_SPAWN_POSITIONS[slot])
             egg:SetAttribute("SpawnSlot", slot)
+            local spawnDefinition = BiomeCatalog.Meadow
+            egg:SetAttribute("BiomeId", spawnDefinition.Id)
+            egg:SetAttribute("EggId", spawnDefinition.DefaultEggId)
             egg:SetAttribute("Collected", false)
             egg.Transparency = 0
             local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
