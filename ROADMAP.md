@@ -521,8 +521,9 @@ Source and automated packaging checks do not substitute for actual gameplay test
 
 ### Sprint 4.21 — Frost Highlands vertical slice (2026-11-23)
 - [x] Add the third explorable island with a snowfield, pine grove, glacier crystals, and a two-way route to Emerald Wilds.
+- [x] Connect both islands with a walkable nine-section ice causeway; keep portals as optional fast travel.
 - [x] Gate Frost Highlands behind level 12 and the completed Emerald Grove trial.
-- [x] Add the Frost Egg with a biome-specific hatch table: Frost Fox 60%, Snow Owl 30%, Glacier Bear 10%.
+- [x] Add the Frost Egg with a biome-specific hatch table: Frost Fox 60%, Snow Owl 30%, Glacier Bear 10%; disclose odds on an in-world sign.
 - [x] Add three collectible Frost species with distinct low-poly follower/display silhouettes.
 - [x] Add three persistent trial runes (Aurora, Glacier, Winter), a one-time +180 XP reward, and the Emberlands quest gate.
 - [x] Extend the shared objective panel to show either Emerald or Frost trial progress.
