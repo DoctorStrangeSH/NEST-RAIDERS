@@ -1510,6 +1510,25 @@ function WorldBuilder:Build()
     guardianLight.Range = 28
     guardianLight.Brightness = 2
     guardianLight.Parent = guardianCore
+    local guardianEffectAttachment = Instance.new("Attachment")
+    guardianEffectAttachment.Name = "GuardianEffectAttachment"
+    guardianEffectAttachment.Parent = guardianCore
+    local guardianBurst = Instance.new("ParticleEmitter")
+    guardianBurst.Name = "GuardianWindupBurst"
+    guardianBurst.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+    guardianBurst.Enabled = false
+    guardianBurst.Rate = 0
+    guardianBurst.Lifetime = NumberRange.new(0.45, 0.9)
+    guardianBurst.Speed = NumberRange.new(7, 13)
+    guardianBurst.SpreadAngle = Vector2.new(180, 180)
+    guardianBurst.Rotation = NumberRange.new(0, 360)
+    guardianBurst.RotSpeed = NumberRange.new(-100, 100)
+    guardianBurst.LightEmission = 0.8
+    guardianBurst.Size = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.5),
+        NumberSequenceKeypoint.new(1, 0),
+    })
+    guardianBurst.Parent = guardianEffectAttachment
     for side = -1, 1, 2 do
         local arm = part(templeGuardian, "GuardianArm_" .. side,
             Vector3.new(4, 10, 5), Vector3.new(78 + side * 8, 28, 2598),
