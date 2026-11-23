@@ -10,6 +10,8 @@ local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)
 
 local AncientCraftingService = {}
 local CRAFT_LOCKS = {}
+local LAST_REQUEST_AT = {}
+local REQUEST_COOLDOWN_SECONDS = 1.5
 local EGG_CAPACITY = 20
 local ELDERWOOD_COST = 10
 local COIN_COST = 300
@@ -105,6 +107,9 @@ function AncientCraftingService:Init()
 
     prompt.Triggered:Connect(function(player)
         if CRAFT_LOCKS[player] then return end
+        local now = os.clock()
+        if now - (LAST_REQUEST_AT[player] or 0) < REQUEST_COOLDOWN_SECONDS then return end
+        LAST_REQUEST_AT[player] = now
         CRAFT_LOCKS[player] = true
         local ok, err = pcall(craft, player, station, prompt)
         CRAFT_LOCKS[player] = nil
@@ -118,6 +123,7 @@ function AncientCraftingService:Init()
 
     Players.PlayerRemoving:Connect(function(player)
         CRAFT_LOCKS[player] = nil
+        LAST_REQUEST_AT[player] = nil
     end)
 end
 
