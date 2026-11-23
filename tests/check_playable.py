@@ -33,6 +33,15 @@ book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua")
 profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
 player_data = Path("src/ServerScriptService/Server/Services/PlayerDataService.lua").read_text()
 progression = Path("src/ServerScriptService/Server/Services/ProgressionService.lua").read_text()
+assert 'ProfilePersistence' in player_data
+assert 'and "TEMPORARY" or "SAVED"' in player_data
+assert 'player:GetAttribute("ProfilePersistence")' in client
+assert 'Сохранение: ВКЛ' in client and 'Сохранение: ТЕСТ' in client
+assert 'local FOLLOW_INTERVAL = 0.1' in companions
+assert '* 4.2' in companions, "Active pets need more lateral spacing"
+assert 'current:Lerp(target, 0.3)' in companions
+assert 'current.LookVector:Dot(target.LookVector)' in companions
+
 assert 'Players.PlayerAdded:Connect(bindPlayer)' in progression
 assert 'for _, player in ipairs(Players:GetPlayers()) do' in progression
 assert 'if boundPlayers[player] then return end' in progression
