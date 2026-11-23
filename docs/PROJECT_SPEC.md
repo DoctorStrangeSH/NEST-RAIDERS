@@ -464,3 +464,9 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The client uses these signals for a guardian recoil reaction (body compression, head recoil, core flash and crystal sparks), a subtle hit camera shake, and a stronger red-screen/camera response when the player takes damage.
 - These effects are cosmetic and local to the challenged player. Boss health, damage, cooldowns, attack resolution and rewards remain server-authoritative.
 - Sound effects are intentionally not assigned placeholder asset IDs. Curated/licensed Roblox audio assets must be selected and verified before sound is marked complete.
+
+
+## Forgotten Heart combat readability — Sprint 4.39
+- Crystal Slam warning zones use cyan, Echo Pulse uses violet, and Shard Rain uses pink. The warnings remain local to the challenged player.
+- The boss health bar animates to the latest server-replicated health value and changes accent color at phase II.
+- Successful player hits display a short floating damage number calculated from the replicated health delta. This is display-only; the server remains authoritative for hit validation and damage.
