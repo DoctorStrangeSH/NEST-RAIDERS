@@ -777,3 +777,17 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Rejoin a private published test experience and confirm Moonpetal, Starshard, and Elderwood values persist.
 
 **Scope note:** This is a unified read-only inventory view; it does not add new resource sources, sinks, or alter economy balance.\n
+
+### Sprint 4.41 — Ancient Egg advanced recipe (2026-11-23)
+
+- [x] Upgrade the Ancient Egg recipe to consume 10 Elderwood, 5 Moonpetals, 3 Starshards and 300 coins.
+- [x] Validate every material and coin balance on the server before charging anything.
+- [x] Return a precise missing-resource message without consuming partial ingredients.
+- [x] Deduct all ingredients after egg catalog, inventory capacity, zone, station distance and profile checks pass.
+- [x] Replicate the updated Elderwood, Moonpetal, Starshard and coin balances immediately after crafting.
+- [x] Update the in-world recipe sign and static regression tests.
+- [ ] Roblox Studio: verify exact costs, successful craft, each insufficient-resource case, full egg bag, out-of-range use and rapid prompt requests.
+- [ ] Verify crafting does not partially deduct ingredients on any rejected attempt.
+- [ ] Rejoin a private published test and verify the crafted egg and remaining materials persist.
+
+**Design intent:** the Whispering Grove and Forgotten Heart Cave rewards now feed into the Ancient Heights crafting loop. The existing Ancient Egg odds remain unchanged.
