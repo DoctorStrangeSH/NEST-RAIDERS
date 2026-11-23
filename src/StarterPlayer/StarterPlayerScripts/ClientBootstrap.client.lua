@@ -1195,6 +1195,80 @@ emptyLabel.TextWrapped = true
 emptyLabel.Visible = false
 emptyLabel.Parent = list
 
+-- Keep panels mutually exclusive regardless of which gameplay action opens them.
+-- Picker is the sole nested dialog and retains its companion display underneath.
+local modalPanels = {
+    shopPanel, nestPanel, displayPanel, buildPanel, visitPanel,
+    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel,
+}
+local closingOtherPanels = false
+local closeAllButton = Instance.new("TextButton")
+closeAllButton.Name = "CloseAllWindows"
+closeAllButton.AnchorPoint = Vector2.new(1, 0)
+closeAllButton.Position = UDim2.new(1, -12, 0, 12)
+closeAllButton.Size = UDim2.fromOffset(132, 40)
+closeAllButton.BackgroundColor3 = Color3.fromRGB(143, 68, 68)
+closeAllButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeAllButton.Font = Enum.Font.GothamBold
+closeAllButton.TextSize = 13
+closeAllButton.Text = "✕ ЗАКРЫТЬ ВСЁ"
+closeAllButton.ZIndex = 50
+closeAllButton.Visible = false
+closeAllButton.Parent = gui
+addCorner(closeAllButton, 10)
+
+local function updateCloseAllButton()
+    local anyVisible = false
+    for _, modal in ipairs(modalPanels) do
+        if modal.Visible then
+            anyVisible = true
+            break
+        end
+    end
+    closeAllButton.Visible = anyVisible
+end
+
+for _, modal in ipairs(modalPanels) do
+    modal:GetPropertyChangedSignal("Visible"):Connect(function()
+        if closingOtherPanels then return end
+        closingOtherPanels = true
+        if modal.Visible then
+            navScroll.Visible = false
+            navToggle.Text = "☰  МЕНЮ"
+            for _, other in ipairs(modalPanels) do
+                if other ~= modal and not (modal == pickerPanel and other == displayPanel) then
+                    other.Visible = false
+                end
+            end
+        end
+        closingOtherPanels = false
+        updateCloseAllButton()
+    end)
+end
+
+closeAllButton.Activated:Connect(function()
+    closingOtherPanels = true
+    for _, modal in ipairs(modalPanels) do modal.Visible = false end
+    closingOtherPanels = false
+    updateCloseAllButton()
+end)
+
+-- Escape closes ordinary panels. Placement editors keep their own Escape behavior.
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed or input.KeyCode ~= Enum.KeyCode.Escape then return end
+    if buildHint.Visible or dragHint.Visible then return end
+    if pickerPanel.Visible then
+        pickerPanel.Visible = false
+        return
+    end
+    if closeAllButton.Visible then
+        closingOtherPanels = true
+        for _, modal in ipairs(modalPanels) do modal.Visible = false end
+        closingOtherPanels = false
+        updateCloseAllButton()
+    end
+end)
+
 local function showNotice(message)
     local notice = gui:FindFirstChild("Notice")
     if not notice then
