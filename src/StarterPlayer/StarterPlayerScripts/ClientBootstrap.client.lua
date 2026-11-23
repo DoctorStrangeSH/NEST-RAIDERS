@@ -3442,13 +3442,14 @@ local function renderCollectionBook(data)
         details.Size = UDim2.new(1, -24, 0, 34)
         details.Font = Enum.Font.GothamMedium
         if entry.Discovered then
-            details.Text = string.format("%s  ·  В коллекции: %d  ·  +%d монет / 10 сек.",
-                entry.Rarity, entry.OwnedCount, entry.Income)
+            local origin = entry.DiscoveredBiome and ("  ·  Найден: " .. tostring(entry.BiomeName)) or ""
+            details.Text = string.format("%s  ·  В коллекции: %d  ·  +%d монет / 10 сек.%s",
+                entry.Rarity, entry.OwnedCount, entry.Income, origin)
         elseif entry.HybridOnly then
             details.Text = string.format("%s  ·  Только через разведение", entry.Rarity)
         else
-            details.Text = string.format("Редкость: %s  ·  Шанс из яйца луга: %d%%",
-                entry.Rarity, entry.HatchChance)
+            details.Text = string.format("%s  ·  %s: %d%%",
+                entry.Rarity, entry.EggName or "Яйцо", entry.HatchChance or 0)
         end
         details.TextColor3 = Color3.fromRGB(190, 204, 223)
         details.TextSize = 12
