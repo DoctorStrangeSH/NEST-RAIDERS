@@ -3546,20 +3546,20 @@ end
 
 local function updateFirstPlayGuide()
     if not player:GetAttribute("ProfileLoaded") then
-        guideText.Text = "ПЕРВОЕ ПРИКЛЮЧЕНИЕ\\nПодключаем сохранение..."
+        guideText.Text = "ПЕРВОЕ ПРИКЛЮЧЕНИЕ\nПодключаем сохранение..."
         guideHighlight.Enabled = false
         return
     end
     if (tonumber(player:GetAttribute("CompanionCount")) or 0) > 0 then
-        guideText.Text = "✓ ПЕРВЫЙ ПИТОМЕЦ!\\nОткрой ☰ МЕНЮ → МОИ ПИТОМЦЫ."
+        guideText.Text = "✓ ПЕРВЫЙ ПИТОМЕЦ!\nОткрой ☰ МЕНЮ → МОИ ПИТОМЦЫ."
         guideHighlight.Enabled = false
         guide.Visible = true
         return
     end
     local hasEgg = (tonumber(player:GetAttribute("EggCount")) or 0) > 0
     guideText.Text = hasEgg
-        and "ШАГ 2 / 2 · ВЫЛУПЛЕНИЕ\\nИди к светящемуся гнезду на своём участке. Нажми E / коснись кнопки."
-        or "ШАГ 1 / 2 · ПЕРВОЕ ЯЙЦО\\nНайди подсвеченное яйцо на острове. Подойди и нажми E / коснись кнопки."
+        and "ШАГ 2 / 2 · ВЫЛУПЛЕНИЕ\nИди к светящемуся гнезду на своём участке. Нажми E / коснись кнопки."
+        or "ШАГ 1 / 2 · ПЕРВОЕ ЯЙЦО\nНайди подсвеченное яйцо на острове. Подойди и нажми E / коснись кнопки."
     local target = firstPlayTarget()
     guideHighlight.Adornee = target
     guideHighlight.Enabled = target ~= nil
