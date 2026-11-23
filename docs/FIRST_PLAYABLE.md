@@ -292,3 +292,11 @@
 - Hatch odds: Ancient Stag 55%, Root Sprite 30%, Sky Serpent 15%.
 - New species use the existing genetic roll, collection discovery, follower and profile systems.
 - This remains a scripted placeholder environment pending curated Creator Store asset review.
+
+
+## Ancient Heights — Elderwood gathering
+- Find one of the six glowing Ancient Roots along the Elder Canopy path.
+- Hold E (or use the touch prompt) to collect 1–3 Elderwood.
+- Each root has an independent three-minute cooldown for each player.
+- Elderwood balance is shown in the Ancient Heights HUD and saved in the player profile.
+- Gathering requires the Ancient Heights unlock; client-side UI cannot grant materials.
