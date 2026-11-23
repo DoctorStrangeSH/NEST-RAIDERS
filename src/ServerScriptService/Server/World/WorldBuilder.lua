@@ -1287,6 +1287,97 @@ function WorldBuilder:Build()
     ancientOddsText.Font = Enum.Font.GothamBlack
     ancientOddsText.Parent = ancientOddsGui
 
+    -- A tucked-away ledge beyond the welcome sign rewards players who explore.
+    local whisperingGrove = Instance.new("Folder")
+    whisperingGrove.Name = "WhisperingGrove"
+    whisperingGrove.Parent = ancient
+
+    local steppingStones = {
+        Vector3.new(0, 19.2, 2648),
+        Vector3.new(5, 19.5, 2654),
+        Vector3.new(10, 19.8, 2660),
+        Vector3.new(15, 20.1, 2666),
+    }
+    for index, position in ipairs(steppingStones) do
+        local stone = part(whisperingGrove, "GroveStep_" .. index,
+            Vector3.new(7, 1.1, 6), position,
+            Color3.fromRGB(143, 155, 117), Enum.Material.Slate)
+        stone.CFrame *= CFrame.Angles(0, math.rad(index * 9), 0)
+        local marker = part(whisperingGrove, "GroveStepGlow_" .. index,
+            Vector3.new(0.35, 0.35, 3.2), position + Vector3.new(0, 0.65, 0),
+            Color3.fromRGB(179, 224, 132), Enum.Material.Neon)
+        marker.CanCollide = false
+        marker.CanTouch = false
+        marker.CanQuery = false
+    end
+
+    local groveRock = part(whisperingGrove, "WhisperingGroveFloatingRock",
+        Vector3.new(38, 14, 36), Vector3.new(18, 10, 2680),
+        Color3.fromRGB(83, 91, 73), Enum.Material.Rock, Enum.PartType.Ball)
+    groveRock.CanCollide = false
+    local grovePlatform = part(whisperingGrove, "WhisperingGrovePlatform",
+        Vector3.new(38, 2, 36), Vector3.new(18, 18.5, 2680),
+        Color3.fromRGB(117, 145, 95), Enum.Material.Grass)
+    grovePlatform.CanCollide = true
+
+    for index = 1, 4 do
+        local angle = index * math.pi / 2
+        local offset = Vector3.new(math.cos(angle) * 12, 0, math.sin(angle) * 12)
+        local pillar = part(whisperingGrove, "GrovePillar_" .. index,
+            Vector3.new(2.4, 8, 2.4), Vector3.new(18, 22.5, 2680) + offset,
+            Color3.fromRGB(116, 105, 78), Enum.Material.Rock)
+        local rune = part(whisperingGrove, "GroveRune_" .. index,
+            Vector3.new(0.35, 4.2, 0.35), pillar.Position + Vector3.new(0, 0.2, 1.25),
+            Color3.fromRGB(185, 235, 143), Enum.Material.Neon)
+        rune.CanCollide = false
+        rune.CanTouch = false
+        rune.CanQuery = false
+        local light = Instance.new("PointLight")
+        light.Color = rune.Color
+        light.Range = 12
+        light.Brightness = 0.75
+        light.Parent = rune
+    end
+
+    local elderHeart = part(whisperingGrove, "ElderHeartAltar",
+        Vector3.new(5, 3, 5), Vector3.new(18, 20.8, 2680),
+        Color3.fromRGB(119, 91, 65), Enum.Material.Wood)
+    local heartCrystal = part(whisperingGrove, "ElderHeartCrystal",
+        Vector3.new(2.2, 3.2, 2.2), elderHeart.Position + Vector3.new(0, 2.5, 0),
+        Color3.fromRGB(190, 237, 140), Enum.Material.Neon, Enum.PartType.Ball)
+    heartCrystal.CanCollide = false
+    local heartLight = Instance.new("PointLight")
+    heartLight.Color = heartCrystal.Color
+    heartLight.Range = 18
+    heartLight.Brightness = 1.4
+    heartLight.Parent = heartCrystal
+    local heartPrompt = Instance.new("ProximityPrompt")
+    heartPrompt.Name = "ElderHeartPrompt"
+    heartPrompt.ActionText = "Пробудить"
+    heartPrompt.ObjectText = "Сердце древней рощи"
+    heartPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    heartPrompt.HoldDuration = 1.2
+    heartPrompt.MaxActivationDistance = 10
+    heartPrompt.RequiresLineOfSight = false
+    heartPrompt.Parent = elderHeart
+
+    local groveSign = part(whisperingGrove, "WhisperingGroveSign",
+        Vector3.new(18, 6, 1), Vector3.new(18, 25, 2700),
+        Color3.fromRGB(66, 77, 55), Enum.Material.WoodPlanks)
+    groveSign.CanCollide = false
+    local groveGui = Instance.new("SurfaceGui")
+    groveGui.Face = Enum.NormalId.Front
+    groveGui.Parent = groveSign
+    local groveLabel = Instance.new("TextLabel")
+    groveLabel.Size = UDim2.fromScale(1, 1)
+    groveLabel.BackgroundTransparency = 1
+    groveLabel.Text = "ШЁПОТ ДРЕВНЕЙ РОЩИ\\nНайди её сердце"
+    groveLabel.TextColor3 = Color3.fromRGB(224, 241, 192)
+    groveLabel.TextScaled = true
+    groveLabel.TextWrapped = true
+    groveLabel.Font = Enum.Font.GothamBlack
+    groveLabel.Parent = groveGui
+
     return world
 end
 
