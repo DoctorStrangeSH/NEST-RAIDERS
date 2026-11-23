@@ -186,3 +186,14 @@ A successful CI build validates the Roblox XML packaging, **not gameplay**. Trea
 - [ ] Studio acceptance: touch multiple positions, confirm the final position is the only one submitted.
 - [ ] Studio acceptance: test touch button safe area, all footprint sizes, edge rejection, rotate/cancel, and server rejections.
 - [ ] Confirm all UI/input interactions in real Roblox Studio Play mode before declaring this gameplay-ready.
+
+### Playable-first placement regression fix (2026-11-23)
+
+- [x] Fix late local declarations causing early build rotate/cancel handlers to capture unrelated global variables.
+- [x] Bind build placement UI to one shared, forward-declared local editor state and forward-declared stop function.
+- [x] Add `tests/check_playable.py` for HUD bootstrap ordering, editor wiring, and `.rbxlx` contents.
+- [x] Run the regression checks during GitHub Actions before uploading the place artifact.
+- [ ] Validate rotate, cancel, confirm and mobile touch controls with actual Roblox Studio input.
+- [ ] Check server and client Output for runtime errors in a two-player Studio session.
+
+**Status:** Source fix integrated. CI success is not a substitute for Roblox Studio acceptance.
