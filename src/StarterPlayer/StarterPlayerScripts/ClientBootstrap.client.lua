@@ -4075,10 +4075,15 @@ local function requestForgottenBossCameraShake(duration, strength)
     end)
 end
 
-local lastForgottenBossHealth = tonumber(player:GetAttribute("ForgottenHeartBossHealth")) or 360
+local lastForgottenBossHealth = tonumber(player:GetAttribute("ForgottenHeartBossHealth"))
 
 local function showForgottenBossDamageNumber()
-    local health = tonumber(player:GetAttribute("ForgottenHeartBossHealth")) or lastForgottenBossHealth
+    local health = tonumber(player:GetAttribute("ForgottenHeartBossHealth"))
+    if not health then return end
+    if lastForgottenBossHealth == nil then
+        lastForgottenBossHealth = health
+        return
+    end
     local damage = math.max(0, lastForgottenBossHealth - health)
     lastForgottenBossHealth = health
     if damage <= 0 then return end
