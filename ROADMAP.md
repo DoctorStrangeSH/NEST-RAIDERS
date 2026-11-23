@@ -244,3 +244,14 @@ Successful CI packaging remains separate from real play testing.
 - [ ] Replace temporary block-based props with curated Roblox-licensed models after actual Play verification.
 
 **Playable First:** This is a visual/wayfinding source update, not confirmation of runtime functionality.
+
+### Playable-first cylinder geometry corrections (2026-11-23)
+
+- [x] Inspect cylinder dimensions in the world and plot generators (Roblox cylinders use the local X axis).
+- [x] Flatten egg garden platforms and pedestals with X-axis thickness and explicit 90° Z rotation.
+- [x] Correct nest bowls, breeding altar rings, and parent pads to have shallow vertical thickness after rotation.
+- [x] Add CI checks for the corrected dimensions and orientation.
+- [ ] Inspect egg pickup, hatch prompts, altar accessibility, and collision behavior in Roblox Studio.
+- [ ] Verify the appearance on desktop and mobile and replace primitive geometry with polished licensed assets only after validating the playable scene.
+
+CI verifies source and packaging, **not actual Roblox physics or visual correctness**.
