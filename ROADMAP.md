@@ -618,3 +618,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend world health checks and static regression coverage for the secret route and altar.
 - [ ] Roblox Studio runtime: test gathering, cooldowns, reconnect persistence, multiplayer isolation, secret traversal, one-time reward, and mobile readability.
 - [ ] Add a meaningful Elderwood sink (crafting or unlock) before expanding the resource economy.
+
+
+### Sprint 4.28 — Elderwood crafting workshop (2026-11-23)
+- [x] Add an Elderwood workshop and a visible in-world recipe sign in Ancient Heights.
+- [x] Add server-authoritative crafting for the Ancient Egg using 10 Elderwood and 300 coins.
+- [x] Validate current biome, zone unlock, live character, prompt distance, profile readiness, egg capacity, and catalog recipe before charging.
+- [x] Add the crafted Ancient Egg to the normal saved egg inventory with AncientHeights provenance so the existing hatch flow and 55/30/15 table remain authoritative.
+- [x] Replicate Elderwood, Coins, and EggCount immediately after crafting.
+- [x] Add world health checks and static regression coverage for the workshop, recipe, costs, capacity and validation.
+- [ ] Roblox Studio runtime: verify exact costs, insufficient-resource rejection, full-bag rejection, hatch result/odds, rejoin persistence, and two-player isolation.
+- [ ] Balance Elderwood gathering and Ancient Egg recipe cost after playtesting.
