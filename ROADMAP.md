@@ -267,3 +267,14 @@ CI verifies source and packaging, **not actual Roblox physics or visual correctn
 - [ ] Validate multiplayer plot ownership and DataStore persistence in Studio.
 
 **Limitation:** The structural check verifies instances and prompts, not whether collecting/hatching works at runtime.
+
+### Playable-first early-join profile synchronization (2026-11-23)
+
+- [x] Fix EggService startup race: players already connected while DataStore loading was in progress did not subscribe to ProfileLoaded updates.
+- [x] Bind the same profile-load listener for existing and future players, synchronize already loaded profiles immediately, and clear bookkeeping when players leave.
+- [x] Add static regression checks for both early-join and later-join cases.
+- [ ] Roblox Studio: join while profile load is delayed and verify EggCount and CompanionCount update when loading finishes.
+- [ ] Roblox Studio: verify the first egg pickup/hatch/companion HUD counters and own plot assignment.
+- [ ] Roblox Studio: confirm a multiplayer session retains correct per-player counters.
+
+The fix is committed, but the in-game flow is still not runtime-verified.
