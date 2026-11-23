@@ -1300,7 +1300,7 @@ function WorldBuilder:Build()
     }
     for index, offset in ipairs(benchLegs) do
         part(elderwoodWorkshop, "WorkshopLeg_" .. index, Vector3.new(0.8, 2.2, 0.8),
-            workbench.Position + offset, Color3.fromRGB(82, 61, 44), Enum.Material.Wood)
+            workbench.Position + offset + Vector3.new(0, -0.7, 0), Color3.fromRGB(82, 61, 44), Enum.Material.Wood)
     end
     local workbenchCrystal = part(elderwoodWorkshop, "AncientEggCraftingCrystal",
         Vector3.new(2.2, 3.2, 2.2), workbench.Position + Vector3.new(0, 2.6, 0),
