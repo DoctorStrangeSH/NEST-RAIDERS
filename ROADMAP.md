@@ -594,3 +594,13 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend the shared Russian trial HUD, world health diagnostics, and CI regression checks.
 - [ ] Roblox Studio runtime: test ordered puzzle, wrong-order reset, reconnect persistence, multiplayer isolation, boss attacks/dodge, reward exactly once, and Ancient Heights travel.
 - [ ] Full Ancient Heights biome content, mobile layout, combat feel, and performance acceptance remain for follow-up sprints.
+
+
+### Sprint 4.26 — Ancient Heights exploration slice (2026-11-23)
+- [x] Expand the Ancient Heights landing platform into an explorable elder-canopy garden with old trees, rune pillars, and a central stone path.
+- [x] Add Ancient Egg world pickups and reuse the existing server-validated collection, respawn, and hatch flow.
+- [x] Add a biome-owned 55% / 30% / 15% hatch table for three Ancient Heights companion species.
+- [x] Add distinct follower silhouettes for the Ancient Stag, Root Sprite, and Sky Serpent.
+- [x] Add structural world-health checks and static CI regression coverage for the new biome slice.
+- [ ] Roblox Studio runtime: verify the level-50 + crystal_trial gate, arrival/return travel, egg collection and respawn, hatch odds, follower visuals, multiplayer isolation, and profile persistence.
+- [ ] Tune island collision, mobile readability, traversal boundaries, and performance after Studio playtest.
