@@ -109,7 +109,6 @@ function EggService:Collect(player, egg)
     player:SetAttribute("LastNotice", "Ты подобрал яйцо луга!")
 
     local originalSize = egg.Size
-    local originalCFrame = egg.CFrame
     egg:SetAttribute("SpawnSlot", nil)
     egg.CanCollide = false
     local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
@@ -139,20 +138,8 @@ function EggService:Collect(player, egg)
             if not occupied[slot] then table.insert(available, slot) end
         end
         if #available == 0 then
-            task.delay(2, function()
-                if egg and egg.Parent then
-                    egg:SetAttribute("Collected", true)
-                    task.delay(2, function()
-                        if egg and egg.Parent then
-                            egg:SetAttribute("Collected", false)
-                            egg:SetAttribute("SpawnSlot", nil)
-                            egg.Transparency = 0
-                            if prompt then prompt.Enabled = true end
-                        end
-                    end)
-                end
-            end)
-            return
+            warn("[NEST RAIDERS] No free egg spawn slot; using a fallback slot.")
+            for slot = 1, #EGG_SPAWN_POSITIONS do table.insert(available, slot) end
         end
         local slot = available[math.random(1, #available)]
         egg.CFrame = CFrame.new(EGG_SPAWN_POSITIONS[slot])
