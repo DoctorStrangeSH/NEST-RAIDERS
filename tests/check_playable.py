@@ -82,8 +82,8 @@ assert 'player.CharacterAdded:Connect(function()' in companions
 assert 'local spawnRoot = character and character:FindFirstChild("HumanoidRootPart")' in companions
 assert 'pet:PivotTo(spawnRoot.CFrame * CFrame.new(side, -2.2, behind) * CFrame.Angles(0, math.pi, 0))' in companions
 assert 'CFrame.Angles(0, math.pi, 0)' in companions
-assert '* 3.6' in companions
-assert 'Lerp(target, 0.22)' in companions
+assert '* 4.2' in companions
+assert 'current:Lerp(target, 0.3)' in companions
 assert 'local collectTween = TweenService:Create(' in eggs
 assert 'collectTween:Play()' in eggs and 'respawnTween:Play()' in eggs
 assert companions.index('pet:PivotTo(spawnRoot.CFrame') < companions.index('task.spawn(function()', companions.index('function CompanionService:RefreshPlayer'))
