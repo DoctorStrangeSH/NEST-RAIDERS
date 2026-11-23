@@ -17,6 +17,8 @@ local ProfileTemplate = {
     DiscoveredSpecies = {},
     Materials = {
         AshCrystal = 0,
+        LastAshfallClaimEventId = "",
+        AshfallClaimedNodes = {},
     },
     ActiveCompanions = {},
     CompanionIncomeRemainder = 0,
