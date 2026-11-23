@@ -125,6 +125,13 @@ local CompanionCatalog = {
         PetMoodBonus = 8,
         PlayMoodBonus = 4,
         EggId = "FrostEgg",
+        Ability = {
+            Id = "FrostCache",
+            Name = "Морозный тайник",
+            Description = "Находит тайник с монетами среди сугробов.",
+            UnlockLevel = 7,
+            CooldownSeconds = 300,
+        },
     },
     SnowOwl = {
         Id = "SnowOwl",
@@ -140,6 +147,13 @@ local CompanionCatalog = {
         PetMoodBonus = 4,
         PlayMoodBonus = 8,
         EggId = "FrostEgg",
+        Ability = {
+            Id = "AuroraGaze",
+            Name = "Взгляд авроры",
+            Description = "Дарит опыт, найденный в северном сиянии.",
+            UnlockLevel = 7,
+            CooldownSeconds = 300,
+        },
     },
     GlacierBear = {
         Id = "GlacierBear",
@@ -155,6 +169,13 @@ local CompanionCatalog = {
         PetMoodBonus = 12,
         PlayMoodBonus = 0,
         EggId = "FrostEgg",
+        Ability = {
+            Id = "GlacierGuard",
+            Name = "Страж ледника",
+            Description = "Накопляет крупную монетную защиту в гнезде.",
+            UnlockLevel = 7,
+            CooldownSeconds = 300,
+        },
     },
 
     -- Hybrid species are breeding-only. Weight = 0 keeps them out of natural hatches.
