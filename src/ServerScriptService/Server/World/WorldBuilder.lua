@@ -631,6 +631,29 @@ function WorldBuilder:Build()
     sanctuaryText.Font = Enum.Font.GothamBlack
     sanctuaryText.Parent = sanctuaryGui
 
+    -- Physical causeway from Frost Highlands: portals are optional shortcuts.
+    local emberCauseway = Instance.new("Folder")
+    emberCauseway.Name = "EmberCauseway"
+    emberCauseway.Parent = world
+    for index = 1, 9 do
+        local z = 1130 + (index - 1) * 40
+        local x = index % 2 == 0 and -3 or 3
+        local segment = part(emberCauseway, "EmberBridgeSegment_" .. index,
+            Vector3.new(20, 2, 44), Vector3.new(x, 16.5, z),
+            Color3.fromRGB(92, 83, 82), Enum.Material.Basalt)
+        local edgeGlow = part(emberCauseway, "BridgeLavaBeacon_" .. index,
+            Vector3.new(1.1, 2.8, 1.1), Vector3.new(x + (index % 2 == 0 and 8 or -8), 18.5, z),
+            Color3.fromRGB(255, 126, 56), Enum.Material.Neon, Enum.PartType.Ball)
+        edgeGlow.CanCollide = false
+        if index % 2 == 1 then
+            local beaconLight = Instance.new("PointLight")
+            beaconLight.Color = Color3.fromRGB(255, 126, 56)
+            beaconLight.Range = 10
+            beaconLight.Brightness = 0.45
+            beaconLight.Parent = edgeGlow
+        end
+    end
+
     local emberEggs = Instance.new("Folder")
     emberEggs.Name = "EggSpawnPoints"
     emberEggs.Parent = ember
