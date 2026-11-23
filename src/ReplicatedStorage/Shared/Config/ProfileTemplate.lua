@@ -7,6 +7,9 @@ local ProfileTemplate = {
         StarterIsland = true,
     },
     CompletedQuests = {},
+    QuestProgress = {
+        EmeraldTrialRunes = {},
+    },
     EggInventory = {},
     Companions = {},
     -- Permanent species discoveries survive merging or consuming the last copy.
