@@ -553,3 +553,13 @@
 - [ ] Verify the panel is mutually exclusive with other modal windows and closes with its own close control and «ЗАКРЫТЬ ВСЁ».
 - [ ] Verify layout at 375px mobile width and desktop.
 - [ ] In a private published test place, rejoin and confirm all five balances persist.\n
+
+## Sprint 4.41 — Advanced Ancient Egg recipe
+- [ ] Collect 10 Elderwood, 5 Moonpetals, 3 Starshards and 300 coins; craft one Ancient Egg.
+- [ ] Verify each ingredient and the coin balance decrease by exactly the recipe amount.
+- [ ] Repeat with each ingredient individually missing; verify the notice names the missing material and no other balance changes.
+- [ ] Fill the egg bag; verify crafting is rejected without spending anything.
+- [ ] Trigger from outside prompt range and from a different biome; verify no spending.
+- [ ] Spam the prompt; verify one egg and one ingredient deduction only.
+- [ ] Hatch the crafted Ancient Egg at the normal nest station and verify the 55/30/15 catalog odds remain unchanged.
+- [ ] Rejoin a private published test and verify egg and remaining resources persist.
