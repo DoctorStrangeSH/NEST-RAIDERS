@@ -113,6 +113,37 @@ function WorldHealthCheck:Check()
         end
     end
 
+
+    local ember = world and world:FindFirstChild("Emberlands")
+    if not ember then
+        fail("Пепельные земли не созданы")
+    else
+        local heatZones = ember:FindFirstChild("HeatZones")
+        local heatCount = 0
+        for _, zone in ipairs(heatZones and heatZones:GetChildren() or {}) do
+            if zone:IsA("BasePart") and (tonumber(zone:GetAttribute("HeatPerSecond")) or 0) > 0 then
+                heatCount += 1
+            end
+        end
+        if heatCount < 3 then fail("В Пепельных землях должно быть не менее трёх зон жара") end
+        local sanctuary = ember:FindFirstChild("CoolingSanctuary")
+        local cooling = sanctuary and sanctuary:FindFirstChild("CoolingZone")
+        if not cooling or (tonumber(cooling:GetAttribute("CoolingPerSecond")) or 0) <= 0 then
+            fail("Не создана рабочая зона охлаждения")
+        end
+        local emberEggs = ember:FindFirstChild("EggSpawnPoints")
+        local eggCount = 0
+        for _, egg in ipairs(emberEggs and emberEggs:GetChildren() or {}) do
+            if egg:IsA("BasePart") and egg:GetAttribute("WorldEgg")
+                and egg:GetAttribute("BiomeId") == "Emberlands"
+                and egg:FindFirstChild("CollectEggPrompt") then eggCount += 1 end
+        end
+        if eggCount < 3 then fail("Яйца Пепельных земель: " .. eggCount .. " из 3") end
+        if not ember:FindFirstChild("EmberReturnPortal") then fail("Нет обратного портала из Пепельных земель") end
+        local frost = world:FindFirstChild("FrostHighlands")
+        if not frost or not frost:FindFirstChild("EmberPortal") then fail("Нет портала из Ледяных нагорий в Пепельные земли") end
+    end
+
     return #issues == 0, issues
 end
 
