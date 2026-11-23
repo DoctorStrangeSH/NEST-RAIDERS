@@ -1292,7 +1292,7 @@ function WorldBuilder:Build()
     elderwoodWorkshop.Name = "ElderwoodWorkshop"
     elderwoodWorkshop.Parent = ancient
     local workbench = part(elderwoodWorkshop, "AncientEggCraftingStation",
-        Vector3.new(9, 2.2, 5), Vector3.new(-20, 20.8, 2630),
+        Vector3.new(9, 2.2, 5), Vector3.new(-29, 20.8, 2630),
         Color3.fromRGB(111, 83, 57), Enum.Material.WoodPlanks)
     local benchLegs = {
         Vector3.new(-3.4, -1.5, -1.6), Vector3.new(3.4, -1.5, -1.6),
