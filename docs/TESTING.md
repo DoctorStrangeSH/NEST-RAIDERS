@@ -431,3 +431,17 @@
 - [ ] In a two-player session, verify one player's rune progress and chest claim do not complete or reward the other player.
 - [ ] Rejoin a private published test and verify rune progress and the one-time chest reward persist.
 - [ ] Verify HUD at 375px, 768px, and desktop widths; ensure the temple objective panel does not overlap the Elderwood balance.
+
+
+## Heartwood Guardian boss — Studio acceptance
+- [ ] Complete the temple rune puzzle and claim the treasure chest before attempting the boss.
+- [ ] Confirm the boss rejects interaction before the player's own temple puzzle and chest claim.
+- [ ] Confirm each hit removes 24 boss HP and the health bar starts at 240.
+- [ ] Verify Vine Slam warning lasts 1.8 seconds, deals 30 damage within 15 studs, and can be dodged by moving farther away.
+- [ ] Verify Root Wave warning lasts 1.25 seconds, deals 18 damage within 26 studs, and can be dodged by leaving the radius.
+- [ ] Verify attacks alternate and the player can continue attacking after each cooldown.
+- [ ] In a two-player session, verify each player's boss HP, windup, victory and rewards are independent.
+- [ ] Rejoin a private published test and verify boss HP and victory state persist.
+- [ ] Defeat the boss and confirm exactly one Heartwood Guardian is added, 600 XP is granted, and no duplicate reward is possible.
+- [ ] Confirm the new companion appears in the collection book as boss-exclusive and follows the player if an active slot is available.
+- [ ] Verify boss HUD warnings and health bar at 375px, 768px and desktop widths.
