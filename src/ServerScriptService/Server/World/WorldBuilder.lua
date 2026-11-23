@@ -1719,6 +1719,129 @@ function WorldBuilder:Build()
     groveLabel.Font = Enum.Font.GothamBlack
     groveLabel.Parent = groveGui
 
+    -- Forgotten Heart Cave: a small traversable side dungeon with its own crystal puzzle.
+    local forgottenCave = Instance.new("Folder")
+    forgottenCave.Name = "ForgottenHeartCave"
+    forgottenCave.Parent = ancient
+
+    local caveIsland = part(forgottenCave, "ForgottenCaveFloatingRock",
+        Vector3.new(108, 20, 88), Vector3.new(145, 7, 2600),
+        Color3.fromRGB(69, 74, 73), Enum.Material.Rock, Enum.PartType.Ball)
+    caveIsland.CanCollide = false
+    local caveFloor = part(forgottenCave, "ForgottenCaveFloor",
+        Vector3.new(96, 2, 76), Vector3.new(145, 18, 2600),
+        Color3.fromRGB(76, 83, 82), Enum.Material.Slate)
+    local caveBridge = part(forgottenCave, "ForgottenCaveBridge",
+        Vector3.new(66, 1.4, 9), Vector3.new(62, 19, 2600),
+        Color3.fromRGB(117, 111, 96), Enum.Material.Slate)
+    for index = 1, 9 do
+        local railX = 30 + index * 7
+        for _, side in ipairs({-1, 1}) do
+            local rail = part(forgottenCave, "CaveBridgeRail_" .. index .. "_" .. side,
+                Vector3.new(0.8, 2.4, 0.8), Vector3.new(railX, 20.5, 2600 + side * 4.2),
+                Color3.fromRGB(93, 83, 68), Enum.Material.Wood)
+            rail.CanCollide = true
+        end
+    end
+
+    local caveWalls = {
+        { Name = "CaveNorthWall", Size = Vector3.new(96, 24, 5), Position = Vector3.new(145, 30, 2562) },
+        { Name = "CaveSouthWall", Size = Vector3.new(96, 24, 5), Position = Vector3.new(145, 30, 2638) },
+        { Name = "CaveBackWall", Size = Vector3.new(5, 24, 81), Position = Vector3.new(192, 30, 2600) },
+        { Name = "CaveEntryLeft", Size = Vector3.new(5, 24, 25), Position = Vector3.new(98, 30, 2574) },
+        { Name = "CaveEntryRight", Size = Vector3.new(5, 24, 25), Position = Vector3.new(98, 30, 2626) },
+    }
+    for _, wall in ipairs(caveWalls) do
+        local stoneWall = part(forgottenCave, wall.Name, wall.Size, wall.Position,
+            Color3.fromRGB(78, 82, 78), Enum.Material.Rock)
+        stoneWall.CanCollide = true
+    end
+    local caveCeiling = part(forgottenCave, "ForgottenCaveCeiling",
+        Vector3.new(96, 5, 76), Vector3.new(145, 43, 2600),
+        Color3.fromRGB(57, 62, 61), Enum.Material.Rock)
+    caveCeiling.CanCollide = false
+    for index = 1, 7 do
+        local x = 106 + index * 11
+        local stalactite = part(forgottenCave, "CaveStalactite_" .. index,
+            Vector3.new(2.4, 7 + (index % 3) * 2, 2.4), Vector3.new(x, 38, 2570 + (index % 2) * 60),
+            Color3.fromRGB(92, 96, 91), Enum.Material.Rock, Enum.PartType.Ball)
+        stalactite.CanCollide = false
+    end
+
+    local caveCrystalDefinitions = {
+        { Id = "Root", Name = "Корень", Position = Vector3.new(124, 20.5, 2584), Color = Color3.fromRGB(157, 220, 115) },
+        { Id = "River", Name = "Река", Position = Vector3.new(145, 20.5, 2614), Color = Color3.fromRGB(111, 204, 231) },
+        { Id = "Dawn", Name = "Рассвет", Position = Vector3.new(166, 20.5, 2584), Color = Color3.fromRGB(255, 190, 111) },
+    }
+    for _, definition in ipairs(caveCrystalDefinitions) do
+        local crystal = part(forgottenCave, "CaveCrystal_" .. definition.Id,
+            Vector3.new(3.2, 5.2, 3.2), definition.Position,
+            definition.Color, Enum.Material.Neon, Enum.PartType.Ball)
+        crystal:SetAttribute("CaveCrystalId", definition.Id)
+        crystal.CanCollide = false
+        local light = Instance.new("PointLight")
+        light.Color = definition.Color
+        light.Range = 13
+        light.Brightness = 1.1
+        light.Parent = crystal
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "CaveCrystalPrompt"
+        prompt.ActionText = "Коснуться"
+        prompt.ObjectText = "Кристалл: " .. definition.Name
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.55
+        prompt.MaxActivationDistance = 9
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = crystal
+    end
+
+    local caveClue = part(forgottenCave, "ForgottenCaveClue",
+        Vector3.new(12, 6, 1), Vector3.new(108, 25, 2600),
+        Color3.fromRGB(62, 68, 63), Enum.Material.WoodPlanks)
+    caveClue.CFrame *= CFrame.Angles(0, math.rad(90), 0)
+    caveClue.CanCollide = false
+    local caveClueGui = Instance.new("SurfaceGui")
+    caveClueGui.Face = Enum.NormalId.Front
+    caveClueGui.Parent = caveClue
+    local caveClueText = Instance.new("TextLabel")
+    caveClueText.Size = UDim2.fromScale(1, 1)
+    caveClueText.BackgroundTransparency = 1
+    caveClueText.Text = "СЕРДЦЕ ПЕЩЕРЫ\\nКОРЕНЬ → РЕКА → РАССВЕТ"
+    caveClueText.TextColor3 = Color3.fromRGB(224, 235, 205)
+    caveClueText.TextScaled = true
+    caveClueText.TextWrapped = true
+    caveClueText.Font = Enum.Font.GothamBlack
+    caveClueText.Parent = caveClueGui
+
+    local caveCache = Instance.new("Model")
+    caveCache.Name = "ForgottenCaveCache"
+    caveCache.Parent = forgottenCave
+    local caveChest = part(caveCache, "ForgottenCaveChest",
+        Vector3.new(6, 3.2, 4.5), Vector3.new(178, 20.6, 2615),
+        Color3.fromRGB(92, 75, 57), Enum.Material.WoodPlanks)
+    local caveChestLid = part(caveCache, "ForgottenCaveChestLid",
+        Vector3.new(6.2, 1.1, 4.7), Vector3.new(178, 22.7, 2615),
+        Color3.fromRGB(117, 137, 128), Enum.Material.Metal)
+    caveChestLid.CanCollide = false
+    local caveChestGem = part(caveCache, "ForgottenCaveChestGem",
+        Vector3.new(1.6, 1.6, 1.6), Vector3.new(178, 24, 2612.6),
+        Color3.fromRGB(180, 220, 255), Enum.Material.Neon, Enum.PartType.Ball)
+    caveChestGem.CanCollide = false
+    local chestGlow = Instance.new("PointLight")
+    chestGlow.Color = caveChestGem.Color
+    chestGlow.Range = 15
+    chestGlow.Brightness = 1.2
+    chestGlow.Parent = caveChestGem
+    local caveChestPrompt = Instance.new("ProximityPrompt")
+    caveChestPrompt.Name = "ForgottenCaveChestPrompt"
+    caveChestPrompt.ActionText = "Открыть"
+    caveChestPrompt.ObjectText = "Сокровищница забытого сердца"
+    caveChestPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    caveChestPrompt.HoldDuration = 1
+    caveChestPrompt.MaxActivationDistance = 10
+    caveChestPrompt.RequiresLineOfSight = false
+    caveChestPrompt.Parent = caveChest
+
     return world
 end
 
