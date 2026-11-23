@@ -183,9 +183,9 @@ function WorldBuilder:Build()
         label.Parent = gui
     end
     makeWayfindingSign("EggGroveSign", Vector3.new(-18, 14, -39),
-        "ЛУГ ЯИЦ\\nСобери своё первое яйцо", Color3.fromRGB(255, 226, 164))
+        "ЛУГ ЯИЦ\nСобери своё первое яйцо", Color3.fromRGB(255, 226, 164))
     makeWayfindingSign("NestDistrictSign", Vector3.new(27, 14, -39),
-        "ЛИЧНЫЕ ГНЁЗДА\\nВылупи питомца у себя", Color3.fromRGB(192, 245, 207))
+        "ЛИЧНЫЕ ГНЁЗДА\nВылупи питомца у себя", Color3.fromRGB(192, 245, 207))
 
     local sign = part(island, "WelcomeSign", Vector3.new(18, 10, 1), Vector3.new(0, 16, -91), Color3.fromRGB(105, 72, 47), Enum.Material.Wood)
     local surface = Instance.new("SurfaceGui")
