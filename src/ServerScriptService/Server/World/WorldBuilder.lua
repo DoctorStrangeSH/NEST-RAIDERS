@@ -1320,6 +1320,22 @@ function WorldBuilder:Build()
     craftPrompt.MaxActivationDistance = 11
     craftPrompt.RequiresLineOfSight = false
     craftPrompt.Parent = workbench
+    local recipeSign = part(elderwoodWorkshop, "AncientEggRecipeSign",
+        Vector3.new(14, 6, 1), Vector3.new(-29, 26, 2637),
+        Color3.fromRGB(65, 78, 55), Enum.Material.WoodPlanks)
+    recipeSign.CanCollide = false
+    local recipeGui = Instance.new("SurfaceGui")
+    recipeGui.Face = Enum.NormalId.Front
+    recipeGui.Parent = recipeSign
+    local recipeLabel = Instance.new("TextLabel")
+    recipeLabel.Size = UDim2.fromScale(1, 1)
+    recipeLabel.BackgroundTransparency = 1
+    recipeLabel.Text = "РЕЦЕПТ ДРЕВНЕГО ЯЙЦА\\n10 эссенции + 300 монет"
+    recipeLabel.TextColor3 = Color3.fromRGB(230, 241, 198)
+    recipeLabel.TextScaled = true
+    recipeLabel.TextWrapped = true
+    recipeLabel.Font = Enum.Font.GothamBlack
+    recipeLabel.Parent = recipeGui
 
     -- A tucked-away ledge beyond the welcome sign rewards players who explore.
     local whisperingGrove = Instance.new("Folder")
