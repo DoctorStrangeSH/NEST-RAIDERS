@@ -615,3 +615,12 @@
 - [ ] Compare displayed extra materials against actual server-side inventory changes; verify no phantom rewards.
 - [ ] With no Gatherer equipped, notices should not display a Gatherer bonus.
 - [ ] Verify the displayed percentage is the expected long-run bonus, not a guaranteed bonus on every attempt.
+
+## Sprint 4.44 — Studio-only sampling tool
+- Open **АРТЕФАКТЫ** in Studio Play, equip a Gatherer and select **ТЕСТ: 1000 СБОРОВ БЕЗ НАЧИСЛЕНИЯ** at the top of the collection list.
+- The test uses the actual server `ArtifactBonusService:ApplyGatherBonus` formula on 1000 sample yields (1, 2, 3). It compares the observed extra-material rate against the expected equipped Gatherer rate.
+- No resource balances or node cooldowns are modified. The request is blocked in published servers.
+- [ ] With nothing equipped, confirm 0 extra drops and 0% expected yield.
+- [ ] Equip a +5% / +10% / +15% Gatherer and confirm the simulated observed rate is near the expected rate.
+- [ ] Unequip the Gatherer and rerun to confirm the bonus disappears.
+- [ ] Ensure simulated samples never award real materials or bypass node cooldowns.
