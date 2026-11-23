@@ -1158,6 +1158,99 @@ function WorldBuilder:Build()
     ancientLabel.Font = Enum.Font.GothamBlack
     ancientLabel.Parent = ancientGui
 
+
+    -- Ancient Heights exploration slice: an old canopy sanctuary with ruins,
+    -- walkable garden paths and its own collectible Ancient Egg.
+    local ancientGarden = Instance.new("Folder")
+    ancientGarden.Name = "ElderCanopy"
+    ancientGarden.Parent = ancient
+
+    local path = part(ancientGarden, "ElderStonePath", Vector3.new(12, 1.2, 68),
+        Vector3.new(0, 19.1, 2604), Color3.fromRGB(150, 133, 105), Enum.Material.Slate)
+    path.CanCollide = true
+    for index = 1, 8 do
+        local side = index % 2 == 0 and -1 or 1
+        local z = 2572 + math.floor((index - 1) / 2) * 17
+        local trunkHeight = 13 + (index % 3) * 3
+        local trunk = part(ancientGarden, "ElderTreeTrunk_" .. index,
+            Vector3.new(3.2, trunkHeight, 3.2), Vector3.new(side * (27 + (index % 2) * 4), 18.5 + trunkHeight / 2, z),
+            Color3.fromRGB(102, 79, 58), Enum.Material.Wood)
+        local canopy = part(ancientGarden, "ElderTreeCanopy_" .. index,
+            Vector3.new(15, 12, 15), trunk.Position + Vector3.new(0, trunkHeight / 2 + 5, 0),
+            index % 2 == 0 and Color3.fromRGB(104, 153, 93) or Color3.fromRGB(128, 171, 103),
+            Enum.Material.Grass, Enum.PartType.Ball)
+        canopy.CanCollide = false
+    end
+
+    local ruinFolder = Instance.new("Folder")
+    ruinFolder.Name = "ElderRuins"
+    ruinFolder.Parent = ancientGarden
+    for index = 1, 6 do
+        local angle = index * math.pi * 2 / 6
+        local position = Vector3.new(math.cos(angle) * 37, 18.5, 2600 + math.sin(angle) * 37)
+        local pillar = part(ruinFolder, "AncientPillar_" .. index,
+            Vector3.new(4, 13 + (index % 3) * 2, 4),
+            position + Vector3.new(0, 6.5, 0), Color3.fromRGB(132, 119, 95), Enum.Material.Rock)
+        pillar.CFrame *= CFrame.Angles(0, math.rad(index * 13), math.rad((index % 2 == 0) and 2 or -2))
+        local rune = part(ruinFolder, "AncientRune_" .. index,
+            Vector3.new(0.45, 3.5, 0.45), position + Vector3.new(0, 7, 2.1),
+            Color3.fromRGB(182, 223, 143), Enum.Material.Neon)
+        rune.CanCollide = false
+        if index % 2 == 0 then
+            local light = Instance.new("PointLight")
+            light.Color = rune.Color
+            light.Range = 10
+            light.Brightness = 0.45
+            light.Parent = rune
+        end
+    end
+
+    local ancientEggs = Instance.new("Folder")
+    ancientEggs.Name = "EggSpawnPoints"
+    ancientEggs.Parent = ancient
+    local ancientEggPositions = {
+        Vector3.new(-22, 21, 2580), Vector3.new(22, 21, 2580),
+        Vector3.new(0, 21, 2620), Vector3.new(-30, 21, 2600),
+        Vector3.new(30, 21, 2600),
+    }
+    for index, position in ipairs(ancientEggPositions) do
+        local egg = part(ancientEggs, "AncientEgg_" .. index, Vector3.new(4.5, 5.2, 4.5),
+            position, Color3.fromRGB(183, 220, 143), Enum.Material.Neon, Enum.PartType.Ball)
+        egg:SetAttribute("WorldEgg", true)
+        egg:SetAttribute("BiomeId", "AncientHeights")
+        egg:SetAttribute("EggId", "AncientEgg")
+        local glow = Instance.new("PointLight")
+        glow.Color = Color3.fromRGB(194, 236, 151)
+        glow.Range = 14
+        glow.Brightness = 1.25
+        glow.Parent = egg
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "CollectEggPrompt"
+        prompt.ActionText = "Собрать"
+        prompt.ObjectText = "Яйцо древнего древа"
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.5
+        prompt.MaxActivationDistance = 11
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = egg
+    end
+
+    local ancientOddsSign = part(ancient, "AncientEggOddsSign", Vector3.new(31, 10, 1),
+        Vector3.new(0, 27, 2640), Color3.fromRGB(77, 75, 57), Enum.Material.WoodPlanks)
+    ancientOddsSign.CanCollide = false
+    local ancientOddsGui = Instance.new("SurfaceGui")
+    ancientOddsGui.Face = Enum.NormalId.Front
+    ancientOddsGui.Parent = ancientOddsSign
+    local ancientOddsText = Instance.new("TextLabel")
+    ancientOddsText.Size = UDim2.fromScale(1, 1)
+    ancientOddsText.BackgroundTransparency = 1
+    ancientOddsText.Text = "ЯЙЦО ДРЕВНЕГО ДРЕВА\\nОлень-древень · 55%\\nДух корней · 30%\\nНебесный змей · 15%"
+    ancientOddsText.TextColor3 = Color3.fromRGB(235, 239, 201)
+    ancientOddsText.TextScaled = true
+    ancientOddsText.TextWrapped = true
+    ancientOddsText.Font = Enum.Font.GothamBlack
+    ancientOddsText.Parent = ancientOddsGui
+
     return world
 end
 
