@@ -369,3 +369,12 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Roblox Studio: hatch a valid natural egg and breeding egg, verify accurate inventory decrement and companion creation.
 - [ ] In a disposable Studio test save, inject an egg with missing `GeneticTrait.Name`; verify no egg disappears.
 - [ ] Verify multiplayer, companion visuals and DataStore round trip; CI source checks do not replace Studio gameplay tests.
+
+### Playable-first hatch request serialization (2026-11-23)
+
+- [x] Serialize hatch requests per player so rapid/repeated ProximityPrompt triggers cannot overlap while follower refresh yields.
+- [x] Wrap the hatch operation with protected execution, always release the per-player guard, log unexpected errors, and show a recovery-oriented notice.
+- [x] Clear per-player hatch state when the player leaves.
+- [x] Add CI regression checks for the guard and protected hatch execution.
+- [ ] Roblox Studio: trigger hatch rapidly several times and verify each egg produces at most one companion.
+- [ ] Verify normal hatch, corrupted legacy egg, follower refresh error, collection update and save/rejoin in Studio.
