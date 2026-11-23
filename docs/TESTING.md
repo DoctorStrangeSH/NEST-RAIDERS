@@ -586,3 +586,16 @@
 
 - [ ] Click **ОБЪЕДИНИТЬ ×3**, verify the confirmation shows the resulting next tier, then cancel and verify nothing changes.
 - [ ] Confirm the merge and verify the three source instances are replaced by one upgraded instance.
+
+## Sprint 4.44 — Gatherer artifacts acceptance
+- [ ] Craft artifacts repeatedly and verify the three Gatherer entries are obtainable; expected family weight is 20% (12/6/2 out of 100).
+- [ ] Equip a Gatherer artifact and harvest an Elderwood root; verify server notice shows the gathering bonus and resource total increases according to the bonus roll.
+- [ ] Equip a Gatherer artifact and mine a Crystal Realm vein; verify the bonus applies after existing active-companion bonuses.
+- [ ] Compare a sufficiently large sample of harvests with no Gatherer artifact and with +5%, +10%, and +15% bonuses; verify average extra yield trends toward the displayed rate.
+- [ ] Upgrade a Gatherer artifact and verify its bonus scales by 25% per level.
+- [ ] Equip two Gatherer artifacts and verify combined bonus is capped at +50%.
+- [ ] Unequip the artifacts and verify gathering returns to the unmodified yield.
+- [ ] Verify node cooldowns remain 180 seconds and are not bypassed by artifact bonuses.
+- [ ] Verify wrong biome, locked progression, dead character, out-of-range and missing-profile attempts award no resources.
+- [ ] Rejoin and verify artifact levels, equipment and displayed bonus persist.
+- [ ] Check artifact collection text and effect labels at 375px mobile width.
