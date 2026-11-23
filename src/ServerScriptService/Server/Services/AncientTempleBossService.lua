@@ -11,11 +11,24 @@ local CompanionCatalog = require(game:GetService("ReplicatedStorage").Shared.Con
 local AncientTempleBossService = {}
 local BOSS_MAX_HEALTH = 240
 local PLAYER_HIT_DAMAGE = 24
-local BOSS_DAMAGE = 25
 local PLAYER_HIT_COOLDOWN = 0.9
 local BOSS_ATTACK_COOLDOWN = 4.5
-local BOSS_WINDUP_SECONDS = 1.5
-local BOSS_ATTACK_RADIUS = 19
+local BOSS_ATTACKS = {
+    {
+        Id = "VineSlam",
+        Warning = "Страж поднимает корни! Отойди от него!",
+        Damage = 30,
+        Radius = 15,
+        WindupSeconds = 1.8,
+    },
+    {
+        Id = "RootWave",
+        Warning = "Страж собирает волну корней! Уходи подальше!",
+        Damage = 18,
+        Radius = 26,
+        WindupSeconds = 1.25,
+    },
+}
 local REWARD_XP = 600
 local REWARD_COMPANION_ID = "HeartwoodGuardian"
 
@@ -136,6 +149,7 @@ function AncientTempleBossService:Init()
     self._lastPlayerHit = {}
     self._lastBossAttack = {}
     self._windups = {}
+    self._attackIndex = {}
     self._locks = {}
 
     local world = Workspace:WaitForChild("NestRaidersWorld", 30)
@@ -183,6 +197,7 @@ function AncientTempleBossService:Init()
                 profile.CompletedQuests.ancient_temple_boss = true
                 self._windups[player] = nil
                 player:SetAttribute("AncientTempleBossWindup", false)
+                player:SetAttribute("AncientTempleBossAttackType", "")
                 publish(player, profile, progress)
                 grantUniqueCompanion(player, profile)
                 ProgressionService:AddXP(player, REWARD_XP)
@@ -197,24 +212,35 @@ function AncientTempleBossService:Init()
             if (not lastAttack or now - lastAttack >= BOSS_ATTACK_COOLDOWN)
                 and not self._windups[player] then
                 self._lastBossAttack[player] = now
+                local attackIndex = (self._attackIndex[player] or 0) % #BOSS_ATTACKS + 1
+                self._attackIndex[player] = attackIndex
+                local attack = BOSS_ATTACKS[attackIndex]
                 self._windups[player] = true
                 player:SetAttribute("AncientTempleBossWindup", true)
-                player:SetAttribute("LastNotice", "Страж собирает силу корней! Отойди от него!")
-                task.delay(BOSS_WINDUP_SECONDS, function()
+                player:SetAttribute("AncientTempleBossAttackType", attack.Id)
+                player:SetAttribute("LastNotice", attack.Warning)
+                task.delay(attack.WindupSeconds, function()
                     self._windups[player] = nil
                     if not player.Parent then return end
                     player:SetAttribute("AncientTempleBossWindup", false)
+                    player:SetAttribute("AncientTempleBossAttackType", "")
+                    local currentProfile = PlayerDataService:GetProfile(player)
+                    if currentProfile and currentProfile.CompletedQuests
+                        and currentProfile.CompletedQuests.ancient_temple_boss == true then
+                        return
+                    end
                     local character = player.Character
                     local root = character and character:FindFirstChild("HumanoidRootPart")
                     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
                     if player:GetAttribute("CurrentBiome") == "AncientHeights"
                         and root and humanoid and humanoid.Health > 0
-                        and (root.Position - core.Position).Magnitude <= BOSS_ATTACK_RADIUS then
-                        humanoid:TakeDamage(BOSS_DAMAGE)
-                        player:SetAttribute("LastNotice",
-                            "Удар корней настиг тебя! Отходи во время предупреждения.")
+                        and (root.Position - core.Position).Magnitude <= attack.Radius then
+                        humanoid:TakeDamage(attack.Damage)
+                        player:SetAttribute("LastNotice", attack.Id == "VineSlam"
+                            and "Корни обрушились на тебя! В следующий раз уклонись от тяжёлого удара."
+                            or "Волна корней настигла тебя! Уходи за пределы арены во время подготовки.")
                     elseif player.Parent then
-                        player:SetAttribute("LastNotice", "Ты уклонился от удара Стража!")
+                        player:SetAttribute("LastNotice", "Ты уклонился от атаки Стража!")
                     end
                 end)
             end
@@ -233,6 +259,7 @@ function AncientTempleBossService:Init()
         if boundPlayers[player] then return end
         boundPlayers[player] = true
         player:SetAttribute("AncientTempleBossWindup", false)
+        player:SetAttribute("AncientTempleBossAttackType", "")
         local function sync()
             if not player.Parent or not player:GetAttribute("ProfileLoaded") then return end
             local profile, progress = getState(player)
@@ -247,6 +274,7 @@ function AncientTempleBossService:Init()
         self._lastPlayerHit[player] = nil
         self._lastBossAttack[player] = nil
         self._windups[player] = nil
+        self._attackIndex[player] = nil
         self._locks[player] = nil
     end)
     for _, player in ipairs(Players:GetPlayers()) do bindPlayer(player) end
