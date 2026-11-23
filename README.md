@@ -135,5 +135,6 @@ Successful breeding triggers a temporary altar animation: the two selected compa
 - Frost Portal is gated by level 12 and the completed Emerald Grove trial.
 - Frost Egg hatch odds are disclosed in-world: Frost Fox 60%, Snow Owl 30%, Glacier Bear 10%.
 - Three persistent runes complete the Heart of Winter trial for +180 XP and satisfy the Emberlands quest gate.
+- Frost Fox, Snow Owl, and Glacier Bear each unlock a unique server-validated active ability at companion level 7.
 - World egg pickup is restricted to the player's current unlocked biome.
 - All visuals are scripted prototypes pending Roblox Studio art and gameplay acceptance.
