@@ -341,3 +341,7 @@
 - Root Wave: the Guardian recoils and spreads its arms to release the wave.
 - Thorn Burst: in phase two, the Guardian spreads its branches and flares its crown.
 - On victory, the heart flashes gold and releases a burst of particles before returning to its calm glow.
+
+
+## Whispering Grove hidden cache
+Explore the stepping stones beyond the Elder Heart altar. Four rune pads conceal a second treasure. Read the sequence from the grove's clue: Moon → Leaf → Dew → Star. An incorrect touch resets your personal sequence. The hidden cache grants Moonpetals, coins and XP once per player.
