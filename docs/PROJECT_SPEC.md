@@ -292,8 +292,8 @@ A feature is done only when:
 ## Implemented biome slice — Frost Highlands (Sprint 4.21)
 The first Frost Highlands vertical slice is integrated in the prototype:
 - Entry is server-gated by level 12 and the account-bound `emerald_trial` completion.
-- The island contains a snowfield, pine grove, glacier crystals, three Frost Egg pickups, three trial runes, and a return portal to Emerald Wilds.
-- Frost Egg odds are 60% Frost Fox, 30% Snow Owl, and 10% Glacier Bear; the shared BiomeCatalog is the hatch source of truth.
+- The island contains a snowfield, pine grove, glacier crystals, three Frost Egg pickups, three trial runes, and a return portal to Emerald Wilds. A walkable nine-section ice causeway connects it physically to Emerald Wilds; portals are optional fast travel.
+- Frost Egg odds are 60% Frost Fox, 30% Snow Owl, and 10% Glacier Bear; the shared BiomeCatalog is the hatch source of truth and the odds are disclosed on an in-world sign.
 - Frost trial progress (Aurora, Glacier, Winter) is persistent; completing all three grants +180 XP once and satisfies the configured Emberlands quest prerequisite. Emberlands still requires level 22.
 - Egg collection is rejected unless the player's server-owned current biome matches the egg's unlocked biome.
 - These are scripted placeholder visuals. Studio runtime, persistence, collision, mobile, and performance acceptance remain mandatory before this slice is considered release-ready.
