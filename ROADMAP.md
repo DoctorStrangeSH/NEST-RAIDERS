@@ -744,3 +744,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend static regression checks for animations, crystal clusters, breakage, reward reveal and health validation.
 - [ ] Roblox Studio: test every animation at desktop and mobile aspect ratios; verify crystals regrow and another player sees no local effects.
 - [ ] Review animation timing and visual readability during real combat.
+
+
+### Sprint 4.38 — Forgotten Heart combat feedback (2026-11-23)
+- [x] Publish server-authoritative hit and damage pulse attributes for the personal boss encounter.
+- [x] Add a local guardian hit reaction: body compression, head recoil, core flash and crystal impact sparks.
+- [x] Add a short camera shake when the player lands a hit.
+- [x] Add a red damage flash and stronger camera shake when a boss attack hits the player.
+- [x] Keep visual feedback local to the player whose encounter generated the event.
+- [x] Extend static regression checks for combat feedback signals and effects.
+- [ ] Add curated, licensed sound assets for attacks, impacts, phase transition and victory.
+- [ ] Roblox Studio: verify hit feedback timing, camera shake comfort, mobile performance and multiplayer isolation.
+- [ ] Tune damage, cooldowns and windups after hands-on combat testing.
