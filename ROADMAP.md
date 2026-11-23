@@ -841,3 +841,6 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add a Studio-only Gatherer QA fixture to test equipping, resource yields and three-to-one merges without rare-drop grinding.
 - [x] Independently guard the fixture on the server and enforce the collection capacity.
 - [ ] Verify the fixture and all Gatherer gameplay in Roblox Studio before closing Sprint 4.44.
+
+- [x] Show the actual additional resource count from Gatherer artifacts in harvest notices, including zero on unsuccessful bonus rolls; retain the displayed expected bonus percentage.
+- [ ] Verify those bonus notices against real Studio Play harvests before final Sprint 4.44 sign-off.
