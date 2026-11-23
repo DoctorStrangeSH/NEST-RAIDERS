@@ -128,6 +128,12 @@ local DEFINITIONS = {
         Detail = Color3.fromRGB(180, 239, 232),
         Kind = "HeartWisp",
     },
+    ForgottenHeartGuardian = {
+        Body = Color3.fromRGB(81, 111, 130),
+        Accent = Color3.fromRGB(126, 224, 246),
+        Detail = Color3.fromRGB(181, 147, 235),
+        Kind = "ForgottenHeartGuardian",
+    },
     HeartwoodGuardian = {
         Body = Color3.fromRGB(105, 145, 91),
         Accent = Color3.fromRGB(205, 190, 126),
@@ -244,6 +250,18 @@ local function buildPet(parent, companion, index)
         makeShape(model, "EarRight", Vector3.new(0.42, 0.85, 0.35), Vector3.new(0.48, 2.55, 0.3), definition.Detail, Enum.PartType.Wedge)
         makeShape(model, "CrystalCrest", Vector3.new(0.4, 1.05, 0.4), Vector3.new(0, 2.7, 0.15), definition.Accent, Enum.PartType.Wedge)
         makeShape(model, "CrystalTail", Vector3.new(0.55, 0.55, 1.45), Vector3.new(0, 1.25, -1.2), definition.Detail, Enum.PartType.Wedge)
+    elseif definition.Kind == "ForgottenHeartGuardian" then
+        makeShape(model, "ChestHeart", Vector3.new(0.95, 0.95, 0.55), Vector3.new(0, 1.75, 1.0), definition.Accent)
+        makeShape(model, "ShoulderCrystalLeft", Vector3.new(0.65, 1.0, 0.65), Vector3.new(-1.05, 2.0, 0), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "ShoulderCrystalRight", Vector3.new(0.65, 1.0, 0.65), Vector3.new(1.05, 2.0, 0), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "CrownCrystal", Vector3.new(0.55, 1.15, 0.55), Vector3.new(0, 2.85, 0.15), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "LeftGauntlet", Vector3.new(0.75, 0.85, 0.75), Vector3.new(-1.25, 0.95, 0.3), definition.Detail)
+        makeShape(model, "RightGauntlet", Vector3.new(0.75, 0.85, 0.75), Vector3.new(1.25, 0.95, 0.3), definition.Detail)
+        local heartLight = Instance.new("PointLight")
+        heartLight.Color = definition.Accent
+        heartLight.Range = 11
+        heartLight.Brightness = 1.4
+        heartLight.Parent = body
     elseif definition.Kind == "HeartWisp" then
         makeShape(model, "Halo", Vector3.new(1.8, 0.22, 1.8), Vector3.new(0, 2.85, 0), definition.Accent, Enum.PartType.Cylinder)
         makeShape(model, "Core", Vector3.new(0.9, 0.9, 0.9), Vector3.new(0, 1.9, 0.1), definition.Detail)
