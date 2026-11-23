@@ -3749,7 +3749,7 @@ local function updateBiomeTrialPanel()
                 or "Сокровищница пробудила Хранителя. Атакуй его и уклоняйся от голубых меток на земле."
             trialBarFill.BackgroundColor3 = Color3.fromRGB(119, 211, 245)
             trialBarFill.Size = UDim2.fromScale(1, 1)
-            trialStatus.Text = caveBossCompleted and "ХРАНИТЕЛЬ ПОВЕРЖЕН" or "СЕКРЕТНАЯ БИТВА · ФАЗА I / II"
+            trialStatus.Text = caveBossCompleted and "ХРАНИТЕЛЬ ПОВЕРЖЕН" or string.format("СЕКРЕТНАЯ БИТВА · ФАЗА %d / II", tonumber(player:GetAttribute("ForgottenHeartBossPhase")) or 1)
             bossBarBack.Visible = true
             bossStatus.Visible = true
             local caveBossHealth = math.clamp(tonumber(player:GetAttribute("ForgottenHeartBossHealth")) or 360, 0, 360)
