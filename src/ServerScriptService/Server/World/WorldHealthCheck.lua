@@ -283,6 +283,16 @@ function WorldHealthCheck:Check()
             or not forgottenCave:FindFirstChild("ForgottenHeartBossSign") then
             fail("Нет арены или таблички Хранителя забытого сердца")
         end
+        local bossArenaCrystalCount = 0
+        for index = 1, 8 do
+            local crystalCluster = forgottenCave and forgottenCave:FindFirstChild("ForgottenHeartArenaCrystal_" .. index)
+            if crystalCluster and crystalCluster:FindFirstChild("CrystalCore") and crystalCluster:FindFirstChild("CrystalShard") then
+                bossArenaCrystalCount += 1
+            end
+        end
+        if bossArenaCrystalCount ~= 8 then
+            fail(string.format("Кристаллы арены Хранителя: %d из 8", bossArenaCrystalCount))
+        end
         local whisperingGrove = ancient:FindFirstChild("WhisperingGrove")
         local groveAltar = whisperingGrove and whisperingGrove:FindFirstChild("ElderHeartAltar")
         local grovePrompt = groveAltar and groveAltar:FindFirstChild("ElderHeartPrompt")
