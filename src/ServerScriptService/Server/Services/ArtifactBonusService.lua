@@ -7,16 +7,18 @@ local MAX_GATHER_BONUS = 0.50
 
 function ArtifactBonusService:GetGatherBonus(profile)
     if type(profile) ~= "table" then return 0 end
+    local artifacts = type(profile.Artifacts) == "table" and profile.Artifacts or {}
+    local equippedArtifacts = type(profile.EquippedArtifacts) == "table" and profile.EquippedArtifacts or {}
     local artifactsById = {}
-    for _, artifact in ipairs(profile.Artifacts or {}) do
+    for _, artifact in ipairs(artifacts) do
         if type(artifact) == "table" and type(artifact.InstanceId) == "string" then
             artifactsById[artifact.InstanceId] = artifact
         end
     end
 
     local totalBonus = 0
-    for _, instanceId in ipairs(profile.EquippedArtifacts or {}) do
-        local artifact = artifactsById[instanceId]
+    for _, instanceId in ipairs(equippedArtifacts) do
+        local artifact = type(instanceId) == "string" and artifactsById[instanceId] or nil
         local definition = artifact and ArtifactCatalog[artifact.Id]
         if definition then
             local level = math.clamp(math.floor(tonumber(artifact.Level) or 1), 1, 6)
