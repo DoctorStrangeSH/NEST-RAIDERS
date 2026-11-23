@@ -86,6 +86,19 @@ assert 'for biomeId, spawnPositions in pairs(EGG_SPAWN_POSITIONS) do' in eggs
 assert 'local allowed, reason = self:CanEnterZone(player, zoneId)' in progression
 assert 'character:PivotTo(CFrame.new(destination + Vector3.new(0, 4, 0)))' in progression
 assert '{ Id = "EmeraldWilds", DisplayName = "Изумрудный лес", RequiredLevel = 5, RequiredQuest = nil }' in game_config
+
+assert 'EmeraldTrialRunes = {}' in profile_template
+assert 'EmeraldTrialRunes' in world and 'EmeraldRunePrompt' in world
+assert 'Руна рощи' in world and 'Руна реки' in world and 'Руна рассвета' in world
+assert 'profile.QuestProgress.EmeraldTrialRunes[runeId] = true' in progression
+assert 'profile.CompletedQuests.emerald_trial = true' in progression
+assert 'self:AddXP(player, 100)' in progression
+assert 'EmeraldTrialProgress' in progression and 'EmeraldTrialCompleted' in progression
+assert 'RequiredQuest = "emerald_trial"' in game_config
+assert 'DisplayName = "Ледяные нагорья"' in game_config
+assert 'EmeraldTrialPanel' in client and 'updateEmeraldTrialPanel' in client
+assert 'CurrentBiome' in client and 'ПРОБУЖДЕНО РУН' in client
+
 assert 'for _, player in ipairs(Players:GetPlayers()) do' in progression
 assert 'if boundPlayers[player] then return end' in progression
 assert 'self:RefreshZoneUnlocks(player)' in progression
