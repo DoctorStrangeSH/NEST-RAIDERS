@@ -184,6 +184,11 @@ function EggService:Hatch(player, station)
         ParentSpecies = type(egg.ParentSpecies) == "table" and egg.ParentSpecies or nil,
     }
     table.insert(profile.Companions, companion)
+    -- Register a discovery at the moment of hatching, regardless of whether
+    -- this individual pet is later merged, bred or removed.
+    profile.DiscoveredSpecies = type(profile.DiscoveredSpecies) == "table"
+        and profile.DiscoveredSpecies or {}
+    profile.DiscoveredSpecies[companion.Id] = true
     profile.ActiveCompanions = profile.ActiveCompanions or {}
     if #profile.ActiveCompanions < 3 then
         table.insert(profile.ActiveCompanions, companion.InstanceId)
