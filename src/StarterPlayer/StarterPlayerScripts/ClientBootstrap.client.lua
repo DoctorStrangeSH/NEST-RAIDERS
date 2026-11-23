@@ -3965,16 +3965,51 @@ player:GetAttributeChangedSignal("AncientTempleBossWindup"):Connect(function()
 end)
 updateGuardianPhaseVisual()
 
--- The Forgotten Heart Guardian has its own local-only core animation and phase colors.
+-- The Forgotten Heart Guardian has client-local choreography so one player's fight
+-- never changes another player's view of the shared arena model.
 local forgottenBossVisualGeneration = 0
-local function getForgottenBossVisual()
+local forgottenBossAttackGeneration = 0
+local forgottenBossBrokenCrystals = {}
+local forgottenBossPhaseTwoPlayed = false
+
+local function getForgottenBossModel()
     local world = Workspace:FindFirstChild("NestRaidersWorld")
     local ancient = world and world:FindFirstChild("AncientHeights")
     local cave = ancient and ancient:FindFirstChild("ForgottenHeartCave")
-    local guardian = cave and cave:FindFirstChild("ForgottenHeartGuardian")
+    return cave and cave:FindFirstChild("ForgottenHeartGuardian"), cave
+end
+
+local function getForgottenBossVisual()
+    local guardian = getForgottenBossModel()
     local core = guardian and guardian:FindFirstChild("ForgottenHeartCore")
     local light = core and core:FindFirstChildOfClass("PointLight")
     return core, light
+end
+
+local function getForgottenBossArms()
+    local guardian = getForgottenBossModel()
+    if not guardian then return nil end
+    return guardian:FindFirstChild("GuardianArm_-1"), guardian:FindFirstChild("GuardianArm_1")
+end
+
+local function tweenForgottenBossArms(leftGoal, rightGoal, duration, style)
+    local left, right = getForgottenBossArms()
+    if left and leftGoal then
+        TweenService:Create(left, TweenInfo.new(duration, style or Enum.EasingStyle.Back, Enum.EasingDirection.Out), { CFrame = leftGoal }):Play()
+    end
+    if right and rightGoal then
+        TweenService:Create(right, TweenInfo.new(duration, style or Enum.EasingStyle.Back, Enum.EasingDirection.Out), { CFrame = rightGoal }):Play()
+    end
+end
+
+local function getForgottenBossArmBases()
+    local left, right = getForgottenBossArms()
+    return left and left.CFrame, right and right.CFrame
+end
+
+local function resetForgottenBossArms()
+    local left, right = getForgottenBossArmBases()
+    tweenForgottenBossArms(left, right, 0.32, Enum.EasingStyle.Quad)
 end
 
 local function updateForgottenBossPhaseVisual()
@@ -3995,9 +4030,72 @@ local function updateForgottenBossPhaseVisual()
     end
 end
 
+local function createForgottenBossDebris(origin, index, count)
+    local Debris = game:GetService("Debris")
+    for shardIndex = 1, count do
+        local shard = Instance.new("Part")
+        shard.Name = "ForgottenHeartLocalDebris"
+        shard.Size = Vector3.new(0.35 + shardIndex * 0.07, 0.65 + shardIndex * 0.08, 0.35 + shardIndex * 0.07)
+        shard.Material = Enum.Material.Neon
+        shard.Color = shardIndex % 2 == 0 and Color3.fromRGB(116, 213, 255) or Color3.fromRGB(180, 145, 239)
+        shard.Anchored = true
+        shard.CanCollide = false
+        shard.CanTouch = false
+        shard.CanQuery = false
+        shard.CFrame = CFrame.new(origin + Vector3.new(0, 1.2, 0))
+            * CFrame.Angles(math.rad(shardIndex * 19), math.rad(index * 31), math.rad(shardIndex * 37))
+        shard.Parent = Workspace
+        local angle = (shardIndex / count) * math.pi * 2 + index * 0.7
+        local destination = origin + Vector3.new(math.cos(angle) * (2 + shardIndex * 0.45), 1.5 + shardIndex * 0.35, math.sin(angle) * (2 + shardIndex * 0.45))
+        TweenService:Create(shard, TweenInfo.new(0.65 + shardIndex * 0.04, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Position = destination,
+            Orientation = Vector3.new(shardIndex * 31, index * 23, shardIndex * 47),
+            Transparency = 1,
+        }):Play()
+        Debris:AddItem(shard, 1.4)
+    end
+end
+
+local function breakForgottenBossArenaCrystals()
+    local _, cave = getForgottenBossModel()
+    if not cave then return end
+    for index = 1, 8 do
+        local cluster = cave:FindFirstChild("ForgottenHeartArenaCrystal_" .. index)
+        if cluster and not forgottenBossBrokenCrystals[cluster] then
+            forgottenBossBrokenCrystals[cluster] = true
+            local origin = cluster:GetPivot().Position
+            createForgottenBossDebris(origin, index, 5)
+            for _, piece in ipairs(cluster:GetDescendants()) do
+                if piece:IsA("BasePart") then
+                    TweenService:Create(piece, TweenInfo.new(0.24, Enum.EasingStyle.Quad), {
+                        Transparency = 1,
+                        Size = piece.Size * 0.18,
+                    }):Play()
+                end
+            end
+            task.delay(8, function()
+                if not cluster.Parent then return end
+                for _, piece in ipairs(cluster:GetDescendants()) do
+                    if piece:IsA("BasePart") then
+                        piece.Transparency = 0
+                        local originalSize = piece.Name == "CrystalCore" and Vector3.new(2.1, 5.2, 2.1) or Vector3.new(1.1, 2.8, 1.1)
+                        piece.Size = originalSize
+                        TweenService:Create(piece, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                            Size = originalSize,
+                        }):Play()
+                    end
+                end
+                forgottenBossBrokenCrystals[cluster] = nil
+            end)
+        end
+    end
+end
+
 local function playForgottenBossTelegraph()
     forgottenBossVisualGeneration += 1
+    forgottenBossAttackGeneration += 1
     local generation = forgottenBossVisualGeneration
+    local attackGeneration = forgottenBossAttackGeneration
     local core, light = getForgottenBossVisual()
     if not core then return end
     local phaseTwo = player:GetAttribute("ForgottenHeartBossPhase") == 2
@@ -4018,42 +4116,138 @@ local function playForgottenBossTelegraph()
             Range = phaseTwo and 38 or 31,
         }):Play()
     end
+
+    local leftBase, rightBase = getForgottenBossArmBases()
+    if leftBase and rightBase then
+        if attackType == "CrystalSlam" then
+            tweenForgottenBossArms(
+                leftBase * CFrame.new(0, 3.2, 0) * CFrame.Angles(math.rad(-32), 0, math.rad(-16)),
+                rightBase * CFrame.new(0, 3.2, 0) * CFrame.Angles(math.rad(-32), 0, math.rad(16)),
+                0.38
+            )
+            task.delay(0.82, function()
+                if attackGeneration ~= forgottenBossAttackGeneration then return end
+                tweenForgottenBossArms(
+                    leftBase * CFrame.new(0, -0.8, -0.8) * CFrame.Angles(math.rad(48), 0, math.rad(-8)),
+                    rightBase * CFrame.new(0, -0.8, -0.8) * CFrame.Angles(math.rad(48), 0, math.rad(8)),
+                    0.16,
+                    Enum.EasingStyle.Quad
+                )
+            end)
+        elseif attackType == "EchoPulse" then
+            tweenForgottenBossArms(
+                leftBase * CFrame.new(-1.1, 0.8, 0) * CFrame.Angles(0, 0, math.rad(52)),
+                rightBase * CFrame.new(1.1, 0.8, 0) * CFrame.Angles(0, 0, math.rad(-52)),
+                0.5
+            )
+        elseif attackType == "ShardRain" then
+            tweenForgottenBossArms(
+                leftBase * CFrame.new(-0.3, 2.6, 0.3) * CFrame.Angles(math.rad(-42), 0, math.rad(-28)),
+                rightBase * CFrame.new(0.3, 2.6, 0.3) * CFrame.Angles(math.rad(-42), 0, math.rad(28)),
+                0.42
+            )
+            breakForgottenBossArenaCrystals()
+        end
+    end
+
     task.delay(0.65, function()
         if generation ~= forgottenBossVisualGeneration or not core.Parent then return end
         updateForgottenBossPhaseVisual()
     end)
 end
 
+local function playForgottenBossPhaseTwo()
+    if forgottenBossPhaseTwoPlayed then return end
+    forgottenBossPhaseTwoPlayed = true
+    local core, light = getForgottenBossVisual()
+    if core then
+        local purple = Color3.fromRGB(198, 132, 255)
+        TweenService:Create(core, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Color = purple,
+            Size = Vector3.new(5.6, 5.6, 3.8),
+        }):Play()
+        if light then
+            TweenService:Create(light, TweenInfo.new(0.5), {
+                Color = purple,
+                Brightness = 8,
+                Range = 44,
+            }):Play()
+        end
+    end
+    local leftBase, rightBase = getForgottenBossArmBases()
+    if leftBase and rightBase then
+        tweenForgottenBossArms(
+            leftBase * CFrame.new(-1.5, 1.6, 0) * CFrame.Angles(0, 0, math.rad(68)),
+            rightBase * CFrame.new(1.5, 1.6, 0) * CFrame.Angles(0, 0, math.rad(-68)),
+            0.7
+        )
+    end
+    breakForgottenBossArenaCrystals()
+    task.delay(1.25, resetForgottenBossArms)
+end
+
 local function playForgottenBossVictory()
     forgottenBossVisualGeneration += 1
+    forgottenBossAttackGeneration += 1
     local generation = forgottenBossVisualGeneration
+    local guardian = getForgottenBossModel()
     local core, light = getForgottenBossVisual()
-    if not core then return end
-    local color = Color3.fromRGB(255, 224, 151)
+    if not core or not guardian then return end
+    local gold = Color3.fromRGB(255, 224, 151)
     TweenService:Create(core, TweenInfo.new(0.55, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Color = color,
+        Color = gold,
         Size = Vector3.new(6, 6, 4),
     }):Play()
     if light then
         TweenService:Create(light, TweenInfo.new(0.55), {
-            Color = color,
+            Color = gold,
             Brightness = 8,
             Range = 46,
         }):Play()
     end
-    task.delay(2, function()
+    local left, right = getForgottenBossArms()
+    if left then
+        TweenService:Create(left, TweenInfo.new(0.9, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out), {
+            CFrame = left.CFrame * CFrame.new(-2, -2.5, 0) * CFrame.Angles(0, 0, math.rad(-65)),
+            Transparency = 1,
+        }):Play()
+    end
+    if right then
+        TweenService:Create(right, TweenInfo.new(0.9, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out), {
+            CFrame = right.CFrame * CFrame.new(2, -2.5, 0) * CFrame.Angles(0, 0, math.rad(65)),
+            Transparency = 1,
+        }):Play()
+    end
+    for _, name in ipairs({"GuardianBody", "GuardianHead"}) do
+        local piece = guardian:FindFirstChild(name)
+        if piece and piece:IsA("BasePart") then
+            TweenService:Create(piece, TweenInfo.new(1.1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+                Transparency = 1,
+                Size = piece.Size * 0.65,
+            }):Play()
+        end
+    end
+    task.delay(2.2, function()
         if generation == forgottenBossVisualGeneration and core.Parent then
-            updateForgottenBossPhaseVisual()
+            core.Size = Vector3.new(6, 6, 4)
+            core.Color = gold
         end
     end)
 end
 
-player:GetAttributeChangedSignal("ForgottenHeartBossPhase"):Connect(updateForgottenBossPhaseVisual)
+player:GetAttributeChangedSignal("ForgottenHeartBossPhase"):Connect(function()
+    if player:GetAttribute("ForgottenHeartBossPhase") == 2 then
+        playForgottenBossPhaseTwo()
+    else
+        updateForgottenBossPhaseVisual()
+    end
+end)
 player:GetAttributeChangedSignal("ForgottenHeartBossWindup"):Connect(function()
     if player:GetAttribute("ForgottenHeartBossWindup") == true then
         playForgottenBossTelegraph()
     else
-        forgottenBossVisualGeneration += 1
+        forgottenBossAttackGeneration += 1
+        resetForgottenBossArms()
         updateForgottenBossPhaseVisual()
     end
 end)
