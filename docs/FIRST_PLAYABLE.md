@@ -334,3 +334,10 @@
 - At half health the Guardian enters phase two and unlocks Thorn Burst, a wide attack with a longer warning.
 - Watch the core glow and particles to time your dodge.
 - Victory also places the permanent “СЕРДЦЕ ДРЕВА” trophy in your personal nest.
+
+
+## Guardian attack choreography
+- Vine Slam: the Guardian raises both arms, then slams them down.
+- Root Wave: the Guardian recoils and spreads its arms to release the wave.
+- Thorn Burst: in phase two, the Guardian spreads its branches and flares its crown.
+- On victory, the heart flashes gold and releases a burst of particles before returning to its calm glow.
