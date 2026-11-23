@@ -476,3 +476,16 @@
 - [ ] Reopen the cache and confirm no duplicate rewards are granted.
 - [ ] In a two-player session, progress one player's rune sequence and verify the other player's HUD and saved sequence remain unchanged.
 - [ ] Rejoin and confirm the cache remains claimed and Moonpetal balance persists.
+
+
+## Forgotten Heart Cave — Studio acceptance
+- [ ] Reach the cave from Ancient Heights and cross the bridge without falling or snagging on the rails.
+- [ ] Enter the cave; confirm the floor, walls and ceiling allow comfortable player movement and camera clearance.
+- [ ] Read the entrance clue and activate Root → River → Dawn.
+- [ ] Activate a wrong crystal midway; confirm only your personal progress resets to 0/3.
+- [ ] Rejoin after one or two correct crystals; confirm the HUD restores the saved sequence.
+- [ ] Try the chest before completing the puzzle; confirm it remains locked and grants no rewards.
+- [ ] Complete the puzzle and open the chest; confirm exactly +3 Starshards, +600 coins and +300 XP.
+- [ ] Reopen the chest and confirm no duplicate reward is granted.
+- [ ] In a two-player session, progress one player's cave sequence and verify the other player's progress and reward state remain independent.
+- [ ] Rejoin after claiming the chest and verify completion and Starshard balance persist.
