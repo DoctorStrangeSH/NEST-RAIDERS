@@ -428,3 +428,11 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Roblox Studio: confirm HUD says `Сохранение: ТЕСТ` in default Studio mode.
 - [ ] Enable Studio API access and explicitly opt into DataStore testing only in a separate test place; verify HUD says `Сохранение: ВКЛ` and a rejoin restores data.
 - [ ] Verify 2–3 active pet models remain separated and move smoothly on desktop/mobile.
+
+### Island building access fix (2026-11-23)
+
+- [x] Allow players to open the building catalogue and refresh their building inventory without first walking to the island.
+- [x] Keep physical proximity validation for placing, moving, and removing world buildings.
+- [x] Keep purchases server-authoritative and inventory / balance validated.
+- [x] Add regression checks for remote catalogue access and plot-local world mutations.
+- [ ] Roblox Studio: open the build menu from spawn, buy an affordable item, walk to the owned plot, place / move / remove it, and verify a second player cannot mutate the first player's plot.
