@@ -13,6 +13,7 @@ local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalo
 local EggService = {}
 local EGG_RESPAWN_SECONDS = 20
 local EGG_CAPACITY = 20
+EggService._hatching = {}
 local COMPANIONS = {}
 for _, definition in pairs(CompanionCatalog) do
     if (tonumber(definition.Weight) or 0) > 0 then
@@ -109,7 +110,7 @@ function EggService:Collect(player, egg)
     end)
 end
 
-function EggService:Hatch(player, station)
+function EggService:_HatchUnlocked(player, station)
     if not player:GetAttribute("ProfileLoaded") then return end
     local profile = PlayerDataService:GetProfile(player)
     if not profile or #profile.EggInventory == 0 then
@@ -231,6 +232,24 @@ function EggService:Hatch(player, station)
     player:SetAttribute("LastNotice", "Вылупился питомец: " .. definition.Name .. " (" .. definition.Rarity .. ") · " .. geneticTrait.Name .. originMessage .. "!" .. xpMessage)
 end
 
+
+-- Serialize hatch requests per player. ProximityPrompt can fire more than once
+-- while a previous hatch is still refreshing the follower model.
+function EggService:Hatch(player, station)
+    if self._hatching[player] then return end
+    self._hatching[player] = true
+    local ok, err = pcall(function()
+        self:_HatchUnlocked(player, station)
+    end)
+    self._hatching[player] = nil
+    if not ok then
+        warn("[NEST RAIDERS] Hatch request failed safely: " .. tostring(err))
+        if player and player.Parent then
+            player:SetAttribute("LastNotice", "Не удалось вылупить яйцо. Попробуй ещё раз; яйцо не должно пропасть.")
+        end
+    end
+end
+
 function EggService:Init()
     local world = Workspace:WaitForChild("NestRaidersWorld", 30)
     if not world then
@@ -272,6 +291,7 @@ function EggService:Init()
     Players.PlayerAdded:Connect(bindPlayer)
     Players.PlayerRemoving:Connect(function(player)
         boundPlayers[player] = nil
+        self._hatching[player] = nil
     end)
     for _, player in ipairs(Players:GetPlayers()) do
         bindPlayer(player)
