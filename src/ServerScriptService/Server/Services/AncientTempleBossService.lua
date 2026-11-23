@@ -7,6 +7,7 @@ local PlayerDataService = require(ServerScriptService.Server.Services.PlayerData
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
 local CompanionCatalog = require(game:GetService("ReplicatedStorage").Shared.Config.CompanionCatalog)
+local PlotService = require(ServerScriptService.Server.Services.PlotService)
 
 local AncientTempleBossService = {}
 local BOSS_MAX_HEALTH = 240
@@ -27,6 +28,15 @@ local BOSS_ATTACKS = {
         Damage = 18,
         Radius = 26,
         WindupSeconds = 1.25,
+        Phase = 1,
+    },
+    {
+        Id = "ThornBurst",
+        Warning = "Страж пробудил шипы! Отойди от него и держись подальше!",
+        Damage = 22,
+        Radius = 32,
+        WindupSeconds = 2,
+        Phase = 2,
     },
 }
 local REWARD_XP = 600
@@ -59,6 +69,8 @@ end
 local function publish(player, profile, progress)
     player:SetAttribute("AncientTempleProgress", sequenceCount(progress.AncientTempleRunes))
     player:SetAttribute("AncientTempleBossHealth", progress.AncientTempleBossHealth)
+    player:SetAttribute("AncientTempleBossPhase",
+        progress.AncientTempleBossHealth > 0 and progress.AncientTempleBossHealth <= BOSS_MAX_HEALTH / 2 and 2 or 1)
     player:SetAttribute("AncientTempleCompleted",
         profile.CompletedQuests.ancient_temple_trial == true)
     player:SetAttribute("AncientTempleBossCompleted",
@@ -83,6 +95,22 @@ local function validateAt(player, target, distance)
         or (root.Position - target.Position).Magnitude > distance + 2 then
         return false
     end
+    return true
+end
+
+local function grantGuardianTrophy(player, profile)
+    profile.Nest = type(profile.Nest) == "table" and profile.Nest or {}
+    profile.Nest.IslandTrophies = type(profile.Nest.IslandTrophies) == "table"
+        and profile.Nest.IslandTrophies or {}
+    if profile.Nest.IslandTrophies.AncientTempleGuardian then return false end
+
+    profile.Nest.IslandTrophies.AncientTempleGuardian = {
+        Week = "TempleGuardian",
+        Category = "AncientTemple",
+        Place = 1,
+        ClaimedAt = os.time(),
+    }
+    PlotService:ApplyContestTrophies(player)
     return true
 end
 
@@ -200,9 +228,10 @@ function AncientTempleBossService:Init()
                 player:SetAttribute("AncientTempleBossAttackType", "")
                 publish(player, profile, progress)
                 grantUniqueCompanion(player, profile)
+                grantGuardianTrophy(player, profile)
                 ProgressionService:AddXP(player, REWARD_XP)
                 player:SetAttribute("LastNotice",
-                    "Страж повержен! +600 опыта. Получен уникальный питомец: Страж Сердцевины!")
+                    "Страж повержен! +600 опыта. Получены Страж Сердцевины и трофей «Сердце Древа» для твоего гнезда!")
                 return
             end
 
@@ -212,9 +241,16 @@ function AncientTempleBossService:Init()
             if (not lastAttack or now - lastAttack >= BOSS_ATTACK_COOLDOWN)
                 and not self._windups[player] then
                 self._lastBossAttack[player] = now
-                local attackIndex = (self._attackIndex[player] or 0) % #BOSS_ATTACKS + 1
+                local phase = progress.AncientTempleBossHealth <= BOSS_MAX_HEALTH / 2 and 2 or 1
+                local availableAttacks = {}
+                for _, definition in ipairs(BOSS_ATTACKS) do
+                    if definition.Phase <= phase then
+                        table.insert(availableAttacks, definition)
+                    end
+                end
+                local attackIndex = (self._attackIndex[player] or 0) % #availableAttacks + 1
                 self._attackIndex[player] = attackIndex
-                local attack = BOSS_ATTACKS[attackIndex]
+                local attack = availableAttacks[attackIndex]
                 self._windups[player] = true
                 player:SetAttribute("AncientTempleBossWindup", true)
                 player:SetAttribute("AncientTempleBossAttackType", attack.Id)
@@ -260,6 +296,7 @@ function AncientTempleBossService:Init()
         boundPlayers[player] = true
         player:SetAttribute("AncientTempleBossWindup", false)
         player:SetAttribute("AncientTempleBossAttackType", "")
+        player:SetAttribute("AncientTempleBossPhase", 1)
         local function sync()
             if not player.Parent or not player:GetAttribute("ProfileLoaded") then return end
             local profile, progress = getState(player)
