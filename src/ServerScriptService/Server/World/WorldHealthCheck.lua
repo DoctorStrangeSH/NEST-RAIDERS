@@ -274,6 +274,28 @@ function WorldHealthCheck:Check()
         if not craftPrompt or not craftPrompt:IsA("ProximityPrompt") then
             fail("Нет мастерской создания древних яиц")
         end
+        local temple = ancient:FindFirstChild("AncientTreeTemple")
+        local templeFloor = temple and temple:FindFirstChild("TempleSanctuaryFloor")
+        local causeway = temple and temple:FindFirstChild("TempleCauseway")
+        local runeFolder = temple and temple:FindFirstChild("TempleRunes")
+        local runeCount = 0
+        for _, descendant in ipairs(runeFolder and runeFolder:GetDescendants() or {}) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "AncientTempleRunePrompt" then
+                runeCount += 1
+            end
+        end
+        local treasure = temple and temple:FindFirstChild("AncientTempleTreasure")
+        local chest = treasure and treasure:FindFirstChild("AncientTempleChest")
+        local chestPrompt = chest and chest:FindFirstChild("AncientTempleChestPrompt")
+        if not templeFloor then fail("Нет пола Храма Древнего древа") end
+        if not causeway then fail("Нет каменной дороги к Храму Древнего древа") end
+        if runeCount < 3 then fail(string.format("Руны храма: %d из 3", runeCount)) end
+        if not temple or not temple:FindFirstChild("AncientTempleClueSign") then
+            fail("Нет подсказки к последовательности рун храма")
+        end
+        if not chestPrompt or not chestPrompt:IsA("ProximityPrompt") then
+            fail("Нет сундука Сердца рощи")
+        end
     end
 
     return #issues == 0, issues
