@@ -506,6 +506,25 @@ assert 'ArtifactMergeConfirm' in client and 'ОБЪЕДИНИТЬ ТРИ АРТ�
 assert 'Результат:' in client and 'УЛУЧШИТЬ' in client
 assert 'СЛОТЫ:' in client and 'artifact.TierName' in client
 
+# Gatherer artifact family: equipped relics increase server-side Elderwood and crystal yields.
+artifact_bonus = Path("src/ServerScriptService/Server/Services/ArtifactBonusService.lua").read_text()
+assert 'ArtifactBonusService' in Path("src/ServerScriptService/Server/Services/AncientHarvestService.lua").read_text()
+assert 'ArtifactBonusService' in Path("src/ServerScriptService/Server/Services/CrystalMiningService.lua").read_text()
+assert 'function ArtifactBonusService:GetGatherBonus(profile)' in artifact_bonus
+assert 'function ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)' in artifact_bonus
+assert 'MAX_GATHER_BONUS = 0.50' in artifact_bonus
+assert 'definition.GatherBonus' in artifact_bonus and 'profile.EquippedArtifacts' in artifact_bonus
+assert 'RootHarvester' in artifact_catalog and 'MoonForager' in artifact_catalog and 'StarProspector' in artifact_catalog
+assert 'GatherBonus = 0.05' in artifact_catalog and 'GatherBonus = 0.10' in artifact_catalog and 'GatherBonus = 0.15' in artifact_catalog
+assert 'Weight = 48' in artifact_catalog and 'Weight = 24' in artifact_catalog and 'Weight = 8' in artifact_catalog
+assert 'Weight = 12' in artifact_catalog and 'Weight = 6' in artifact_catalog and 'Weight = 2' in artifact_catalog
+assert 'ApplyGatherBonus(profile, baseAmount)' in ancient_harvest
+crystal_mining = Path("src/ServerScriptService/Server/Services/CrystalMiningService.lua").read_text()
+assert 'ApplyGatherBonus(profile, baseAmount)' in crystal_mining
+assert 'GatherBonus = math.min(0.50' in inventory
+assert 'EquippedGatherBonus' in inventory and 'GatherBonus' in client
+assert 'ДОБЫЧА +%d%%' in client and 'Добыча +%d%%' in client
+
 # Ancient Tree Temple: walkable side-island, ordered runes, personal treasure claim and objective HUD.
 ancient_temple = Path("src/ServerScriptService/Server/Services/AncientTempleService.lua").read_text()
 assert '"AncientTempleService"' in server and 'function AncientTempleService:Init()' in ancient_temple
