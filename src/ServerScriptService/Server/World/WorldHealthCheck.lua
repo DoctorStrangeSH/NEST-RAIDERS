@@ -93,6 +93,10 @@ function WorldHealthCheck:Check()
         if not frost:FindFirstChild("FrostReturnPortal") then
             fail("Нет обратного портала из Ледяных нагорий")
         end
+        local emerald = world:FindFirstChild("EmeraldWilds")
+        if not emerald or not emerald:FindFirstChild("FrostPortal") then
+            fail("Нет входного портала в Ледяные нагорья из Изумрудного леса")
+        end
     end
 
     return #issues == 0, issues
