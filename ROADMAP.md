@@ -821,3 +821,5 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify mixed types/levels, duplicate/unowned IDs, equipped items, and level VI are rejected without inventory changes.
 - [ ] Verify income bonus changes after upgrade/equip and remains capped at 20%.
 - [ ] Test the artifact collection on 375px mobile and desktop.
+
+- [x] Add a confirmation overlay that previews the next tier before consuming three artifacts.
