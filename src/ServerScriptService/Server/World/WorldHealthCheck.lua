@@ -307,6 +307,16 @@ function WorldHealthCheck:Check()
         if not guardianBurst or not guardianBurst:IsA("ParticleEmitter") then
             fail("Нет эффектов предупреждения атак Стража")
         end
+        for _, partName in ipairs({
+            "GuardianBody", "GuardianHead",
+            "GuardianArm_-1", "GuardianArm_1",
+            "GuardianBranch_-1", "GuardianBranch_1",
+        }) do
+            local animatedPart = guardian and guardian:FindFirstChild(partName)
+            if not animatedPart or not animatedPart:IsA("BasePart") then
+                fail("Нет анимируемой части Стража: " .. partName)
+            end
+        end
     end
 
     return #issues == 0, issues
