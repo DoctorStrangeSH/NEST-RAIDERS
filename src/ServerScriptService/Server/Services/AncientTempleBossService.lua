@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local ServerScriptService = game:GetService("ServerScriptService")
 local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
@@ -202,6 +203,138 @@ function AncientTempleBossService:Init()
         return
     end
 
+    -- The Guardian is a shared world model, so its physical animation is cosmetic and
+    -- never controls per-player health, attack timing, or damage validation.
+    local animationBase = {}
+    for _, descendant in ipairs(guardian:GetDescendants()) do
+        if descendant:IsA("BasePart") then
+            animationBase[descendant] = {
+                CFrame = descendant.CFrame,
+                Size = descendant.Size,
+            }
+        end
+    end
+    local guardianLight = core:FindFirstChildOfClass("PointLight")
+    if guardianLight then
+        animationBase[guardianLight] = {
+            Brightness = guardianLight.Brightness,
+            Range = guardianLight.Range,
+        }
+    end
+    self._animationGeneration = 0
+    self._animationTweens = {}
+
+    local function animate(instance, duration, properties, style)
+        if not instance or not instance.Parent then return end
+        local tween = TweenService:Create(instance, TweenInfo.new(
+            duration,
+            style or Enum.EasingStyle.Quad,
+            Enum.EasingDirection.Out
+        ), properties)
+        table.insert(self._animationTweens, tween)
+        tween:Play()
+    end
+
+    local function restoreGuardian(generation, duration)
+        if generation ~= self._animationGeneration then return end
+        for instance, properties in pairs(animationBase) do
+            if instance.Parent then
+                local reset = {}
+                if properties.CFrame then reset.CFrame = properties.CFrame end
+                if properties.Size then reset.Size = properties.Size end
+                if properties.Brightness then reset.Brightness = properties.Brightness end
+                if properties.Range then reset.Range = properties.Range end
+                animate(instance, duration or 0.35, reset)
+            end
+        end
+    end
+
+    local function playGuardianAttackAnimation(attackId)
+        self._animationGeneration += 1
+        local generation = self._animationGeneration
+        for _, tween in ipairs(self._animationTweens) do tween:Cancel() end
+        table.clear(self._animationTweens)
+
+        local function part(name)
+            return guardian:FindFirstChild(name)
+        end
+        local function base(name)
+            local target = part(name)
+            local saved = target and animationBase[target]
+            return target, saved and saved.CFrame
+        end
+        local leftArm, leftArmBase = base("GuardianArm_-1")
+        local rightArm, rightArmBase = base("GuardianArm_1")
+        local leftBranch, leftBranchBase = base("GuardianBranch_-1")
+        local rightBranch, rightBranchBase = base("GuardianBranch_1")
+        local body, bodyBase = base("GuardianBody")
+        local head, headBase = base("GuardianHead")
+        local crown = {}
+        for index = 1, 5 do
+            local leaf, leafBase = base("GuardianCrownLeaf_" .. index)
+            if leaf and leafBase then table.insert(crown, { Part = leaf, CFrame = leafBase, Index = index }) end
+        end
+
+        if attackId == "VineSlam" then
+            if leftArm and leftArmBase then
+                animate(leftArm, 0.5, { CFrame = leftArmBase * CFrame.Angles(math.rad(-58), 0, math.rad(-18)) }, Enum.EasingStyle.Back)
+            end
+            if rightArm and rightArmBase then
+                animate(rightArm, 0.5, { CFrame = rightArmBase * CFrame.Angles(math.rad(-58), 0, math.rad(18)) }, Enum.EasingStyle.Back)
+            end
+            task.delay(0.55, function()
+                if generation ~= self._animationGeneration then return end
+                if leftArm and leftArmBase then
+                    animate(leftArm, 0.18, { CFrame = leftArmBase * CFrame.Angles(math.rad(52), 0, math.rad(-12)) }, Enum.EasingStyle.Exponential)
+                end
+                if rightArm and rightArmBase then
+                    animate(rightArm, 0.18, { CFrame = rightArmBase * CFrame.Angles(math.rad(52), 0, math.rad(12)) }, Enum.EasingStyle.Exponential)
+                end
+            end)
+            task.delay(1.0, function() restoreGuardian(generation, 0.32) end)
+        elseif attackId == "RootWave" then
+            if body and bodyBase then
+                animate(body, 0.32, { CFrame = bodyBase * CFrame.new(0, -1.2, 0) }, Enum.EasingStyle.Quad)
+            end
+            if head and headBase then
+                animate(head, 0.32, { CFrame = headBase * CFrame.new(0, 1.1, 0) }, Enum.EasingStyle.Back)
+            end
+            if leftArm and leftArmBase then
+                animate(leftArm, 0.3, { CFrame = leftArmBase * CFrame.Angles(0, 0, math.rad(-48)) })
+            end
+            if rightArm and rightArmBase then
+                animate(rightArm, 0.3, { CFrame = rightArmBase * CFrame.Angles(0, 0, math.rad(48)) })
+            end
+            task.delay(0.55, function() restoreGuardian(generation, 0.48) end)
+        elseif attackId == "ThornBurst" then
+            if leftArm and leftArmBase then
+                animate(leftArm, 0.62, { CFrame = leftArmBase * CFrame.Angles(math.rad(-24), 0, math.rad(-72)) }, Enum.EasingStyle.Back)
+            end
+            if rightArm and rightArmBase then
+                animate(rightArm, 0.62, { CFrame = rightArmBase * CFrame.Angles(math.rad(-24), 0, math.rad(72)) }, Enum.EasingStyle.Back)
+            end
+            if leftBranch and leftBranchBase then
+                animate(leftBranch, 0.62, { CFrame = leftBranchBase * CFrame.Angles(0, 0, math.rad(-42)) })
+            end
+            if rightBranch and rightBranchBase then
+                animate(rightBranch, 0.62, { CFrame = rightBranchBase * CFrame.Angles(0, 0, math.rad(42)) })
+            end
+            for _, leaf in ipairs(crown) do
+                local direction = leaf.Index % 2 == 0 and 1 or -1
+                animate(leaf.Part, 0.62, {
+                    CFrame = leaf.CFrame * CFrame.Angles(math.rad(direction * 24), 0, math.rad(direction * 18)),
+                }, Enum.EasingStyle.Back)
+            end
+            if guardianLight then
+                animate(guardianLight, 0.62, {
+                    Brightness = 7,
+                    Range = 42,
+                })
+            end
+            task.delay(0.82, function() restoreGuardian(generation, 0.58) end)
+        end
+    end
+
     prompt.Triggered:Connect(function(player)
         if self._locks[player] then return end
         self._locks[player] = true
@@ -265,6 +398,7 @@ function AncientTempleBossService:Init()
                 local attackIndex = (self._attackIndex[player] or 0) % #availableAttacks + 1
                 self._attackIndex[player] = attackIndex
                 local attack = availableAttacks[attackIndex]
+                playGuardianAttackAnimation(attack.Id)
                 self._windups[player] = true
                 player:SetAttribute("AncientTempleBossWindup", true)
                 player:SetAttribute("AncientTempleBossAttackType", attack.Id)
