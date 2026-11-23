@@ -688,7 +688,7 @@ for index, button in ipairs(menuButtons) do
     -- Close the menu after choosing any feature; existing Activated handlers still run.
     button.Activated:Connect(function()
         navScroll.Visible = false
-        navToggle.Text = "☰  МЕНЮ"
+        navToggle.Text = "МЕНЮ"
     end)
 end
 
@@ -1275,7 +1275,7 @@ for _, modal in ipairs(modalPanels) do
         closingOtherPanels = true
         if modal.Visible then
             navScroll.Visible = false
-            navToggle.Text = "☰  МЕНЮ"
+            navToggle.Text = "МЕНЮ"
             for _, other in ipairs(modalPanels) do
                 if other ~= modal and not (modal == pickerPanel and other == displayPanel) then
                     other.Visible = false
