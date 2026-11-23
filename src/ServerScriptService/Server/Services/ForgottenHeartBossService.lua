@@ -192,8 +192,13 @@ function ForgottenHeartBossService:Init()
         else
             table.insert(markers, targetOnFloor)
         end
+        local warningColor = attack.Id == "CrystalSlam"
+            and Color3.fromRGB(105, 222, 255)
+            or (attack.Id == "EchoPulse"
+                and Color3.fromRGB(183, 139, 255)
+                or Color3.fromRGB(255, 145, 207))
         for _, markerPosition in ipairs(markers) do
-            createWarning(markerPosition, attack.Radius, Color3.fromRGB(109, 220, 255), attack.Windup, player.UserId)
+            createWarning(markerPosition, attack.Radius, warningColor, attack.Windup, player.UserId)
         end
         task.delay(attack.Windup, function()
             self._windups[player] = nil
