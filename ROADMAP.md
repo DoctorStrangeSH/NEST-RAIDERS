@@ -218,3 +218,16 @@ A successful CI build validates the Roblox XML packaging, **not gameplay**. Trea
 - [ ] Verify egg collection, building, plots, breeding, saved profiles and mobile operation in Studio.
 
 The readiness marker only proves client script completion; **it does not prove that server services or gameplay are operational**.
+
+### Playable-first guided egg loop (2026-11-23)
+
+- [x] Integrate a two-step Russian first-play guide into the actual game HUD (collect egg → hatch at own nest).
+- [x] Highlight the nearest available world egg, then the owner's HatchStation when an egg is in inventory.
+- [x] Update guide with server-replicated ProfileLoaded, EggCount, CompanionCount and PlotId; keep the server authoritative for all rewards.
+- [x] Add CI static checks for the guide and its world target bindings.
+- [ ] Roblox Studio: confirm guidance appears immediately and does not overlap mobile actions.
+- [ ] Roblox Studio: collect an egg, observe guide advance, hatch at own plot, then open the companion inventory.
+- [ ] Roblox Studio: confirm target highlights work after respawn and under multiplayer.
+- [ ] Roblox Studio: verify the entire gameplay loop and persistence before accepting Sprint 4.20.
+
+Successful CI packaging remains separate from real play testing.
