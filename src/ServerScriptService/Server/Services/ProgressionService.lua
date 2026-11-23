@@ -79,18 +79,30 @@ function ProgressionService:AddXP(player, amount)
 end
 
 function ProgressionService:Init()
-    Players.PlayerAdded:Connect(function(player)
+    -- Players may join while Bootstrap is still initializing services.
+    -- Reconcile both existing and future players without duplicate workers.
+    local boundPlayers = {}
+    local function bindPlayer(player)
+        if boundPlayers[player] then return end
+        boundPlayers[player] = true
         player:SetAttribute("ProgressionReady", false)
         task.spawn(function()
             while player.Parent and not player:GetAttribute("ProfileLoaded") do
                 task.wait(0.1)
             end
-            if player.Parent then
-                self:RefreshZoneUnlocks(player)
-                player:SetAttribute("ProgressionReady", true)
-            end
+            if not player.Parent then return end
+            self:RefreshZoneUnlocks(player)
+            player:SetAttribute("ProgressionReady", true)
         end)
+    end
+
+    Players.PlayerAdded:Connect(bindPlayer)
+    Players.PlayerRemoving:Connect(function(player)
+        boundPlayers[player] = nil
     end)
+    for _, player in ipairs(Players:GetPlayers()) do
+        bindPlayer(player)
+    end
 end
 
 return ProgressionService
