@@ -3707,7 +3707,9 @@ local function updateBiomeTrialPanel()
             local attackType = player:GetAttribute("AncientTempleBossAttackType")
             bossStatus.Text = attackType == "VineSlam"
                 and "ТЯЖЁЛЫЙ УДАР! ОТОЙДИ ДАЛЬШЕ!"
-                or "ВОЛНА КОРНЕЙ! УХОДИ С АРЕНЫ!"
+                or (attackType == "ThornBurst"
+                    and "ШИПЫ ДРЕВА! ОТОЙДИ ОТ СТРАЖА!"
+                    or "ВОЛНА КОРНЕЙ! УХОДИ С АРЕНЫ!")
             bossStatus.TextColor3 = Color3.fromRGB(255, 190, 120)
         else
             bossStatus.Text = bossCompleted and "СТРАЖ ПОВЕРЖЕН"
@@ -3801,8 +3803,15 @@ local function updateGuardianPhaseVisual()
     if not core then return end
     local phaseTwo = player:GetAttribute("AncientTempleBossPhase") == 2
     local color = phaseTwo and Color3.fromRGB(255, 145, 91) or Color3.fromRGB(190, 239, 133)
-    if light then light.Color = color end
-    core.Color = color
+    if light then
+        light.Color = color
+        light.Brightness = phaseTwo and 2.5 or 2
+        light.Range = phaseTwo and 32 or 28
+    end
+    TweenService:Create(core, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {
+        Size = Vector3.new(4, 4, 2),
+        Color = color,
+    }):Play()
 end
 
 local function playGuardianTelegraph()
