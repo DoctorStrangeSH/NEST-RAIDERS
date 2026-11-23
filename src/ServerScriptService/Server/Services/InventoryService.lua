@@ -170,11 +170,15 @@ function InventoryService:HandleRequest(player, payload)
     if type(payload) ~= "table" or type(payload.Action) ~= "string" then
         return { Ok = false, Message = "Некорректный запрос." }
     end
-    local now = os.clock()
-    if now - (self._lastRequest[player] or 0) < REQUEST_COOLDOWN then
-        return { Ok = false, Message = "Подожди немного." }
+    -- Read-only snapshots must not consume the rate limit for gameplay actions.
+    -- Otherwise immediately opening the inventory after equipping/hatching can fail.
+    if payload.Action ~= "Get" then
+        local now = os.clock()
+        if now - (self._lastRequest[player] or 0) < REQUEST_COOLDOWN then
+            return { Ok = false, Message = "Подожди немного." }
+        end
+        self._lastRequest[player] = now
     end
-    self._lastRequest[player] = now
 
     local profile = PlayerDataService:GetProfile(player)
     if not profile or not player:GetAttribute("ProfileLoaded") then
