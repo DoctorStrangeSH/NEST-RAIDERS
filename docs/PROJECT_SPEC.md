@@ -475,3 +475,10 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - PlayerDataService publishes saved balances for Elderwood, Moonpetal, and Starshard when a profile loads, alongside the existing Ash Crystal and Crystal Shard attributes.
 - The panel is reachable from the main navigation, uses the shared modal coordinator, and must fit narrow mobile viewports.
 - Existing biome-specific HUDs remain contextual; this panel is the cross-biome overview.\n
+
+## Ancient Egg advanced recipe — Sprint 4.41
+- The Ancient Heights workshop crafts one Ancient Egg for 10 Elderwood, 5 Moonpetals, 3 Starshards and 300 coins.
+- All four balances are validated server-side before any ingredient is deducted.
+- Insufficient ingredients reject the craft without partial spending and report the exact missing resource.
+- On success, all ingredients are deducted together, the egg is added to the normal egg inventory, and updated resource/coin attributes are replicated.
+- Egg species odds remain the existing AncientEgg BiomeCatalog weights (55/30/15).
