@@ -287,8 +287,6 @@ local CompanionCatalog = {
         Hybrid = true,
     },
 
-}
-
     AncientStag = {
         Id = "AncientStag", Name = "Олень-древень", Rarity = "Редкий",
         Income = 68, Weight = 55,
@@ -315,5 +313,6 @@ local CompanionCatalog = {
         PetMoodBonus = 4, PlayMoodBonus = 12, EggId = "AncientEgg",
         Ability = { Id = "SkywardFortune", Name = "Удача высот", Description = "Находит редкие награды среди облаков.", UnlockLevel = 7, CooldownSeconds = 420 },
     },
+}
 
 return CompanionCatalog
