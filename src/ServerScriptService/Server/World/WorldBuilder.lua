@@ -681,6 +681,22 @@ function WorldBuilder:Build()
         Color3.fromRGB(255, 125, 55), "Emberlands", Vector3.new(0, 18, 1480))
     makeBiomePortal(ember, "EmberReturnPortal", Vector3.new(-45, 24, 1480),
         Color3.fromRGB(128, 225, 255), "FrostHighlands", Vector3.new(0, 16, 1040))
+    local emberOddsSign = part(ember, "EmberEggOddsSign", Vector3.new(28, 10, 1),
+        Vector3.new(0, 24, 1638), Color3.fromRGB(91, 49, 38), Enum.Material.WoodPlanks)
+    emberOddsSign.CanCollide = false
+    local emberOddsGui = Instance.new("SurfaceGui")
+    emberOddsGui.Face = Enum.NormalId.Front
+    emberOddsGui.Parent = emberOddsSign
+    local emberOddsText = Instance.new("TextLabel")
+    emberOddsText.Size = UDim2.fromScale(1, 1)
+    emberOddsText.BackgroundTransparency = 1
+    emberOddsText.Text = "ЯЙЦО ПЕПЕЛЬНОГО ПЛАМЕНИ\\nУгольный лис · 60%\\nМагмовый дракончик · 30%\\nПепельный феникс · 10%"
+    emberOddsText.TextColor3 = Color3.fromRGB(255, 229, 204)
+    emberOddsText.TextScaled = true
+    emberOddsText.TextWrapped = true
+    emberOddsText.Font = Enum.Font.GothamBlack
+    emberOddsText.Parent = emberOddsGui
+
     local emberSign = part(ember, "EmberWelcomeSign", Vector3.new(25, 9, 1),
         Vector3.new(0, 25, 1438), Color3.fromRGB(88, 49, 42), Enum.Material.WoodPlanks)
     local emberGui = Instance.new("SurfaceGui")
