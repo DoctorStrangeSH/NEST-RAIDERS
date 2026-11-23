@@ -287,3 +287,13 @@ A feature is done only when:
 - The egg stores IsHybrid based on the selected offspring catalog entry. Hybrid eggs receive four additional golden shards and a stronger reveal burst.
 - Ritual effects are temporary, automatically cleaned up, and never run for rejected breeding requests.
 - The animation is cosmetic only: offspring species, genetic trait, parent lineage, currency cost, parent cooldown, and five-minute incubation remain server-authoritative and unchanged.
+
+ 
+## Implemented biome slice — Frost Highlands (Sprint 4.21)
+The first Frost Highlands vertical slice is integrated in the prototype:
+- Entry is server-gated by level 12 and the account-bound `emerald_trial` completion.
+- The island contains a snowfield, pine grove, glacier crystals, three Frost Egg pickups, three trial runes, and a return portal to Emerald Wilds.
+- Frost Egg odds are 60% Frost Fox, 30% Snow Owl, and 10% Glacier Bear; the shared BiomeCatalog is the hatch source of truth.
+- Frost trial progress (Aurora, Glacier, Winter) is persistent; completing all three grants +180 XP once and satisfies the configured Emberlands quest prerequisite. Emberlands still requires level 22.
+- Egg collection is rejected unless the player's server-owned current biome matches the egg's unlocked biome.
+- These are scripted placeholder visuals. Studio runtime, persistence, collision, mobile, and performance acceptance remain mandatory before this slice is considered release-ready.
