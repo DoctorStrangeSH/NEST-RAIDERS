@@ -115,7 +115,7 @@ function ProgressionService:Init()
                         player:SetAttribute("EmeraldTrialCompleted", true)
                         self:AddXP(player, 100)
                         self:RefreshZoneUnlocks(player)
-                        player:SetAttribute("LastNotice", "Испытание Изумрудной рощи пройдено! Все три руны пробуждены. +100 опыта. Путь к Северным высотам открыт при достижении 12 уровня.")
+                        player:SetAttribute("LastNotice", "Испытание Изумрудной рощи пройдено! Все три руны пробуждены. +100 опыта. Путь к Ледяным нагорьям откроется на 12 уровне.")
                     else
                         player:SetAttribute("LastNotice", string.format("Древняя руна пробуждена! Испытание: %d / 3", count))
                     end
@@ -131,8 +131,14 @@ function ProgressionService:Init()
                     local allowed, reason = self:CanEnterZone(player, zoneId)
                     if not allowed then
                         local zone = self:GetZone(zoneId)
-                        local required = zone and zone.RequiredLevel or 1
-                        player:SetAttribute("LastNotice", string.format("Нужно достичь %d уровня, чтобы открыть эту область.", required))
+                        local profile = PlayerDataService:GetProfile(player)
+                        if zone and profile and profile.Level >= zone.RequiredLevel and zone.RequiredQuest
+                            and profile.CompletedQuests[zone.RequiredQuest] ~= true then
+                            player:SetAttribute("LastNotice", "Сначала пройди испытание предыдущего биома, чтобы открыть эту область.")
+                        else
+                            local required = zone and zone.RequiredLevel or 1
+                            player:SetAttribute("LastNotice", string.format("Нужно достичь %d уровня, чтобы открыть эту область.", required))
+                        end
                         return
                     end
                     local character = player.Character
