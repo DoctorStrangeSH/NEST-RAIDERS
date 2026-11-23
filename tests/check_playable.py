@@ -733,6 +733,10 @@ assert 'payload.Action == "DevSeedGathererArtifacts"' in inventory_service
 assert 'if not RunService:IsStudio() then' in inventory_service
 assert 'DevOnly = true' in inventory_service
 assert '(artifact.DevOnly == true) ~= (first.DevOnly == true)' in inventory_service
+assert 'artifact.DevOnly == true then count += 1 end' in inventory_service
+assert 'DevOnly = artifact.DevOnly == true' in inventory_service
+assert 'tostring(artifact.DevOnly == true)' in client
+assert 'artifact.DevOnly and " · ТЕСТ" or ""' in client
 assert 'DevOnly = first.DevOnly == true or nil' in inventory_service
 assert 'if RunService:IsStudio() then' in player_data
 assert 'if artifact.DevOnly == true then' in player_data
