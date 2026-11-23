@@ -299,3 +299,15 @@ The fix is committed, but the in-game flow is still not runtime-verified.
 - [ ] Roblox Studio: verify all-incubating feedback, ready breeding egg inheritance, inventory and companion counts, and persistence.
 
 **Not runtime-verified:** source and CI checks cannot prove in-game behavior.
+
+### Playable-first live collection refresh (2026-11-23)
+
+- [x] Keep read-only `CompanionInventory/Get` snapshots outside the cooldown reserved for mutations (equip/unequip/train/merge/breed).
+- [x] Refresh open companion inventory and collection panels when the server replicates a new `CompanionCount` after hatching.
+- [x] Avoid rebuilding closed panels and guard against overlapping refresh callbacks.
+- [x] Add CI checks covering the above client and server wiring.
+- [ ] Roblox Studio: hatch a pet with a collection or inventory panel open and check the newly owned companion appears without reopening.
+- [ ] Roblox Studio: reopen the inventory rapidly, equip/unequip a companion and confirm write-action cooldown still applies.
+- [ ] Roblox Studio: confirm collection/species counts and pet followers with one and two players.
+
+CI checks packaging and source structure only, not in-game interaction.
