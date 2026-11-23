@@ -361,6 +361,7 @@ function WorldBuilder:Build()
         local zoneLabels = {
             EmeraldWilds = "Изумрудный лес · уровень 5",
             FrostHighlands = "Ледяные нагорья · уровень 12 + испытание",
+            Emberlands = "Пепельные земли · уровень 22 + испытание",
             StarterIsland = "Стартовый остров",
         }
         prompt.ObjectText = zoneLabels[zoneId] or "Неизвестная область"
@@ -601,6 +602,13 @@ function WorldBuilder:Build()
     local sanctuaryBase = part(sanctuary, "CoolingSanctuaryBase", Vector3.new(34, 2, 30),
         Vector3.new(0, 15.5, 1480), Color3.fromRGB(91, 167, 174), Enum.Material.Glass)
     sanctuaryBase:SetAttribute("CoolingPerSecond", 24)
+    local coolingVolume = part(sanctuary, "CoolingZone", Vector3.new(38, 18, 36),
+        Vector3.new(0, 24, 1480), Color3.fromRGB(119, 235, 229), Enum.Material.ForceField)
+    coolingVolume.Transparency = 1
+    coolingVolume.CanCollide = false
+    coolingVolume.CanTouch = false
+    coolingVolume.CanQuery = false
+    coolingVolume:SetAttribute("CoolingPerSecond", 24)
     local sanctuaryCrystal = part(sanctuary, "CoolingCrystal", Vector3.new(5, 13, 5),
         Vector3.new(0, 24, 1480), Color3.fromRGB(119, 235, 229), Enum.Material.Neon, Enum.PartType.Ball)
     sanctuaryCrystal.CanCollide = false
