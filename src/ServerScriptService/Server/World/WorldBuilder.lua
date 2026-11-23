@@ -371,9 +371,9 @@ function WorldBuilder:Build()
         light.Parent = portal
     end
     makeBiomePortal(island, "EmeraldPortal", Vector3.new(0, 20, 132),
-        Color3.fromRGB(80, 255, 153), "EmeraldWilds", Vector3.new(0, 24, 520))
+        Color3.fromRGB(80, 255, 153), "EmeraldWilds", Vector3.new(0, 16, 520))
     makeBiomePortal(emerald, "ReturnPortal", Vector3.new(0, 24, 430),
-        Color3.fromRGB(255, 218, 126), "StarterIsland", Vector3.new(0, 15, -112))
+        Color3.fromRGB(255, 218, 126), "StarterIsland", Vector3.new(0, 11, -112))
     local emeraldSign = part(emerald, "EmeraldWelcomeSign", Vector3.new(22, 9, 1),
         Vector3.new(0, 25, 452), Color3.fromRGB(61, 91, 66), Enum.Material.WoodPlanks)
     local emeraldGui = Instance.new("SurfaceGui")
