@@ -458,3 +458,13 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add static regression checks for both income paths.
 - [ ] Roblox Studio: hatch pets with Natural, Verdant, Luminous and Prismatic traits; compare active and displayed income over several 10-second ticks.
 - [ ] Verify legacy pets without a trait continue earning their original base income.
+
+### Genetic trait income carry-over hardening (2026-11-23)
+
+- [x] Preserve fractional active-pet income between ticks in the player profile; small 2–8% bonuses now accumulate instead of disappearing through per-tick rounding.
+- [x] Preserve fractional displayed-pet income between ticks in the nest profile.
+- [x] Show effective income and genetic bonus percentage in displayed/available nest-pet snapshots.
+- [x] Keep the displayed income-per-tick estimate precise to two decimal places.
+- [x] Add backward-compatible profile defaults and static checks for the remainder fields.
+- [ ] Roblox Studio: verify low-income pets with Verdant/Luminous/Prismatic traits earn the expected additional whole coins after enough 10-second ticks.
+- [ ] Rejoin and verify fractional remainder survives profile save/load.
