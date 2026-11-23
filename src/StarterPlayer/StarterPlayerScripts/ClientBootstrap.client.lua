@@ -3699,7 +3699,10 @@ local function updateBiomeTrialPanel()
         bossBarBack.Visible = ancientBossActive
         bossStatus.Visible = count >= 3 and completed
         local bossHealth = math.clamp(tonumber(player:GetAttribute("AncientTempleBossHealth")) or 240, 0, 240)
+        local bossPhase = tonumber(player:GetAttribute("AncientTempleBossPhase")) or 1
         bossBarFill.Size = UDim2.fromScale(bossHealth / 240, 1)
+        bossBarFill.BackgroundColor3 = bossPhase == 2
+            and Color3.fromRGB(255, 119, 91) or Color3.fromRGB(255, 111, 65)
         if player:GetAttribute("AncientTempleBossWindup") == true then
             local attackType = player:GetAttribute("AncientTempleBossAttackType")
             bossStatus.Text = attackType == "VineSlam"
@@ -3708,7 +3711,9 @@ local function updateBiomeTrialPanel()
             bossStatus.TextColor3 = Color3.fromRGB(255, 190, 120)
         else
             bossStatus.Text = bossCompleted and "СТРАЖ ПОВЕРЖЕН"
-                or string.format("ЗДОРОВЬЕ СТРАЖА: %d / 240", bossHealth)
+                or (bossPhase == 2
+                    and string.format("ФАЗА II · ЯРОСТЬ ДРЕВА · %d / 240", bossHealth)
+                    or string.format("ЗДОРОВЬЕ СТРАЖА: %d / 240", bossHealth))
             bossStatus.TextColor3 = Color3.fromRGB(220, 239, 179)
         end
     elseif isCrystal then
