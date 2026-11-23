@@ -50,6 +50,18 @@ local DEFINITIONS = {
         Detail = Color3.fromRGB(75, 119, 157),
         Kind = "Bear",
     },
+    CinderFox = {
+        Body = Color3.fromRGB(201, 85, 42), Accent = Color3.fromRGB(255, 186, 85),
+        Detail = Color3.fromRGB(83, 51, 45), Kind = "EmberFox",
+    },
+    MagmaWhelp = {
+        Body = Color3.fromRGB(85, 62, 60), Accent = Color3.fromRGB(255, 119, 48),
+        Detail = Color3.fromRGB(255, 203, 91), Kind = "MagmaDragon",
+    },
+    AshPhoenix = {
+        Body = Color3.fromRGB(226, 102, 47), Accent = Color3.fromRGB(255, 217, 120),
+        Detail = Color3.fromRGB(161, 63, 52), Kind = "Phoenix",
+    },
     EmberFox = {
         Body = Color3.fromRGB(224, 105, 55),
         Accent = Color3.fromRGB(255, 190, 93),
@@ -107,6 +119,18 @@ local function buildPet(parent, companion, index)
         makeShape(model, "Tail", Vector3.new(1.15, 1.15, 1.1), Vector3.new(0, 1.3, -1.15), definition.Accent)
         makeShape(model, "LeftHorn", Vector3.new(0.25, 0.55, 0.25), Vector3.new(-0.3, 2.7, 0.3), Color3.fromRGB(255, 216, 119), Enum.PartType.Wedge)
         makeShape(model, "RightHorn", Vector3.new(0.25, 0.55, 0.25), Vector3.new(0.3, 2.7, 0.3), Color3.fromRGB(255, 216, 119), Enum.PartType.Wedge)
+    elseif definition.Kind == "MagmaDragon" then
+        makeShape(model, "Snout", Vector3.new(0.8, 0.55, 0.65), Vector3.new(0, 1.55, 1.2), definition.Accent)
+        makeShape(model, "LeftWing", Vector3.new(0.55, 1.25, 1.35), Vector3.new(-1.05, 1.55, -0.1), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "RightWing", Vector3.new(0.55, 1.25, 1.35), Vector3.new(1.05, 1.55, -0.1), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "Tail", Vector3.new(0.5, 0.5, 1.5), Vector3.new(0, 1.0, -1.2), definition.Accent)
+        makeShape(model, "LeftHorn", Vector3.new(0.25, 0.65, 0.25), Vector3.new(-0.45, 2.5, 0.25), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "RightHorn", Vector3.new(0.25, 0.65, 0.25), Vector3.new(0.45, 2.5, 0.25), definition.Detail, Enum.PartType.Wedge)
+    elseif definition.Kind == "Phoenix" then
+        makeShape(model, "Beak", Vector3.new(0.42, 0.55, 0.42), Vector3.new(0, 1.65, 1.15), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "LeftWing", Vector3.new(0.5, 1.25, 1.4), Vector3.new(-1.05, 1.25, -0.1), definition.Accent)
+        makeShape(model, "RightWing", Vector3.new(0.5, 1.25, 1.4), Vector3.new(1.05, 1.25, -0.1), definition.Accent)
+        makeShape(model, "Crest", Vector3.new(0.35, 0.8, 0.35), Vector3.new(0, 2.55, 0.35), definition.Detail, Enum.PartType.Wedge)
     elseif definition.Kind == "Fernshell" then
         makeShape(model, "Shell", Vector3.new(2.1, 1.15, 1.8), Vector3.new(0, 1.75, -0.05), definition.Accent)
         for _, x in ipairs({-0.7, 0.7}) do
