@@ -3970,6 +3970,7 @@ updateGuardianPhaseVisual()
 local forgottenBossVisualGeneration = 0
 local forgottenBossAttackGeneration = 0
 local forgottenBossBrokenCrystals = {}
+local forgottenBossArmBaseCache = {}
 local forgottenBossPhaseTwoPlayed = false
 
 local function getForgottenBossModel()
@@ -4004,7 +4005,13 @@ end
 
 local function getForgottenBossArmBases()
     local left, right = getForgottenBossArms()
-    return left and left.CFrame, right and right.CFrame
+    if left and forgottenBossArmBaseCache[left] == nil then
+        forgottenBossArmBaseCache[left] = left.CFrame
+    end
+    if right and forgottenBossArmBaseCache[right] == nil then
+        forgottenBossArmBaseCache[right] = right.CFrame
+    end
+    return left and forgottenBossArmBaseCache[left], right and forgottenBossArmBaseCache[right]
 end
 
 local function resetForgottenBossArms()
@@ -4077,10 +4084,10 @@ local function breakForgottenBossArenaCrystals()
                 if not cluster.Parent then return end
                 for _, piece in ipairs(cluster:GetDescendants()) do
                     if piece:IsA("BasePart") then
-                        piece.Transparency = 0
                         local originalSize = piece.Name == "CrystalCore" and Vector3.new(2.1, 5.2, 2.1) or Vector3.new(1.1, 2.8, 1.1)
-                        piece.Size = originalSize
-                        TweenService:Create(piece, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                        piece.Transparency = 0
+                        piece.Size = originalSize * 0.18
+                        TweenService:Create(piece, TweenInfo.new(0.42, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
                             Size = originalSize,
                         }):Play()
                     end
