@@ -3545,6 +3545,12 @@ local function firstPlayTarget()
 end
 
 local function updateFirstPlayGuide()
+    if remotes:GetAttribute("WorldHealth") == "DEGRADED" then
+        local reason = tostring(remotes:GetAttribute("WorldHealthError") or "неизвестная ошибка")
+        guideText.Text = "⚠ ОШИБКА МИРА\n" .. string.sub(reason, 1, 120)
+        guideHighlight.Enabled = false
+        return
+    end
     if not player:GetAttribute("ProfileLoaded") then
         guideText.Text = "ПЕРВОЕ ПРИКЛЮЧЕНИЕ\nПодключаем сохранение..."
         guideHighlight.Enabled = false
