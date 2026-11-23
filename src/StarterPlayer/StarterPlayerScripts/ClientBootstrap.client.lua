@@ -3664,10 +3664,15 @@ local function updateBiomeTrialPanel()
     local completed = player:GetAttribute(completeAttribute) == true
     local bossCompleted = isAncient and player:GetAttribute("AncientTempleBossCompleted") == true
     local ancientBossActive = isAncient and count >= 3 and completed and not bossCompleted
+    local groveRuneProgress = isAncient and math.clamp(
+        tonumber(player:GetAttribute("WhisperingGroveRuneProgress")) or 0, 0, 4) or 0
+    local groveCacheOpened = isAncient and player:GetAttribute("WhisperingGroveCacheOpened") == true
+    local showGroveSecret = isAncient and (groveRuneProgress > 0 or groveCacheOpened)
 
     trialPanel.Position = (isEmber or isCrystal) and UDim2.new(1, -12, 0, 286)
         or (isAncient and UDim2.new(1, -12, 0, 196) or UDim2.new(1, -12, 0, 184))
-    trialPanel.Size = UDim2.fromOffset(236, ((isEmber or isCrystal) or ancientBossActive) and 142 or 112)
+    trialPanel.Size = UDim2.fromOffset(236,
+        showGroveSecret and 158 or (((isEmber or isCrystal) or ancientBossActive) and 142 or 112))
     trialPanel.BackgroundColor3 = isAncient and Color3.fromRGB(42, 61, 43)
         or (isCrystal and Color3.fromRGB(48, 39, 76)
         or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51)))
@@ -3696,6 +3701,11 @@ local function updateBiomeTrialPanel()
         trialStatus.Text = bossCompleted and "СТРАЖ ПОВЕРЖЕН"
             or (completed and "СОКРОВИЩЕ ПОЛУЧЕНО"
             or string.format("ПРОБУЖДЕНО РУН: %d / 3", count))
+        if showGroveSecret then
+            trialDescription.Text ..= groveCacheOpened
+                and "\\n\\nСЕКРЕТ РОЩИ: ТАЙНИК ОТКРЫТ"
+                or string.format("\\n\\nСЕКРЕТ РОЩИ: РУНЫ %d / 4", groveRuneProgress)
+        end
         bossBarBack.Visible = ancientBossActive
         bossStatus.Visible = count >= 3 and completed
         local bossHealth = math.clamp(tonumber(player:GetAttribute("AncientTempleBossHealth")) or 240, 0, 240)
@@ -3779,6 +3789,7 @@ for _, attribute in ipairs({
     "AncientTempleProgress", "AncientTempleCompleted",
     "AncientTempleBossHealth", "AncientTempleBossCompleted", "AncientTempleBossWindup",
     "AncientTempleBossAttackType", "AncientTempleBossPhase",
+    "WhisperingGroveRuneProgress", "WhisperingGroveCacheOpened",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
