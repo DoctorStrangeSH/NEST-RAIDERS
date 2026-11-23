@@ -844,3 +844,6 @@ Source and automated packaging checks do not substitute for actual gameplay test
 
 - [x] Show the actual additional resource count from Gatherer artifacts in harvest notices, including zero on unsuccessful bonus rolls; retain the displayed expected bonus percentage.
 - [ ] Verify those bonus notices against real Studio Play harvests before final Sprint 4.44 sign-off.
+
+- [x] Add a Studio-only, server-authoritative 1000-harvest gathering simulation, using the real bonus formula without awarding materials or changing cooldowns.
+- [ ] Confirm simulation output in Roblox Studio Play for unequipped and equipped Gatherer artifacts.
