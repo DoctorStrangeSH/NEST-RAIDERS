@@ -583,3 +583,6 @@
 - [ ] Rejoin after a successful merge; verify artifact ID, instance ID, level and equipment state persist.
 - [ ] Equip upgraded artifacts and compare passive-income payouts; verify the combined +20% cap.
 - [ ] Verify the UI only offers unequipped merge groups and remains usable at 375px width.
+
+- [ ] Click **ОБЪЕДИНИТЬ ×3**, verify the confirmation shows the resulting next tier, then cancel and verify nothing changes.
+- [ ] Confirm the merge and verify the three source instances are replaced by one upgraded instance.
