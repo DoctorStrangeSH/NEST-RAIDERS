@@ -3717,6 +3717,73 @@ for _, attribute in ipairs({"CurrentBiome", "Heat", "HeatInSanctuary", "HeatProt
 end
 updateHeatPanel()
 
+
+-- Ashfall event HUD: event phase and saved crystal count are server-authoritative.
+local ashfallPanel = Instance.new("Frame")
+ashfallPanel.Name = "AshfallEventPanel"
+ashfallPanel.AnchorPoint = Vector2.new(1, 0)
+ashfallPanel.Position = UDim2.new(1, -24, 0, 198)
+ashfallPanel.Size = UDim2.fromOffset(260, 78)
+ashfallPanel.BackgroundColor3 = Color3.fromRGB(48, 35, 34)
+ashfallPanel.BackgroundTransparency = 0.08
+ashfallPanel.Visible = false
+ashfallPanel.Parent = gui
+addCorner(ashfallPanel, 14)
+addStroke(ashfallPanel, Color3.fromRGB(255, 190, 92), 1.5)
+
+local ashfallTitle = Instance.new("TextLabel")
+ashfallTitle.BackgroundTransparency = 1
+ashfallTitle.Position = UDim2.fromOffset(14, 7)
+ashfallTitle.Size = UDim2.new(1, -28, 0, 22)
+ashfallTitle.Font = Enum.Font.GothamBold
+ashfallTitle.Text = "ВУЛКАНИЧЕСКОЕ СОБЫТИЕ"
+ashfallTitle.TextColor3 = Color3.fromRGB(255, 220, 190)
+ashfallTitle.TextSize = 13
+ashfallTitle.TextXAlignment = Enum.TextXAlignment.Left
+ashfallTitle.Parent = ashfallPanel
+
+local ashfallStatus = Instance.new("TextLabel")
+ashfallStatus.BackgroundTransparency = 1
+ashfallStatus.Position = UDim2.fromOffset(14, 31)
+ashfallStatus.Size = UDim2.new(1, -28, 0, 19)
+ashfallStatus.Font = Enum.Font.GothamMedium
+ashfallStatus.TextColor3 = Color3.fromRGB(255, 238, 220)
+ashfallStatus.TextSize = 11
+ashfallStatus.TextXAlignment = Enum.TextXAlignment.Left
+ashfallStatus.Parent = ashfallPanel
+
+local ashfallCrystals = Instance.new("TextLabel")
+ashfallCrystals.BackgroundTransparency = 1
+ashfallCrystals.Position = UDim2.fromOffset(14, 51)
+ashfallCrystals.Size = UDim2.new(1, -28, 0, 18)
+ashfallCrystals.Font = Enum.Font.GothamBold
+ashfallCrystals.TextColor3 = Color3.fromRGB(255, 204, 119)
+ashfallCrystals.TextSize = 11
+ashfallCrystals.TextXAlignment = Enum.TextXAlignment.Left
+ashfallCrystals.Parent = ashfallPanel
+
+local function updateAshfallPanel()
+    local inEmberlands = player:GetAttribute("CurrentBiome") == "Emberlands"
+    ashfallPanel.Visible = inEmberlands
+    if not inEmberlands then return end
+    local phase = tostring(player:GetAttribute("AshfallPhase") or "IDLE")
+    local seconds = math.max(0, tonumber(player:GetAttribute("AshfallSeconds")) or 0)
+    if phase == "WARNING" then
+        ashfallStatus.Text = "ИЗВЕРЖЕНИЕ ЧЕРЕЗ " .. seconds .. " СЕК. · ИЩИ УКРЫТИЕ!"
+    elseif phase == "ERUPTION" then
+        ashfallStatus.Text = "ИЗВЕРЖЕНИЕ! УКЛОНЯЙСЯ ОТ ЛАВОВЫХ ВОЛН!"
+    elseif phase == "AFTERMATH" then
+        ashfallStatus.Text = "ПОСЛЕДСТВИЯ · КРИСТАЛЛЫ ЕЩЁ " .. seconds .. " СЕК."
+    else
+        ashfallStatus.Text = "Следующее извержение примерно через " .. seconds .. " сек."
+    end
+    ashfallCrystals.Text = "Пепельные кристаллы: " .. math.max(0, tonumber(player:GetAttribute("AshCrystals")) or 0)
+end
+for _, attribute in ipairs({"CurrentBiome", "AshfallPhase", "AshfallSeconds", "AshCrystals"}) do
+    player:GetAttributeChangedSignal(attribute):Connect(updateAshfallPanel)
+end
+updateAshfallPanel()
+
 local guideHighlight = Instance.new("Highlight")
 guideHighlight.Name = "FirstPlayTarget"
 guideHighlight.FillColor = Color3.fromRGB(255, 216, 129)
