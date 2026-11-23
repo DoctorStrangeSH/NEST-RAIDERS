@@ -7,6 +7,7 @@ on:
     paths:
       - "src/**"
       - "default.project.json"
+      - "tests/**"
       - ".github/workflows/build-studio-project.yml"
   workflow_dispatch:
 
@@ -39,6 +40,9 @@ jobs:
 
       - name: Verify output
         run: test -s "NEST-RAIDERS.rbxlx"
+
+      - name: Check playable-first regressions and package structure
+        run: python3 tests/check_playable.py
 
       - name: Upload Studio project
         uses: actions/upload-artifact@v4
