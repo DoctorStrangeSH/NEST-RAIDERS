@@ -149,9 +149,6 @@ function WorldHealthCheck:Check()
         if not ember:FindFirstChild("EmberReturnPortal") then fail("Нет обратного портала из Пепельных земель") end
         local frost = world:FindFirstChild("FrostHighlands")
         if not frost or not frost:FindFirstChild("EmberPortal") then fail("Нет портала из Ледяных нагорий в Пепельные земли") end
-    end
-
-
         local trial = ember:FindFirstChild("HeartOfFireTrial")
         if not trial then
             fail("Не создана арена Испытания Огненного сердца")
@@ -181,6 +178,7 @@ function WorldHealthCheck:Check()
             end
             if stepCount < 12 then fail(string.format("Подъём к алтарю: %d из 12 ступеней", stepCount)) end
         end
+    end
 
     return #issues == 0, issues
 end
