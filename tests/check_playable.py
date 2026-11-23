@@ -97,6 +97,10 @@ assert 'EmeraldTrialProgress' in progression and 'EmeraldTrialCompleted' in prog
 assert 'RequiredQuest = "emerald_trial"' in game_config
 assert 'DisplayName = "Ледяные нагорья"' in game_config
 assert 'EmeraldTrialPanel' in client and 'updateEmeraldTrialPanel' in client
+
+assert 'root.Position - descendant.Parent.Position).Magnitude > descendant.MaxActivationDistance + 2' in progression
+assert 'Vector3.new(0, 16, 520)' in world and 'Vector3.new(0, 11, -112)' in world
+
 assert 'CurrentBiome' in client and 'ПРОБУЖДЕНО РУН' in client
 
 assert 'for _, player in ipairs(Players:GetPlayers()) do' in progression
