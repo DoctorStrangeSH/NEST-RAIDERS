@@ -86,6 +86,7 @@ local function spawnAshCrystals(eventFolder, eventId)
         crystal.Material = Enum.Material.Neon
         crystal.Color = Color3.fromRGB(255, 190, 92)
         crystal:SetAttribute("AshfallEventId", eventId)
+        crystal:SetAttribute("AshfallNodeIndex", index)
         crystal.Parent = rewards
 
         local light = Instance.new("PointLight")
@@ -104,13 +105,8 @@ local function spawnAshCrystals(eventFolder, eventId)
         prompt.RequiresLineOfSight = false
         prompt.Parent = crystal
 
-        local claimed = {}
         prompt.Triggered:Connect(function(player)
             if not player.Parent or player:GetAttribute("CurrentBiome") ~= "Emberlands" then return end
-            if claimed[player.UserId] then
-                player:SetAttribute("LastNotice", "Ты уже подобрал этот кристалл после извержения.")
-                return
-            end
             local character = player.Character
             local root = character and character:FindFirstChild("HumanoidRootPart")
             if not root or (root.Position - crystal.Position).Magnitude > prompt.MaxActivationDistance + 2 then return end
@@ -120,10 +116,21 @@ local function spawnAshCrystals(eventFolder, eventId)
                 return
             end
             profile.Materials = type(profile.Materials) == "table" and profile.Materials or {}
-            profile.Materials.AshCrystal = math.max(0, math.floor(tonumber(profile.Materials.AshCrystal) or 0)) + REWARD_AMOUNT
-            claimed[player.UserId] = true
-            player:SetAttribute("AshCrystals", profile.Materials.AshCrystal)
-            player:SetAttribute("LastNotice", "Получен пепельный кристалл! Всего: " .. profile.Materials.AshCrystal)
+            local materials = profile.Materials
+            if materials.LastAshfallClaimEventId ~= eventId then
+                materials.LastAshfallClaimEventId = eventId
+                materials.AshfallClaimedNodes = {}
+            end
+            materials.AshfallClaimedNodes = type(materials.AshfallClaimedNodes) == "table"
+                and materials.AshfallClaimedNodes or {}
+            if materials.AshfallClaimedNodes[index] == true then
+                player:SetAttribute("LastNotice", "Ты уже подобрал этот кристалл после извержения.")
+                return
+            end
+            materials.AshfallClaimedNodes[index] = true
+            materials.AshCrystal = math.max(0, math.floor(tonumber(materials.AshCrystal) or 0)) + REWARD_AMOUNT
+            player:SetAttribute("AshCrystals", materials.AshCrystal)
+            player:SetAttribute("LastNotice", "Получен пепельный кристалл! Всего: " .. materials.AshCrystal)
         end)
     end
 
@@ -177,7 +184,7 @@ function AshfallService:_runEvent()
     local ember = getEmberlands()
     if not ember then return end
     self._eventCounter += 1
-    local eventId = self._eventCounter
+    local eventId = game.JobId .. "_" .. tostring(os.time()) .. "_" .. tostring(self._eventCounter)
     local eventFolder = ember:FindFirstChild("LiveAshfall")
     if not eventFolder then
         eventFolder = Instance.new("Folder")
