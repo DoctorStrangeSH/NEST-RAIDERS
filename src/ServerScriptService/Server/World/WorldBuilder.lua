@@ -123,6 +123,59 @@ function WorldBuilder:Build()
     label.Font = Enum.Font.GothamBlack
     label.Parent = surface
 
+    -- Decorative landing experience: readable paths, flower gardens and egg pedestals.
+    -- These details are intentionally non-interactive and do not replace gameplay services.
+    local gardens = Instance.new("Folder")
+    gardens.Name = "WelcomeGardens"
+    gardens.Parent = island
+    local flowerColors = {
+        Color3.fromRGB(255, 185, 209),
+        Color3.fromRGB(255, 234, 153),
+        Color3.fromRGB(200, 171, 255),
+        Color3.fromRGB(245, 250, 255),
+    }
+    for index = 1, 64 do
+        local side = index % 2 == 0 and -1 or 1
+        local lane = math.floor((index - 1) / 2)
+        local z = -94 + (lane % 32) * 6
+        local x = side * (16 + (lane % 3) * 4)
+        local y = 10.95
+        local stem = part(gardens, "FlowerStem", Vector3.new(0.35, 1.2, 0.35),
+            Vector3.new(x, y + 0.5, z), Color3.fromRGB(70, 153, 80), Enum.Material.Grass)
+        stem.CanCollide = false
+        local bloom = part(gardens, "FlowerBloom", Vector3.new(1.5, 1.5, 1.5),
+            Vector3.new(x, y + 1.3, z), flowerColors[(lane % #flowerColors) + 1],
+            Enum.Material.SmoothPlastic, Enum.PartType.Ball)
+        bloom.CanCollide = false
+    end
+
+    for _, z in ipairs({-76, -38, 0, 38, 76}) do
+        for _, x in ipairs({-32, 32}) do
+            local post = part(gardens, "PathLanternPost", Vector3.new(0.8, 6, 0.8),
+                Vector3.new(x, 14, z), Color3.fromRGB(111, 76, 52), Enum.Material.Wood)
+            post.CanCollide = false
+            local lightOrb = part(gardens, "PathLanternGlow", Vector3.new(2.3, 2.3, 2.3),
+                Vector3.new(x, 17.3, z), Color3.fromRGB(255, 220, 139),
+                Enum.Material.Neon, Enum.PartType.Ball)
+            lightOrb.CanCollide = false
+            local pointLight = Instance.new("PointLight")
+            pointLight.Range = 13
+            pointLight.Brightness = 0.6
+            pointLight.Color = Color3.fromRGB(255, 219, 156)
+            pointLight.Parent = lightOrb
+        end
+    end
+
+    for _, eggPosition in ipairs({
+        Vector3.new(-24, 14, 20), Vector3.new(25, 14, 24), Vector3.new(0, 14, 65),
+    }) do
+        local pedestal = part(gardens, "EggPedestal", Vector3.new(6, 1.4, 6),
+            Vector3.new(eggPosition.X, 11, eggPosition.Z),
+            Color3.fromRGB(176, 146, 112), Enum.Material.Slate, Enum.PartType.Cylinder)
+        pedestal.CFrame = CFrame.new(eggPosition.X, 11, eggPosition.Z)
+        pedestal.CanCollide = false
+    end
+
     return world
 end
 
