@@ -614,7 +614,7 @@ assert 'Руны тайника рощи:' in world_health
 assert 'ForgottenHeartCave' in world and 'ForgottenCaveBridge' in world
 assert 'ForgottenCaveFloor' in world and 'CaveStalactite_' in world
 assert '"CaveCrystal_" .. definition.Id' in world and 'Id = "Root"' in world and 'Id = "River"' in world and 'Id = "Dawn"' in world
-assert 'Корень → Река → Рассвет' in world
+assert 'КОРНИ → РЕКА → РАССВЕТ' in world
 assert 'ForgottenCaveChestPrompt' in world
 assert 'CRYSTAL_ORDER = { "Root", "River", "Dawn" }' in ancient_cave
 assert 'ForgottenCaveCrystals' in ancient_cave and 'forgotten_cave_cache' in ancient_cave
