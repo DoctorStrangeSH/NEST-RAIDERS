@@ -86,6 +86,23 @@ local BiomeCatalog = {
             },
         },
     },
+    ForgottenCave = {
+        Id = "ForgottenCave",
+        Name = "Пещера забытого сердца",
+        DefaultEggId = "ForgottenCaveEgg",
+        Eggs = {
+            ForgottenCaveEgg = {
+                Id = "ForgottenCaveEgg",
+                Name = "Яйцо забытого сердца",
+                Rarity = "Легендарное",
+                SpeciesWeights = {
+                    CaveGlimmerbat = 65,
+                    CrystalProwler = 25,
+                    HeartWisp = 10,
+                },
+            },
+        },
+    },
     AncientHeights = {
         Id = "AncientHeights",
         Name = "Древние высоты",
