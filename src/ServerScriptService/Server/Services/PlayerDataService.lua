@@ -6,6 +6,7 @@ local RunService = game:GetService("RunService")
 
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local ProfileTemplate = require(ReplicatedStorage.Shared.Config.ProfileTemplate)
+local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 
 local PlayerDataService = {}
 PlayerDataService._profiles = {}
@@ -42,7 +43,21 @@ local function validProfile(data)
         and type(data.Companions or {}) == "table"
 end
 
+-- Migrate older saves before publishing ProfileLoaded, independently of whether
+-- the player ever opens the collection book.
+local function restoreDiscoveredSpecies(data)
+    local discovered = type(data.DiscoveredSpecies) == "table" and data.DiscoveredSpecies or {}
+    for _, companion in ipairs(type(data.Companions) == "table" and data.Companions or {}) do
+        if type(companion) == "table" and type(companion.Id) == "string"
+            and CompanionCatalog[companion.Id] then
+            discovered[companion.Id] = true
+        end
+    end
+    data.DiscoveredSpecies = discovered
+end
+
 local function publishProfile(player, data)
+    restoreDiscoveredSpecies(data)
     data._SessionLock = nil
     PlayerDataService._profiles[player] = data
     player:SetAttribute("Coins", data.Coins)
