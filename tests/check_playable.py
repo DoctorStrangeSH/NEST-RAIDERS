@@ -420,4 +420,15 @@ for kind in ("AncientStag", "RootSprite", "SkySerpent"):
     assert f'Kind = "{kind}"' in ancient_models
     assert f'definition.Kind == "{kind}"' in ancient_models
 
+
+# Ancient Heights harvesting: saved resource balance, per-player cooldowns and responsive HUD.
+ancient_harvest = Path("src/ServerScriptService/Server/Services/AncientHarvestService.lua").read_text()
+assert '"AncientHarvestService"' in server and 'function AncientHarvestService:Init()' in ancient_harvest
+assert 'ElderwoodNodeCooldowns' in ancient_harvest and 'materials.Elderwood' in ancient_harvest
+assert 'ProgressionService:CanEnterZone(player, "AncientHeights")' in ancient_harvest
+assert 'Elderwood = 0' in profile_template and 'ElderwoodNodeCooldowns = {}' in profile_template
+assert 'ElderwoodNodeId' in world and 'HarvestElderwoodPrompt' in world
+assert 'AncientHarvestPanel' in client and 'Elderwood' in client
+assert 'Древние корни:' in world_health
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
