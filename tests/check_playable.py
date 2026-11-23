@@ -52,6 +52,12 @@ assert 'OriginBiome = egg.BiomeId or "Meadow"' in eggs
 companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
 inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
 book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua").read_text()
+assert 'profile.DiscoveredBiomes[companion.Id] = companion.OriginBiome or "Meadow"' in eggs
+assert 'local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)' in book
+assert 'BiomeName = biomeName' in book and 'DiscoveredBiome = profile.DiscoveredBiomes[definition.Id]' in book
+assert 'speciesWeight / totalWeight * 100' in book
+assert 'entry.DiscoveredBiome' in client and 'entry.EggName' in client
+
 profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
 assert 'CompanionIncomeRemainder = 0' in profile_template
 assert 'StoredIncomeRemainder = 0' in profile_template
