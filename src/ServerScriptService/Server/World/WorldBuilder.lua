@@ -139,7 +139,7 @@ function WorldBuilder:Build()
         ring.CanCollide = false
         -- Tall ambient glow allows players to recognize egg sites from afar.
         local beam = part(zone, "EggBeacon",
-            Vector3.new(1.25, 9, 1.25), Vector3.new(grove.x, 19.2, grove.z),
+            Vector3.new(1.25, 9, 1.25), Vector3.new(grove.x + 4.5, 19.2, grove.z + 4.5),
             Color3.fromRGB(255, 222, 155), Enum.Material.Neon, Enum.PartType.Cylinder)
         beam.CanCollide = false
         beam.CanTouch = false
