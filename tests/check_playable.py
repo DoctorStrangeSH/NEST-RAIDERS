@@ -520,11 +520,11 @@ assert 'GatherBonus = 0.05' in artifact_catalog and 'GatherBonus = 0.10' in arti
 assert 'Weight = 48' in artifact_catalog and 'Weight = 24' in artifact_catalog and 'Weight = 8' in artifact_catalog
 assert 'Weight = 12' in artifact_catalog and 'Weight = 6' in artifact_catalog and 'Weight = 2' in artifact_catalog
 assert 'ApplyGatherBonus(profile, baseAmount)' in ancient_harvest
-assert 'gatherBonus > 0' in ancient_harvest and 'артефакт: +%d ресурс(ов)' in ancient_harvest
+assert 'gatherBonus > 0' in ancient_harvest and 'артефакт: +%d дополнительно (средний бонус +%d%%)' in ancient_harvest
 assert 'local amount, gatherBonus, extraMaterials = ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)' in ancient_harvest
 crystal_mining = Path("src/ServerScriptService/Server/Services/CrystalMiningService.lua").read_text()
 assert 'ApplyGatherBonus(profile, baseAmount)' in crystal_mining
-assert 'gatherBonus > 0' in crystal_mining and 'артефакт: +%d ресурс(ов)' in crystal_mining
+assert 'gatherBonus > 0' in crystal_mining and 'артефакт: +%d дополнительно (средний бонус +%d%%)' in crystal_mining
 assert 'amount, gatherBonus, extraMaterials = ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)' in crystal_mining
 assert 'NODE_COOLDOWN_SECONDS = 180' in ancient_harvest and 'NODE_COOLDOWN_SECONDS = 180' in crystal_mining
 assert 'CurrentBiome") ~= "AncientHeights"' in ancient_harvest
