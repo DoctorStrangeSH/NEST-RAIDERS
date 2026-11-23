@@ -4,6 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
+local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local CrystalMiningService = {}
 local NODE_COOLDOWN_SECONDS = 180
@@ -77,14 +78,20 @@ function CrystalMiningService:Init()
 
                 local species = activeSpecies(profile)
                 local amount = math.random(2, 4)
+                local gatherBonus = 0
                 if species.PrismFox then amount += 1 end
                 if species.CrystalDeer then amount += 1 end
                 if species.AuroraDragon and math.random() < 0.35 then amount += 2 end
+                local baseAmount = amount
+                amount, gatherBonus = ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)
 
                 materials.CrystalNodeCooldowns[nodeId] = now + NODE_COOLDOWN_SECONDS
                 materials.CrystalShard = math.max(0, math.floor(tonumber(materials.CrystalShard) or 0)) + amount
                 player:SetAttribute("CrystalShards", materials.CrystalShard)
-                player:SetAttribute("LastNotice", string.format("Добыто кристальных осколков: +%d. Всего: %d.", amount, materials.CrystalShard))
+                player:SetAttribute("LastNotice", string.format(
+                    "Добыто кристальных осколков: +%d%s. Всего: %d.",
+                    amount, gatherBonus > 0 and string.format(" · бонус артефактов +%d%%", math.floor(gatherBonus * 100 + 0.5)) or "",
+                    materials.CrystalShard))
             end)
         end
     end
