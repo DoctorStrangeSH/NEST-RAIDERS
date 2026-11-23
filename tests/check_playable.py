@@ -31,6 +31,13 @@ assert 'ServiceError_' in server
 assert 'remote.OnServerInvoke = function()' in server, "Uninitialized remotes must fail quickly"
 assert 'Ok = false' in server and 'Message = "Система ещё загружается' in server
 assert 'NestRaidersHUD' in watchdog
+assert 'gui:SetAttribute("ClientReady", false)' in client
+assert 'gui:SetAttribute("ClientReady", true)' in client
+assert client.rindex('gui:SetAttribute("ClientReady", true)') > client.rindex('updateStats()')
+assert 'hud:GetAttribute("ClientReady") == true' in watchdog
+assert 'GetAttributeChangedSignal("ClientReady")' in watchdog
+assert 'if hasHud() then return end' not in watchdog
+
 
 path = Path("NEST-RAIDERS.rbxlx")
 if path.exists():
