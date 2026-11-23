@@ -278,3 +278,13 @@ CI verifies source and packaging, **not actual Roblox physics or visual correctn
 - [ ] Roblox Studio: confirm a multiplayer session retains correct per-player counters.
 
 The fix is committed, but the in-game flow is still not runtime-verified.
+
+### Playable-first companion respawn synchronization (2026-11-23)
+
+- [x] Bind both ProfileLoaded and CharacterAdded handlers for players already present when CompanionService initializes as well as future arrivals.
+- [x] Preserve an immediate follower refresh for already-loaded profiles and avoid duplicate per-player bindings.
+- [x] Keep companion cleanup on player departure.
+- [x] Extend CI regression checks for early join, post-load follower refresh and character respawn registration.
+- [ ] Roblox Studio: hatch a pet, confirm follower appears; reset character and confirm follower remains visible.
+- [ ] Roblox Studio: exercise the same path with an early-joining player and two concurrent players.
+- [ ] Verify inventory, pet display, and saved progress before closing Sprint 4.20.
