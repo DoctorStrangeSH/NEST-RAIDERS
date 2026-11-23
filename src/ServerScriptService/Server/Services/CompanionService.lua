@@ -110,6 +110,24 @@ local DEFINITIONS = {
         Detail = Color3.fromRGB(149, 130, 203),
         Kind = "SkySerpent",
     },
+    CaveGlimmerbat = {
+        Body = Color3.fromRGB(91, 119, 166),
+        Accent = Color3.fromRGB(154, 224, 255),
+        Detail = Color3.fromRGB(72, 78, 128),
+        Kind = "CaveGlimmerbat",
+    },
+    CrystalProwler = {
+        Body = Color3.fromRGB(116, 157, 167),
+        Accent = Color3.fromRGB(195, 239, 244),
+        Detail = Color3.fromRGB(103, 116, 185),
+        Kind = "CrystalProwler",
+    },
+    HeartWisp = {
+        Body = Color3.fromRGB(135, 109, 190),
+        Accent = Color3.fromRGB(255, 222, 154),
+        Detail = Color3.fromRGB(180, 239, 232),
+        Kind = "HeartWisp",
+    },
     HeartwoodGuardian = {
         Body = Color3.fromRGB(105, 145, 91),
         Accent = Color3.fromRGB(205, 190, 126),
@@ -214,6 +232,27 @@ local function buildPet(parent, companion, index)
                 Vector3.new(math.cos(angle) * 0.9, 0.75, math.sin(angle) * 0.9), definition.Detail)
         end
         makeShape(model, "Sprout", Vector3.new(0.45, 0.85, 0.3), Vector3.new(0, 2.85, 0), definition.Detail, Enum.PartType.Wedge)
+    elseif definition.Kind == "CaveGlimmerbat" then
+        makeShape(model, "BatEarLeft", Vector3.new(0.35, 1.0, 0.25), Vector3.new(-0.52, 2.55, 0.2), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "BatEarRight", Vector3.new(0.35, 1.0, 0.25), Vector3.new(0.52, 2.55, 0.2), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "WingLeft", Vector3.new(0.35, 1.2, 1.35), Vector3.new(-1.15, 1.35, -0.15), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "WingRight", Vector3.new(0.35, 1.2, 1.35), Vector3.new(1.15, 1.35, -0.15), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "GlowMark", Vector3.new(0.45, 0.45, 0.2), Vector3.new(0, 1.55, 1.05), definition.Accent)
+    elseif definition.Kind == "CrystalProwler" then
+        makeShape(model, "Muzzle", Vector3.new(0.8, 0.45, 0.6), Vector3.new(0, 1.58, 1.15), definition.Accent)
+        makeShape(model, "EarLeft", Vector3.new(0.42, 0.85, 0.35), Vector3.new(-0.48, 2.55, 0.3), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "EarRight", Vector3.new(0.42, 0.85, 0.35), Vector3.new(0.48, 2.55, 0.3), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "CrystalCrest", Vector3.new(0.4, 1.05, 0.4), Vector3.new(0, 2.7, 0.15), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "CrystalTail", Vector3.new(0.55, 0.55, 1.45), Vector3.new(0, 1.25, -1.2), definition.Detail, Enum.PartType.Wedge)
+    elseif definition.Kind == "HeartWisp" then
+        makeShape(model, "Halo", Vector3.new(1.8, 0.22, 1.8), Vector3.new(0, 2.85, 0), definition.Accent, Enum.PartType.Cylinder)
+        makeShape(model, "Core", Vector3.new(0.9, 0.9, 0.9), Vector3.new(0, 1.9, 0.1), definition.Detail)
+        makeShape(model, "FlameTop", Vector3.new(0.5, 1.0, 0.5), Vector3.new(0, 3.25, 0), definition.Accent, Enum.PartType.Ball)
+        local aura = Instance.new("PointLight")
+        aura.Color = definition.Accent
+        aura.Range = 12
+        aura.Brightness = 1.5
+        aura.Parent = body
     elseif definition.Kind == "SkySerpent" then
         makeShape(model, "SerpentSnout", Vector3.new(0.75, 0.45, 0.9), Vector3.new(0, 1.6, 1.15), definition.Accent)
         makeShape(model, "Crest", Vector3.new(0.3, 0.85, 0.3), Vector3.new(0, 2.55, 0.25), definition.Detail, Enum.PartType.Wedge)
