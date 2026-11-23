@@ -69,22 +69,25 @@ function AncientSecretService:Init()
     end)
 
     local Players = game:GetService("Players")
-    Players.PlayerRemoving:Connect(function(player)
-        CLAIM_LOCKS[player] = nil
-    end)
-    for _, player in ipairs(Players:GetPlayers()) do
-        local profile = PlayerDataService:GetProfile(player)
-        player:SetAttribute("AncientGroveSecretFound",
-            profile and profile.CompletedQuests and profile.CompletedQuests.ancient_grove_secret == true or false)
-    end
-    Players.PlayerAdded:Connect(function(player)
-        player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
-            if not player:GetAttribute("ProfileLoaded") then return end
+    local boundPlayers = {}
+    local function bindPlayer(player)
+        if boundPlayers[player] then return end
+        boundPlayers[player] = true
+        local function syncDiscovery()
+            if not player.Parent or not player:GetAttribute("ProfileLoaded") then return end
             local profile = PlayerDataService:GetProfile(player)
             player:SetAttribute("AncientGroveSecretFound",
                 profile and profile.CompletedQuests and profile.CompletedQuests.ancient_grove_secret == true or false)
-        end)
+        end
+        player:GetAttributeChangedSignal("ProfileLoaded"):Connect(syncDiscovery)
+        syncDiscovery()
+    end
+    Players.PlayerAdded:Connect(bindPlayer)
+    Players.PlayerRemoving:Connect(function(player)
+        CLAIM_LOCKS[player] = nil
+        boundPlayers[player] = nil
     end)
+    for _, player in ipairs(Players:GetPlayers()) do bindPlayer(player) end
 end
 
 return AncientSecretService
