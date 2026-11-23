@@ -468,3 +468,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add backward-compatible profile defaults and static checks for the remainder fields.
 - [ ] Roblox Studio: verify low-income pets with Verdant/Luminous/Prismatic traits earn the expected additional whole coins after enough 10-second ticks.
 - [ ] Rejoin and verify fractional remainder survives profile save/load.
+
+### Biome-aware egg tables foundation (2026-11-23)
+
+- [x] Add a dedicated BiomeCatalog with biome-owned egg definitions and species weight tables.
+- [x] Resolve wild-hatched species from the collected egg's biome/egg pool instead of one global species roll.
+- [x] Stamp world eggs with biome and egg identity on initial spawn and respawn.
+- [x] Preserve the source biome on the hatched companion record for collection/profile features.
+- [x] Add regression checks for biome catalog wiring and egg-to-companion provenance.
+- [ ] Roblox Studio: collect and hatch MeadowEgg; verify only MeadowFox, MossTurtle and SproutDragon can hatch with 55/30/15 relative weights.
+- [ ] Add the next physical biome zone and its egg pool only after its terrain, unlock gate and spawn points are present in the playable world.
+- [ ] Extend the egg shop odds display to read the same biome catalog source so displayed odds cannot drift from hatch logic.
