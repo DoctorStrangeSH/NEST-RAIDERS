@@ -9,6 +9,8 @@ local ProfileTemplate = {
     CompletedQuests = {},
     EggInventory = {},
     Companions = {},
+    -- Permanent species discoveries survive merging or consuming the last copy.
+    DiscoveredSpecies = {},
     ActiveCompanions = {},
     Nest = {
         Level = 1,
