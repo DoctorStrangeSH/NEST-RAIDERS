@@ -652,7 +652,7 @@ navToggle.BackgroundColor3 = Color3.fromRGB(35, 61, 66)
 navToggle.TextColor3 = Color3.fromRGB(255, 236, 183)
 navToggle.TextSize = 14
 navToggle.Font = Enum.Font.GothamBlack
-navToggle.Text = "☰  МЕНЮ"
+navToggle.Text = "МЕНЮ"
 navToggle.Parent = gui
 addCorner(navToggle, 12)
 
@@ -694,7 +694,7 @@ end
 
 navToggle.Activated:Connect(function()
     navScroll.Visible = not navScroll.Visible
-    navToggle.Text = navScroll.Visible and "✕  ЗАКРЫТЬ" or "☰  МЕНЮ"
+    navToggle.Text = navScroll.Visible and "ЗАКРЫТЬ" or "МЕНЮ"
 end)
 
 local function resizeNavigation()
@@ -1252,7 +1252,7 @@ closeAllButton.BackgroundColor3 = Color3.fromRGB(143, 68, 68)
 closeAllButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeAllButton.Font = Enum.Font.GothamBold
 closeAllButton.TextSize = 13
-closeAllButton.Text = "✕ ЗАКРЫТЬ ВСЁ"
+closeAllButton.Text = "ЗАКРЫТЬ ВСЁ"
 closeAllButton.ZIndex = 50
 closeAllButton.Visible = false
 closeAllButton.Parent = gui
@@ -1488,7 +1488,7 @@ local function renderInventory(data)
         trainButton.Position = UDim2.fromOffset(136, 96)
         trainButton.Size = UDim2.fromOffset(116, 27)
         trainButton.BackgroundColor3 = Color3.fromRGB(66, 137, 151)
-        trainButton.Text = (companion.Level or 1) >= 10 and "МАКС. УРОВЕНЬ" or ("ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. "🪙")
+        trainButton.Text = (companion.Level or 1) >= 10 and "МАКС. УРОВЕНЬ" or ("ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. "мон.")
         trainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         trainButton.TextSize = 9
         trainButton.Font = Enum.Font.GothamBlack
@@ -1507,7 +1507,7 @@ local function renderInventory(data)
                 renderInventory(updated)
             else
                 trainButton.Active = true
-                trainButton.Text = "ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. "🪙"
+                trainButton.Text = "ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. "мон."
             end
         end)
 
@@ -1696,7 +1696,7 @@ local function renderShop(data)
         buy.Position = UDim2.new(1, -12, 1, -10)
         buy.Size = UDim2.fromOffset(150, 34)
         buy.BackgroundColor3 = Color3.fromRGB(190, 135, 57)
-        buy.Text = "КУПИТЬ · " .. tostring(item.Price) .. " 🪙"
+        buy.Text = "КУПИТЬ · " .. tostring(item.Price) .. " мон."
         buy.TextColor3 = Color3.fromRGB(255, 255, 245)
         buy.TextSize = 13
         buy.Font = Enum.Font.GothamBlack
@@ -1749,7 +1749,7 @@ local function renderNest(data)
         nestUpgrade.BackgroundColor3 = Color3.fromRGB(83, 101, 87)
     else
         nestDescription.Text = string.format("Следующее улучшение откроет новые украшения и места для питомцев. Доступно мест: %d.", data.DisplaySlots or 0)
-        nestUpgrade.Text = "УЛУЧШИТЬ · " .. tostring(data.NextCost or 0) .. " 🪙"
+        nestUpgrade.Text = "УЛУЧШИТЬ · " .. tostring(data.NextCost or 0) .. " мон."
         nestUpgrade.Active = true
         nestUpgrade.AutoButtonColor = true
         nestUpgrade.BackgroundColor3 = Color3.fromRGB(83, 151, 103)
@@ -1829,7 +1829,7 @@ local function renderDecor(data)
         buy.Position = UDim2.new(1, -8, 0, 7)
         buy.Size = UDim2.fromOffset(92, 28)
         buy.BackgroundColor3 = Color3.fromRGB(181, 132, 69)
-        buy.Text = "КУПИТЬ " .. tostring(item.Cost) .. "🪙"
+        buy.Text = "КУПИТЬ " .. tostring(item.Cost) .. "мон."
         buy.TextColor3 = Color3.new(1, 1, 1)
         buy.TextSize = 9
         buy.Font = Enum.Font.GothamBlack
@@ -2241,7 +2241,7 @@ renderBuild = function(data)
         buy.Position = UDim2.new(1, -8, 0, 8)
         buy.Size = UDim2.fromOffset(102, 30)
         buy.BackgroundColor3 = Color3.fromRGB(183, 137, 67)
-        buy.Text = "КУПИТЬ " .. tostring(item.Cost) .. "🪙"
+        buy.Text = "КУПИТЬ " .. tostring(item.Cost) .. "мон."
         buy.TextColor3 = Color3.new(1, 1, 1)
         buy.TextSize = 10
         buy.Font = Enum.Font.GothamBlack
@@ -3264,7 +3264,7 @@ renderDisplay = function(data)
         if not entry.Empty then filledSlots += 1 end
     end
     displayIncome.Text = string.format("Занято витрин: %d / %d  ·  Доход: +%d монет каждые %d сек.\nНакоплено: %d монет", filledSlots, data.SlotLimit or 0, data.IncomePerTick or 0, data.TickSeconds or 10, data.StoredCoins or 0)
-    collectDisplay.Text = "СОБРАТЬ · " .. tostring(data.StoredCoins or 0) .. " 🪙"
+    collectDisplay.Text = "СОБРАТЬ · " .. tostring(data.StoredCoins or 0) .. " мон."
     collectDisplay.Active = (data.StoredCoins or 0) > 0
     collectDisplay.AutoButtonColor = collectDisplay.Active
     for _, child in ipairs(displayList:GetChildren()) do
@@ -3340,15 +3340,15 @@ renderDisplay = function(data)
             end
             addCareAction("ЛАСКА", "Pet", -80, 44, Color3.fromRGB(89, 143, 112))
             addCareAction("ИГРА", "Play", -8, 44, Color3.fromRGB(91, 126, 174))
-            addCareAction("КОРМ 10🪙", "Feed", -80, 77, Color3.fromRGB(183, 139, 70))
+            addCareAction("КОРМ 10мон.", "Feed", -80, 77, Color3.fromRGB(183, 139, 70))
             addCareAction("СОН", "Sleep", -8, 77, Color3.fromRGB(91, 104, 153))
-            addCareAction("ЛАКОМСТВО 15🪙", "Treat", -8, 110, Color3.fromRGB(180, 115, 65), 140)
+            addCareAction("ЛАКОМСТВО 15мон.", "Treat", -8, 110, Color3.fromRGB(180, 115, 65), 140)
             addCareAction("ИГРАТЬ С ИГРУШКОЙ", "ToyPlay", -8, 143, Color3.fromRGB(91, 133, 173), 140)
 
             local toyChoices = {
-                { Id = "MeadowBall", Label = "МЯЧ 25🪙", X = -152, Color = Color3.fromRGB(204, 111, 83) },
-                { Id = "CozyPlush", Label = "ПЛЮШ 40🪙", X = -80, Color = Color3.fromRGB(139, 108, 185) },
-                { Id = "WindSpinner", Label = "ВЕРТУШКА 35🪙", X = -8, Color = Color3.fromRGB(74, 159, 153) },
+                { Id = "MeadowBall", Label = "МЯЧ 25мон.", X = -152, Color = Color3.fromRGB(204, 111, 83) },
+                { Id = "CozyPlush", Label = "ПЛЮШ 40мон.", X = -80, Color = Color3.fromRGB(139, 108, 185) },
+                { Id = "WindSpinner", Label = "ВЕРТУШКА 35мон.", X = -8, Color = Color3.fromRGB(74, 159, 153) },
             }
             for _, toy in ipairs(toyChoices) do
                 local toyButton = Instance.new("TextButton")
