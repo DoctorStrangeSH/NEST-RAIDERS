@@ -214,6 +214,7 @@ function ProgressionService:Init()
                         FrostHighlands = "Добро пожаловать в Ледяные нагорья!",
                         Emberlands = "Добро пожаловать в Пепельные земли! Берегись перегрева.",
                         CrystalRealm = "Добро пожаловать в Хрустальное королевство! Ищи сияющие жилы и призматические яйца.",
+                        AncientHeights = "Добро пожаловать на Древние высоты! Это первая открытая площадка нового биома.",
                         StarterIsland = "Ты вернулся на стартовый остров.",
                     }
                     player:SetAttribute("LastNotice", arrivalMessages[zoneId] or "Ты прибыл в новый биом.")
