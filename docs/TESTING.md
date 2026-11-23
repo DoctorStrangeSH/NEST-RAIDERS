@@ -607,3 +607,5 @@
 - [ ] Verify the test button is visible in Studio Play and absent from a published server.
 - [ ] Use the fixture to equip each Gatherer, harvest Elderwood and Crystal nodes, merge three copies, and verify the next tier.
 - [ ] Verify the fixture cannot be invoked in a published server and leaves the inventory unchanged when capacity is insufficient.
+
+- QA fixtures are counted independently from normal crafted artifacts. The collection labels temporary QA items with `ТЕСТ` and keeps their merge groups separate from normal artifacts.
