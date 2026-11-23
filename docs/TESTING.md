@@ -514,3 +514,15 @@
 - [ ] Defeat the boss and verify one Mythic Forgotten Heart Guardian companion, 1,200 coins, 5 Starshards and 800 XP are granted.
 - [ ] Confirm the reward companion has the crystal golem follower model and appears in the Collection Book with the cave source.
 - [ ] Rejoin and confirm boss completion, companion ownership and reward balances persist; no duplicate reward is granted.
+
+
+## Forgotten Heart Guardian choreography — Studio acceptance
+- [ ] Trigger Crystal Slam and confirm both arms rise and slam in sync with the warning.
+- [ ] Trigger Echo Pulse and confirm the arms spread while the wide warning ring is visible.
+- [ ] Trigger Shard Rain and confirm raised arms, crystal breakage and flying shard fragments.
+- [ ] Reach phase II and verify the purple awakening flare and arena crystal break sequence play once.
+- [ ] Confirm crystal clusters regrow after eight seconds and are not left invisible or undersized.
+- [ ] Defeat the boss and verify the collapse animation and golden core remain visible.
+- [ ] Confirm the mythic companion reveal card appears once, fits 375px-wide mobile screens and closes with its button.
+- [ ] Rejoin after defeating the boss and confirm the reward reveal does not replay.
+- [ ] In a two-player Studio session, confirm one player's animations and crystal breakage are not visible to the other player.
