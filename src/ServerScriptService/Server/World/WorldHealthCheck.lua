@@ -296,6 +296,12 @@ function WorldHealthCheck:Check()
         if not chestPrompt or not chestPrompt:IsA("ProximityPrompt") then
             fail("Нет сундука Сердца рощи")
         end
+        local guardian = temple and temple:FindFirstChild("AncientTempleGuardian")
+        local guardianCore = guardian and guardian:FindFirstChild("GuardianHeartCore")
+        local guardianPrompt = guardianCore and guardianCore:FindFirstChild("AncientTempleBossPrompt")
+        if not guardianPrompt or not guardianPrompt:IsA("ProximityPrompt") then
+            fail("Нет Стража Сердца Древа или его точки взаимодействия")
+        end
     end
 
     return #issues == 0, issues
