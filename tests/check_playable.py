@@ -12,6 +12,14 @@ watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua"
 world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
 plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
 eggs = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
+companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+assert 'local function bindPlayer(player)' in companions, "Companion service must bind early joiners"
+assert 'Players.PlayerAdded:Connect(bindPlayer)' in companions
+assert 'player.CharacterAdded:Connect(function()' in companions
+assert 'player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()' in companions
+assert 'for _, player in ipairs(Players:GetPlayers()) do' in companions
+assert 'if player.Parent and player:GetAttribute("ProfileLoaded") then' in companions
+
 assert 'local function bindPlayer(player)' in eggs, "EggService must bind loading players"
 assert 'Players.PlayerAdded:Connect(bindPlayer)' in eggs
 assert 'for _, player in ipairs(Players:GetPlayers()) do' in eggs
