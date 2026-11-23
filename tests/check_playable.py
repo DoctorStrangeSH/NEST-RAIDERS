@@ -341,7 +341,7 @@ assert 'AshfallPhase' in ashfall and '"WARNING"' in ashfall and '"ERUPTION"' in 
 assert 'AshfallLavaSurge_' in ashfall and 'wave.Position = Vector3.new(0, 18.2, z)' in ashfall
 assert 'self:_damageAt(z)' in ashfall and 'humanoid:TakeDamage(SURGE_DAMAGE)' in ashfall
 assert 'root.Position.Z > 1500' in ashfall, "Lava surges must not damage players in the cooling sanctuary"
-assert 'CollectAshCrystalPrompt' in ashfall and 'AshfallClaimedNodes[index]' in ashfall
+assert 'CollectAshCrystalPrompt' in ashfall and 'AshfallClaimedNodes[nodeKey]' in ashfall
 assert 'LastAshfallClaimEventId' in ashfall and 'AshfallClaimedNodes' in ashfall
 assert 'materials.AshCrystal' in ashfall and 'AshCrystal = 0' in profile_template
 assert 'LastAshfallClaimEventId = ""' in profile_template and 'AshfallClaimedNodes = {}' in profile_template
