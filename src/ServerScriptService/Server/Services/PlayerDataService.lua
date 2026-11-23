@@ -63,6 +63,7 @@ local function publishProfile(player, data)
     player:SetAttribute("Coins", data.Coins)
     local materials = type(data.Materials) == "table" and data.Materials or {}
     player:SetAttribute("AshCrystals", math.max(0, math.floor(tonumber(materials.AshCrystal) or 0)))
+    player:SetAttribute("CrystalShards", math.max(0, math.floor(tonumber(materials.CrystalShard) or 0)))
     player:SetAttribute("Level", data.Level)
     player:SetAttribute("ProfilePersistence", PlayerDataService._studioFallback[player] and "TEMPORARY" or "SAVED")
     player:SetAttribute("ProfileLoaded", true)
