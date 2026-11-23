@@ -487,7 +487,7 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Artifacts are persistent instances in `profile.Artifacts`; equipped instance IDs are stored separately in `profile.EquippedArtifacts`.
 - Maximum equipped artifacts: 2. The server validates ownership and slot capacity for every equip action.
 - The Ancient Heights workshop crafts one random artifact for 4 Moonpetals, 2 Starshards, 2 Crystal Shards, 1 Ash Crystal and 250 coins.
-- Craft odds: Root Sigil 60% (+3% passive income), Moon Pendant 30% (+6%), Star Prism 10% (+10%).
+- Craft weights: Root Sigil 48% (+3% passive income), Moon Pendant 24% (+6%), Star Prism 8% (+10%), Root Harvester 12% (+5% gathering), Moon Forager 6% (+10% gathering), Star Prospector 2% (+15% gathering). The full catalog totals 100; Gatherer artifacts account for 20% of crafts.
 - Bonuses stack additively and are capped at +20% to passive income from active companions.
 - The UI displays owned artifacts, rarity, effect and equipment state. All crafting, ownership and equipment changes are server-authoritative.
 
