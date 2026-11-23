@@ -118,7 +118,7 @@ function EggService:Collect(player, egg)
 
     local biomeId = egg:GetAttribute("BiomeId") or "Meadow"
     local requiredZone = biomeId == "Meadow" and "StarterIsland" or biomeId
-    if player:GetAttribute("CurrentBiome") ~= requiredZone then
+    if (player:GetAttribute("CurrentBiome") or "StarterIsland") ~= requiredZone then
         player:SetAttribute("LastNotice", "Собирай яйца только в том биоме, где находишься.")
         return
     end
