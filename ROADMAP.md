@@ -197,3 +197,12 @@ A successful CI build validates the Roblox XML packaging, **not gameplay**. Trea
 - [ ] Check server and client Output for runtime errors in a two-player Studio session.
 
 **Status:** Source fix integrated. CI success is not a substitute for Roblox Studio acceptance.
+
+### Playable-first network startup safety (2026-11-23)
+
+- [x] Install a fail-fast response on every pre-registered RemoteFunction to avoid indefinite client `InvokeServer` hangs when a gameplay service fails to start.
+- [x] Gameplay services replace the temporary fallback with their actual server-validated handlers during initialization.
+- [x] Extend GitHub Actions regression checks for the initial remote fallback.
+- [ ] Roblox Studio acceptance: intentionally disable a nonessential service and ensure its UI request returns a Russian error rather than hanging.
+- [ ] Roblox Studio acceptance: confirm normal shop/inventory/building requests still reach their service handlers.
+- [ ] Verify regular startup, pet interactions, breeding, and mobile UI before marking Sprint 4.20 complete.
