@@ -448,3 +448,12 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Attacks are server-authoritative and telegraphed with ground markers. Targeted markers are shown only to the player whose encounter is being attacked. Players avoid damage by leaving the marked area before the windup ends.
 - A successful first defeat grants the Mythic boss-exclusive companion `ForgottenHeartGuardian`, 1,200 coins, 5 Starshards and 800 XP. Repeated interactions grant no duplicate reward.
 - The reward companion is permanently recorded in the Collection Book under Пещера забытого сердца and has its own follower silhouette.
+
+
+## Forgotten Heart Guardian choreography — Sprint 4.37
+- Boss attack animations are client-local and keyed to the player's replicated windup attributes: Crystal Slam raises and slams both arms, Echo Pulse spreads the arms, and Shard Rain raises both arms to summon falling shards.
+- The second phase has a one-time awakening flourish: the core turns violet, the guardian spreads its arms and arena crystals shatter.
+- Eight crystal clusters decorate the arena. Shard Rain and phase awakening break the clusters for the local player; flying shard debris is cosmetic and clusters regrow after eight seconds.
+- Victory plays a collapse animation while the golden heart remains visible.
+- The server raises ForgottenHeartBossRewardReveal only on a fresh victory. The client uses this transient signal to show the mythic companion reveal card. Returning players who already defeated the boss do not see the acquisition scene again.
+- All choreography, debris and crystal breakage are client-local; the server remains authoritative for damage, health, completion and rewards.
