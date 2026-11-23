@@ -22,6 +22,8 @@ local ProfileTemplate = {
     },
     EggInventory = {},
     Companions = {},
+    Artifacts = {},
+    EquippedArtifacts = {},
     -- Permanent species discoveries survive merging or consuming the last copy.
     DiscoveredSpecies = {},
     Materials = {
