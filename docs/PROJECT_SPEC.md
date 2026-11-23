@@ -325,3 +325,13 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Defeating the guardian completes ember_trial and grants +250 XP once. The existing progression configuration already gates Crystal Realm behind level 35 and ember_trial.
 - The Russian HUD shows rune progress, guardian health, and the dodge warning. Static CI and world-health checks cover the arena structure and service wiring.
 - This is a scripted combat prototype. Roblox Studio collision, combat feel, multiplayer, persistence, balance, and mobile acceptance are still required.
+
+
+## Crystal Realm foundation — Sprint 4.24
+- Crystal Realm is gated by the existing level 35 + ember_trial requirement. It is reachable from Emberlands through a portal and a physical crystal skyway, with a return portal.
+- The island contains a floating prismatic plateau, luminous crystal spires, aurora gardens, eight mineable crystal veins and Crystal Egg spawn points.
+- Each player can mine each vein once per three-minute cooldown. A successful mine awards 2–4 Crystal Shards. Shards and node cooldowns are stored in the player profile.
+- Active Prism Fox companions add one shard, Crystal Fawns add one shard, and active Aurora Dragons have a 35% chance to add two extra shards.
+- The Prismatic Radiance Egg hatches Prism Fox (60%), Crystal Fawn (30%), or Aurora Dragon (10%). The existing egg collection, respawn and hatch systems are reused.
+- The Russian HUD shows the saved Crystal Shard balance. Static CI and world-health checks cover the biome structure and service wiring.
+- Studio runtime, balance, multiplayer, mobile and performance acceptance remain outstanding.
