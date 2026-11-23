@@ -66,6 +66,7 @@ local function normalizeProfile(profile)
             and #artifact.InstanceId <= 80 and ArtifactCatalog[artifact.Id]
             and not seenArtifactIds[artifact.InstanceId] then
             seenArtifactIds[artifact.InstanceId] = true
+            artifact.Level = math.clamp(math.floor(tonumber(artifact.Level) or 1), 1, 6)
             ownedArtifacts[artifact.InstanceId] = true
             table.insert(cleanArtifacts, artifact)
         end
@@ -186,10 +187,14 @@ local function makeSnapshot(profile)
     for _, artifact in ipairs(profile.Artifacts or {}) do
         local definition = ArtifactCatalog[artifact.Id]
         if definition then
+            local level = math.clamp(math.floor(tonumber(artifact.Level) or 1), 1, 6)
+            local tierNames = { "I · Обычный", "II · Улучшенный", "III · Редкий", "IV · Эпический", "V · Легендарный", "VI · Мифический" }
+            local incomeBonus = math.min(0.20, (tonumber(definition.IncomeBonus) or 0) * (1 + (level - 1) * 0.25))
             table.insert(artifacts, {
                 InstanceId = artifact.InstanceId, Id = definition.Id, Name = definition.Name,
-                Rarity = definition.Rarity, Description = definition.Description,
-                IncomeBonus = definition.IncomeBonus, Equipped = equippedArtifacts[artifact.InstanceId] == true,
+                Rarity = definition.Rarity, Level = level, TierName = tierNames[level],
+                Description = definition.Description, IncomeBonus = incomeBonus,
+                Equipped = equippedArtifacts[artifact.InstanceId] == true,
             })
         end
     end
@@ -270,7 +275,7 @@ function InventoryService:HandleRequest(player, payload)
         for material, cost in pairs(costs) do profile.Materials[material] = balances[material] - cost end
         profile.Coins = coins - 250
         table.insert(profile.Artifacts, {
-            Id = selected.Id, InstanceId = HttpService:GenerateGUID(false), CraftedAt = os.time(),
+            Id = selected.Id, Level = 1, InstanceId = HttpService:GenerateGUID(false), CraftedAt = os.time(),
         })
         player:SetAttribute("Moonpetal", profile.Materials.Moonpetal)
         player:SetAttribute("Starshard", profile.Materials.Starshard)
@@ -278,6 +283,55 @@ function InventoryService:HandleRequest(player, payload)
         player:SetAttribute("AshCrystals", profile.Materials.AshCrystal)
         player:SetAttribute("Coins", profile.Coins)
         local message = "Создан артефакт: " .. selected.Name .. " · " .. selected.Rarity .. "!"
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
+    end
+
+    if payload.Action == "MergeArtifacts" then
+        if type(payload.ArtifactInstanceIds) ~= "table" or #payload.ArtifactInstanceIds ~= 3 then
+            return { Ok = false, Message = "Для объединения выбери ровно 3 одинаковых артефакта." }
+        end
+        local selectedIds, selectedSet = {}, {}
+        for _, instanceId in ipairs(payload.ArtifactInstanceIds) do
+            if type(instanceId) ~= "string" or #instanceId > 80 or selectedSet[instanceId] then
+                return { Ok = false, Message = "Некорректный набор артефактов." }
+            end
+            selectedSet[instanceId] = true
+            table.insert(selectedIds, instanceId)
+        end
+        local equippedSet = {}
+        for _, instanceId in ipairs(profile.EquippedArtifacts) do equippedSet[instanceId] = true end
+        local selectedArtifacts = {}
+        for _, artifact in ipairs(profile.Artifacts) do
+            if selectedSet[artifact.InstanceId] then table.insert(selectedArtifacts, artifact) end
+        end
+        if #selectedArtifacts ~= 3 then
+            return { Ok = false, Message = "Один или несколько артефактов не принадлежат тебе." }
+        end
+        local first = selectedArtifacts[1]
+        local targetLevel = math.clamp(math.floor(tonumber(first.Level) or 1), 1, 6)
+        if targetLevel >= 6 then return { Ok = false, Message = "Мифический артефакт уже достиг максимального уровня." } end
+        for _, artifact in ipairs(selectedArtifacts) do
+            if artifact.Id ~= first.Id or math.clamp(math.floor(tonumber(artifact.Level) or 1), 1, 6) ~= targetLevel then
+                return { Ok = false, Message = "Объединять можно только 3 артефакта одного вида и уровня." }
+            end
+            if equippedSet[artifact.InstanceId] then
+                return { Ok = false, Message = "Сними артефакты с экипировки перед объединением." }
+            end
+        end
+        local nextArtifacts = {}
+        for _, artifact in ipairs(profile.Artifacts) do
+            if not selectedSet[artifact.InstanceId] then table.insert(nextArtifacts, artifact) end
+        end
+        local upgraded = {
+            Id = first.Id, Level = targetLevel + 1,
+            InstanceId = HttpService:GenerateGUID(false), CraftedAt = os.time(), UpgradedAt = os.time(),
+        }
+        table.insert(nextArtifacts, upgraded)
+        profile.Artifacts = nextArtifacts
+        local definition = ArtifactCatalog[upgraded.Id]
+        local tierNames = { "I · Обычный", "II · Улучшенный", "III · Редкий", "IV · Эпический", "V · Легендарный", "VI · Мифический" }
+        local message = string.format("%s улучшен до уровня %s!", definition.Name, tierNames[upgraded.Level])
         player:SetAttribute("LastNotice", message)
         return { Ok = true, Data = makeSnapshot(profile), Message = message }
     end
