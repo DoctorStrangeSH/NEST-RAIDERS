@@ -87,6 +87,14 @@ assert '* 4.2' in companions
 assert 'current:Lerp(target, 0.3)' in companions
 assert 'local collectTween = TweenService:Create(' in eggs
 assert 'collectTween:Play()' in eggs and 'respawnTween:Play()' in eggs
+assert 'local EGG_SPAWN_POSITIONS = {' in eggs
+assert 'ACTIVE_WORLD_EGGS = 3' in eggs
+assert 'local shuffledSlots = {}' in eggs and 'shuffledSlots[swap]' in eggs
+assert 'egg:SetAttribute("SpawnSlot", slot)' in eggs
+assert 'local occupied = {}' in eggs and 'if not occupied[slot] then' in eggs
+assert world.count('{x =') >= 9, "Egg grove should expose at least nine candidate spawn sites"
+assert 'for slot = 1, #EGG_SPAWN_POSITIONS do' in eggs
+
 assert companions.index('pet:PivotTo(spawnRoot.CFrame') < companions.index('task.spawn(function()', companions.index('function CompanionService:RefreshPlayer'))
 
 assert 'player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()' in companions
