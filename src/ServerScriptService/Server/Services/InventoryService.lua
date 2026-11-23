@@ -262,6 +262,7 @@ function InventoryService:HandleRequest(player, payload)
                 table.insert(profile.Artifacts, {
                     Id = artifactId,
                     Level = 1,
+                    DevOnly = true,
                     InstanceId = HttpService:GenerateGUID(false),
                     CraftedAt = os.time(),
                 })
@@ -357,6 +358,9 @@ function InventoryService:HandleRequest(player, payload)
             if artifact.Id ~= first.Id or math.clamp(math.floor(tonumber(artifact.Level) or 1), 1, 6) ~= targetLevel then
                 return { Ok = false, Message = "Объединять можно только 3 артефакта одного вида и уровня." }
             end
+            if (artifact.DevOnly == true) ~= (first.DevOnly == true) then
+                return { Ok = false, Message = "Нельзя смешивать тестовые и обычные артефакты." }
+            end
             if equippedSet[artifact.InstanceId] then
                 return { Ok = false, Message = "Сними артефакты с экипировки перед объединением." }
             end
@@ -366,7 +370,7 @@ function InventoryService:HandleRequest(player, payload)
             if not selectedSet[artifact.InstanceId] then table.insert(nextArtifacts, artifact) end
         end
         local upgraded = {
-            Id = first.Id, Level = targetLevel + 1,
+            Id = first.Id, Level = targetLevel + 1, DevOnly = first.DevOnly == true or nil,
             InstanceId = HttpService:GenerateGUID(false), CraftedAt = os.time(), UpgradedAt = os.time(),
         }
         table.insert(nextArtifacts, upgraded)
