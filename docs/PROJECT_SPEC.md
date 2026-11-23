@@ -412,3 +412,12 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The physical Guardian model is shared and its choreography is cosmetic only. Player health, attack windups, phase, damage and rewards remain per-player and server-authoritative.
 - The heart core and PointLight telegraph remain local to each client so one player's phase does not recolor another player's encounter.
 - On personal victory, the winning client plays a gold particle burst and heart-core reveal. The reward companion is still granted by the server.
+
+
+## Whispering Grove hidden cache — Sprint 4.33
+- Four runes are interactable on the hidden grove platform. Their required order is Moon → Leaf → Dew → Star.
+- Each player's sequence is saved in `QuestProgress.GroveCacheRunes`. A wrong rune resets only that player's sequence.
+- The cache is locked until the four runes are activated in order. The server validates biome, zone access, living character and interaction distance.
+- A successful first claim sets `CompletedQuests.whispering_grove_cache` and grants 5 Moonpetals, 400 coins and 200 XP. Repeated claims grant nothing.
+- Moonpetals are stored in `Materials.Moonpetal` and mirrored to the `Moonpetal` player attribute for UI and crafting integrations.
+- The Ancient Heights HUD displays the player's personal cache-rune progress.
