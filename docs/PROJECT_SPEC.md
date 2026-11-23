@@ -361,3 +361,11 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - A successful harvest grants 1–3 Elderwood, persisted in Materials.Elderwood.
 - The Ancient Heights HUD displays the saved balance; client UI never grants resources.
 - Elderwood is a progression material; its crafting/unlock sink is intentionally deferred until the first gathering playtest.
+
+
+## Whispering Grove secret — Sprint 4.27
+- A short sequence of floating stepping stones leads from the Elder Canopy to a hidden outer ledge.
+- The ledge contains four rune pillars and the Elder Heart altar.
+- The altar can be claimed once per player, guarded by server-side biome, progression, character, distance, profile, and duplicate-claim validation.
+- First discovery grants 250 coins, 150 XP, and 8 Elderwood; completion is saved in CompletedQuests.ancient_grove_secret.
+- The secret is a one-time exploration reward, not a repeatable currency farm.
