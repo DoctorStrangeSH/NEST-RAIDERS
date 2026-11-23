@@ -3703,8 +3703,8 @@ local function updateBiomeTrialPanel()
             or string.format("ПРОБУЖДЕНО РУН: %d / 3", count))
         if showGroveSecret then
             trialDescription.Text ..= groveCacheOpened
-                and "\\n\\nСЕКРЕТ РОЩИ: ТАЙНИК ОТКРЫТ"
-                or string.format("\\n\\nСЕКРЕТ РОЩИ: РУНЫ %d / 4", groveRuneProgress)
+                and "\n\nСЕКРЕТ РОЩИ: ТАЙНИК ОТКРЫТ"
+                or string.format("\n\nСЕКРЕТ РОЩИ: РУНЫ %d / 4", groveRuneProgress)
         end
         bossBarBack.Visible = ancientBossActive
         bossStatus.Visible = count >= 3 and completed
