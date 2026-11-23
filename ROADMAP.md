@@ -325,3 +325,14 @@ CI checks packaging and source structure only, not in-game interaction.
 - [ ] Existing historic profiles: discoveries of species consumed **before this update** cannot be reconstructed if no copies remain.
 
 **Validation:** GitHub Actions checks syntax packaging and source invariants; the in-game collection flow still requires a real Studio Play test.
+
+### Playable-first collection migration at profile load (2026-11-23)
+
+- [x] Backfill currently owned species into `DiscoveredSpecies` as part of PlayerDataService profile publication, including early Studio fallback and DataStore loads.
+- [x] Perform migration **before** setting `ProfileLoaded` so all services and the HUD see consistent discovery state without requiring the player to open the collection book.
+- [x] Preserve prior `DiscoveredSpecies` values; historic species with no surviving companion records cannot be reconstructed.
+- [x] Add CI static checks for the migration order and catalog validation.
+- [ ] Studio Play with DataStore enabled: load an old profile without `DiscoveredSpecies`, skip opening the collection, save, rejoin, and check discoveries.
+- [ ] Verify hatch → collection → merge → rejoin, including empty inventory and second-player scenarios.
+
+Automated builds verify source invariants, not real DataStore round-trip behavior.
