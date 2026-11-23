@@ -117,6 +117,12 @@ assert 'FrostFox = {' in companion_models and 'Kind = "Fox"' in companion_models
 assert 'SnowOwl = {' in companion_models and 'Kind = "Owl"' in companion_models
 assert 'GlacierBear = {' in companion_models and 'Kind = "Bear"' in companion_models
 assert 'definition.Kind == "Owl"' in companion_models and 'definition.Kind == "Bear"' in companion_models
+assert 'Id = "FrostCache"' in Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+assert 'Id = "AuroraGaze"' in Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+assert 'Id = "GlacierGuard"' in Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+assert 'ability.Id == "FrostCache"' in inventory
+assert 'ability.Id == "AuroraGaze"' in inventory
+assert 'ability.Id == "GlacierGuard"' in inventory
 assert '{ Id = "FrostHighlands", DisplayName = "Ледяные нагорья", RequiredLevel = 12, RequiredQuest = "emerald_trial" }' in game_config
 assert '{ Id = "Emberlands", DisplayName = "Пепельные земли", RequiredLevel = 22, RequiredQuest = "frost_trial" }' in game_config
 
