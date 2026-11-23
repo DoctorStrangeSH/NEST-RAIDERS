@@ -37,6 +37,11 @@ local EGG_SPAWN_POSITIONS = {
         Vector3.new(-48, 26, 2110), Vector3.new(48, 26, 2110), Vector3.new(-65, 26, 2040),
         Vector3.new(65, 26, 2040), Vector3.new(-42, 26, 2160), Vector3.new(42, 26, 2160),
     },
+    AncientHeights = {
+        Vector3.new(-22, 21, 2580), Vector3.new(22, 21, 2580), Vector3.new(0, 21, 2620),
+        Vector3.new(-30, 21, 2600), Vector3.new(30, 21, 2600), Vector3.new(-18, 21, 2630),
+        Vector3.new(18, 21, 2630), Vector3.new(-35, 21, 2588), Vector3.new(35, 21, 2588),
+    },
     Emberlands = {
         Vector3.new(-48, 16, 1520), Vector3.new(48, 16, 1520), Vector3.new(-48, 16, 1600),
         Vector3.new(48, 16, 1600), Vector3.new(0, 16, 1630), Vector3.new(-65, 16, 1560),
