@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -3770,11 +3771,93 @@ for _, attribute in ipairs({
     "CrystalTrialProgress", "CrystalTrialCompleted", "CrystalTrialBossHealth", "CrystalTrialBossWindup",
     "AncientTempleProgress", "AncientTempleCompleted",
     "AncientTempleBossHealth", "AncientTempleBossCompleted", "AncientTempleBossWindup",
-    "AncientTempleBossAttackType",
+    "AncientTempleBossAttackType", "AncientTempleBossPhase",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
 updateBiomeTrialPanel()
+
+-- Guardian attack visuals are local-only: one player's boss phase never changes another player's view.
+local guardianVisualGeneration = 0
+local function getLocalGuardianParts()
+    local world = Workspace:FindFirstChild("NestRaidersWorld")
+    local ancient = world and world:FindFirstChild("AncientHeights")
+    local temple = ancient and ancient:FindFirstChild("AncientTreeTemple")
+    local guardian = temple and temple:FindFirstChild("AncientTempleGuardian")
+    local core = guardian and guardian:FindFirstChild("GuardianHeartCore")
+    local light = core and core:FindFirstChildOfClass("PointLight")
+    local attachment = core and core:FindFirstChild("GuardianEffectAttachment")
+    local burst = attachment and attachment:FindFirstChild("GuardianWindupBurst")
+    return core, light, burst
+end
+
+local function updateGuardianPhaseVisual()
+    local core, light = getLocalGuardianParts()
+    if not core then return end
+    local phaseTwo = player:GetAttribute("AncientTempleBossPhase") == 2
+    local color = phaseTwo and Color3.fromRGB(255, 145, 91) or Color3.fromRGB(190, 239, 133)
+    if light then light.Color = color end
+    core.Color = color
+end
+
+local function playGuardianTelegraph()
+    guardianVisualGeneration += 1
+    local generation = guardianVisualGeneration
+    local core, light, burst = getLocalGuardianParts()
+    if not core then return end
+
+    local phaseTwo = player:GetAttribute("AncientTempleBossPhase") == 2
+    local attackType = player:GetAttribute("AncientTempleBossAttackType")
+    local baseColor = phaseTwo and Color3.fromRGB(255, 145, 91) or Color3.fromRGB(190, 239, 133)
+    local pulseColor = attackType == "ThornBurst"
+        and Color3.fromRGB(255, 91, 104)
+        or (phaseTwo and Color3.fromRGB(255, 188, 101) or Color3.fromRGB(235, 255, 190))
+    local originalSize = Vector3.new(4, 4, 2)
+    local pulseSize = attackType == "RootWave" and Vector3.new(5.8, 5.8, 3.2)
+        or Vector3.new(5.2, 5.2, 2.8)
+
+    if burst and burst:IsA("ParticleEmitter") then
+        burst.Color = ColorSequence.new(baseColor, pulseColor)
+        burst:Emit(phaseTwo and 36 or 22)
+    end
+    local pulse = TweenService:Create(core,
+        TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        { Size = pulseSize, Color = pulseColor })
+    pulse:Play()
+    if light then
+        TweenService:Create(light, TweenInfo.new(0.32), {
+            Brightness = phaseTwo and 6 or 4,
+            Range = phaseTwo and 36 or 30,
+            Color = pulseColor,
+        }):Play()
+    end
+
+    task.delay(0.5, function()
+        if generation ~= guardianVisualGeneration or not core.Parent then return end
+        TweenService:Create(core, TweenInfo.new(0.4, Enum.EasingStyle.Quad), {
+            Size = originalSize,
+            Color = baseColor,
+        }):Play()
+        if light then
+            TweenService:Create(light, TweenInfo.new(0.4), {
+                Brightness = phaseTwo and 2.5 or 2,
+                Range = phaseTwo and 32 or 28,
+                Color = baseColor,
+            }):Play()
+        end
+    end)
+end
+
+player:GetAttributeChangedSignal("AncientTempleBossPhase"):Connect(updateGuardianPhaseVisual)
+player:GetAttributeChangedSignal("AncientTempleBossWindup"):Connect(function()
+    if player:GetAttribute("AncientTempleBossWindup") == true then
+        playGuardianTelegraph()
+    else
+        guardianVisualGeneration += 1
+        updateGuardianPhaseVisual()
+    end
+end)
+updateGuardianPhaseVisual()
 
 
 -- Volcanic heat HUD: values are replicated from the server, never client-authoritative.
