@@ -406,4 +406,16 @@ assert 'CrystalTrialProgress' in client and 'CrystalTrialBossWindup' in client
 assert 'ИСПЫТАНИЕ ПРИЗМЫ' in client and 'ХРАНИТЕЛЯ' in client
 assert 'CrystalTrial' in world_health and 'AncientLanding' in world_health
 
+
+# Ancient Heights: first explorable biome slice, its own egg table and follower species.
+assert 'AncientHeights = {' in biomes and 'AncientEgg' in biomes
+assert 'AncientStag = 55' in biomes and 'RootSprite = 30' in biomes and 'SkySerpent = 15' in biomes
+assert 'AncientStag = {' in companions and 'RootSprite = {' in companions and 'SkySerpent = {' in companions
+assert 'AncientHeights = {' in Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
+assert 'AncientHeights' in world and 'ElderCanopy' in world and 'ElderRuins' in world
+assert 'AncientEggOddsSign' in world and 'Яйцо древнего древа' in world
+assert 'AncientHeights' in world_health and 'Яйца Древних высот:' in world_health
+assert 'Kind = "AncientStag"' in Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+assert 'definition.Kind == "AncientStag"' in Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
