@@ -448,6 +448,7 @@ assert 'ELDERWOOD_COST = 10' in ancient_crafting and 'COIN_COST = 300' in ancien
 assert 'EGG_CAPACITY = 20' in ancient_crafting and 'profile.EggInventory' in ancient_crafting
 assert 'ProgressionService:CanEnterZone(player, "AncientHeights")' in ancient_crafting
 assert 'CraftAncientEggPrompt' in ancient_crafting and 'MaxActivationDistance + 2' in ancient_crafting
+assert 'REQUEST_COOLDOWN_SECONDS = 1.5' in ancient_crafting and 'LAST_REQUEST_AT' in ancient_crafting
 assert 'Id = EGG_ID' in ancient_crafting and 'BiomeId = "AncientHeights"' in ancient_crafting
 assert 'profile.Materials.Elderwood = elderwood - ELDERWOOD_COST' in ancient_crafting
 assert 'profile.Coins = coins - COIN_COST' in ancient_crafting
