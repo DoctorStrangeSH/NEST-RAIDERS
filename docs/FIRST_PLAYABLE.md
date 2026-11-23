@@ -372,4 +372,8 @@ A successful strike makes the Guardian recoil and flash with crystal sparks. A b
 
 
 ## Combat readability
-Each boss attack has its own warning color: cyan for Crystal Slam, violet for Echo Pulse and pink for Shard Rain. The health bar eases smoothly to the current value, and successful hits show floating damage numbers.
+Each boss attack has its own warning color: cyan for Crystal Slam, violet for Echo Pulse and pink for Shard Rain. The health bar eases smoothly to the current value, and successful hits show floating damage numbers.\n\n## Unified material inventory
+- Open **«Мои материалы»** from the main feature menu.
+- Review current balances for Elderwood, Moonpetal, Starshard, Crystal Shards, and Ash Crystals.
+- Values are read-only and update when the server replicates a new balance.
+- The panel is available regardless of the current biome; biome-specific HUDs continue to show local objectives and events.\n
