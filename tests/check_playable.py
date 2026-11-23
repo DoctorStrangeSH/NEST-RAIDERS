@@ -49,6 +49,18 @@ assert 'chooseCompanion(egg.Id or "MeadowEgg")' in eggs
 assert 'BiomeId = egg:GetAttribute("BiomeId") or "Meadow"' in eggs
 assert 'OriginBiome = egg.BiomeId or "Meadow"' in eggs
 
+assert 'EmeraldWilds = {' in biomes and 'EmeraldEgg' in biomes
+assert 'EmeraldFox = 50' in biomes and 'GlowMoth = 32' in biomes and 'AncientSprout = 18' in biomes
+assert 'emerald.Name = "EmeraldWilds"' in world
+assert 'ZoneTravelPrompt' in world and 'EmeraldPortal' in world and 'ReturnPortal' in world
+assert 'EmeraldFloatingFoundation' in world and 'EmeraldEgg' in world
+assert 'EmeraldWilds = {' in eggs and 'spawnPositions = EGG_SPAWN_POSITIONS[biomeId]' in eggs
+assert 'for biomeId, spawnPositions in pairs(EGG_SPAWN_POSITIONS) do' in eggs
+assert 'local allowed, reason = self:CanEnterZone(player, zoneId)' in progression
+assert 'character:PivotTo(CFrame.new(destination + Vector3.new(0, 4, 0)))' in progression
+assert '{ Id = "EmeraldWilds", DisplayName = "Изумрудный лес", RequiredLevel = 5, RequiredQuest = nil }' in game_config
+
+
 companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
 inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
 book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua").read_text()
@@ -63,6 +75,7 @@ assert 'CompanionIncomeRemainder = 0' in profile_template
 assert 'StoredIncomeRemainder = 0' in profile_template
 player_data = Path("src/ServerScriptService/Server/Services/PlayerDataService.lua").read_text()
 progression = Path("src/ServerScriptService/Server/Services/ProgressionService.lua").read_text()
+game_config = Path("src/ReplicatedStorage/Shared/Config/GameConfig.lua").read_text()
 assert 'ProfilePersistence' in player_data
 assert 'and "TEMPORARY" or "SAVED"' in player_data
 assert 'player:GetAttribute("ProfilePersistence")' in client
