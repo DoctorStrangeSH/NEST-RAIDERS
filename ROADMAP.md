@@ -807,3 +807,17 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Test collection panel on 375px mobile and desktop; verify workshop range and biome restrictions.
 
 **Scope note:** Artifact effects currently boost passive income from active companions. Gathering and hatch-rate bonuses are reserved for later balance-tested artifact families.
+
+### Sprint 4.43 — Artifact upgrades and merging (2026-11-23)
+
+- [x] Add six persistent artifact upgrade levels, from I (Обычный) to VI (Мифический).
+- [x] Add a server-authoritative 3-to-1 merge action for three unique copies of the same artifact type and level.
+- [x] Reject mixed types/levels, duplicate IDs, unowned IDs, malformed requests, max-level merges, and equipped artifacts without changing inventory.
+- [x] Remove exactly three source instances and create one new instance at the next level.
+- [x] Scale passive-income bonus by 25% per upgrade step, retaining the existing 20% combined equipped-artifact cap.
+- [x] Display upgrade level, scaled bonus, and merge controls in the artifact collection; only unequipped copies are offered for merging.
+- [x] Extend static regression checks and acceptance documentation.
+- [ ] Roblox Studio: merge three matching artifacts and verify the next level, source removal, and save persistence.
+- [ ] Verify mixed types/levels, duplicate/unowned IDs, equipped items, and level VI are rejected without inventory changes.
+- [ ] Verify income bonus changes after upgrade/equip and remains capped at 20%.
+- [ ] Test the artifact collection on 375px mobile and desktop.
