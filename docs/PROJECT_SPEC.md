@@ -469,4 +469,9 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 ## Forgotten Heart combat readability — Sprint 4.39
 - Crystal Slam warning zones use cyan, Echo Pulse uses violet, and Shard Rain uses pink. The warnings remain local to the challenged player.
 - The boss health bar animates to the latest server-replicated health value and changes accent color at phase II.
-- Successful player hits display a short floating damage number calculated from the replicated health delta. This is display-only; the server remains authoritative for hit validation and damage.
+- Successful player hits display a short floating damage number calculated from the replicated health delta. This is display-only; the server remains authoritative for hit validation and damage.\n\n## Unified material inventory — Sprint 4.40
+- Provide a single read-only inventory panel for Elderwood, Moonpetal, Starshard, Crystal Shards, and Ash Crystals.
+- Display live values from server-replicated player attributes; never accept client-side resource edits.
+- PlayerDataService publishes saved balances for Elderwood, Moonpetal, and Starshard when a profile loads, alongside the existing Ash Crystal and Crystal Shard attributes.
+- The panel is reachable from the main navigation, uses the shared modal coordinator, and must fit narrow mobile viewports.
+- Existing biome-specific HUDs remain contextual; this panel is the cross-biome overview.\n
