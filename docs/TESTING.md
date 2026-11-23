@@ -500,3 +500,17 @@
 - [ ] Confirm Cave Glimmerbat has bat wings/ears, Crystal Prowler has crystal crest/tail, and Heart Wisp has its halo/core glow.
 - [ ] Confirm all three appear in the Collection Book with the correct rarity, cave source, odds and discovery state.
 - [ ] Rejoin after claiming/hatching and verify the egg, pet and collection discovery persist.
+
+
+## Forgotten Heart Guardian boss — Studio acceptance
+- [ ] Claim the Forgotten Cave chest and verify the boss HUD unlocks without requiring a rejoin.
+- [ ] Approach the guardian and confirm the prompt is available only within interaction range.
+- [ ] Strike the boss and verify health decreases by exactly 30, with no rapid prompt double-hits.
+- [ ] Verify phase II begins at or below 180 HP and Shard Rain becomes available.
+- [ ] Dodge Crystal Slam by leaving its target circle before the warning ends.
+- [ ] Dodge Echo Pulse by moving outside the wide ring.
+- [ ] Dodge Shard Rain by leaving all three marked zones.
+- [ ] In a two-player Studio session, confirm one player's boss health, attack markers, completion and rewards do not affect the other player.
+- [ ] Defeat the boss and verify one Mythic Forgotten Heart Guardian companion, 1,200 coins, 5 Starshards and 800 XP are granted.
+- [ ] Confirm the reward companion has the crystal golem follower model and appears in the Collection Book with the cave source.
+- [ ] Rejoin and confirm boss completion, companion ownership and reward balances persist; no duplicate reward is granted.
