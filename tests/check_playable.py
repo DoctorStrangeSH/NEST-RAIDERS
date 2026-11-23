@@ -7,6 +7,17 @@ import re
 import xml.etree.ElementTree as ET
 
 client = Path("src/StarterPlayer/StarterPlayerScripts/ClientBootstrap.client.lua").read_text()
+assert 'player.CameraMinZoomDistance = 7' in client
+assert 'player.CameraMaxZoomDistance = 24' in client
+assert 'ResponsiveHudScale' in client and 'camera:GetPropertyChangedSignal("ViewportSize")' in client
+assert 'МЕНЮ' in client and '☰  МЕНЮ' not in client
+assert '🪙' not in client, "Avoid unsupported currency emoji glyphs in UI"
+assert 'local collectTween = TweenService:Create(' in eggs
+assert 'collectTween:Play()' in eggs and 'respawnTween:Play()' in eggs
+assert 'CFrame.Angles(0, math.pi, 0)' in companions
+assert '* 3.6' in companions
+assert 'Lerp(target, 0.22)' in companions
+
 server = Path("src/ServerScriptService/Server/Bootstrap.server.lua").read_text()
 watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua").read_text()
 world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
