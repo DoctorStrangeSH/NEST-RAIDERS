@@ -135,7 +135,7 @@ assert 'local shuffledSlots = {}' in eggs and 'shuffledSlots[swap]' in eggs
 assert 'egg:SetAttribute("SpawnSlot", slot)' in eggs
 assert 'local occupied = {}' in eggs and 'if not occupied[slot] then' in eggs
 assert world.count('{x =') >= 9, "Egg grove should expose at least nine candidate spawn sites"
-assert 'for slot = 1, #EGG_SPAWN_POSITIONS do' in eggs
+assert 'for slot = 1, #spawnPositions do' in eggs
 
 assert companions.index('pet:PivotTo(spawnRoot.CFrame') < companions.index('task.spawn(function()', companions.index('function CompanionService:RefreshPlayer'))
 
