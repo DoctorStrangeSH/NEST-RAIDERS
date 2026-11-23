@@ -345,3 +345,10 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The first Ancient Heights landing platform and a return portal are present; this is a destination slice, not the completed biome.
 - The Russian trial HUD shows puzzle progress, guardian health, and the dodge warning. CI and world-health checks cover puzzle props, prompts, guardian, and destination portals.
 - Roblox Studio runtime, multiplayer, balance, collision, mobile, and performance acceptance remain outstanding.
+
+## Ancient Heights — Sprint 4.26
+- Access requires level 50 and completion of the Crystal Prism Trial (crystal_trial).
+- The first playable slice is the Elder Canopy: a central stone path, eight old trees, six rune pillars, and Ancient Egg pickups.
+- Ancient Egg hatch weights are 55% Ancient Stag, 30% Root Sprite, and 15% Sky Serpent.
+- Egg collection, respawn, hatch validation, inventory capacity, discovery tracking, and genetic rolls reuse the existing server-authoritative egg pipeline.
+- Ancient species have distinct follower silhouettes. Their active ability kits are intentionally not advertised until their server-authoritative implementations are added.
