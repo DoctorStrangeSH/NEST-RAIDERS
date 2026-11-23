@@ -1008,6 +1008,155 @@ function WorldBuilder:Build()
     welcomeText.Font = Enum.Font.GothamBlack
     welcomeText.Parent = welcomeGui
 
+
+    -- Crystal Prism Trial: three ordered reflectors converge on the dormant guardian.
+    local prismTrial = Instance.new("Folder")
+    prismTrial.Name = "PrismTrial"
+    prismTrial.Parent = crystal
+    local trialPlatform = part(prismTrial, "PrismTrialPlatform", Vector3.new(82, 3, 68),
+        Vector3.new(0, 26, 2080), Color3.fromRGB(88, 76, 125), Enum.Material.Slate)
+    local platformTrim = part(prismTrial, "PrismPlatformTrim", Vector3.new(76, 0.7, 62),
+        Vector3.new(0, 27.8, 2080), Color3.fromRGB(129, 111, 177), Enum.Material.Neon)
+    platformTrim.CanCollide = false
+
+    local prismDefinitions = {
+        { Id = "Azure", Name = "Лазурная призма", Position = Vector3.new(-27, 30, 2068), Color = Color3.fromRGB(92, 211, 255) },
+        { Id = "Rose", Name = "Розовая призма", Position = Vector3.new(0, 30, 2068), Color = Color3.fromRGB(255, 137, 215) },
+        { Id = "Crown", Name = "Золотая призма", Position = Vector3.new(27, 30, 2068), Color = Color3.fromRGB(255, 215, 112) },
+    }
+    for index, definition in ipairs(prismDefinitions) do
+        local pedestal = part(prismTrial, "PrismPedestal_" .. definition.Id,
+            Vector3.new(7, 3, 7), definition.Position + Vector3.new(0, -1.5, 0),
+            Color3.fromRGB(63, 56, 89), Enum.Material.Slate)
+        pedestal:SetAttribute("PrismId", definition.Id)
+        local crystalGem = part(prismTrial, "PrismGem_" .. definition.Id,
+            Vector3.new(4, 7, 4), definition.Position + Vector3.new(0, 3.5, 0),
+            definition.Color, Enum.Material.Neon, Enum.PartType.Block)
+        crystalGem.CFrame *= CFrame.Angles(math.rad(10), math.rad(index * 22), math.rad(12))
+        crystalGem.CanCollide = false
+        crystalGem:SetAttribute("PrismId", definition.Id)
+        local glow = Instance.new("PointLight")
+        glow.Color = definition.Color
+        glow.Range = 20
+        glow.Brightness = 1.6
+        glow.Parent = crystalGem
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "CrystalPrismPrompt"
+        prompt.ActionText = "Настроить луч"
+        prompt.ObjectText = definition.Name
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.65
+        prompt.MaxActivationDistance = 11
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = crystalGem
+    end
+
+    local beamNodes = {
+        Vector3.new(-27, 35, 2068),
+        Vector3.new(0, 35, 2088),
+        Vector3.new(27, 35, 2068),
+    }
+    for index = 1, 2 do
+        local startPoint, endPoint = beamNodes[index], beamNodes[index + 1]
+        local delta = endPoint - startPoint
+        local beam = part(prismTrial, "PrismLightBeam_" .. index,
+            Vector3.new(1.1, 1.1, delta.Magnitude), (startPoint + endPoint) / 2,
+            index == 1 and Color3.fromRGB(115, 205, 255) or Color3.fromRGB(255, 178, 205),
+            Enum.Material.Neon)
+        beam.CFrame = CFrame.lookAt((startPoint + endPoint) / 2, endPoint)
+        beam.CanCollide = false
+        beam.Transparency = 0.18
+    end
+
+    local convergence = part(prismTrial, "PrismConvergenceCore", Vector3.new(8, 8, 8),
+        Vector3.new(0, 34, 2093), Color3.fromRGB(255, 232, 163), Enum.Material.Neon, Enum.PartType.Ball)
+    convergence.CanCollide = false
+    local convergenceLight = Instance.new("PointLight")
+    convergenceLight.Color = Color3.fromRGB(210, 192, 255)
+    convergenceLight.Range = 28
+    convergenceLight.Brightness = 2
+    convergenceLight.Parent = convergence
+
+    local prismGuardian = Instance.new("Model")
+    prismGuardian.Name = "PrismGuardian"
+    prismGuardian.Parent = prismTrial
+    local guardianBody = part(prismGuardian, "GuardianBody", Vector3.new(13, 16, 11),
+        Vector3.new(0, 39, 2110), Color3.fromRGB(82, 72, 113), Enum.Material.Slate, Enum.PartType.Ball)
+    guardianBody.CanCollide = false
+    local guardianCore = part(prismGuardian, "GuardianPrismCore", Vector3.new(7, 9, 7),
+        Vector3.new(0, 40, 2104), Color3.fromRGB(190, 160, 255), Enum.Material.Neon, Enum.PartType.Block)
+    guardianCore.CFrame *= CFrame.Angles(math.rad(12), math.rad(25), math.rad(12))
+    guardianCore.CanCollide = false
+    local guardianGlow = Instance.new("PointLight")
+    guardianGlow.Color = Color3.fromRGB(190, 160, 255)
+    guardianGlow.Range = 34
+    guardianGlow.Brightness = 2.4
+    guardianGlow.Parent = guardianCore
+    for side = -1, 1, 2 do
+        local shard = part(prismGuardian, "GuardianShard_" .. side,
+            Vector3.new(4, 10, 4), Vector3.new(side * 9, 43, 2110),
+            side < 0 and Color3.fromRGB(106, 213, 255) or Color3.fromRGB(255, 169, 218),
+            Enum.Material.Neon, Enum.PartType.Block)
+        shard.CFrame *= CFrame.Angles(0, 0, math.rad(side * 18))
+        shard.CanCollide = false
+    end
+    local guardianPrompt = Instance.new("ProximityPrompt")
+    guardianPrompt.Name = "CrystalTrialBossPrompt"
+    guardianPrompt.ActionText = "Атаковать"
+    guardianPrompt.ObjectText = "Хранитель призмы"
+    guardianPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    guardianPrompt.HoldDuration = 0.45
+    guardianPrompt.MaxActivationDistance = 12
+    guardianPrompt.RequiresLineOfSight = false
+    guardianPrompt.Parent = guardianCore
+
+    local trialSign = part(prismTrial, "CrystalTrialSign", Vector3.new(34, 10, 1),
+        Vector3.new(0, 34, 2043), Color3.fromRGB(58, 48, 91), Enum.Material.Slate)
+    trialSign.CanCollide = false
+    local trialGui = Instance.new("SurfaceGui")
+    trialGui.Face = Enum.NormalId.Front
+    trialGui.Parent = trialSign
+    local trialLabel = Instance.new("TextLabel")
+    trialLabel.Size = UDim2.fromScale(1, 1)
+    trialLabel.BackgroundTransparency = 1
+    trialLabel.Text = "ИСПЫТАНИЕ ПРИЗМЫ\\nЛазурный → Розовый → Золотой\\nЗатем победи Хранителя"
+    trialLabel.TextColor3 = Color3.fromRGB(239, 226, 255)
+    trialLabel.TextScaled = true
+    trialLabel.TextWrapped = true
+    trialLabel.Font = Enum.Font.GothamBlack
+    trialLabel.Parent = trialGui
+
+    -- Ancient Heights becomes reachable after the trial; its full biome is a later slice.
+    local ancient = Instance.new("Folder")
+    ancient.Name = "AncientHeights"
+    ancient.Parent = world
+    part(ancient, "AncientFloatingFoundation", Vector3.new(105, 24, 105),
+        Vector3.new(0, -1, 2600), Color3.fromRGB(91, 86, 75), Enum.Material.Rock, Enum.PartType.Ball)
+    local ancientTop = part(ancient, "AncientLanding", Vector3.new(7, 90, 90),
+        Vector3.new(0, 14, 2600), Color3.fromRGB(180, 164, 128), Enum.Material.Slate, Enum.PartType.Cylinder)
+    ancientTop.CFrame = CFrame.new(0, 14, 2600) * CFrame.Angles(0, 0, math.rad(90))
+    part(ancient, "AncientArrivalPad", Vector3.new(26, 1, 26),
+        Vector3.new(0, 18, 2600), Color3.fromRGB(211, 193, 145), Enum.Material.Sandstone)
+    makeBiomePortal(crystal, "AncientHeightsPortal", Vector3.new(50, 29, 2080),
+        Color3.fromRGB(255, 219, 143), "AncientHeights", Vector3.new(0, 21, 2600))
+    makeBiomePortal(ancient, "AncientReturnPortal", Vector3.new(0, 23, 2560),
+        Color3.fromRGB(190, 170, 255), "CrystalRealm", Vector3.new(0, 30, 2080))
+    local ancientSign = part(ancient, "AncientWelcomeSign", Vector3.new(26, 9, 1),
+        Vector3.new(0, 28, 2642), Color3.fromRGB(76, 67, 57), Enum.Material.WoodPlanks)
+    ancientSign.CanCollide = false
+    local ancientGui = Instance.new("SurfaceGui")
+    ancientGui.Face = Enum.NormalId.Front
+    ancientGui.Parent = ancientSign
+    local ancientLabel = Instance.new("TextLabel")
+    ancientLabel.Size = UDim2.fromScale(1, 1)
+    ancientLabel.BackgroundTransparency = 1
+    ancientLabel.Text = "ДРЕВНИЕ ВЫСОТЫ\\nПервая площадка открыта"
+    ancientLabel.TextColor3 = Color3.fromRGB(255, 238, 197)
+    ancientLabel.TextScaled = true
+    ancientLabel.TextWrapped = true
+    ancientLabel.Font = Enum.Font.GothamBlack
+    ancientLabel.Parent = ancientGui
+
     return world
 end
 
