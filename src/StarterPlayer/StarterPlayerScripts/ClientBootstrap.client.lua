@@ -3643,6 +3643,80 @@ for _, attribute in ipairs({
 end
 updateBiomeTrialPanel()
 
+
+-- Volcanic heat HUD: values are replicated from the server, never client-authoritative.
+local heatPanel = Instance.new("Frame")
+heatPanel.Name = "VolcanicHeatPanel"
+heatPanel.AnchorPoint = Vector2.new(1, 0)
+heatPanel.Position = UDim2.new(1, -24, 0, 110)
+heatPanel.Size = UDim2.fromOffset(260, 78)
+heatPanel.BackgroundColor3 = Color3.fromRGB(48, 35, 34)
+heatPanel.BackgroundTransparency = 0.08
+heatPanel.Visible = false
+heatPanel.Parent = gui
+addCorner(heatPanel, 14)
+addStroke(heatPanel, Color3.fromRGB(255, 153, 88), 1.5)
+
+local heatTitle = Instance.new("TextLabel")
+heatTitle.BackgroundTransparency = 1
+heatTitle.Position = UDim2.fromOffset(14, 7)
+heatTitle.Size = UDim2.new(1, -28, 0, 22)
+heatTitle.Font = Enum.Font.GothamBold
+heatTitle.Text = "ТЕМПЕРАТУРА"
+heatTitle.TextColor3 = Color3.fromRGB(255, 220, 190)
+heatTitle.TextSize = 14
+heatTitle.TextXAlignment = Enum.TextXAlignment.Left
+heatTitle.Parent = heatPanel
+
+local heatBarBack = Instance.new("Frame")
+heatBarBack.Position = UDim2.fromOffset(14, 34)
+heatBarBack.Size = UDim2.new(1, -28, 0, 13)
+heatBarBack.BackgroundColor3 = Color3.fromRGB(91, 68, 62)
+heatBarBack.Parent = heatPanel
+addCorner(heatBarBack, 8)
+
+local heatBar = Instance.new("Frame")
+heatBar.Size = UDim2.fromScale(0, 1)
+heatBar.BackgroundColor3 = Color3.fromRGB(255, 160, 70)
+heatBar.Parent = heatBarBack
+addCorner(heatBar, 8)
+
+local heatStatus = Instance.new("TextLabel")
+heatStatus.BackgroundTransparency = 1
+heatStatus.Position = UDim2.fromOffset(14, 51)
+heatStatus.Size = UDim2.new(1, -28, 0, 19)
+heatStatus.Font = Enum.Font.GothamMedium
+heatStatus.TextColor3 = Color3.fromRGB(255, 238, 220)
+heatStatus.TextSize = 11
+heatStatus.TextXAlignment = Enum.TextXAlignment.Left
+heatStatus.Parent = heatPanel
+
+local function updateHeatPanel()
+    local inEmberlands = player:GetAttribute("CurrentBiome") == "Emberlands"
+    heatPanel.Visible = inEmberlands
+    if not inEmberlands then return end
+    local heat = math.clamp(tonumber(player:GetAttribute("Heat")) or 0, 0, 100)
+    local protection = math.clamp(tonumber(player:GetAttribute("HeatProtection")) or 0, 0, 100)
+    heatBar.Size = UDim2.fromScale(heat / 100, 1)
+    heatBar.BackgroundColor3 = heat >= 90 and Color3.fromRGB(255, 70, 48)
+        or (heat >= 65 and Color3.fromRGB(255, 139, 48) or Color3.fromRGB(255, 190, 86))
+    if player:GetAttribute("HeatInSanctuary") then
+        heatStatus.Text = "ОХЛАЖДЕНИЕ · ЗАЩИТА " .. protection .. "%"
+    elseif heat >= 90 then
+        heatStatus.Text = "КРИТИЧЕСКИЙ ПЕРЕГРЕВ · ИЩИ УБЕЖИЩЕ!"
+    elseif heat >= 65 then
+        heatStatus.Text = "ОПАСНО · ОТСТУПИ ОТ ЛАВЫ"
+    elseif heat > 0 then
+        heatStatus.Text = "ЖАР НАКАПЛИВАЕТСЯ · ЗАЩИТА " .. protection .. "%"
+    else
+        heatStatus.Text = "ТЕМПЕРАТУРА В НОРМЕ"
+    end
+end
+for _, attribute in ipairs({"CurrentBiome", "Heat", "HeatInSanctuary", "HeatProtection"}) do
+    player:GetAttributeChangedSignal(attribute):Connect(updateHeatPanel)
+end
+updateHeatPanel()
+
 local guideHighlight = Instance.new("Highlight")
 guideHighlight.Name = "FirstPlayTarget"
 guideHighlight.FillColor = Color3.fromRGB(255, 216, 129)
