@@ -1,7 +1,6 @@
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local ServerScriptService = game:GetService("ServerScriptService")
-local TweenService = game:GetService("TweenService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 
@@ -133,23 +132,6 @@ local function spawnAshCrystals(ember, eventFolder, eventId)
     end)
 end
 
-local function damagePlayersAt(z)
-    local now = os.clock()
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player:GetAttribute("CurrentBiome") == "Emberlands" then
-            local character = player.Character
-            local root = character and character:FindFirstChild("HumanoidRootPart")
-            local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-            if root and humanoid and humanoid.Health > 0
-                and math.abs(root.Position.X) <= 74
-                and math.abs(root.Position.Z - z) <= 9
-                and root.Position.Y <= 34 then
-                selfDamage = nil
-            end
-        end
-    end
-end
-
 function AshfallService:Init()
     self._running = false
     self._lastSurgeDamage = {}
@@ -158,7 +140,6 @@ function AshfallService:Init()
     Players.PlayerAdded:Connect(function(player)
         player:SetAttribute("AshfallPhase", "IDLE")
         player:SetAttribute("AshfallSeconds", 0)
-        player:SetAttribute("AshCrystals", 0)
     end)
     Players.PlayerRemoving:Connect(function(player)
         self._lastSurgeDamage[player] = nil
@@ -179,7 +160,8 @@ function AshfallService:_damageAt(z)
             if root and humanoid and humanoid.Health > 0
                 and math.abs(root.Position.X) <= 74
                 and math.abs(root.Position.Z - z) <= 9
-                and root.Position.Y <= 34 then
+                and root.Position.Y <= 34
+                and root.Position.Z > 1500 then
                 local lastDamage = self._lastSurgeDamage[player] or 0
                 if now - lastDamage >= SURGE_DAMAGE_COOLDOWN then
                     self._lastSurgeDamage[player] = now
