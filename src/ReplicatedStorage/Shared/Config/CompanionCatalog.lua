@@ -338,6 +338,16 @@ local CompanionCatalog = {
         PetMoodBonus = 12, PlayMoodBonus = 10,
         Ability = { Id = "HeartResonance", Name = "Резонанс сердца", Description = "Дарит дополнительный опыт за исследование мира.", UnlockLevel = 7, CooldownSeconds = 480 },
     },
+    ForgottenHeartGuardian = {
+        Id = "ForgottenHeartGuardian", Name = "Страж забытого сердца", Rarity = "Мифический",
+        Income = 240, Weight = 0, BossExclusive = true,
+        AcquisitionLabel = "Только за победу над Хранителем забытого сердца",
+        Description = "Маленький древний голем, в чьей груди пульсирует кристалл забытого сердца.",
+        Personality = "Непоколебимый", PersonalityDescription = "Молча охраняет гнездо и защищает тех, кого считает друзьями.",
+        FavoriteFood = "Звёздный нектар", FavoriteToy = "CozyPlush",
+        PetMoodBonus = 12, PlayMoodBonus = 8,
+        Ability = { Id = "HeartstoneAegis", Name = "Эгида сердца", Description = "Периодически помогает находить дополнительные редкие материалы.", UnlockLevel = 7, CooldownSeconds = 480 },
+    },
     HeartwoodGuardian = {
         Id = "HeartwoodGuardian", Name = "Страж Сердцевины", Rarity = "Легендарный",
         Income = 165, Weight = 0, BossExclusive = true,
