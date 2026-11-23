@@ -465,3 +465,14 @@
 - [ ] Confirm the local core pulse remains independent from shared body animation and each player's HUD / phase stays private.
 - [ ] Defeat the Guardian and confirm only the winning player sees the gold victory reveal, then receives the unique follower and nest trophy.
 - [ ] Rejoin and verify the follower, trophy and completed state persist without replaying the victory effect on spawn.
+
+
+## Whispering Grove hidden cache — Studio acceptance
+- [ ] Find the four rune pads on the hidden platform and activate Moon → Leaf → Dew → Star.
+- [ ] Activate a wrong rune midway; confirm only your own progress resets to 0/4.
+- [ ] Rejoin after two correct runes; confirm the HUD restores 2/4 and the next expected rune remains Dew.
+- [ ] Try the cache before solving the puzzle; confirm it remains locked and grants no rewards.
+- [ ] Complete the puzzle and open the cache; confirm exactly +5 Moonpetals, +400 coins and +200 XP.
+- [ ] Reopen the cache and confirm no duplicate rewards are granted.
+- [ ] In a two-player session, progress one player's rune sequence and verify the other player's HUD and saved sequence remain unchanged.
+- [ ] Rejoin and confirm the cache remains claimed and Moonpetal balance persists.
