@@ -17,6 +17,7 @@ server = Path("src/ServerScriptService/Server/Bootstrap.server.lua").read_text()
 watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua").read_text()
 world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
 plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
+build_service = Path("src/ServerScriptService/Server/Services/NestBuildService.lua").read_text()
 assert 'local folder = island:FindFirstChild("PlayerPlots")' in plots
 assert 'local ok, model, station, ownerLabel = pcall(buildPlot, folder, definition)' in plots
 assert 'folder:SetAttribute("CreatedCount", created)' in plots
@@ -151,6 +152,11 @@ before("local activeBuildPlacement = nil", 'buildRotateButton.Activated:Connect(
 before("local stopBuildPlacement", 'buildCancelButton.Activated:Connect(')
 before("local buildRotation = 0", 'buildRotateButton.Activated:Connect(')
 before("local buildHint, buildRotateButton, buildCancelButton, buildConfirmButton", 'buildHint = Instance.new(')
+assert 'if payload.Action=="Get" then' in build_service
+assert build_service.index('if payload.Action=="Get" then') < build_service.index('if payload.Action=="Place" or payload.Action=="Move" or payload.Action=="Remove" then')
+assert 'Подойди к своему острову, чтобы строить.' in build_service
+assert 'local root=player.Character and player.Character:FindFirstChild("HumanoidRootPart")' in build_service
+assert 'if payload.Action=="Buy" then' in build_service
 assert "stopBuildPlacement = function(reopen)" in client
 assert "buildConfirmButton.Activated:Connect(" in client
 assert 'buildConfirmButton.Visible = true' in client
