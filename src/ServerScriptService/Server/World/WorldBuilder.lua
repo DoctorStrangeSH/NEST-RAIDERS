@@ -927,7 +927,7 @@ function WorldBuilder:Build()
         local color = crystalPalette[(index - 1) % #crystalPalette + 1]
         local node = part(veins, "CrystalVein_" .. index,
             Vector3.new(5, 8 + (index % 3) * 2, 5),
-            position + Vector3.new(0, 4, 0), color, Enum.Material.Crystal, Enum.PartType.Crystal)
+            position + Vector3.new(0, 4, 0), color, Enum.Material.Neon, Enum.PartType.Block)
         node.CanCollide = false
         node:SetAttribute("CrystalNodeId", "RoyalVein_" .. index)
         local glow = Instance.new("PointLight")
