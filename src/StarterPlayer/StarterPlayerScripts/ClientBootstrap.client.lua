@@ -1459,7 +1459,7 @@ artifactsSlots.Size = UDim2.new(1, -36, 0, 24)
 artifactsSlots.Font = Enum.Font.GothamBold
 artifactsSlots.Text = "СЛОТЫ: 0 / 2"
 artifactsSlots.TextColor3 = Color3.fromRGB(255, 221, 164)
-artifactsSlots.TextSize = 12
+artifactsSlots.TextSize = 10
 artifactsSlots.TextXAlignment = Enum.TextXAlignment.Left
 artifactsSlots.Parent = artifactsPanel
 
