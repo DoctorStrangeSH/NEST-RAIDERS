@@ -289,4 +289,31 @@ local CompanionCatalog = {
 
 }
 
+    AncientStag = {
+        Id = "AncientStag", Name = "Олень-древень", Rarity = "Редкий",
+        Income = 68, Weight = 55,
+        Description = "Хранитель древних крон, несущий силу старого леса.",
+        Personality = "Благородный", PersonalityDescription = "Любит тишину рощ и заботу о маленьких ростках.",
+        FavoriteFood = "Золотые жёлуди", FavoriteToy = "CozyPlush",
+        PetMoodBonus = 10, PlayMoodBonus = 4, EggId = "AncientEgg",
+        Ability = { Id = "ElderGrace", Name = "Благодать древних", Description = "Находит дополнительную награду в Древних высотах.", UnlockLevel = 7, CooldownSeconds = 360 },
+    },
+    RootSprite = {
+        Id = "RootSprite", Name = "Дух корней", Rarity = "Эпический",
+        Income = 82, Weight = 30,
+        Description = "Маленький дух, пробудившийся в сердце старого дерева.",
+        Personality = "Заботливый", PersonalityDescription = "Любит ухаживать за растениями и играть с листьями.",
+        FavoriteFood = "Медовые семена", FavoriteToy = "MeadowBall",
+        PetMoodBonus = 8, PlayMoodBonus = 8, EggId = "AncientEgg",
+    },
+    SkySerpent = {
+        Id = "SkySerpent", Name = "Небесный змей", Rarity = "Мифический",
+        Income = 108, Weight = 15,
+        Description = "Древний крылатый змей, парящий между островами.",
+        Personality = "Мечтательный", PersonalityDescription = "Обожает высоту, ветер и сияющие облака.",
+        FavoriteFood = "Звёздный нектар", FavoriteToy = "WindSpinner",
+        PetMoodBonus = 4, PlayMoodBonus = 12, EggId = "AncientEgg",
+        Ability = { Id = "SkywardFortune", Name = "Удача высот", Description = "Находит редкие награды среди облаков.", UnlockLevel = 7, CooldownSeconds = 420 },
+    },
+
 return CompanionCatalog
