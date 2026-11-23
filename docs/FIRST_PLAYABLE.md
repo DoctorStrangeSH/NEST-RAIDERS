@@ -389,3 +389,9 @@ Each boss attack has its own warning color: cyan for Crystal Slam, violet for Ec
 - Recipe: 4 Moonpetals + 2 Starshards + 2 Crystal Shards + 1 Ash Crystal + 250 coins.
 - A crafted artifact is randomly selected: Root Sigil (60%), Moon Pendant (30%), Star Prism (10%).
 - Equip up to two artifacts. Their passive-income bonuses stack additively, up to +20% total.
+
+## Artifact upgrades
+- The collection shows each artifact's upgrade level and current passive-income bonus.
+- Three matching unequipped copies can be combined using **ОБЪЕДИНИТЬ ×3**.
+- Each merge consumes the three source instances and creates one new instance at the next level.
+- Level VI (Мифический) is the maximum. Equipped artifacts are never offered as merge ingredients.
