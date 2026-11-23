@@ -129,6 +129,9 @@ function WorldBuilder:Build()
     -- without blocking the three existing collectible egg parts.
     for _, grove in ipairs({
         {x = -24, z = 20}, {x = 25, z = 24}, {x = 0, z = 65},
+        {x = -42, z = -5}, {x = 42, z = -5},
+        {x = -42, z = 40}, {x = 42, z = 40},
+        {x = -35, z = 75}, {x = 35, z = 75},
     }) do
         local zone = Instance.new("Model")
         zone.Name = "EggGarden_" .. tostring(grove.x) .. "_" .. tostring(grove.z)
@@ -246,6 +249,9 @@ function WorldBuilder:Build()
 
     for _, eggPosition in ipairs({
         Vector3.new(-24, 14, 20), Vector3.new(25, 14, 24), Vector3.new(0, 14, 65),
+        Vector3.new(-42, 14, -5), Vector3.new(42, 14, -5),
+        Vector3.new(-42, 14, 40), Vector3.new(42, 14, 40),
+        Vector3.new(-35, 14, 75), Vector3.new(35, 14, 75),
     }) do
         local pedestal = part(gardens, "EggPedestal", Vector3.new(1.4, 6, 6),
             Vector3.new(eggPosition.X, 11, eggPosition.Z),
