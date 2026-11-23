@@ -1831,7 +1831,7 @@ function WorldBuilder:Build()
     caveOddsText.Parent = caveOddsGui
 
     local bossArena = part(forgottenCave, "ForgottenHeartBossArena",
-        Vector3.new(34, 0.5, 30), Vector3.new(174, 19.25, 2600),
+        Vector3.new(34, 0.5, 24), Vector3.new(174, 19.25, 2599),
         Color3.fromRGB(66, 79, 87), Enum.Material.Slate)
     bossArena.CanCollide = true
     bossArena.Transparency = 0.18
