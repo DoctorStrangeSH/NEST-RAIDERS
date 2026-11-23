@@ -682,7 +682,7 @@ function WorldBuilder:Build()
         Color3.fromRGB(255, 125, 55), "Emberlands", Vector3.new(0, 18, 1480))
     makeBiomePortal(ember, "EmberReturnPortal", Vector3.new(-45, 24, 1480),
         Color3.fromRGB(128, 225, 255), "FrostHighlands", Vector3.new(0, 16, 1040))
-    makeBiomePortal(ember, "CrystalPortal", Vector3.new(0, 22, 1658),
+    makeBiomePortal(ember, "CrystalPortal", Vector3.new(72, 22, 1560),
         Color3.fromRGB(180, 130, 255), "CrystalRealm", Vector3.new(0, 24, 2080))
     local emberOddsSign = part(ember, "EmberEggOddsSign", Vector3.new(28, 10, 1),
         Vector3.new(0, 24, 1638), Color3.fromRGB(91, 49, 38), Enum.Material.WoodPlanks)
@@ -899,7 +899,7 @@ function WorldBuilder:Build()
     bridge.Name = "CrystalSkyway"
     bridge.Parent = world
     for index = 1, 8 do
-        local z = 1690 + (index - 1) * 39
+        local z = 1660 + (index - 1) * 39
         local y = 20 + math.sin(index * 0.65) * 2
         local segment = part(bridge, "CrystalBridgeSegment_" .. index,
             Vector3.new(18, 2, 42), Vector3.new(0, y, z),
