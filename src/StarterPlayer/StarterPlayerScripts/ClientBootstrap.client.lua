@@ -4312,8 +4312,8 @@ local function showForgottenHeartRewardReveal()
 
     local petName = Instance.new("TextLabel")
     petName.BackgroundTransparency = 1
-    petName.Position = UDim2.fromScale(0.06, 0.69)
-    petName.Size = UDim2.fromScale(0.88, 0.12)
+    petName.Position = UDim2.fromScale(0.06, 0.68)
+    petName.Size = UDim2.fromScale(0.88, 0.1)
     petName.Font = Enum.Font.GothamBlack
     petName.Text = "СТРАЖ ЗАБЫТОГО СЕРДЦА"
     petName.TextColor3 = Color3.fromRGB(245, 247, 255)
@@ -4322,8 +4322,8 @@ local function showForgottenHeartRewardReveal()
 
     local rewardLine = Instance.new("TextLabel")
     rewardLine.BackgroundTransparency = 1
-    rewardLine.Position = UDim2.fromScale(0.07, 0.8)
-    rewardLine.Size = UDim2.fromScale(0.86, 0.07)
+    rewardLine.Position = UDim2.fromScale(0.07, 0.79)
+    rewardLine.Size = UDim2.fromScale(0.86, 0.06)
     rewardLine.Font = Enum.Font.GothamMedium
     rewardLine.Text = "+1 200 монет  ·  +5 осколков  ·  +800 опыта"
     rewardLine.TextColor3 = Color3.fromRGB(194, 216, 235)
