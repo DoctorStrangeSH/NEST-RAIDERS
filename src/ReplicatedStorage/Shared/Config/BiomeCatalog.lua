@@ -52,6 +52,23 @@ local BiomeCatalog = {
             },
         },
     },
+    CrystalRealm = {
+        Id = "CrystalRealm",
+        Name = "Хрустальное королевство",
+        DefaultEggId = "CrystalEgg",
+        Eggs = {
+            CrystalEgg = {
+                Id = "CrystalEgg",
+                Name = "Яйцо призматического сияния",
+                Rarity = "Легендарное",
+                SpeciesWeights = {
+                    PrismFox = 60,
+                    CrystalDeer = 30,
+                    AuroraDragon = 10,
+                },
+            },
+        },
+    },
     EmeraldWilds = {
         Id = "EmeraldWilds",
         Name = "Изумрудный лес",
