@@ -28,6 +28,8 @@ assert 'local modalPanels = {' in client
 assert 'CloseAllWindows' in client
 before('remoteFolder.Name = "NestRaidersRemotes"', 'builder:Build()', server)
 assert 'ServiceError_' in server
+assert 'remote.OnServerInvoke = function()' in server, "Uninitialized remotes must fail quickly"
+assert 'Ok = false' in server and 'Message = "Система ещё загружается' in server
 assert 'NestRaidersHUD' in watchdog
 
 path = Path("NEST-RAIDERS.rbxlx")
