@@ -225,3 +225,14 @@
 - A lineage egg grows from a spark above the altar and receives trait-colored light and particles.
 - Hybrid offspring receive a distinct golden shard burst.
 - Effects are cosmetic; breeding results and incubation remain server-authoritative.
+
+## Frost Highlands — Sprint 4.21
+- Frost Highlands is the third explorable island, reached from Emerald Wilds through a portal gated by level 12 and the completed Emerald Grove trial.
+- The island includes a snowfield, pine grove, luminous glacier crystals, three Frost Egg spawn points, three trial rune shrines, and a return portal to Emerald Wilds.
+- The Frost Egg uses its own disclosed hatch table: Frost Fox 60%, Snow Owl 30%, Glacier Bear 10%.
+- The three new species have dedicated companion catalog entries and distinct low-poly fox, owl, and bear follower/display models.
+- Activate the Aurora, Glacier, and Winter runes to complete the Heart of Winter trial and receive 180 XP. Rune progress and completion are stored in the player profile.
+- Completing the Frost trial satisfies the configured quest requirement for Emberlands; the next zone still requires level 22.
+- World egg collection now checks that the player is in the matching unlocked biome; prompts cannot be used remotely from another island.
+- CI static checks and world structural health checks cover the Frost island, egg prompts, trial runes, and return portal.
+- Studio runtime, persistence, collision, and mobile acceptance are still required; a successful Rojo build is not proof of gameplay.
