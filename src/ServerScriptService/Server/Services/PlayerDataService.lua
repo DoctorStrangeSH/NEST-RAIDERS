@@ -62,6 +62,7 @@ local function publishProfile(player, data)
     PlayerDataService._profiles[player] = data
     player:SetAttribute("Coins", data.Coins)
     player:SetAttribute("Level", data.Level)
+    player:SetAttribute("ProfilePersistence", PlayerDataService._studioFallback[player] and "TEMPORARY" or "SAVED")
     player:SetAttribute("ProfileLoaded", true)
 end
 
