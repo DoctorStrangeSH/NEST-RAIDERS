@@ -207,3 +207,7 @@ The cave treasure claim awakens a personal 360-HP boss encounter. Fight through 
 
 ### Guardian arena effects
 The Forgotten Heart arena now has eight breakable crystal clusters, local attack choreography, a violet phase-two awakening, flying crystal debris, regrowth and a one-time mythic companion reveal after victory.
+
+
+### Combat feedback
+Guardian strikes now trigger local hit reactions, core flashes and crystal sparks. Taking damage triggers a red-screen flash and camera shake; combat outcomes remain server-authoritative.
