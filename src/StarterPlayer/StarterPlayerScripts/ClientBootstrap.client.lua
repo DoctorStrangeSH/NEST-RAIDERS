@@ -1433,7 +1433,7 @@ artifactsHint.BackgroundTransparency = 1
 artifactsHint.Position = UDim2.fromOffset(18, 48)
 artifactsHint.Size = UDim2.new(1, -36, 0, 48)
 artifactsHint.Font = Enum.Font.Gotham
-artifactsHint.Text = "Экипируй до 2 артефактов: они усиливают пассивный доход питомцев. Создание доступно у мастерской Древних высот."
+artifactsHint.Text = "Экипируй до 2 артефактов: они усиливают пассивный доход питомцев и добычу ресурсов. Создание доступно у мастерской Древних высот."
 artifactsHint.TextColor3 = Color3.fromRGB(190, 190, 220)
 artifactsHint.TextSize = 11
 artifactsHint.TextWrapped = true
@@ -1452,6 +1452,27 @@ artifactsCraft.Font = Enum.Font.GothamBlack
 artifactsCraft.Parent = artifactsPanel
 addCorner(artifactsCraft, 10)
 
+if RunService:IsStudio() then
+    local artifactsTestButton = Instance.new("TextButton")
+    artifactsTestButton.Name = "GathererArtifactTestButton"
+    artifactsTestButton.Position = UDim2.fromOffset(16, 174)
+    artifactsTestButton.Size = UDim2.new(1, -32, 0, 32)
+    artifactsTestButton.BackgroundColor3 = Color3.fromRGB(55, 105, 91)
+    artifactsTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ"
+    artifactsTestButton.TextColor3 = Color3.fromRGB(235, 255, 241)
+    artifactsTestButton.TextSize = 10
+    artifactsTestButton.Font = Enum.Font.GothamBlack
+    artifactsTestButton.Parent = artifactsPanel
+    addCorner(artifactsTestButton, 9)
+    artifactsTestButton.Activated:Connect(function()
+        local data = invokeInventory({ Action = "DevSeedGathererArtifacts" })
+        if data then
+            renderArtifacts(data)
+            showNotice("Тестовые Собиратели добавлены: по 3 каждого вида.")
+        end
+    end)
+end
+
 local artifactsSlots = Instance.new("TextLabel")
 artifactsSlots.BackgroundTransparency = 1
 artifactsSlots.Position = UDim2.fromOffset(18, 146)
@@ -1465,8 +1486,8 @@ artifactsSlots.Parent = artifactsPanel
 
 local artifactsList = Instance.new("ScrollingFrame")
 artifactsList.Name = "ArtifactList"
-artifactsList.Position = UDim2.fromOffset(14, 174)
-artifactsList.Size = UDim2.new(1, -28, 1, -188)
+artifactsList.Position = UDim2.fromOffset(14, RunService:IsStudio() and 212 or 174)
+artifactsList.Size = UDim2.new(1, -28, 1, (RunService:IsStudio() and -226 or -188))
 artifactsList.BackgroundTransparency = 1
 artifactsList.BorderSizePixel = 0
 artifactsList.ScrollBarThickness = 5
