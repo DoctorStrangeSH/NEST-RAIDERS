@@ -247,3 +247,11 @@
 - Ember Egg hatch odds: Cinder Fox 60%, Magma Whelp 30%, Ash Phoenix 10%. Eggs use the shared collection/hatching flow and biome-specific spawn pool.
 - The Russian HUD shows heat percentage, protection, and danger/sanctuary status.
 - Visuals are scripted prototypes. Studio playtesting, collision review, and mobile/performance acceptance are not yet complete.
+
+ 
+## Ashfall world event — Sprint 4.22.2
+- Volcanic event runs while players are exploring Emberlands: a 20-second warning, three moving lava surges, then a 75-second reward window.
+- Lava surges are server-authoritative and deal damage when they cross a player; the cooling sanctuary remains a safe zone.
+- Four glowing ash crystals appear after the event. Each player can collect each node once per event.
+- Ash crystals persist in the profile and are shown in the Russian event HUD alongside the countdown and current event phase.
+- The event is a scripted gameplay prototype. Studio runtime, multiplayer, balance, and mobile acceptance are still required.
