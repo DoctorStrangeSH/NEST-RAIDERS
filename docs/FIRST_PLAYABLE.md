@@ -313,3 +313,10 @@
 - Craft one Ancient Egg for 10 Elderwood and 300 coins.
 - The crafted egg enters the regular egg bag; return to your own nest's hatch station to hatch it.
 - Its hatch odds are the same as a wild Ancient Egg: Ancient Stag 55%, Root Sprite 30%, Sky Serpent 15%.
+
+
+## Ancient Tree Temple
+- From the Elder Canopy, cross the stone causeway to the temple side-island.
+- Read the clue and activate the three runes in order: Root → River → Dawn.
+- A wrong rune resets your own sequence; other players' progress is unaffected.
+- Once all three runes are lit, open the treasure chest for a one-time reward of 500 coins, 300 XP, and 20 Elderwood.
