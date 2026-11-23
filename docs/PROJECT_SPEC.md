@@ -457,3 +457,10 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Victory plays a collapse animation while the golden heart remains visible.
 - The server raises ForgottenHeartBossRewardReveal only on a fresh victory. The client uses this transient signal to show the mythic companion reveal card. Returning players who already defeated the boss do not see the acquisition scene again.
 - All choreography, debris and crystal breakage are client-local; the server remains authoritative for damage, health, completion and rewards.
+
+
+## Forgotten Heart combat feedback — Sprint 4.38
+- The server increments `ForgottenHeartBossHitPulse` after each accepted player hit and `ForgottenHeartBossDamagePulse` when a boss attack damages the player.
+- The client uses these signals for a guardian recoil reaction (body compression, head recoil, core flash and crystal sparks), a subtle hit camera shake, and a stronger red-screen/camera response when the player takes damage.
+- These effects are cosmetic and local to the challenged player. Boss health, damage, cooldowns, attack resolution and rewards remain server-authoritative.
+- Sound effects are intentionally not assigned placeholder asset IDs. Curated/licensed Roblox audio assets must be selected and verified before sound is marked complete.
