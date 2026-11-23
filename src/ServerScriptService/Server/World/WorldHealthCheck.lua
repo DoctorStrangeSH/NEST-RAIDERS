@@ -247,6 +247,15 @@ function WorldHealthCheck:Check()
         if ancientEggCount < 3 then fail(string.format("Яйца Древних высот: %d из 3", ancientEggCount)) end
         if not ancient:FindFirstChild("ElderCanopy") then fail("Нет рощи Древних высот") end
         if not ancient:FindFirstChild("AncientEggOddsSign") then fail("Нет таблицы вероятностей древнего яйца") end
+        local elderwoodNodes = ancient:FindFirstChild("ElderwoodNodes")
+        local elderwoodCount = 0
+        for _, node in ipairs(elderwoodNodes and elderwoodNodes:GetChildren() or {}) do
+            if node:IsA("BasePart") and type(node:GetAttribute("ElderwoodNodeId")) == "string"
+                and node:FindFirstChild("HarvestElderwoodPrompt") then
+                elderwoodCount += 1
+            end
+        end
+        if elderwoodCount < 6 then fail(string.format("Древние корни: %d из 6", elderwoodCount)) end
     end
 
     return #issues == 0, issues
