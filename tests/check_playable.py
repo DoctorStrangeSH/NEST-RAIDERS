@@ -739,6 +739,14 @@ assert 'if artifact.DevOnly == true then' in player_data
 assert 'if not testArtifactIds[instanceId] then' in player_data
 assert 'requiredSlots' in inventory_service and '#profile.Artifacts + requiredSlots > 40' in inventory_service
 assert 'artifactsTestButton' in client and 'RunService:IsStudio() then' in client
+assert 'local showNotice, invokeInventory, renderArtifacts' in client
+assert client.index('local showNotice, invokeInventory, renderArtifacts') < client.index('local artifactsTestButton')
+assert 'renderArtifacts = function(data)' in client
+assert 'showNotice = function(message)' in client
+assert 'invokeInventory = function(payload)' in client
+assert 'local function renderArtifacts(data)' not in client
+assert 'local function showNotice(message)' not in client
+assert 'local function invokeInventory(payload)' not in client
 assert 'Action = "DevSeedGathererArtifacts"' in client
 assert 'ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ' in client
 assert 'добычу ресурсов' in client
