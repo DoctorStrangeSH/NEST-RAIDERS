@@ -151,6 +151,37 @@ function WorldHealthCheck:Check()
         if not frost or not frost:FindFirstChild("EmberPortal") then fail("Нет портала из Ледяных нагорий в Пепельные земли") end
     end
 
+
+        local trial = ember:FindFirstChild("HeartOfFireTrial")
+        if not trial then
+            fail("Не создана арена Испытания Огненного сердца")
+        else
+            local arena = trial:FindFirstChild("HeartOfFireArena")
+            if not arena or not arena:IsA("BasePart") then
+                fail("Нет платформы арены Огненного сердца")
+            end
+            local runes = trial:FindFirstChild("TrialRunes")
+            local runeCount = 0
+            for _, descendant in ipairs(runes and runes:GetDescendants() or {}) do
+                if descendant:IsA("ProximityPrompt") and descendant.Name == "EmberTrialRunePrompt" then
+                    runeCount += 1
+                end
+            end
+            if runeCount < 3 then fail(string.format("Руны Огненного сердца: %d из 3", runeCount)) end
+            local guardian = trial:FindFirstChild("HeartOfFireGuardian")
+            local core = guardian and guardian:FindFirstChild("GuardianFlameCore")
+            local bossPrompt = core and core:FindFirstChild("EmberTrialBossPrompt")
+            if not bossPrompt or not bossPrompt:IsA("ProximityPrompt") then
+                fail("Нет взаимодействия с Огненным стражем")
+            end
+            local approach = trial:FindFirstChild("TrialApproach")
+            local stepCount = 0
+            for _, step in ipairs(approach and approach:GetChildren() or {}) do
+                if step:IsA("BasePart") and step.Name:match("^BasaltTrialStep_") then stepCount += 1 end
+            end
+            if stepCount < 12 then fail(string.format("Подъём к алтарю: %d из 12 ступеней", stepCount)) end
+        end
+
     return #issues == 0, issues
 end
 
