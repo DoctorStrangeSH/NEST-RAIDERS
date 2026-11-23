@@ -11,6 +11,15 @@ server = Path("src/ServerScriptService/Server/Bootstrap.server.lua").read_text()
 watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua").read_text()
 world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
 plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
+health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
+assert 'function WorldHealthCheck:Check()' in health
+for required in ['StarterSpawn', 'EggSpawnPoints', 'CollectEggPrompt', 'PlayerPlots', 'HatchStation', 'HatchPrompt', 'PlotGrass']:
+    assert required in health, f"World health validation missing {required}"
+assert 'WorldHealth", "READY"' in server
+assert 'WorldHealth", "DEGRADED"' in server
+assert 'WorldHealthError' in server and 'WorldHealthError' in client
+assert 'remotes:GetAttribute("WorldHealth") == "DEGRADED"' in client
+
 assert 'Vector3.new(18, 10, 1)' in world, "Welcome sign should have a readable front face"
 assert 'Vector3.new(9, 5, 1)' in plots, "Personal nest signs should have a readable front face"
 assert 'EggGroveWayfinding' in world
