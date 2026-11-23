@@ -702,3 +702,17 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Register the cave service, display cave progress in the Ancient Heights HUD and extend world health/static regression checks.
 - [ ] Roblox Studio: verify bridge traversal, cave collision/ceiling clearance, clue readability, correct and incorrect sequence, rejoin persistence, chest lock and multiplayer isolation.
 - [ ] Add Starshard to a later crafting recipe and material inventory UI.
+
+
+### Sprint 4.35 — Forgotten Heart companions (2026-11-23)
+- [x] Add the exclusive Forgotten Cave Egg to the biome egg catalog with transparent 65/25/10 species weights.
+- [x] Add three cave-only species: Twilight Bat (Rare), Crystal Prowler (Epic), Heart Wisp (Legendary).
+- [x] Give each species its own description, personality, favorite items, income value and companion ability.
+- [x] Add distinct follower model silhouettes: bat wings and ears, prowler crystal crest, and floating heart-wisp halo/core.
+- [x] Award one Forgotten Cave Egg from the personal cave treasure chest, alongside the existing Starshard/coin/XP rewards.
+- [x] Keep the reward one-time and require a free egg inventory slot before claiming, so no reward is silently lost.
+- [x] Show the egg odds on a sign inside the cave and validate its presence in the world health check.
+- [x] Reuse the existing hatch pipeline and collection book so the new egg and species work with inventory, hatching, discovery tracking and collection odds.
+- [x] Extend static regression coverage for species, weights, models and reward flow.
+- [ ] Roblox Studio: solve the cave puzzle, claim and hatch the egg, verify all three possible species, follower silhouettes, ability data, collection discovery and persistence.
+- [ ] Balance income and abilities after playtesting.
