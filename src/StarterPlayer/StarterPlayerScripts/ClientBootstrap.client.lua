@@ -4221,7 +4221,7 @@ local function showForgottenHeartRewardReveal()
     card.BorderSizePixel = 0
     card.Parent = dim
     local cardConstraint = Instance.new("UISizeConstraint")
-    cardConstraint.MinSize = Vector2.new(280, 250)
+    cardConstraint.MinSize = Vector2.new(280, 270)
     cardConstraint.MaxSize = Vector2.new(500, 360)
     cardConstraint.Parent = card
     local cardCorner = Instance.new("UICorner")
@@ -4265,14 +4265,40 @@ local function showForgottenHeartRewardReveal()
     emblemStroke.Color = Color3.fromRGB(190, 232, 255)
     emblemStroke.Thickness = 2
     emblemStroke.Parent = emblem
-    local emblemText = Instance.new("TextLabel")
-    emblemText.Size = UDim2.fromScale(1, 1)
-    emblemText.BackgroundTransparency = 1
-    emblemText.Text = "✦"
-    emblemText.TextColor3 = Color3.fromRGB(225, 246, 255)
-    emblemText.Font = Enum.Font.GothamBlack
-    emblemText.TextScaled = true
-    emblemText.Parent = emblem
+    local petViewport = Instance.new("ViewportFrame")
+    petViewport.Size = UDim2.fromScale(1, 1)
+    petViewport.BackgroundTransparency = 1
+    petViewport.Ambient = Color3.fromRGB(170, 205, 238)
+    petViewport.LightColor = Color3.fromRGB(225, 242, 255)
+    petViewport.Parent = emblem
+    local petWorld = Instance.new("WorldModel")
+    petWorld.Parent = petViewport
+    local petCamera = Instance.new("Camera")
+    petCamera.CFrame = CFrame.lookAt(Vector3.new(0, 2.5, 7), Vector3.new(0, 1.7, 0))
+    petCamera.Parent = petViewport
+    petViewport.CurrentCamera = petCamera
+    local petModel = Instance.new("Model")
+    petModel.Name = "ForgottenHeartGuardianRewardPreview"
+    petModel.Parent = petWorld
+    local function previewPart(name, size, position, color, shape, material)
+        local piece = Instance.new("Part")
+        piece.Name = name
+        piece.Size = size
+        piece.Position = position
+        piece.Anchored = true
+        piece.CanCollide = false
+        piece.Material = material or Enum.Material.Slate
+        piece.Color = color
+        if shape then piece.Shape = shape end
+        piece.Parent = petModel
+        return piece
+    end
+    previewPart("Body", Vector3.new(2.1, 2.0, 1.7), Vector3.new(0, 1.2, 0), Color3.fromRGB(78, 104, 127), Enum.PartType.Ball)
+    previewPart("Head", Vector3.new(1.55, 1.4, 1.4), Vector3.new(0, 2.55, 0), Color3.fromRGB(103, 129, 151), Enum.PartType.Ball)
+    previewPart("LeftArm", Vector3.new(0.75, 1.5, 0.75), Vector3.new(-1.25, 1.25, 0), Color3.fromRGB(78, 104, 127), Enum.PartType.Ball)
+    previewPart("RightArm", Vector3.new(0.75, 1.5, 0.75), Vector3.new(1.25, 1.25, 0), Color3.fromRGB(78, 104, 127), Enum.PartType.Ball)
+    previewPart("HeartCore", Vector3.new(0.75, 0.75, 0.45), Vector3.new(0, 1.45, 0.86), Color3.fromRGB(128, 224, 255), Enum.PartType.Ball, Enum.Material.Neon)
+    previewPart("CrownCrystal", Vector3.new(0.45, 1.0, 0.45), Vector3.new(0, 3.65, 0), Color3.fromRGB(170, 142, 245), Enum.PartType.Wedge, Enum.Material.Neon)
 
     local rarity = Instance.new("TextLabel")
     rarity.BackgroundTransparency = 1
@@ -4294,9 +4320,19 @@ local function showForgottenHeartRewardReveal()
     petName.TextScaled = true
     petName.Parent = card
 
+    local rewardLine = Instance.new("TextLabel")
+    rewardLine.BackgroundTransparency = 1
+    rewardLine.Position = UDim2.fromScale(0.07, 0.8)
+    rewardLine.Size = UDim2.fromScale(0.86, 0.07)
+    rewardLine.Font = Enum.Font.GothamMedium
+    rewardLine.Text = "+1 200 монет  ·  +5 осколков  ·  +800 опыта"
+    rewardLine.TextColor3 = Color3.fromRGB(194, 216, 235)
+    rewardLine.TextScaled = true
+    rewardLine.Parent = card
+
     local close = Instance.new("TextButton")
     close.AnchorPoint = Vector2.new(0.5, 1)
-    close.Position = UDim2.fromScale(0.5, 0.94)
+    close.Position = UDim2.fromScale(0.5, 0.98)
     close.Size = UDim2.fromOffset(160, 34)
     close.BackgroundColor3 = Color3.fromRGB(116, 174, 211)
     close.TextColor3 = Color3.fromRGB(16, 28, 42)
