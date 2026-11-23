@@ -34,22 +34,25 @@ local function buildSnapshot(profile)
         local count = ownedCounts[definition.Id] or 0
         local isDiscovered = profile.DiscoveredSpecies[definition.Id] == true
         if isDiscovered then discovered += 1 end
-        local eggId = definition.EggId or "MeadowEgg"
-        local biomeName = "Зелёный луг"
-        local eggName = "Яйцо луга"
+        local eggId = definition.EggId
+        local biomeName = definition.BossExclusive and "Храм Древнего древа" or "Зелёный луг"
+        local eggName = definition.BossExclusive and "Награда за босса" or "Яйцо луга"
         local biomeChance = 0
-        for _, biome in pairs(BiomeCatalog) do
-            for _, egg in pairs(biome.Eggs or {}) do
-                if egg.Id == eggId then
-                    biomeName = biome.Name or biomeName
-                    eggName = egg.Name or eggName
-                    local totalWeight = 0
-                    for _, weight in pairs(egg.SpeciesWeights or {}) do
-                        if type(weight) == "number" and weight > 0 then totalWeight += weight end
+        if not definition.BossExclusive then
+            eggId = eggId or "MeadowEgg"
+            for _, biome in pairs(BiomeCatalog) do
+                for _, egg in pairs(biome.Eggs or {}) do
+                    if egg.Id == eggId then
+                        biomeName = biome.Name or biomeName
+                        eggName = egg.Name or eggName
+                        local totalWeight = 0
+                        for _, weight in pairs(egg.SpeciesWeights or {}) do
+                            if type(weight) == "number" and weight > 0 then totalWeight += weight end
+                        end
+                        local speciesWeight = tonumber(egg.SpeciesWeights and egg.SpeciesWeights[definition.Id]) or 0
+                        biomeChance = totalWeight > 0 and math.floor(speciesWeight / totalWeight * 100 + 0.5) or 0
+                        break
                     end
-                    local speciesWeight = tonumber(egg.SpeciesWeights and egg.SpeciesWeights[definition.Id]) or 0
-                    biomeChance = totalWeight > 0 and math.floor(speciesWeight / totalWeight * 100 + 0.5) or 0
-                    break
                 end
             end
         end
@@ -64,6 +67,8 @@ local function buildSnapshot(profile)
             BiomeName = biomeName,
             DiscoveredBiome = profile.DiscoveredBiomes[definition.Id],
             HybridOnly = definition.Hybrid == true,
+            BossExclusive = definition.BossExclusive == true,
+            AcquisitionLabel = definition.AcquisitionLabel,
             OwnedCount = count,
             Discovered = isDiscovered,
         })
