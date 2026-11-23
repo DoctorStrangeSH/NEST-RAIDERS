@@ -344,6 +344,7 @@ assert 'root.Position.Z > 1500' in ashfall, "Lava surges must not damage players
 assert 'CollectAshCrystalPrompt' in ashfall and 'AshfallClaimedNodes[index]' in ashfall
 assert 'LastAshfallClaimEventId' in ashfall and 'AshfallClaimedNodes' in ashfall
 assert 'profile.Materials.AshCrystal' in ashfall and 'AshCrystal = 0' in profile_template
+assert 'LastAshfallClaimEventId = ""' in profile_template and 'AshfallClaimedNodes = {}' in profile_template
 assert 'player:SetAttribute("AshCrystals"' in player_data
 assert 'AshfallEventPanel' in client and 'updateAshfallPanel' in client
 assert 'Пепельные кристаллы:' in client and 'ИЗВЕРЖЕНИЕ ЧЕРЕЗ' in client
