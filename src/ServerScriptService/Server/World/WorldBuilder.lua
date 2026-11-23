@@ -313,6 +313,41 @@ function WorldBuilder:Build()
         prompt.Parent = egg
     end
 
+    -- Three persistent runes form the Emerald Wilds trial required by later biomes.
+    local runeFolder = Instance.new("Folder")
+    runeFolder.Name = "EmeraldTrialRunes"
+    runeFolder.Parent = emerald
+    local runeDefinitions = {
+        { Id = "Grove", Name = "Руна рощи", Position = Vector3.new(-34, 19, 525), Color = Color3.fromRGB(125, 255, 173) },
+        { Id = "River", Name = "Руна реки", Position = Vector3.new(34, 19, 525), Color = Color3.fromRGB(111, 226, 255) },
+        { Id = "Dawn", Name = "Руна рассвета", Position = Vector3.new(0, 19, 485), Color = Color3.fromRGB(255, 224, 126) },
+    }
+    for _, definition in ipairs(runeDefinitions) do
+        local pedestal = part(runeFolder, definition.Id .. "RunePedestal",
+            Vector3.new(5, 2, 5), definition.Position - Vector3.new(0, 1, 0),
+            Color3.fromRGB(92, 105, 82), Enum.Material.Slate)
+        pedestal:SetAttribute("RuneId", definition.Id)
+        local crystal = part(runeFolder, definition.Id .. "RuneCrystal",
+            Vector3.new(2.2, 4.2, 2.2), definition.Position + Vector3.new(0, 2, 0),
+            definition.Color, Enum.Material.Neon, Enum.PartType.Ball)
+        crystal.CanCollide = false
+        crystal:SetAttribute("RuneId", definition.Id)
+        local light = Instance.new("PointLight")
+        light.Color = definition.Color
+        light.Range = 12
+        light.Brightness = 0.8
+        light.Parent = crystal
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "EmeraldRunePrompt"
+        prompt.ActionText = "Активировать"
+        prompt.ObjectText = definition.Name
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.65
+        prompt.MaxActivationDistance = 10
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = crystal
+    end
+
     local function makeBiomePortal(parent, name, position, color, zoneId, destination)
         local portal = part(parent, name, Vector3.new(4, 15, 15), position,
             color, Enum.Material.Neon, Enum.PartType.Cylinder)
