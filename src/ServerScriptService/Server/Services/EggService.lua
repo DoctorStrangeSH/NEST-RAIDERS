@@ -266,6 +266,7 @@ function EggService:_HatchUnlocked(player, station)
         GeneticTrait = geneticTrait,
         HatchedAt = now,
         Origin = egg.Origin or "Hatch",
+        OriginBiome = egg.BiomeId or "Meadow",
         ParentSpecies = type(egg.ParentSpecies) == "table" and egg.ParentSpecies or nil,
     }
     table.insert(profile.Companions, companion)
