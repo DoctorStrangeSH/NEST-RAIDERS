@@ -14,6 +14,8 @@ local LAST_REQUEST_AT = {}
 local REQUEST_COOLDOWN_SECONDS = 1.5
 local EGG_CAPACITY = 20
 local ELDERWOOD_COST = 10
+local MOONPETAL_COST = 5
+local STARSHARD_COST = 3
 local COIN_COST = 300
 local EGG_ID = "AncientEgg"
 
@@ -65,10 +67,22 @@ local function craft(player, station, prompt)
 
     profile.Materials = type(profile.Materials) == "table" and profile.Materials or {}
     local elderwood = math.max(0, math.floor(tonumber(profile.Materials.Elderwood) or 0))
+    local moonpetals = math.max(0, math.floor(tonumber(profile.Materials.Moonpetal) or 0))
+    local starshards = math.max(0, math.floor(tonumber(profile.Materials.Starshard) or 0))
     local coins = math.max(0, math.floor(tonumber(profile.Coins) or 0))
     if elderwood < ELDERWOOD_COST then
         player:SetAttribute("LastNotice", string.format(
             "Не хватает эссенции: нужно %d, у тебя %d.", ELDERWOOD_COST, elderwood))
+        return
+    end
+    if moonpetals < MOONPETAL_COST then
+        player:SetAttribute("LastNotice", string.format(
+            "Не хватает лунных лепестков: нужно %d, у тебя %d.", MOONPETAL_COST, moonpetals))
+        return
+    end
+    if starshards < STARSHARD_COST then
+        player:SetAttribute("LastNotice", string.format(
+            "Не хватает звёздных осколков: нужно %d, у тебя %d.", STARSHARD_COST, starshards))
         return
     end
     if coins < COIN_COST then
@@ -79,6 +93,8 @@ local function craft(player, station, prompt)
 
     -- Spend only after every requirement and the target catalog entry are validated.
     profile.Materials.Elderwood = elderwood - ELDERWOOD_COST
+    profile.Materials.Moonpetal = moonpetals - MOONPETAL_COST
+    profile.Materials.Starshard = starshards - STARSHARD_COST
     profile.Coins = coins - COIN_COST
     table.insert(profile.EggInventory, {
         Id = EGG_ID,
@@ -89,6 +105,8 @@ local function craft(player, station, prompt)
     })
 
     player:SetAttribute("Elderwood", profile.Materials.Elderwood)
+    player:SetAttribute("Moonpetal", profile.Materials.Moonpetal)
+    player:SetAttribute("Starshard", profile.Materials.Starshard)
     player:SetAttribute("Coins", profile.Coins)
     player:SetAttribute("EggCount", #profile.EggInventory)
     player:SetAttribute("LastNotice", "Создано Яйцо древнего древа! Оно ждёт тебя на станции вылупления.")
