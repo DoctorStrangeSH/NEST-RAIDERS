@@ -397,7 +397,7 @@ assert 'REWARD_XP = 500' in crystal_trial and 'ProgressionService:AddXP(player, 
 assert 'profile.CompletedQuests.crystal_trial = true' in crystal_trial
 assert 'CrystalPrismPrompt' in crystal_trial and 'CrystalTrialBossPrompt' in crystal_trial
 assert 'PrismTrial' in world and '"PrismGem_" .. definition.Id' in world and 'Id = "Azure"' in world and 'Id = "Rose"' in world and 'Id = "Crown"' in world
-assert 'PrismLightBeam_1' in world and 'PrismLightBeam_2' in world and 'PrismGuardian' in world
+assert '"PrismLightBeam_" .. index' in world and 'for index = 1, 2 do' in world and 'PrismGuardian' in world
 assert 'CrystalTrialBossPrompt' in world and 'Лазурный → Розовый → Золотой' in world
 assert 'AncientHeights' in game_config and 'RequiredLevel = 50, RequiredQuest = "crystal_trial"' in game_config
 assert 'AncientHeightsPortal' in world and 'AncientReturnPortal' in world
