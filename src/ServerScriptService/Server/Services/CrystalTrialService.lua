@@ -100,6 +100,10 @@ function CrystalTrialService:Init()
 
                 local prismId = descendant.Parent:GetAttribute("PrismId")
                 local count = sequenceCount(progress.CrystalTrialPrisms)
+                if count >= #PRISM_SEQUENCE then
+                    player:SetAttribute("LastNotice", "Все три луча уже соединены. Теперь сразись с Хранителем призмы!")
+                    return
+                end
                 local expected = PRISM_SEQUENCE[count + 1]
                 if prismId ~= expected then
                     table.clear(progress.CrystalTrialPrisms)
