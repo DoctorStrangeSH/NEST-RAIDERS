@@ -128,6 +128,7 @@ local function grantUniqueCompanion(player, profile)
         end
     end
     player:SetAttribute("CompanionCount", #profile.Companions)
+    player:SetAttribute("ActiveCompanionCount", #profile.ActiveCompanions)
     CompanionService:RefreshPlayer(player)
 end
 
