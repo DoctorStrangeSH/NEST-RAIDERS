@@ -457,4 +457,24 @@ assert 'ElderwoodWorkshop' in world and 'AncientEggCraftingStation' in world
 assert 'CraftAncientEggPrompt' in world and 'РЕЦЕПТ ДРЕВНОГО ЯЙЦА' in world
 assert 'Нет мастерской создания древних яиц' in world_health
 
+
+# Ancient Tree Temple: walkable side-island, ordered runes, personal treasure claim and objective HUD.
+ancient_temple = Path("src/ServerScriptService/Server/Services/AncientTempleService.lua").read_text()
+assert '"AncientTempleService"' in server and 'function AncientTempleService:Init()' in ancient_temple
+assert 'AncientTempleRunes = {}' in profile_template and 'AncientTempleRunes' in ancient_temple
+assert 'SEQUENCE = { "Root", "River", "Dawn" }' in ancient_temple
+assert 'table.clear(sequence)' in ancient_temple and 'sequenceCount(sequence)' in ancient_temple
+assert 'ProgressionService:CanEnterZone(player, "AncientHeights")' in ancient_temple
+assert 'CurrentBiome") ~= "AncientHeights"' in ancient_temple
+assert 'MaxActivationDistance + 2' in ancient_temple
+assert 'profile.CompletedQuests.ancient_temple_trial = true' in ancient_temple
+assert 'REWARD_COINS = 500' in ancient_temple and 'REWARD_XP = 300' in ancient_temple
+assert 'REWARD_ELDERWOOD = 20' in ancient_temple and 'ancient_temple_trial' in ancient_temple
+assert 'AncientTreeTemple' in world and 'TempleSanctuaryFloor' in world and 'TempleCauseway' in world
+assert 'AncientTempleRunePrompt' in world and 'AncientTempleChestPrompt' in world
+assert 'КОРНИ → РЕКА → РАССВЕТ' in world and 'Сундук Сердца рощи' in world
+assert 'Нет пола Храма Древнего древа' in world_health and 'Руны храма:' in world_health
+assert 'AncientTempleProgress' in client and 'AncientTempleCompleted' in client
+assert 'ХРАМ ДРЕВНЕГО ДРЕВА' in client and 'AncientTempleProgress' in client
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
