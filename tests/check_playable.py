@@ -72,6 +72,11 @@ assert 'Players.PlayerRemoving:Connect(function(player)' in eggs
 assert 'for index, candidate in ipairs(profile.EggInventory) do' in eggs, "Hatch should scan inventory"
 assert 'hatchIndex, egg = index, candidate' in eggs
 assert 'table.remove(profile.EggInventory, hatchIndex)' in eggs, "Hatch should consume selected egg"
+assert 'function EggService:_HatchUnlocked(player, station)' in eggs
+assert 'function EggService:Hatch(player, station)' in eggs
+assert 'if self._hatching[player] then return end' in eggs
+assert 'self._hatching[player] = nil' in eggs
+assert 'local ok, err = pcall(function()' in eggs
 assert 'type(geneticTrait.Name) ~= "string"' in eggs
 assert 'type(definition.Name) ~= "string"' in eggs
 assert 'type(definition.Income) ~= "number"' in eggs
