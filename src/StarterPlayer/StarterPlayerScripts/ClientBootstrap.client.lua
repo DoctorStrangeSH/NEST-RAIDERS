@@ -1483,8 +1483,9 @@ local function renderArtifacts(data)
         if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
     end
     local artifacts = data and data.Artifacts or {}
-    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d  ·  КОЛЛЕКЦИЯ: %d / 40",
-        data and data.EquippedArtifactCount or 0, data and data.MaxEquippedArtifacts or 2, #artifacts)
+    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d  ·  КОЛЛЕКЦИЯ: %d / 40  ·  ДОБЫЧА +%d%%",
+        data and data.EquippedArtifactCount or 0, data and data.MaxEquippedArtifacts or 2, #artifacts,
+        math.floor(((data and data.EquippedGatherBonus) or 0) * 100 + 0.5))
     if #artifacts == 0 then
         local empty = Instance.new("TextLabel")
         empty.Size = UDim2.new(1, -8, 0, 70)
@@ -1542,9 +1543,15 @@ local function renderArtifacts(data)
         detail.Position = UDim2.fromOffset(12, 34)
         detail.Size = UDim2.new(1, -132, 0, 66)
         detail.Font = Enum.Font.Gotham
-        detail.Text = string.format("%s\n%s\nБонус дохода: +%d%%",
-            artifact.Rarity or "", artifact.Description or "",
-            math.floor((artifact.IncomeBonus or 0) * 100 + 0.5))
+        local effects = {}
+        if (artifact.IncomeBonus or 0) > 0 then
+            table.insert(effects, string.format("Доход +%d%%", math.floor(artifact.IncomeBonus * 100 + 0.5)))
+        end
+        if (artifact.GatherBonus or 0) > 0 then
+            table.insert(effects, string.format("Добыча +%d%%", math.floor(artifact.GatherBonus * 100 + 0.5)))
+        end
+        detail.Text = string.format("%s\n%s\n%s",
+            artifact.Rarity or "", artifact.Description or "", table.concat(effects, " · "))
         detail.TextColor3 = Color3.fromRGB(190, 194, 214)
         detail.TextSize = 10
         detail.TextWrapped = true
