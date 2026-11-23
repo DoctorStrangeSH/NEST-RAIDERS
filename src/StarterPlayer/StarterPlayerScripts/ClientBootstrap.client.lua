@@ -617,6 +617,84 @@ profileButton.Parent = gui
 addCorner(profileButton, 12)
 addStroke(profileButton, Color3.fromRGB(160, 220, 192), 1.5)
 
+-- Compact responsive navigation: keep every feature reachable on desktop and mobile.
+-- Previously the last buttons were fixed at Y=692 and disappeared off small screens.
+local menuButtons = {
+    inventoryButton, shopButton, collectionButton, nestButton, displayButton,
+    decorButton, buildButton, visitButton, contestButton, hallButton, profileButton,
+}
+local navToggle = Instance.new("TextButton")
+navToggle.Name = "MenuToggle"
+navToggle.Position = UDim2.fromOffset(12, 162)
+navToggle.Size = UDim2.fromOffset(184, 44)
+navToggle.BackgroundColor3 = Color3.fromRGB(35, 61, 66)
+navToggle.TextColor3 = Color3.fromRGB(255, 236, 183)
+navToggle.TextSize = 14
+navToggle.Font = Enum.Font.GothamBlack
+navToggle.Text = "☰  МЕНЮ"
+navToggle.Parent = gui
+addCorner(navToggle, 12)
+
+local navScroll = Instance.new("ScrollingFrame")
+navScroll.Name = "FeatureMenu"
+navScroll.Position = UDim2.fromOffset(12, 212)
+navScroll.Size = UDim2.fromOffset(250, 350)
+navScroll.BackgroundColor3 = Color3.fromRGB(28, 45, 55)
+navScroll.BackgroundTransparency = 0.12
+navScroll.BorderSizePixel = 0
+navScroll.ScrollBarThickness = 5
+navScroll.ScrollingDirection = Enum.ScrollingDirection.Y
+navScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+navScroll.Visible = false
+navScroll.Parent = gui
+addCorner(navScroll, 12)
+local navPadding = Instance.new("UIPadding")
+navPadding.PaddingTop = UDim.new(0, 8)
+navPadding.PaddingBottom = UDim.new(0, 8)
+navPadding.PaddingLeft = UDim.new(0, 8)
+navPadding.PaddingRight = UDim.new(0, 8)
+navPadding.Parent = navScroll
+local navLayout = Instance.new("UIListLayout")
+navLayout.SortOrder = Enum.SortOrder.LayoutOrder
+navLayout.Padding = UDim.new(0, 7)
+navLayout.Parent = navScroll
+
+for index, button in ipairs(menuButtons) do
+    button.Parent = navScroll
+    button.LayoutOrder = index
+    button.Position = UDim2.new()
+    button.Size = UDim2.new(1, -2, 0, 42)
+    -- Close the menu after choosing any feature; existing Activated handlers still run.
+    button.Activated:Connect(function()
+        navScroll.Visible = false
+        navToggle.Text = "☰  МЕНЮ"
+    end)
+end
+
+navToggle.Activated:Connect(function()
+    navScroll.Visible = not navScroll.Visible
+    navToggle.Text = navScroll.Visible and "✕  ЗАКРЫТЬ" or "☰  МЕНЮ"
+end)
+
+local function resizeNavigation()
+    local viewport = Workspace.CurrentCamera and Workspace.CurrentCamera.ViewportSize or Vector2.new(900, 650)
+    local narrow = viewport.X < 600
+    panel.Position = narrow and UDim2.fromOffset(12, 8) or UDim2.fromOffset(18, 18)
+    panel.Size = narrow and UDim2.fromOffset(206, 112) or UDim2.fromOffset(250, 132)
+    title.TextSize = narrow and 15 or 18
+    stats.TextSize = narrow and 12 or 15
+    stats.Position = narrow and UDim2.fromOffset(12, 32) or UDim2.fromOffset(14, 36)
+    navToggle.Position = UDim2.fromOffset(narrow and 12 or 18, narrow and 126 or 162)
+    navToggle.Size = UDim2.fromOffset(narrow and 206 or 250, 42)
+    navScroll.Position = UDim2.fromOffset(narrow and 12 or 18, narrow and 172 or 210)
+    navScroll.Size = UDim2.fromOffset(narrow and 206 or 250, math.max(110, math.min(460, viewport.Y - (narrow and 190 or 228))))
+end
+resizeNavigation()
+if Workspace.CurrentCamera then
+    Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(resizeNavigation)
+end
+Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(resizeNavigation)
+
 local profilePanel = Instance.new("Frame")
 profilePanel.Name = "PublicProfilePanel"
 profilePanel.AnchorPoint = Vector2.new(0.5, 0.5)
