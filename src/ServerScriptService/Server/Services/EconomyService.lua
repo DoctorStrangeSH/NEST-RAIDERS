@@ -7,6 +7,13 @@ local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local EconomyService = {}
 local MAX_TICK_REWARD = 5000
 
+local function getCompanionIncome(companion)
+    local baseIncome = math.clamp(math.floor(tonumber(companion.Income) or 0), 0, 1000)
+    local trait = type(companion.GeneticTrait) == "table" and companion.GeneticTrait or {}
+    local bonus = math.clamp(tonumber(trait.IncomeBonus) or 0, 0, 0.25)
+    return baseIncome * (1 + bonus)
+end
+
 function EconomyService:GrantCoins(player, amount, reason)
     local profile = PlayerDataService:GetProfile(player)
     if not profile or type(amount) ~= "number" or amount <= 0 then return false end
@@ -29,10 +36,10 @@ function EconomyService:GetPassiveIncome(profile)
     for _, instanceId in ipairs(profile.ActiveCompanions or {}) do
         local companion = ownedById[instanceId]
         if companion and type(companion.Income) == "number" then
-            total += math.clamp(math.floor(companion.Income), 0, 1000)
+            total += getCompanionIncome(companion)
         end
     end
-    return math.min(total, MAX_TICK_REWARD)
+    return math.min(math.floor(total + 0.5), MAX_TICK_REWARD)
 end
 
 function EconomyService:Start()
