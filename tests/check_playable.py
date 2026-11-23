@@ -11,6 +11,14 @@ server = Path("src/ServerScriptService/Server/Bootstrap.server.lua").read_text()
 watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua").read_text()
 world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
 plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
+eggs = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
+assert 'local function bindPlayer(player)' in eggs, "EggService must bind loading players"
+assert 'Players.PlayerAdded:Connect(bindPlayer)' in eggs
+assert 'for _, player in ipairs(Players:GetPlayers()) do' in eggs
+assert 'player:GetAttributeChangedSignal("ProfileLoaded"):Connect(syncWhenReady)' in eggs
+assert 'if profile then syncAttributes(player, profile) end' in eggs
+assert 'Players.PlayerRemoving:Connect(function(player)' in eggs
+
 health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
 assert 'function WorldHealthCheck:Check()' in health
 for required in ['StarterSpawn', 'EggSpawnPoints', 'CollectEggPrompt', 'PlayerPlots', 'HatchStation', 'HatchPrompt', 'PlotGrass']:
