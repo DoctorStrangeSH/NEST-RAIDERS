@@ -569,3 +569,16 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend world health diagnostics and static CI regression coverage.
 - [ ] Roblox Studio runtime: test approach collision, rune interactions, solo/multiplayer encounter isolation, guardian attack/dodge timing, profile persistence, and one-time reward.
 - [ ] Tune boss health/damage, attack telegraph, and mobile HUD after Studio playtest.
+
+
+### Sprint 4.24 — Crystal Realm foundation (2026-11-23)
+- [x] Add the gated Crystal Realm destination (level 35 + Heart of Fire trial) and return travel.
+- [x] Build a floating prismatic plateau, crystal spires, aurora garden and connected Crystal Skyway.
+- [x] Add eight server-validated mineable crystal veins with per-player saved 3-minute node cooldowns.
+- [x] Persist Crystal Shards and expose the balance in the Russian Crystal Realm HUD.
+- [x] Add the Prismatic Radiance Egg with explicit 60/30/10 hatch odds and three new species.
+- [x] Reuse the existing server-owned egg collection, respawn and hatching systems.
+- [x] Add companion mining bonuses for Prism Fox, Crystal Fawn and Aurora Dragon.
+- [x] Extend structural world checks and static CI regression coverage.
+- [ ] Roblox Studio runtime: test travel gate, bridge traversal, collision, mine prompts/cooldowns, egg collection/respawn/hatching, companion bonuses, multiplayer and persistence.
+- [ ] Tune crystal resource economy, mobile HUD, world performance and visual polish after playtesting.
