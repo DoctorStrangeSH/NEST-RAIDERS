@@ -402,3 +402,13 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Phase two adds Thorn Burst: 22 damage, 32-stud radius and a 2-second warning. Vine Slam and Root Wave remain in the attack rotation.
 - The local client plays a core pulse, color shift, light burst and particle telegraph for the active player's attack. These visuals must not overwrite another player's phase or health.
 - Defeating the Guardian grants a permanent trophy entry in `Nest.IslandTrophies.AncientTempleGuardian`. The trophy is displayed in the player's nest with the label “СЕРДЦЕ ДРЕВА”.
+
+
+## Heartwood Guardian — Sprint 4.32
+- Vine Slam uses a raised-arm windup followed by a downward strike.
+- Root Wave uses a body recoil, raised head and spread arms.
+- Thorn Burst spreads both arms and branches and flares the crown.
+- All animated body parts return to their authored idle CFrames after the attack. A newer attack cancels stale tweens before starting its own choreography.
+- The physical Guardian model is shared and its choreography is cosmetic only. Player health, attack windups, phase, damage and rewards remain per-player and server-authoritative.
+- The heart core and PointLight telegraph remain local to each client so one player's phase does not recolor another player's encounter.
+- On personal victory, the winning client plays a gold particle burst and heart-core reveal. The reward companion is still granted by the server.
