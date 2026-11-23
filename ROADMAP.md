@@ -823,3 +823,17 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Test the artifact collection on 375px mobile and desktop.
 
 - [x] Add a confirmation overlay that previews the next tier before consuming three artifacts.
+
+### Sprint 4.44 — Gatherer artifact family (2026-11-23)
+
+- [x] Add three Gatherer artifacts: Root Harvester (+5%), Moon Forager (+10%), Star Prospector (+15%).
+- [x] Preserve the existing income artifact odds ratio while reserving 20% of crafting rolls for the Gatherer family (12/6/2 weights; all catalog weights total 100).
+- [x] Add a shared server-only ArtifactBonusService that calculates equipped gathering bonuses by artifact level.
+- [x] Apply the bonus to Ancient Heights Elderwood harvesting and Crystal Realm mining after existing companion bonuses.
+- [x] Preserve resource-node cooldowns; bonus yield is a fractional expected-yield roll, not an extra node activation.
+- [x] Expose per-artifact and combined equipped gathering bonuses in the collection UI.
+- [x] Add static regression assertions and manual acceptance checks.
+- [ ] Roblox Studio: compare long-run gathering totals with no Gatherer artifact and with each tier equipped.
+- [ ] Verify unequipping immediately removes the gathering bonus and rejoining preserves the correct equipped effect.
+- [ ] Verify existing cooldown, biome, progression, distance and companion bonuses remain unchanged.
+- [ ] Verify UI readability at 375px mobile width.
