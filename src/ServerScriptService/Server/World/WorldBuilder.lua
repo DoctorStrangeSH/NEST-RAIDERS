@@ -720,11 +720,11 @@ function WorldBuilder:Build()
     local stairFolder = Instance.new("Folder")
     stairFolder.Name = "TrialApproach"
     stairFolder.Parent = trial
-    for index = 1, 8 do
-        local alpha = (index - 1) / 7
+    for index = 1, 12 do
+        local alpha = (index - 1) / 11
         local step = part(stairFolder, "BasaltTrialStep_" .. index,
             Vector3.new(13, 2.2, 12),
-            Vector3.new(-62 + index * 6, 16 + alpha * 36, 1560),
+            Vector3.new(-66 + index * 5, 16 + alpha * 36, 1560),
             Color3.fromRGB(75, 65, 64), Enum.Material.Basalt)
         step.CFrame *= CFrame.Angles(0, 0, math.rad(-3))
     end
