@@ -609,4 +609,19 @@ assert 'if lastForgottenBossHealth == nil then' in client
 assert 'TweenInfo.new(0.28, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)' in client
 assert 'Size = UDim2.fromScale(caveBossHealth / 360, 1)' in client
 
+# Unified material inventory: profile load publishes every saved resource and UI binds all balances.
+assert 'MaterialsInventoryButton' in client and 'materialsButton, profileButton' in client
+assert 'MaterialsInventoryPanel' in client and 'local materialDefinitions = {' in client
+for material_attribute in ("Elderwood", "Moonpetal", "Starshard", "CrystalShards", "AshCrystals"):
+    assert f'Attribute = "{material_attribute}"' in client
+    assert f'GetAttributeChangedSignal(definition.Attribute)' in client
+for saved_material, published_attribute in (
+    ("Elderwood", "Elderwood"),
+    ("Moonpetal", "Moonpetal"),
+    ("Starshard", "Starshard"),
+):
+    assert f'materials.{saved_material}' in Path("src/ServerScriptService/Server/Services/PlayerDataService.lua").read_text()
+    assert f'SetAttribute("{published_attribute}"' in Path("src/ServerScriptService/Server/Services/PlayerDataService.lua").read_text()
+assert 'materialsPanel, }' not in client
+assert 'materialsPanel,' in client[client.index('local modalPanels = {'):client.index('local closingOtherPanels')]
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
