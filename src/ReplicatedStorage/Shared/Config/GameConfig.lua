@@ -12,13 +12,13 @@ GameConfig.Progression = {
     BaseXPToNextLevel = 100,
     XPScalePerLevel = 1.18,
     Zones = {
-        { Id = "StarterIsland", DisplayName = "Starter Island", RequiredLevel = 1, RequiredQuest = nil },
+        { Id = "StarterIsland", DisplayName = "Стартовый остров", RequiredLevel = 1, RequiredQuest = nil },
         { Id = "EmeraldWilds", DisplayName = "Изумрудный лес", RequiredLevel = 5, RequiredQuest = nil },
         { Id = "FrostHighlands", DisplayName = "Ледяные нагорья", RequiredLevel = 12, RequiredQuest = "emerald_trial" },
-        { Id = "Emberlands", DisplayName = "Emberlands", RequiredLevel = 22, RequiredQuest = "frost_trial" },
-        { Id = "CrystalRealm", DisplayName = "Crystal Realm", RequiredLevel = 35, RequiredQuest = "ember_trial" },
-        { Id = "AncientHeights", DisplayName = "Ancient Heights", RequiredLevel = 50, RequiredQuest = "crystal_trial" },
-        { Id = "VoidFrontier", DisplayName = "Void Frontier", RequiredLevel = 75, RequiredQuest = "ancient_trial" },
+        { Id = "Emberlands", DisplayName = "Пепельные земли", RequiredLevel = 22, RequiredQuest = "frost_trial" },
+        { Id = "CrystalRealm", DisplayName = "Хрустальное королевство", RequiredLevel = 35, RequiredQuest = "ember_trial" },
+        { Id = "AncientHeights", DisplayName = "Древние высоты", RequiredLevel = 50, RequiredQuest = "crystal_trial" },
+        { Id = "VoidFrontier", DisplayName = "Граница пустоты", RequiredLevel = 75, RequiredQuest = "ancient_trial" },
     },
 }
 
