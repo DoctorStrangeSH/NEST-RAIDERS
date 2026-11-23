@@ -689,3 +689,16 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend world health checks and static regression coverage.
 - [ ] Roblox Studio: test correct and incorrect rune order, rejoin between runes, cache lock before completion, one-time reward, and two-player isolation.
 - [ ] Add Moonpetal to a future recipe and material inventory presentation.
+
+
+### Sprint 4.34 — Forgotten Heart Cave (2026-11-23)
+- [x] Build a side-dungeon island connected to Ancient Heights by a walkable stone bridge.
+- [x] Add a cave floor, rock walls, ceiling, stalactites and a readable entrance clue.
+- [x] Add three interactable crystals with the order Root → River → Dawn.
+- [x] Persist each player's crystal sequence; incorrect activation resets only that player's progress.
+- [x] Add a personal treasure chest with server-side biome, zone, alive-character and distance validation.
+- [x] Award a one-time reward of 3 Starshards, 600 coins and 300 XP.
+- [x] Add Starshard and cave puzzle defaults to the player profile.
+- [x] Register the cave service, display cave progress in the Ancient Heights HUD and extend world health/static regression checks.
+- [ ] Roblox Studio: verify bridge traversal, cave collision/ceiling clearance, clue readability, correct and incorrect sequence, rejoin persistence, chest lock and multiplayer isolation.
+- [ ] Add Starshard to a later crafting recipe and material inventory UI.
