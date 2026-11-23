@@ -60,7 +60,7 @@ local function makeSurge(parent, index)
     return wave
 end
 
-local function spawnAshCrystals(ember, eventFolder, eventId)
+local function spawnAshCrystals(eventFolder, eventId)
     local rewards = eventFolder:FindFirstChild("AshfallRewards")
     if not rewards then
         rewards = Instance.new("Folder")
@@ -195,15 +195,12 @@ function AshfallService:_runEvent()
     for index = 1, SURGE_COUNT do
         local wave = makeSurge(eventFolder, index)
         local started = os.clock()
-        local lastTick = started
         while os.clock() - started < SURGE_DURATION do
             local alpha = math.clamp((os.clock() - started) / SURGE_DURATION, 0, 1)
             local z = SURGE_START_Z + (SURGE_END_Z - SURGE_START_Z) * alpha
             wave.Position = Vector3.new(0, 18.2, z)
             self:_damageAt(z)
-            local elapsed = os.clock() - lastTick
             setPlayerEventState("ERUPTION", (SURGE_COUNT - index) * SURGE_DURATION + SURGE_DURATION - (os.clock() - started))
-            lastTick = os.clock()
             task.wait(0.12)
         end
         wave:Destroy()
@@ -211,7 +208,7 @@ function AshfallService:_runEvent()
     end
 
     setPlayerEventState("AFTERMATH", REWARD_LIFETIME)
-    spawnAshCrystals(ember, eventFolder, eventId)
+    spawnAshCrystals(eventFolder, eventId)
     for remaining = REWARD_LIFETIME, 1, -1 do
         setPlayerEventState("AFTERMATH", remaining)
         task.wait(1)
