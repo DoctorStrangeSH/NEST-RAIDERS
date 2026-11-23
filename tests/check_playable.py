@@ -13,6 +13,13 @@ world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text(
 plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
 eggs = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
 companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
+assert 'if payload.Action ~= "Get" then' in inventory, "Read-only inventory snapshots must bypass cooldown"
+assert 'REQUEST_COOLDOWN' in inventory, "Mutation cooldown must remain active"
+assert 'GetAttributeChangedSignal("CompanionCount"):Connect(function()' in client
+assert 'if inventoryPanel.Visible then' in client and 'if bookPanel.Visible then' in client
+assert 'refreshingCompanionWindows = false' in client
+
 assert 'local function bindPlayer(player)' in companions, "Companion service must bind early joiners"
 assert 'Players.PlayerAdded:Connect(bindPlayer)' in companions
 assert 'player.CharacterAdded:Connect(function()' in companions
