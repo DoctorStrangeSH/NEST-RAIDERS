@@ -11,6 +11,7 @@ local DisplayPetService = require(ServerScriptService.Server.Services.DisplayPet
 local EconomyService = require(ServerScriptService.Server.Services.EconomyService)
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
+local ArtifactCatalog = require(ReplicatedStorage.Shared.Config.ArtifactCatalog)
 
 local InventoryService = {}
 local MAX_ACTIVE_COMPANIONS = 3
@@ -56,6 +57,22 @@ local function activeSet(profile)
 end
 
 local function normalizeProfile(profile)
+    profile.Artifacts = type(profile.Artifacts) == "table" and profile.Artifacts or {}
+    profile.EquippedArtifacts = type(profile.EquippedArtifacts) == "table" and profile.EquippedArtifacts or {}
+    local ownedArtifacts = {}
+    for _, artifact in ipairs(profile.Artifacts) do
+        if type(artifact) == "table" and type(artifact.InstanceId) == "string" and ArtifactCatalog[artifact.Id] then
+            ownedArtifacts[artifact.InstanceId] = true
+        end
+    end
+    local equippedArtifacts, seenArtifacts = {}, {}
+    for _, instanceId in ipairs(profile.EquippedArtifacts) do
+        if ownedArtifacts[instanceId] and not seenArtifacts[instanceId] and #equippedArtifacts < 2 then
+            seenArtifacts[instanceId] = true
+            table.insert(equippedArtifacts, instanceId)
+        end
+    end
+    profile.EquippedArtifacts = equippedArtifacts
     profile.ActiveCompanions = type(profile.ActiveCompanions) == "table" and profile.ActiveCompanions or {}
     local owned = {}
     for _, companion in ipairs(profile.Companions) do
@@ -157,9 +174,25 @@ local function makeSnapshot(profile)
             ParentNames = parentNames,
         })
     end
+    local equippedArtifacts = {}
+    for _, instanceId in ipairs(profile.EquippedArtifacts or {}) do equippedArtifacts[instanceId] = true end
+    local artifacts = {}
+    for _, artifact in ipairs(profile.Artifacts or {}) do
+        local definition = ArtifactCatalog[artifact.Id]
+        if definition then
+            table.insert(artifacts, {
+                InstanceId = artifact.InstanceId, Id = definition.Id, Name = definition.Name,
+                Rarity = definition.Rarity, Description = definition.Description,
+                IncomeBonus = definition.IncomeBonus, Equipped = equippedArtifacts[artifact.InstanceId] == true,
+            })
+        end
+    end
     return {
         Companions = companions,
         Eggs = eggs,
+        Artifacts = artifacts,
+        EquippedArtifactCount = #profile.EquippedArtifacts,
+        MaxEquippedArtifacts = 2,
         EggCount = #eggs,
         ActiveCount = #profile.ActiveCompanions,
         MaxActive = MAX_ACTIVE_COMPANIONS,
@@ -189,6 +222,88 @@ function InventoryService:HandleRequest(player, payload)
     if payload.Action == "Get" then
         return { Ok = true, Data = makeSnapshot(profile) }
     end
+    if payload.Action == "CraftArtifact" then
+        if player:GetAttribute("CurrentBiome") ~= "AncientHeights"
+            or not ProgressionService:CanEnterZone(player, "AncientHeights") then
+            return { Ok = false, Message = "Создавать артефакты можно только в мастерской Древних высот." }
+        end
+        local world = Workspace:FindFirstChild("NestRaidersWorld")
+        local ancient = world and world:FindFirstChild("AncientHeights")
+        local workshop = ancient and ancient:FindFirstChild("ElderwoodWorkshop")
+        local station = workshop and workshop:FindFirstChild("AncientEggCraftingStation")
+        local character = player.Character
+        local root = character and character:FindFirstChild("HumanoidRootPart")
+        if not station or not root or (root.Position - station.Position).Magnitude > 16 then
+            return { Ok = false, Message = "Подойди к мастерской Древних высот, чтобы создать артефакт." }
+        end
+        if #profile.Artifacts >= 40 then return { Ok = false, Message = "Коллекция артефактов заполнена." } end
+        profile.Materials = type(profile.Materials) == "table" and profile.Materials or {}
+        local costs = { Moonpetal = 4, Starshard = 2, CrystalShard = 2, AshCrystal = 1 }
+        local balances = {}
+        local names = {
+            Moonpetal = "лунных лепестков", Starshard = "звёздных осколков",
+            CrystalShard = "кристальных осколков", AshCrystal = "пепельных кристаллов",
+        }
+        for material, cost in pairs(costs) do
+            balances[material] = math.max(0, math.floor(tonumber(profile.Materials[material]) or 0))
+            if balances[material] < cost then
+                return { Ok = false, Message = string.format("Не хватает %s: нужно %d, у тебя %d.",
+                    names[material], cost, balances[material]) }
+            end
+        end
+        local coins = math.max(0, math.floor(tonumber(profile.Coins) or 0))
+        if coins < 250 then return { Ok = false, Message = "Для создания артефакта нужно 250 монет." } end
+        local totalWeight = 0
+        for _, definition in pairs(ArtifactCatalog) do totalWeight += definition.Weight end
+        local roll, selected = math.random() * totalWeight, nil
+        for _, definition in pairs(ArtifactCatalog) do
+            roll -= definition.Weight
+            if roll <= 0 then selected = definition break end
+        end
+        selected = selected or ArtifactCatalog.RootSigil
+        for material, cost in pairs(costs) do profile.Materials[material] = balances[material] - cost end
+        profile.Coins = coins - 250
+        table.insert(profile.Artifacts, {
+            Id = selected.Id, InstanceId = HttpService:GenerateGUID(false), CraftedAt = os.time(),
+        })
+        player:SetAttribute("Moonpetal", profile.Materials.Moonpetal)
+        player:SetAttribute("Starshard", profile.Materials.Starshard)
+        player:SetAttribute("CrystalShards", profile.Materials.CrystalShard)
+        player:SetAttribute("AshCrystals", profile.Materials.AshCrystal)
+        player:SetAttribute("Coins", profile.Coins)
+        local message = "Создан артефакт: " .. selected.Name .. " · " .. selected.Rarity .. "!"
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
+    end
+
+    if payload.Action == "EquipArtifact" or payload.Action == "UnequipArtifact" then
+        if type(payload.ArtifactInstanceId) ~= "string" or #payload.ArtifactInstanceId > 80 then
+            return { Ok = false, Message = "Некорректный артефакт." }
+        end
+        local ownedArtifact
+        for _, artifact in ipairs(profile.Artifacts) do
+            if artifact.InstanceId == payload.ArtifactInstanceId and ArtifactCatalog[artifact.Id] then
+                ownedArtifact = artifact
+                break
+            end
+        end
+        if not ownedArtifact then return { Ok = false, Message = "Этот артефакт тебе не принадлежит." } end
+        local equipped = {}
+        for _, instanceId in ipairs(profile.EquippedArtifacts) do equipped[instanceId] = true end
+        if payload.Action == "EquipArtifact" then
+            if equipped[payload.ArtifactInstanceId] then return { Ok = true, Data = makeSnapshot(profile) } end
+            if #profile.EquippedArtifacts >= 2 then return { Ok = false, Message = "Доступно только 2 слота артефактов." } end
+            table.insert(profile.EquippedArtifacts, payload.ArtifactInstanceId)
+        else
+            local nextEquipped = {}
+            for _, instanceId in ipairs(profile.EquippedArtifacts) do
+                if instanceId ~= payload.ArtifactInstanceId then table.insert(nextEquipped, instanceId) end
+            end
+            profile.EquippedArtifacts = nextEquipped
+        end
+        return { Ok = true, Data = makeSnapshot(profile) }
+    end
+
     if payload.Action ~= "Equip" and payload.Action ~= "Unequip" and payload.Action ~= "Merge" and payload.Action ~= "Train" and payload.Action ~= "UseAbility" and payload.Action ~= "Breed" then
         return { Ok = false, Message = "Неизвестное действие." }
     end
