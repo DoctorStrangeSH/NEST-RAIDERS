@@ -563,3 +563,13 @@
 - [ ] Spam the prompt; verify one egg and one ingredient deduction only.
 - [ ] Hatch the crafted Ancient Egg at the normal nest station and verify the 55/30/15 catalog odds remain unchanged.
 - [ ] Rejoin a private published test and verify egg and remaining resources persist.
+
+## Sprint 4.42 — Artifact system acceptance
+- [ ] Open the artifact panel with an empty collection; verify the empty state and craft requirements.
+- [ ] Attempt crafting outside Ancient Heights, away from the workshop, and with each required material missing; verify rejection and no partial spending.
+- [ ] Craft repeatedly; verify only catalog artifacts are awarded and rarities match 60/30/10 odds over a sufficiently large sample.
+- [ ] Equip two artifacts, attempt a third, and verify the third is rejected without changing equipment.
+- [ ] Unequip one artifact and equip another; verify slot count and saved state.
+- [ ] Compare passive income with no artifacts and with each artifact combination; verify additive bonuses and the 20% cap.
+- [ ] Rejoin and verify collection, equipment and passive-income bonus persist.
+- [ ] Verify artifact panel, long artifact names and buttons fit 375px mobile and desktop.
