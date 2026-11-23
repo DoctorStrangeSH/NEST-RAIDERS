@@ -26,6 +26,29 @@ assert 'return self._initialized, created' in plots
 world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
 assert 'FrostHighlands' in world_health and 'FrostRunePrompt' in world_health
 assert 'GlacierCauseway' in world_health and 'FrostEggOddsSign' in world_health
+
+# Emberlands vertical slice: biome-specific eggs, heat/cooling volumes and HUD.
+ember_biomes = Path("src/ReplicatedStorage/Shared/Config/BiomeCatalog.lua").read_text()
+ember_companions = Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+heat_service = Path("src/ServerScriptService/Server/Services/HeatService.lua").read_text()
+assert 'Emberlands = {' in game_config and 'RequiredQuest = "frost_trial"' in game_config
+assert 'EmberEgg' in ember_biomes and 'CinderFox = 60' in ember_biomes
+assert 'MagmaWhelp = 30' in ember_biomes and 'AshPhoenix = 10' in ember_biomes
+assert 'CinderFox = {' in ember_companions and 'MagmaWhelp = {' in ember_companions and 'AshPhoenix = {' in ember_companions
+assert 'Id = "CinderHide"' in ember_companions and 'Id = "MagmaWard"' in ember_companions
+assert 'Id = "PhoenixRenewal"' in ember_companions
+assert 'Emberlands = {' in eggs and 'Vector3.new(-48, 16, 1520)' in eggs
+assert 'Emberlands' in world and 'HeatZones' in world and 'CoolingSanctuary' in world
+assert 'HeatPerSecond' in world and 'CoolingPerSecond' in world and 'CoolingZone' in world
+assert 'EmberPortal' in world and 'EmberReturnPortal' in world
+assert '"HeatService"' in server and 'function HeatService:Start()' in heat_service
+assert 'TakeDamage' in heat_service and 'HeatPhoenixReady' in heat_service
+assert 'HeatHideUntil' in inventory and 'HeatGuardUntil' in inventory and 'HeatPhoenixReady' in inventory
+assert 'VolcanicHeatPanel' in client and 'ТЕМПЕРАТУРА' in client
+assert 'FrostHighlands = "Ледяные нагорья · уровень 12 + испытание"' in world
+assert 'Emberlands = "Пепельные земли · уровень 22 + испытание"' in world
+assert 'CoolingZone' in world_health and 'HeatZones' in world_health
+
 assert 'Создано участков: %d из 6' in world_health
 assert 'Папка PlayerPlots не создана службой PlotService' in world_health
 
