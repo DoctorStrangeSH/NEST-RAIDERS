@@ -272,6 +272,17 @@ function WorldHealthCheck:Check()
         if not caveChestPrompt or not caveChestPrompt:IsA("ProximityPrompt") then
             fail("Нет сокровищницы забытого сердца")
         end
+        local caveBoss = forgottenCave and forgottenCave:FindFirstChild("ForgottenHeartGuardian")
+        local caveBossCore = caveBoss and caveBoss:FindFirstChild("ForgottenHeartCore")
+        local caveBossPrompt = caveBossCore and caveBossCore:FindFirstChild("ForgottenHeartBossPrompt")
+        if not caveBoss or not caveBoss:IsA("Model") or not caveBossCore or not caveBossPrompt
+            or not caveBossPrompt:IsA("ProximityPrompt") then
+            fail("Нет арены или взаимодействия с Хранителем забытого сердца")
+        end
+        if not forgottenCave or not forgottenCave:FindFirstChild("ForgottenHeartBossArena")
+            or not forgottenCave:FindFirstChild("ForgottenHeartBossSign") then
+            fail("Нет арены или таблички Хранителя забытого сердца")
+        end
         local whisperingGrove = ancient:FindFirstChild("WhisperingGrove")
         local groveAltar = whisperingGrove and whisperingGrove:FindFirstChild("ElderHeartAltar")
         local grovePrompt = groveAltar and groveAltar:FindFirstChild("ElderHeartPrompt")
