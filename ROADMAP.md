@@ -582,3 +582,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend structural world checks and static CI regression coverage.
 - [ ] Roblox Studio runtime: test travel gate, bridge traversal, collision, mine prompts/cooldowns, egg collection/respawn/hatching, companion bonuses, multiplayer and persistence.
 - [ ] Tune crystal resource economy, mobile HUD, world performance and visual polish after playtesting.
+
+
+### Sprint 4.25 — Crystal Prism Trial (2026-11-23)
+- [x] Add a three-prism light puzzle with the ordered Azure → Rose → Crown sequence and a visible in-world clue.
+- [x] Persist each player's puzzle progress; an incorrect prism resets only that player's sequence.
+- [x] Add the Prism Guardian with per-player saved health, a telegraphed area attack, and dodge window.
+- [x] Award +500 XP once for defeating the guardian and complete `crystal_trial`.
+- [x] Unlock the configured Ancient Heights gate at level 50 + `crystal_trial`.
+- [x] Build an Ancient Heights landing platform and return portal as the first destination slice.
+- [x] Extend the shared Russian trial HUD, world health diagnostics, and CI regression checks.
+- [ ] Roblox Studio runtime: test ordered puzzle, wrong-order reset, reconnect persistence, multiplayer isolation, boss attacks/dodge, reward exactly once, and Ancient Heights travel.
+- [ ] Full Ancient Heights biome content, mobile layout, combat feel, and performance acceptance remain for follow-up sprints.
