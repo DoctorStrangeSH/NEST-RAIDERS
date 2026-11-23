@@ -475,9 +475,9 @@ function WorldBuilder:Build()
         prompt.Parent = crystal
     end
 
-    makeBiomePortal(emerald, "FrostPortal", Vector3.new(48, 24, 430),
+    makeBiomePortal(emerald, "FrostPortal", Vector3.new(40, 24, 470),
         Color3.fromRGB(132, 224, 255), "FrostHighlands", Vector3.new(0, 16, 1040))
-    makeBiomePortal(frost, "FrostReturnPortal", Vector3.new(0, 24, 950),
+    makeBiomePortal(frost, "FrostReturnPortal", Vector3.new(40, 24, 970),
         Color3.fromRGB(113, 255, 180), "EmeraldWilds", Vector3.new(0, 16, 520))
     local frostSign = part(frost, "FrostWelcomeSign", Vector3.new(22, 9, 1),
         Vector3.new(0, 25, 972), Color3.fromRGB(73, 101, 127), Enum.Material.WoodPlanks)
