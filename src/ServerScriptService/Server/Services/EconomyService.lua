@@ -39,7 +39,10 @@ function EconomyService:GetPassiveIncome(profile)
             total += getCompanionIncome(companion)
         end
     end
-    return math.min(math.floor(total + 0.5), MAX_TICK_REWARD)
+    local accumulated = total + math.clamp(tonumber(profile.CompanionIncomeRemainder) or 0, 0, 0.999999)
+    local payout = math.min(math.floor(accumulated), MAX_TICK_REWARD)
+    profile.CompanionIncomeRemainder = accumulated - payout
+    return payout
 end
 
 function EconomyService:Start()
