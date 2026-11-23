@@ -16,7 +16,9 @@ assert 'local ok, model, station, ownerLabel = pcall(buildPlot, folder, definiti
 assert 'folder:SetAttribute("CreatedCount", created)' in plots
 assert 'folder:SetAttribute("ExpectedCount", #PLOT_DEFINITIONS)' in plots
 assert 'return self._initialized, created' in plots
-assert 'Создано участков: %d из 6' in health if 'health' in locals() else True
+world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
+assert 'Создано участков: %d из 6' in world_health
+assert 'Папка PlayerPlots не создана службой PlotService' in world_health
 
 eggs = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
 companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
