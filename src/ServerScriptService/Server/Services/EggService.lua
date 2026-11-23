@@ -245,7 +245,7 @@ function EggService:Hatch(player, station)
     if not ok then
         warn("[NEST RAIDERS] Hatch request failed safely: " .. tostring(err))
         if player and player.Parent then
-            player:SetAttribute("LastNotice", "Не удалось вылупить яйцо. Попробуй ещё раз; яйцо не должно пропасть.")
+            player:SetAttribute("LastNotice", "Произошла ошибка при вылуплении. Проверь коллекцию питомцев и попробуй ещё раз.")
         end
     end
 end
