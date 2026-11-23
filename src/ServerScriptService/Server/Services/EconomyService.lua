@@ -48,7 +48,11 @@ function EconomyService:GetPassiveIncome(profile)
     for _, instanceId in ipairs(profile.EquippedArtifacts or {}) do
         local artifact = artifactsById[instanceId]
         local definition = artifact and ArtifactCatalog[artifact.Id]
-        if definition then artifactBonus += math.clamp(tonumber(definition.IncomeBonus) or 0, 0, 0.10) end
+        if definition then
+            local level = math.clamp(math.floor(tonumber(artifact.Level) or 1), 1, 6)
+            local scaledBonus = (tonumber(definition.IncomeBonus) or 0) * (1 + (level - 1) * 0.25)
+            artifactBonus += math.clamp(scaledBonus, 0, 0.20)
+        end
     end
     artifactBonus = math.clamp(artifactBonus, 0, 0.20)
     total *= (1 + artifactBonus)
