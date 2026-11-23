@@ -40,7 +40,7 @@ local function buildPlot(parent, definition)
     makePart(plot, "PlotFoundation", Vector3.new(38, 2, 38), CFrame.new(center), Color3.fromRGB(112, 91, 70), Enum.Material.WoodPlanks)
     makePart(plot, "PlotGrass", Vector3.new(36, 0.6, 36), CFrame.new(center + Vector3.new(0, 1.3, 0)), Color3.fromRGB(119, 190, 111), Enum.Material.Grass)
 
-    local nest = makePart(plot, "NestBowl", Vector3.new(13, 2, 11), CFrame.new(center + Vector3.new(0, 3, 0)), Color3.fromRGB(153, 111, 69), Enum.Material.Wood)
+    local nest = makePart(plot, "NestBowl", Vector3.new(2, 13, 11), CFrame.new(center + Vector3.new(0, 3, 0)), Color3.fromRGB(153, 111, 69), Enum.Material.Wood)
     nest.Shape = Enum.PartType.Cylinder
     nest.CFrame = CFrame.new(center + Vector3.new(0, 3, 0)) * CFrame.Angles(0, 0, math.rad(90))
 
@@ -63,7 +63,7 @@ local function buildPlot(parent, definition)
     local breedingBase = makePart(plot, "BreedingStationBase", Vector3.new(9, 1.2, 8),
         CFrame.new(center + Vector3.new(11, 2.3, 0)), Color3.fromRGB(126, 91, 145), Enum.Material.WoodPlanks)
     breedingBase.CanCollide = true
-    local breedingRing = makePart(plot, "BreedingStationRing", Vector3.new(6.8, 0.45, 6.8),
+    local breedingRing = makePart(plot, "BreedingStationRing", Vector3.new(0.45, 6.8, 6.8),
         CFrame.new(center + Vector3.new(11, 3.05, 0)), Color3.fromRGB(177, 125, 226), Enum.Material.Neon)
     breedingRing.Shape = Enum.PartType.Cylinder
     breedingRing.CFrame = CFrame.new(center + Vector3.new(11, 3.05, 0)) * CFrame.Angles(0, 0, math.rad(90))
@@ -93,7 +93,7 @@ local function buildPlot(parent, definition)
 
     for index, side in ipairs({-1, 1}) do
         local parentPad = makePart(plot, "BreedingParentPad_" .. index,
-            Vector3.new(3.4, 0.55, 3.4),
+            Vector3.new(0.55, 3.4, 3.4),
             CFrame.new(center + Vector3.new(11 + side * 5.1, 2.8, 0)),
             Color3.fromRGB(100, 91, 130), Enum.Material.Slate)
         parentPad.Shape = Enum.PartType.Cylinder
