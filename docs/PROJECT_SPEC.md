@@ -421,3 +421,12 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - A successful first claim sets `CompletedQuests.whispering_grove_cache` and grants 5 Moonpetals, 400 coins and 200 XP. Repeated claims grant nothing.
 - Moonpetals are stored in `Materials.Moonpetal` and mirrored to the `Moonpetal` player attribute for UI and crafting integrations.
 - The Ancient Heights HUD displays the player's personal cache-rune progress.
+
+
+## Forgotten Heart Cave — Sprint 4.34
+- A side-dungeon island is connected to Ancient Heights by a stone bridge. The cave contains a floor, rock walls, ceiling, stalactites, three crystals and a treasure chamber.
+- The crystal sequence is Root → River → Dawn. Each player's sequence is stored in `QuestProgress.ForgottenCaveCrystals`; a wrong crystal resets only that player's sequence.
+- The treasure chest stays locked until all three crystals are activated in order. The server validates the player's biome, zone access, living character and distance to the interaction target.
+- A first successful claim sets `CompletedQuests.forgotten_cave_cache` and awards 3 Starshards, 600 coins and 300 XP. Repeated claims grant nothing.
+- Starshards are stored in `Materials.Starshard` and mirrored to the `Starshard` player attribute.
+- The Ancient Heights quest HUD displays the player's cave progress and completed-cache state.
