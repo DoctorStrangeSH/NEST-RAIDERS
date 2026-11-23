@@ -13,6 +13,13 @@ DisplayPetService._lastRequest = {}
 DisplayPetService._lastInteraction = {}
 local REQUEST_COOLDOWN = 0.35
 local INTERACTION_COOLDOWN = 3
+
+local function getCompanionIncome(companion)
+    local baseIncome = math.clamp(math.floor(tonumber(companion.Income) or 0), 0, 1000)
+    local trait = type(companion.GeneticTrait) == "table" and companion.GeneticTrait or {}
+    local bonus = math.clamp(tonumber(trait.IncomeBonus) or 0, 0, 0.25)
+    return baseIncome * (1 + bonus)
+end
 local MOOD_GAIN = { Pet = 15, Play = 25 }
 local FEED_COST = 10
 local FEED_HUNGER = 35
@@ -89,7 +96,8 @@ local function getSnapshot(profile)
                 Name = companion.Name,
                 Rarity = companion.Rarity,
                 Stars = companion.Stars or 1,
-                Income = math.max(0, math.floor(tonumber(companion.Income) or 0)),
+                Income = math.floor(getCompanionIncome(companion) + 0.5),
+                IncomeBonusPercent = math.floor(math.clamp(tonumber(type(companion.GeneticTrait) == "table" and companion.GeneticTrait.IncomeBonus or 0) or 0, 0, 0.25) * 100 + 0.5),
                 Mood = math.floor(profile.Nest.CompanionMood[instanceId] or 50),
                 Hunger = math.floor(needs.Hunger),
                 Energy = math.floor(needs.Energy),
@@ -127,8 +135,11 @@ local function getSnapshot(profile)
         StoredCoins = math.max(0, math.floor(tonumber(profile.Nest.StoredCoins) or 0)),
         IncomePerTick = (function()
             local total = 0
-            for _, item in ipairs(displayed) do total += item.Income or 0 end
-            return total
+            for _, item in ipairs(displayed) do
+                local companion = findOwned(profile, item.InstanceId)
+                if companion then total += getCompanionIncome(companion) end
+            end
+            return math.floor(total + 0.5)
         end)(),
         TickSeconds = 10,
     }
@@ -420,11 +431,11 @@ function DisplayPetService:Start()
                 for _, instanceId in pairs(profile.Nest.DisplayedCompanions) do
                     local companion = findOwned(profile, instanceId)
                     if companion then
-                        total += math.clamp(math.floor(tonumber(companion.Income) or 0), 0, 1000)
+                        total += getCompanionIncome(companion)
                     end
                 end
                 profile.Nest.StoredCoins = math.min(
-                    (tonumber(profile.Nest.StoredCoins) or 0) + total,
+                    (tonumber(profile.Nest.StoredCoins) or 0) + math.floor(total + 0.5),
                     2_000_000_000
                 )
             end
