@@ -25,7 +25,11 @@ assert 'self:RefreshZoneUnlocks(player)' in progression
 assert 'player:SetAttribute("ProgressionReady", true)' in progression
 assert 'local visualOk, visualError = pcall(function()' in eggs
 assert 'CompanionService:RefreshPlayer(player)' in eggs
-assert 'local xpOk, xpError = pcall(function()' in eggs
+assert 'local xpCallOk, xpResult = pcall(function()' in eggs
+assert 'return ProgressionService:AddXP(player, 15)' in eggs
+assert 'local xpAwarded = xpCallOk and xpResult == true' in eggs
+assert 'local xpMessage = xpAwarded and " +15 опыта" or ""' in eggs
+assert 'local xpMessage = xpOk and' not in eggs
 assert 'Hatch companion visual refresh failed' in eggs
 
 assert 'local function restoreDiscoveredSpecies(data)' in player_data
