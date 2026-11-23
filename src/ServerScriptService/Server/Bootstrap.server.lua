@@ -73,6 +73,26 @@ for _, serviceName in ipairs(serviceNames) do
     end
 end
 
+-- Inspect critical first-play objects after PlotService and EggService have initialized.
+-- This is an in-game structural check; gameplay interaction still requires a Studio test.
+local healthOk, healthResult, healthIssues = pcall(function()
+    return require(ServerFolder:WaitForChild("World"):WaitForChild("WorldHealthCheck")):Check()
+end)
+if not healthOk then
+    remoteFolder:SetAttribute("WorldHealth", "DEGRADED")
+    remoteFolder:SetAttribute("WorldHealthError", tostring(healthResult))
+    warn("[NEST RAIDERS] World health check failed: " .. tostring(healthResult))
+elseif not healthResult then
+    local summary = table.concat(healthIssues, "; ")
+    remoteFolder:SetAttribute("WorldHealth", "DEGRADED")
+    remoteFolder:SetAttribute("WorldHealthError", summary)
+    warn("[NEST RAIDERS] World health check: " .. summary)
+else
+    remoteFolder:SetAttribute("WorldHealth", "READY")
+    remoteFolder:SetAttribute("WorldHealthError", nil)
+    print("[NEST RAIDERS] First-play world structure: READY.")
+end
+
 for _, serviceName in ipairs(serviceNames) do
     local service = services[serviceName]
     if service and type(service.Start) == "function" then
