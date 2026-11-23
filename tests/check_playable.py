@@ -520,10 +520,12 @@ assert 'GatherBonus = 0.05' in artifact_catalog and 'GatherBonus = 0.10' in arti
 assert 'Weight = 48' in artifact_catalog and 'Weight = 24' in artifact_catalog and 'Weight = 8' in artifact_catalog
 assert 'Weight = 12' in artifact_catalog and 'Weight = 6' in artifact_catalog and 'Weight = 2' in artifact_catalog
 assert 'ApplyGatherBonus(profile, baseAmount)' in ancient_harvest
-assert 'gatherBonus > 0' in ancient_harvest and 'бонус артефактов' in ancient_harvest
+assert 'gatherBonus > 0' in ancient_harvest and 'артефакт: +%d ресурс(ов)' in ancient_harvest
+assert 'local amount, gatherBonus, extraMaterials = ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)' in ancient_harvest
 crystal_mining = Path("src/ServerScriptService/Server/Services/CrystalMiningService.lua").read_text()
 assert 'ApplyGatherBonus(profile, baseAmount)' in crystal_mining
-assert 'gatherBonus > 0' in crystal_mining and 'бонус артефактов' in crystal_mining
+assert 'gatherBonus > 0' in crystal_mining and 'артефакт: +%d ресурс(ов)' in crystal_mining
+assert 'amount, gatherBonus, extraMaterials = ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)' in crystal_mining
 assert 'NODE_COOLDOWN_SECONDS = 180' in ancient_harvest and 'NODE_COOLDOWN_SECONDS = 180' in crystal_mining
 assert 'CurrentBiome") ~= "AncientHeights"' in ancient_harvest
 assert 'CurrentBiome") ~= "CrystalRealm"' in crystal_mining
@@ -728,6 +730,8 @@ assert min(0.50, 0.3375 + 0.3375) == 0.50
 assert 'local expectedExtra = safeBase * bonus' in artifact_bonus
 assert 'local fraction = expectedExtra - extra' in artifact_bonus
 assert 'math.random() < fraction' in artifact_bonus
+assert 'return safeBase + extra, bonus, extra' in artifact_bonus
+assert 'if safeBase == 0 then return 0, 0, 0 end' in artifact_bonus
 assert 'local RunService = game:GetService("RunService")' in inventory_service
 assert 'payload.Action == "DevSeedGathererArtifacts"' in inventory_service
 assert 'if not RunService:IsStudio() then' in inventory_service
