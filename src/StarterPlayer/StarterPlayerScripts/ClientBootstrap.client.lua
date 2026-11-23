@@ -3553,7 +3553,7 @@ guideText.Parent = guide
 
 -- The Emerald trial stays visible while exploring the second biome.
 local trialPanel = Instance.new("Frame")
-trialPanel.Name = "EmeraldTrialPanel"
+trialPanel.Name = "BiomeTrialPanel"
 trialPanel.AnchorPoint = Vector2.new(1, 0)
 trialPanel.Position = UDim2.new(1, -12, 0, 184)
 trialPanel.Size = UDim2.fromOffset(236, 112)
@@ -3613,23 +3613,35 @@ trialStatus.TextColor3 = Color3.fromRGB(186, 226, 196)
 trialStatus.TextXAlignment = Enum.TextXAlignment.Right
 trialStatus.Parent = trialPanel
 
-local function updateEmeraldTrialPanel()
-    local inEmerald = player:GetAttribute("CurrentBiome") == "EmeraldWilds"
-    trialPanel.Visible = inEmerald
-    if not inEmerald then return end
-    local count = math.clamp(tonumber(player:GetAttribute("EmeraldTrialProgress")) or 0, 0, 3)
-    local completed = player:GetAttribute("EmeraldTrialCompleted") == true
-    trialDescription.Text = completed
-        and "Древняя роща признала тебя. Испытание завершено!"
-        or "Найди три светящиеся руны и активируй каждую."
+local function updateBiomeTrialPanel()
+    local biomeId = player:GetAttribute("CurrentBiome")
+    local isEmerald = biomeId == "EmeraldWilds"
+    local isFrost = biomeId == "FrostHighlands"
+    trialPanel.Visible = isEmerald or isFrost
+    if not trialPanel.Visible then return end
+
+    local countAttribute = isFrost and "FrostTrialProgress" or "EmeraldTrialProgress"
+    local completeAttribute = isFrost and "FrostTrialCompleted" or "EmeraldTrialCompleted"
+    local count = math.clamp(tonumber(player:GetAttribute(countAttribute)) or 0, 0, 3)
+    local completed = player:GetAttribute(completeAttribute) == true
+
+    trialTitle.Text = isFrost and "ИСПЫТАНИЕ СЕРДЦА ЗИМЫ" or "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ"
+    trialTitle.TextColor3 = isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202)
+    trialDescription.Text = isFrost
+        and (completed and "Сердце зимы пробудилось. Испытание завершено!" or "Найди три ледяные руны и пробуди каждую.")
+        or (completed and "Древняя роща признала тебя. Испытание завершено!" or "Найди три светящиеся руны и активируй каждую.")
+    trialBarFill.BackgroundColor3 = isFrost and Color3.fromRGB(125, 211, 255) or Color3.fromRGB(115, 235, 154)
     trialBarFill.Size = UDim2.fromScale(count / 3, 1)
     trialStatus.Text = completed and "ИСПЫТАНИЕ ПРОЙДЕНО" or string.format("ПРОБУЖДЕНО РУН: %d / 3", count)
 end
 
-for _, attribute in ipairs({"CurrentBiome", "EmeraldTrialProgress", "EmeraldTrialCompleted"}) do
-    player:GetAttributeChangedSignal(attribute):Connect(updateEmeraldTrialPanel)
+for _, attribute in ipairs({
+    "CurrentBiome", "EmeraldTrialProgress", "EmeraldTrialCompleted",
+    "FrostTrialProgress", "FrostTrialCompleted",
+}) do
+    player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
-updateEmeraldTrialPanel()
+updateBiomeTrialPanel()
 
 local guideHighlight = Instance.new("Highlight")
 guideHighlight.Name = "FirstPlayTarget"
