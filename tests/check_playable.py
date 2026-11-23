@@ -527,6 +527,8 @@ assert '"GuardianArm_" .. side' in world and '"GuardianBranch_" .. side' in worl
 assert '"GuardianBody"' in world and '"GuardianHead"' in world
 assert 'GroveCacheRune_' in world and 'WhisperingGroveCache' in world
 assert 'GroveCacheRunePrompt' in world and 'WhisperingGroveCachePrompt' in world
+assert 'ЛУНА → ЛИСТ → РОСА → ЗВЕЗДА' in world
+assert 'Нет подсказки к четырём рунам тайника рощи' in world_health
 assert 'GROVE_RUNE_ORDER = { "Moon", "Leaf", "Dew", "Star" }' in grove_secret
 assert 'profile.QuestProgress.GroveCacheRunes' in grove_secret
 assert 'whispering_grove_cache' in grove_secret and 'Moonpetal' in grove_secret
