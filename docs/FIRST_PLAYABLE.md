@@ -284,3 +284,11 @@
 - At level 50, the completed trial unlocks the Ancient Heights portal. The current build includes its first landing platform and a return portal; the full biome is not built yet.
 - The Russian HUD tracks prism progress, guardian health, and the dodge warning.
 - Static CI and Rojo place build pass. Roblox Studio gameplay, multiplayer, persistence, mobile, collision, and performance tests remain required.
+
+## Ancient Heights exploration slice
+- Reach level 50 and complete the Crystal Prism Trial to unlock Ancient Heights.
+- Travel from the Crystal Realm portal to the Elder Canopy; use the return portal to leave.
+- Collect the Ancient Egg from the three active world pickups and hatch it at your own plot.
+- Hatch odds: Ancient Stag 55%, Root Sprite 30%, Sky Serpent 15%.
+- New species use the existing genetic roll, collection discovery, follower and profile systems.
+- This remains a scripted placeholder environment pending curated Creator Store asset review.
