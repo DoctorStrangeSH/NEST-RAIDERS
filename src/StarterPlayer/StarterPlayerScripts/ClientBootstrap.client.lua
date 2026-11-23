@@ -1525,7 +1525,7 @@ renderArtifacts = function(data)
     local groups = {}
     for _, artifact in ipairs(artifacts) do
         if not artifact.Equipped then
-            local key = tostring(artifact.Id) .. ":" .. tostring(artifact.Level or 1)
+            local key = tostring(artifact.Id) .. ":" .. tostring(artifact.Level or 1) .. ":" .. tostring(artifact.DevOnly == true)
             groups[key] = groups[key] or {}
             table.insert(groups[key], artifact)
         end
@@ -1553,7 +1553,7 @@ renderArtifacts = function(data)
         name.Position = UDim2.fromOffset(12, 8)
         name.Size = UDim2.new(1, -132, 0, 22)
         name.Font = Enum.Font.GothamBlack
-        name.Text = (artifact.Name or artifact.Id) .. " · " .. (artifact.TierName or ("ур. " .. tostring(level)))
+        name.Text = (artifact.Name or artifact.Id) .. " · " .. (artifact.TierName or ("ур. " .. tostring(level))) .. (artifact.DevOnly and " · ТЕСТ" or "")
         name.TextColor3 = level >= 6 and Color3.fromRGB(255, 215, 125)
             or (level >= 4 and Color3.fromRGB(220, 169, 255)
             or (level >= 3 and Color3.fromRGB(130, 194, 255) or Color3.fromRGB(222, 222, 232)))
