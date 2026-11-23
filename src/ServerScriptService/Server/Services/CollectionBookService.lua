@@ -35,7 +35,7 @@ local function buildSnapshot(profile)
         local isDiscovered = profile.DiscoveredSpecies[definition.Id] == true
         if isDiscovered then discovered += 1 end
         local eggId = definition.EggId
-        local biomeName = definition.BossExclusive and "Храм Древнего древа" or "Зелёный луг"
+        local biomeName = definition.BossExclusive and (definition.AcquisitionBiome or "Храм Древнего древа") or "Зелёный луг"
         local eggName = definition.BossExclusive and "Награда за босса" or "Яйцо луга"
         local biomeChance = 0
         if not definition.BossExclusive then
