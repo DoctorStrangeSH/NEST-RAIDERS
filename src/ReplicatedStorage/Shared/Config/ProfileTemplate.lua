@@ -15,6 +15,9 @@ local ProfileTemplate = {
     Companions = {},
     -- Permanent species discoveries survive merging or consuming the last copy.
     DiscoveredSpecies = {},
+    Materials = {
+        AshCrystal = 0,
+    },
     ActiveCompanions = {},
     CompanionIncomeRemainder = 0,
     Nest = {
