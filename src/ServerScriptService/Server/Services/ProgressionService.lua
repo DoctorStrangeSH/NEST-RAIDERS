@@ -128,6 +128,53 @@ function ProgressionService:Init()
             end
         end
         for _, descendant in ipairs(world:GetDescendants()) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "FrostRunePrompt" then
+                descendant.Triggered:Connect(function(player)
+                    if player:GetAttribute("CurrentBiome") ~= "FrostHighlands" then
+                        player:SetAttribute("LastNotice", "Ледяные руны откликаются только в Ледяных нагорьях.")
+                        return
+                    end
+                    local character = player.Character
+                    local root = character and character:FindFirstChild("HumanoidRootPart")
+                    if not root or (root.Position - descendant.Parent.Position).Magnitude > descendant.MaxActivationDistance + 2 then
+                        return
+                    end
+                    local profile = PlayerDataService:GetProfile(player)
+                    if not profile then
+                        player:SetAttribute("LastNotice", "Сохранение ещё загружается. Попробуй немного позже.")
+                        return
+                    end
+                    profile.QuestProgress = type(profile.QuestProgress) == "table" and profile.QuestProgress or {}
+                    profile.QuestProgress.FrostTrialRunes = type(profile.QuestProgress.FrostTrialRunes) == "table"
+                        and profile.QuestProgress.FrostTrialRunes or {}
+                    local runeId = descendant.Parent:GetAttribute("RuneId")
+                    if type(runeId) ~= "string"
+                        or (runeId ~= "Aurora" and runeId ~= "Glacier" and runeId ~= "Winter") then
+                        warn("[NEST RAIDERS] Ignored invalid Frost trial rune.")
+                        return
+                    end
+                    local runes = profile.QuestProgress.FrostTrialRunes
+                    if runes[runeId] then
+                        player:SetAttribute("LastNotice", "Эта ледяная руна уже пробуждена.")
+                        return
+                    end
+                    runes[runeId] = true
+                    local count = (runes.Aurora and 1 or 0) + (runes.Glacier and 1 or 0) + (runes.Winter and 1 or 0)
+                    player:SetAttribute("FrostTrialProgress", count)
+                    if count >= 3 and profile.CompletedQuests.frost_trial ~= true then
+                        profile.CompletedQuests.frost_trial = true
+                        player:SetAttribute("FrostTrialCompleted", true)
+                        self:AddXP(player, 180)
+                        self:RefreshZoneUnlocks(player)
+                        player:SetAttribute("LastNotice", "Испытание Сердца зимы пройдено! Все три руны пробуждены. +180 опыта.")
+                    else
+                        player:SetAttribute("LastNotice", string.format("Ледяная руна пробуждена! Испытание: %d / 3", count))
+                    end
+                end)
+            end
+        end
+
+        for _, descendant in ipairs(world:GetDescendants()) do
             if descendant:IsA("ProximityPrompt") and descendant.Name == "ZoneTravelPrompt" then
                 descendant.Triggered:Connect(function(player)
                     local zoneId = descendant.Parent:GetAttribute("ZoneId")
@@ -157,8 +204,12 @@ function ProgressionService:Init()
                     end
                     character:PivotTo(CFrame.new(destination + Vector3.new(0, 4, 0)))
                     player:SetAttribute("CurrentBiome", zoneId)
-                    player:SetAttribute("LastNotice", zoneId == "EmeraldWilds"
-                        and "Добро пожаловать в Изумрудный лес!" or "Ты вернулся на стартовый остров.")
+                    local arrivalMessages = {
+                        EmeraldWilds = "Добро пожаловать в Изумрудный лес!",
+                        FrostHighlands = "Добро пожаловать в Ледяные нагорья!",
+                        StarterIsland = "Ты вернулся на стартовый остров.",
+                    }
+                    player:SetAttribute("LastNotice", arrivalMessages[zoneId] or "Ты прибыл в новый биом.")
                 end)
             end
         end
@@ -184,6 +235,10 @@ function ProgressionService:Init()
             local count = (runes.Grove and 1 or 0) + (runes.River and 1 or 0) + (runes.Dawn and 1 or 0)
             player:SetAttribute("EmeraldTrialProgress", count)
             player:SetAttribute("EmeraldTrialCompleted", profile and profile.CompletedQuests.emerald_trial == true or false)
+            local frostRunes = profile and profile.QuestProgress and profile.QuestProgress.FrostTrialRunes or {}
+            local frostCount = (frostRunes.Aurora and 1 or 0) + (frostRunes.Glacier and 1 or 0) + (frostRunes.Winter and 1 or 0)
+            player:SetAttribute("FrostTrialProgress", frostCount)
+            player:SetAttribute("FrostTrialCompleted", profile and profile.CompletedQuests.frost_trial == true or false)
             player:SetAttribute("CurrentBiome", "StarterIsland")
             player:SetAttribute("ProgressionReady", true)
         end)
