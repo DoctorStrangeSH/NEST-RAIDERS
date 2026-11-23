@@ -377,7 +377,7 @@ function CompanionService:RefreshPlayer(player)
                 for index, pet in ipairs(followers) do
                     if pet.Parent then
                         local side = (index - (#followers + 1) / 2) * 4.2
-                        local behind = 4 + math.floor((index - 1) / 2) * 2.1
+                        local behind = 4 + math.floor((index - 1) / 2) * 2.6
                         local target = root.CFrame * CFrame.new(side, -2.2, behind) * CFrame.Angles(0, math.pi, 0)
                         local current = pet:GetPivot()
                         if (current.Position - target.Position).Magnitude > 0.06
