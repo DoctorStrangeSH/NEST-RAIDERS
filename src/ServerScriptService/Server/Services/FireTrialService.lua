@@ -142,16 +142,17 @@ function FireTrialService:Init()
                     player:SetAttribute("EmberTrialBossUnlocked", false)
                     ProgressionService:AddXP(player, REWARD_XP)
                     ProgressionService:RefreshZoneUnlocks(player)
-                    player:SetAttribute("LastNotice", "Огненный страж повержен! Испытание пройдено. +250 опыта. Путь в Хрустальное королевство открыт на 35 уровне!")
+                    player:SetAttribute("LastNotice", "Огненный страж повержен! Испытание пройдено. +250 опыта. Ты выполнил испытание для Хрустального королевства — осталось достичь 35 уровня!")
                     return
                 end
 
-                player:SetAttribute("LastNotice", string.format("Удар по Огненному стражу! Осталось здоровья: %d / %d. ГОТОВЬСЯ УКЛОНИТЬСЯ!", health, BOSS_MAX_HEALTH))
+                player:SetAttribute("LastNotice", string.format("Удар по Огненному стражу! Осталось здоровья: %d / %d.", health, BOSS_MAX_HEALTH))
                 if now - (self._lastBossAttack[player] or 0) >= BOSS_ATTACK_COOLDOWN
                     and not self._windups[player] then
                     self._lastBossAttack[player] = now
                     self._windups[player] = true
                     player:SetAttribute("EmberTrialBossWindup", true)
+                    player:SetAttribute("LastNotice", "Огненный страж готовит огненную волну! Отойди от него!")
                     task.delay(BOSS_WINDUP_SECONDS, function()
                         self._windups[player] = nil
                         if not player.Parent then return end
