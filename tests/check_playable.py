@@ -689,4 +689,44 @@ for saved_material, published_attribute in (
     assert f'SetAttribute("{published_attribute}"' in Path("src/ServerScriptService/Server/Services/PlayerDataService.lua").read_text()
 assert 'materialsPanel, }' not in client
 assert 'materialsPanel,' in client[client.index('local modalPanels = {'):client.index('local closingOtherPanels')]
+
+# Gatherer artifact balance invariants: catalog weights, per-level scaling and caps.
+artifact_catalog = Path("src/ReplicatedStorage/Shared/Config/ArtifactCatalog.lua").read_text()
+artifact_bonus = Path("src/ServerScriptService/Server/Services/ArtifactBonusService.lua").read_text()
+inventory_service = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
+gatherer_definitions = {
+    "RootHarvester": (0.05, 12),
+    "MoonForager": (0.10, 6),
+    "StarProspector": (0.15, 2),
+}
+for artifact_id, (base_bonus, weight) in gatherer_definitions.items():
+    match = re.search(
+        rf'{artifact_id} = \{{.*?GatherBonus = ([0-9.]+), Weight = (\d+),',
+        artifact_catalog,
+        re.S,
+    )
+    assert match, f"Missing gatherer catalog entry: {artifact_id}"
+    assert float(match.group(1)) == base_bonus
+    assert int(match.group(2)) == weight
+
+all_weights = [int(value) for value in re.findall(r'Weight = (\d+)', artifact_catalog)]
+assert sum(all_weights) == 100
+assert sum(weight for _, weight in gatherer_definitions.values()) == 20
+assert 'local MAX_GATHER_BONUS = 0.50' in artifact_bonus
+assert 'local level = math.clamp(math.floor(tonumber(artifact.Level) or 1), 1, 6)' in artifact_bonus
+assert '1 + (level - 1) * 0.25' in artifact_bonus
+assert 'return math.clamp(totalBonus, 0, MAX_GATHER_BONUS)' in artifact_bonus
+assert 'math.clamp(total, 0, 0.50)' in inventory_service
+
+for artifact_id, (base_bonus, _) in gatherer_definitions.items():
+    level_bonuses = [base_bonus * (1 + (level - 1) * 0.25) for level in range(1, 7)]
+    assert level_bonuses[0] == base_bonus
+    assert level_bonuses[-1] == base_bonus * 2.25
+    assert all(level_bonuses[index] < level_bonuses[index + 1] for index in range(5))
+assert min(0.50, 0.3375 + 0.225) == 0.50
+assert min(0.50, 0.3375 + 0.3375) == 0.50
+assert 'local expectedExtra = safeBase * bonus' in artifact_bonus
+assert 'local fraction = expectedExtra - extra' in artifact_bonus
+assert 'math.random() < fraction' in artifact_bonus
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
