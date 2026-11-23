@@ -489,3 +489,14 @@
 - [ ] Reopen the chest and confirm no duplicate reward is granted.
 - [ ] In a two-player session, progress one player's cave sequence and verify the other player's progress and reward state remain independent.
 - [ ] Rejoin after claiming the chest and verify completion and Starshard balance persist.
+
+
+## Forgotten Cave egg & companions — Studio acceptance
+- [ ] Complete the cave puzzle and claim the chest with an available egg inventory slot.
+- [ ] Confirm exactly one Forgotten Cave Egg is added and the existing cave rewards are still granted.
+- [ ] Fill the egg inventory and verify the chest does not mark itself claimed or consume rewards until space is available.
+- [ ] Hatch the egg at the player's own nest station.
+- [ ] Verify hatch outcomes match the displayed 65% / 25% / 10% table over a large sample.
+- [ ] Confirm Cave Glimmerbat has bat wings/ears, Crystal Prowler has crystal crest/tail, and Heart Wisp has its halo/core glow.
+- [ ] Confirm all three appear in the Collection Book with the correct rarity, cave source, odds and discovery state.
+- [ ] Rejoin after claiming/hatching and verify the egg, pet and collection discovery persist.
