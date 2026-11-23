@@ -168,6 +168,21 @@ function EggService:Hatch(player, station)
         definition = chooseCompanion()
         geneticTrait = chooseGeneticTrait()
     end
+
+    -- Validate everything needed for the pet and confirmation BEFORE removing
+    -- the egg. Malformed legacy breeding traits must not consume an egg and
+    -- leave a partially created companion behind.
+    if type(definition) ~= "table"
+        or type(definition.Id) ~= "string"
+        or type(definition.Name) ~= "string"
+        or type(definition.Rarity) ~= "string"
+        or type(definition.Income) ~= "number"
+        or type(geneticTrait) ~= "table"
+        or type(geneticTrait.Name) ~= "string" then
+        warn("[NEST RAIDERS] Invalid hatch companion/trait data; retaining egg.")
+        player:SetAttribute("LastNotice", "Данные яйца повреждены. Яйцо сохранено; обратись к поддержке.")
+        return
+    end
     table.remove(profile.EggInventory, hatchIndex)
     local companion = {
         InstanceId = HttpService:GenerateGUID(false),
