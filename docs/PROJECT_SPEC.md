@@ -430,3 +430,11 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - A first successful claim sets `CompletedQuests.forgotten_cave_cache` and awards 3 Starshards, 600 coins and 300 XP. Repeated claims grant nothing.
 - Starshards are stored in `Materials.Starshard` and mirrored to the `Starshard` player attribute.
 - The Ancient Heights quest HUD displays the player's cave progress and completed-cache state.
+
+
+## Forgotten Heart companions — Sprint 4.35
+- The cave treasure chest grants one `ForgottenCaveEgg` per player, in addition to 3 Starshards, 600 coins and 300 XP.
+- The egg is stored in the existing egg inventory and hatched through the normal nest hatch station. Claiming requires a free egg slot.
+- Species odds are fixed and visible in the cave: Cave Glimmerbat 65%, Crystal Prowler 25%, Heart Wisp 10%.
+- Cave Glimmerbat is Rare, Crystal Prowler is Epic, and Heart Wisp is Legendary. Each has a distinct follower silhouette, personality, preferred food/toy, income and ability metadata.
+- All three species are registered in CompanionCatalog and BiomeCatalog, so the existing hatch, discovery and Collection Book pipelines handle them without a separate hatch implementation.
