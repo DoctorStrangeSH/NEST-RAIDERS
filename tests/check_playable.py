@@ -501,5 +501,14 @@ assert 'BossExclusive' in inventory and 'не участвует в развед
 assert 'entry.BossExclusive' in client and 'AncientTempleBossHealth' in client
 assert 'AncientTempleBossPrompt' in world and 'GuardianHeartCore' in world
 assert 'Нет Стража Сердца Древа' in world_health
+assert 'GuardianWindupBurst' in world and 'ParticleEmitter' in world_health
+assert 'Id = "ThornBurst"' in ancient_boss and 'Phase = 2' in ancient_boss
+assert 'Damage = 22' in ancient_boss and 'Radius = 32' in ancient_boss and 'WindupSeconds = 2' in ancient_boss
+assert 'AncientTempleBossPhase' in ancient_boss and 'BOSS_MAX_HEALTH / 2' in ancient_boss
+assert 'grantGuardianTrophy' in ancient_boss and 'Category = "AncientTemple"' in ancient_boss
+assert 'PlotService:ApplyContestTrophies(player)' in ancient_boss
+assert 'AncientTemple = "СЕРДЦЕ ДРЕВА"' in plots and 'СЕРДЦЕ ДРЕВА' in plots
+assert 'TweenService' in client and 'playGuardianTelegraph' in client
+assert 'GuardianWindupBurst' in client and 'AncientTempleBossPhase' in client
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
