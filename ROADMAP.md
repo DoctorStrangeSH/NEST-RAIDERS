@@ -664,3 +664,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend world health checks and static regression coverage for phase two, particles and trophy display.
 - [ ] Roblox Studio: verify phase switch exactly at 120 HP, all three attack patterns, visual effects, trophy persistence, nest display after rejoin and two-player isolation.
 - [ ] Tune phase-two attack cadence and visual intensity after playtesting.
+
+
+### Sprint 4.32 — Guardian attack choreography & victory reveal (2026-11-23)
+- [x] Animate Vine Slam with a two-step arm windup and downward strike.
+- [x] Animate Root Wave with a body recoil, head lift and arm spread.
+- [x] Animate Thorn Burst with a wide arm/branch spread and crown flare.
+- [x] Restore all animated body parts to their authored poses after each move; cancel stale tweens when another player's attack starts.
+- [x] Keep the shared physical boss choreography cosmetic; per-player health, attack windows and damage remain server-authoritative and independent.
+- [x] Keep the heart core's local telegraph and light effects independent from shared body animation.
+- [x] Add a local victory particle burst and golden heart reveal for the player who defeats the Guardian.
+- [x] Extend world health checks and static regression coverage for required animated parts and victory reveal.
+- [ ] Roblox Studio: inspect all attack poses, verify return-to-idle after each move, simultaneous multiplayer attacks, victory effect, follower spawn and no stuck body parts.
