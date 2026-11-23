@@ -1351,7 +1351,7 @@ function WorldBuilder:Build()
     local recipeLabel = Instance.new("TextLabel")
     recipeLabel.Size = UDim2.fromScale(1, 1)
     recipeLabel.BackgroundTransparency = 1
-    recipeLabel.Text = "РЕЦЕПТ ДРЕВНЕГО ЯЙЦА\\n10 эссенции + 300 монет"
+    recipeLabel.Text = "РЕЦЕПТ ДРЕВНОГО ЯЙЦА\\n10 эссенции · 5 лунных лепестков\\n3 звёздных осколка · 300 монет"
     recipeLabel.TextColor3 = Color3.fromRGB(230, 241, 198)
     recipeLabel.TextScaled = true
     recipeLabel.TextWrapped = true
