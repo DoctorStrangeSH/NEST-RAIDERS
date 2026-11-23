@@ -393,5 +393,5 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The Guardian is the Ancient Tree Temple boss and is available only after the player's own Root → River → Dawn puzzle and treasure claim.
 - Boss health is stored per player in `QuestProgress.AncientTempleBossHealth` (240 HP); one player's damage does not affect another player's encounter.
 - The boss alternates two telegraphed attacks: Vine Slam (30 damage, 15-stud radius, 1.8-second warning) and Root Wave (18 damage, 26-stud radius, 1.25-second warning). Moving outside the active attack radius before impact avoids damage.
-- A one-time victory grants 600 XP and the legendary Heartwood Guardian companion. The companion is never included in natural egg pools and is labeled as boss-exclusive in the collection book.
+- A one-time victory grants 600 XP and the legendary Heartwood Guardian companion. The companion is never included in natural egg pools and is labeled as boss-exclusive in the collection book. Boss-exclusive companions cannot be used as breeding parents, so this reward remains exclusive to the boss encounter.
 - The reward is added to the collection and automatically activated only when an active companion slot is available.
