@@ -40,9 +40,9 @@ Status legend: [x] done · [ ] not done · [~] in progress
 
 ## Milestone 2 — Open-world progression
 - [ ] Seamless connected biomes with no mandatory world portals.
-- [~] Level and quest requirements defined in shared configuration; gameplay gates not yet implemented.
+- [~] Server-enforced level and quest gates implemented for Starter Island → Emerald Wilds and the Emerald trial → future Frost Highlands; remaining biome gates still need their own gameplay flows.
 - [ ] Server-side zone checks for egg collection and interactions.
-- [ ] Starter Island, Emerald Wilds, Frost Highlands, Emberlands, Crystal Realm, Ancient Heights, Void Frontier.
+- [~] Starter Island and Emerald Wilds playable as separate islands; Frost Highlands, Emberlands, Crystal Realm, Ancient Heights, and Void Frontier remain to be built.
 - [ ] World landmarks, secrets, caves, traversal routes, and discovery rewards.
 
 ## Milestone 3 — Nest, companions, and economy
@@ -505,3 +505,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Confirm egg prompts, collision and island bounds on a live server with multiple players.
 - [ ] Add an actual Emerald trial quest and update the gate only when the quest can be completed in-game.
 - [ ] Add biome-specific collection-book display verification and unique environment audio/ambient effects.
+
+### Emerald Wilds — Ancient Grove trial (2026-11-23)
+- [x] Add three distinct rune shrines (Grove, River, Dawn) with ProximityPrompt interactions.
+- [x] Persist each discovered rune in the player profile; repeated activation does not double-count.
+- [x] Complete `emerald_trial` after all three runes are activated and award 100 XP once.
+- [x] Expose live trial progress and completion attributes to the client.
+- [x] Add a responsive HUD objective panel while the player is in Emerald Wilds.
+- [x] Keep the Frost Highlands progression gate dependent on both level 12 and `emerald_trial`.
+- [x] Improve portal denial messaging so missing level and missing trial are explained separately.
+- [ ] Roblox Studio: test all three runes, reconnect persistence, duplicate activation, and XP reward exactly once.
+- [ ] Verify Frost Highlands gate rejects level 12 without the trial and accepts level 12 with the trial.
