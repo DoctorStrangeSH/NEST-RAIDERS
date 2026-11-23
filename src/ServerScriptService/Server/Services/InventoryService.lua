@@ -228,6 +228,11 @@ function InventoryService:HandleRequest(player, payload)
         if not parentA or not parentB then
             return { Ok = false, Message = "Один из родителей не найден в коллекции." }
         end
+        local definitionA = CompanionCatalog[parentA.Id]
+        local definitionB = CompanionCatalog[parentB.Id]
+        if (definitionA and definitionA.BossExclusive) or (definitionB and definitionB.BossExclusive) then
+            return { Ok = false, Message = "Страж Сердцевины — награда за победу. Он не участвует в разведении." }
+        end
         local levelA = math.clamp(math.floor(tonumber(parentA.Level) or 1), 1, MAX_COMPANION_LEVEL)
         local levelB = math.clamp(math.floor(tonumber(parentB.Level) or 1), 1, MAX_COMPANION_LEVEL)
         if levelA < 7 or levelB < 7 then
