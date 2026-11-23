@@ -178,3 +178,8 @@ Successful breeding triggers a temporary altar animation: the two selected compa
 - Complete the temple puzzle and treasure claim, then defeat the Guardian in a per-player boss encounter.
 - Dodge alternating Vine Slam and Root Wave attacks.
 - Victory grants 600 XP and the legendary boss-exclusive Heartwood Guardian companion.
+
+
+### Guardian phase two and trophy
+- At half health the Guardian unlocks Thorn Burst, a wide, telegraphed attack.
+- Defeating the boss also awards the permanent “СЕРДЦЕ ДРЕВА” trophy, displayed in the player's personal nest.
