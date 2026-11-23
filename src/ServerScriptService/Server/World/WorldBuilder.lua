@@ -787,10 +787,10 @@ function WorldBuilder:Build()
     guardian.Name = "HeartOfFireGuardian"
     guardian.Parent = trial
     local body = part(guardian, "GuardianCore", Vector3.new(12, 15, 10),
-        Vector3.new(0, 62, 1560), Color3.fromRGB(100, 48, 39), Enum.Material.Basalt, Enum.PartType.Ball)
+        Vector3.new(0, 59.5, 1560), Color3.fromRGB(100, 48, 39), Enum.Material.Basalt, Enum.PartType.Ball)
     body.CanCollide = false
     local core = part(guardian, "GuardianFlameCore", Vector3.new(6, 8, 6),
-        Vector3.new(0, 63, 1554), Color3.fromRGB(255, 117, 44), Enum.Material.Neon, Enum.PartType.Ball)
+        Vector3.new(0, 60.5, 1554), Color3.fromRGB(255, 117, 44), Enum.Material.Neon, Enum.PartType.Ball)
     core.CanCollide = false
     local coreLight = Instance.new("PointLight")
     coreLight.Color = Color3.fromRGB(255, 117, 44)
@@ -799,12 +799,12 @@ function WorldBuilder:Build()
     coreLight.Parent = core
     for side = -1, 1, 2 do
         local horn = part(guardian, "GuardianHorn_" .. side,
-            Vector3.new(3, 9, 3), Vector3.new(side * 6, 71, 1562),
+            Vector3.new(3, 9, 3), Vector3.new(side * 6, 68.5, 1562),
             Color3.fromRGB(61, 49, 48), Enum.Material.Basalt, Enum.PartType.Ball)
         horn.CFrame *= CFrame.Angles(0, 0, math.rad(side * 24))
         horn.CanCollide = false
         local arm = part(guardian, "GuardianArm_" .. side,
-            Vector3.new(5, 11, 6), Vector3.new(side * 9, 58, 1560),
+            Vector3.new(5, 11, 6), Vector3.new(side * 9, 55.5, 1560),
             Color3.fromRGB(78, 48, 43), Enum.Material.Basalt, Enum.PartType.Ball)
         arm.CanCollide = false
     end
