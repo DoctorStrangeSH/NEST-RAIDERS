@@ -4038,6 +4038,8 @@ local function updateForgottenBossPhaseVisual()
     end
 end
 
+local createForgottenBossDebris
+
 local forgottenBossShakeUntil = 0
 local forgottenBossShakeStrength = 0
 local forgottenBossShakeBound = false
@@ -4160,7 +4162,7 @@ end
 player:GetAttributeChangedSignal("ForgottenHeartBossHitPulse"):Connect(playForgottenBossHitReaction)
 player:GetAttributeChangedSignal("ForgottenHeartBossDamagePulse"):Connect(playForgottenBossPlayerDamageFeedback)
 
-local function createForgottenBossDebris(origin, index, count)
+createForgottenBossDebris = function(origin, index, count)
     local Debris = game:GetService("Debris")
     for shardIndex = 1, count do
         local shard = Instance.new("Part")
