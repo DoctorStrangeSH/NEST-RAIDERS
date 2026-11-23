@@ -609,3 +609,9 @@
 - [ ] Verify the fixture cannot be invoked in a published server and leaves the inventory unchanged when capacity is insufficient.
 
 - QA fixtures are counted independently from normal crafted artifacts. The collection labels temporary QA items with `ТЕСТ` and keeps their merge groups separate from normal artifacts.
+
+## Sprint 4.44 — Transparent resource bonus notices
+- [ ] With Gatherer equipped, harvest Elderwood and Crystal nodes repeatedly; each notice must show the total material yield and the number of extra materials attributed to the artifact (including zero).
+- [ ] Compare displayed extra materials against actual server-side inventory changes; verify no phantom rewards.
+- [ ] With no Gatherer equipped, notices should not display a Gatherer bonus.
+- [ ] Verify the displayed percentage is the expected long-run bonus, not a guaranteed bonus on every attempt.
