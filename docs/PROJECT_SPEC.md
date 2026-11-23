@@ -500,3 +500,11 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The artifact UI offers merge actions only for groups of at least three unequipped copies.
 
 - The merge UI displays a confirmation overlay with the resulting next tier before any artifact is consumed.
+
+## Gatherer artifact family — Sprint 4.44
+- Three new artifacts affect resource yield: Root Harvester (+5%), Moon Forager (+10%), Star Prospector (+15%).
+- Gatherer bonuses scale by 25% per artifact upgrade level, like passive-income bonuses. The combined gathering bonus from equipped artifacts is capped at +50%.
+- The server-only ArtifactBonusService calculates bonuses from owned artifact instances referenced by EquippedArtifacts. Client input cannot choose a bonus or resource amount.
+- Bonuses are applied to the successful base yield of Elderwood roots in Ancient Heights and crystal veins in Crystal Realm, after existing companion mining bonuses.
+- Fractional expected bonus yield is rolled once per successful node harvest. It does not bypass or shorten the existing per-node cooldown.
+- Crafting weights total 100: existing income artifacts retain their 6:3:1 relative ratio at 48/24/8; Gatherer artifacts use 12/6/2 (20% combined family chance).
