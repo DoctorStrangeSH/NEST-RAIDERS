@@ -18,6 +18,7 @@ local ProfileTemplate = {
         AncientTempleBossHealth = 240,
         GroveCacheRunes = {},
         ForgottenCaveCrystals = {},
+        ForgottenHeartBossHealth = 360,
     },
     EggInventory = {},
     Companions = {},
