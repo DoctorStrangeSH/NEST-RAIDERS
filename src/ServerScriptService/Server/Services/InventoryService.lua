@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local HttpService = game:GetService("HttpService")
 local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
@@ -237,6 +238,39 @@ function InventoryService:HandleRequest(player, payload)
         return { Ok = false, Message = "Профиль ещё загружается." }
     end
     normalizeProfile(profile)
+
+    -- Studio-only QA fixture: never available in published servers.
+    if payload.Action == "DevSeedGathererArtifacts" then
+        if not RunService:IsStudio() then
+            return { Ok = false, Message = "Тестовые предметы доступны только в Roblox Studio." }
+        end
+        local gathererIds = { "RootHarvester", "MoonForager", "StarProspector" }
+        local missingById, requiredSlots = {}, 0
+        for _, artifactId in ipairs(gathererIds) do
+            local count = 0
+            for _, artifact in ipairs(profile.Artifacts) do
+                if artifact.Id == artifactId and artifact.Level == 1 then count += 1 end
+            end
+            missingById[artifactId] = math.max(0, 3 - count)
+            requiredSlots += missingById[artifactId]
+        end
+        if #profile.Artifacts + requiredSlots > 40 then
+            return { Ok = false, Message = "Освободи место в коллекции: для теста нужно до 9 свободных слотов." }
+        end
+        for artifactId, count in pairs(missingById) do
+            for _ = 1, count do
+                table.insert(profile.Artifacts, {
+                    Id = artifactId,
+                    Level = 1,
+                    InstanceId = HttpService:GenerateGUID(false),
+                    CraftedAt = os.time(),
+                })
+            end
+        end
+        local message = "Тестовые Собиратели готовы: по 3 экземпляра каждого вида."
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
+    end
 
     if payload.Action == "Get" then
         return { Ok = true, Data = makeSnapshot(profile) }
