@@ -97,7 +97,7 @@ assert 'self:AddXP(player, 100)' in progression
 assert 'EmeraldTrialProgress' in progression and 'EmeraldTrialCompleted' in progression
 assert 'RequiredQuest = "emerald_trial"' in game_config
 assert 'DisplayName = "Ледяные нагорья"' in game_config
-assert 'EmeraldTrialPanel' in client and 'updateEmeraldTrialPanel' in client
+assert 'BiomeTrialPanel' in client and 'updateBiomeTrialPanel' in client
 
 assert 'root.Position - descendant.Parent.Position).Magnitude > descendant.MaxActivationDistance + 2' in progression
 assert 'Vector3.new(0, 16, 520)' in world and 'Vector3.new(0, 11, -112)' in world
