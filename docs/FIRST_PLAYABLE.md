@@ -328,3 +328,9 @@
 - Watch for two warnings: the heavy Vine Slam is short-range but deals 30 damage; the wide Root Wave reaches farther but deals 18 damage.
 - Move out of the attack radius before the warning ends.
 - Victory grants 600 XP and the legendary Heartwood Guardian companion, a boss-exclusive collection discovery.
+
+
+## Guardian phase two and trophy
+- At half health the Guardian enters phase two and unlocks Thorn Burst, a wide attack with a longer warning.
+- Watch the core glow and particles to time your dodge.
+- Victory also places the permanent “СЕРДЦЕ ДРЕВА” trophy in your personal nest.
