@@ -131,6 +131,12 @@ function WorldHealthCheck:Check()
         if not cooling or (tonumber(cooling:GetAttribute("CoolingPerSecond")) or 0) <= 0 then
             fail("Не создана рабочая зона охлаждения")
         end
+        local emberCauseway = world:FindFirstChild("EmberCauseway")
+        local bridgeCount = 0
+        for _, segment in ipairs(emberCauseway and emberCauseway:GetChildren() or {}) do
+            if segment:IsA("BasePart") and segment.Name:match("^EmberBridgeSegment_") then bridgeCount += 1 end
+        end
+        if bridgeCount < 9 then fail(string.format("Базальтовый мост: %d из 9 секций", bridgeCount)) end
         local emberEggs = ember:FindFirstChild("EggSpawnPoints")
         local eggCount = 0
         for _, egg in ipairs(emberEggs and emberEggs:GetChildren() or {}) do
