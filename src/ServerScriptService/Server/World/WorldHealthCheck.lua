@@ -64,6 +64,37 @@ function WorldHealthCheck:Check()
         end
     end
 
+    local frost = world and world:FindFirstChild("FrostHighlands")
+    if not frost then
+        fail("Ледяные нагорья не созданы")
+    else
+        local frostEggs = frost:FindFirstChild("EggSpawnPoints")
+        local frostEggCount = 0
+        for _, egg in ipairs(frostEggs and frostEggs:GetChildren() or {}) do
+            if egg:IsA("BasePart") and egg:GetAttribute("WorldEgg")
+                and egg:GetAttribute("BiomeId") == "FrostHighlands"
+                and egg:FindFirstChild("CollectEggPrompt") then
+                frostEggCount += 1
+            end
+        end
+        if frostEggCount < 3 then
+            fail(string.format("Яйца Ледяных нагорий: %d из 3", frostEggCount))
+        end
+        local frostRunes = frost:FindFirstChild("FrostTrialRunes")
+        local runeCount = 0
+        for _, descendant in ipairs(frostRunes and frostRunes:GetDescendants() or {}) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "FrostRunePrompt" then
+                runeCount += 1
+            end
+        end
+        if runeCount < 3 then
+            fail(string.format("Руны Ледяных нагорий: %d из 3", runeCount))
+        end
+        if not frost:FindFirstChild("FrostReturnPortal") then
+            fail("Нет обратного портала из Ледяных нагорий")
+        end
+    end
+
     return #issues == 0, issues
 end
 
