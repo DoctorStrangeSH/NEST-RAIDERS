@@ -361,3 +361,7 @@ After opening the cave chest, the guardian awakens in the arena at the back of t
 - **Echo Pulse:** run beyond the wide ring around the guardian.
 - **Shard Rain:** leave all three marked circles.
 Victory grants the Mythic **Страж забытого сердца**, 1,200 coins, 5 Starshards and 800 XP once per player.
+
+
+## Guardian choreography and reward reveal
+Watch the Guardian's arms to read each attack: both arms rise before Crystal Slam, spread for Echo Pulse, and lift high for Shard Rain. At phase II the heart turns violet and the arena crystals burst into shards. The crystals regrow after a short pause. Defeating the Guardian triggers a one-time mythic companion reveal.
