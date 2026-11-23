@@ -206,3 +206,15 @@ A successful CI build validates the Roblox XML packaging, **not gameplay**. Trea
 - [ ] Roblox Studio acceptance: intentionally disable a nonessential service and ensure its UI request returns a Russian error rather than hanging.
 - [ ] Roblox Studio acceptance: confirm normal shop/inventory/building requests still reach their service handlers.
 - [ ] Verify regular startup, pet interactions, breeding, and mobile UI before marking Sprint 4.20 complete.
+
+### Playable-first client readiness verification (2026-11-23)
+
+- [x] Mark `NestRaidersHUD.ClientReady = true` only after all HUD panels, action callbacks and attributes are initialized.
+- [x] Teach `BootRecovery.client.lua` to require that readiness marker, rather than merely checking whether a partially built `ScreenGui` exists.
+- [x] Display recovery diagnostics when the HUD fails mid-initialization, even if some UI components are already visible.
+- [x] Add CI source checks to prevent regression of the readiness protocol.
+- [ ] Verify the recovery screen in Roblox Studio by deliberately causing a client initialization error.
+- [ ] Verify a clean startup hides recovery UI and shows the interactive game HUD.
+- [ ] Verify egg collection, building, plots, breeding, saved profiles and mobile operation in Studio.
+
+The readiness marker only proves client script completion; **it does not prove that server services or gameplay are operational**.
