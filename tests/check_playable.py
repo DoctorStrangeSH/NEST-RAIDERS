@@ -55,6 +55,10 @@ assert 'refreshingCompanionWindows = false' in client
 assert 'local function bindPlayer(player)' in companions, "Companion service must bind early joiners"
 assert 'Players.PlayerAdded:Connect(bindPlayer)' in companions
 assert 'player.CharacterAdded:Connect(function()' in companions
+assert 'local spawnRoot = character and character:FindFirstChild("HumanoidRootPart")' in companions
+assert 'pet:PivotTo(spawnRoot.CFrame * CFrame.new(side, -2.2, behind))' in companions
+assert companions.index('pet:PivotTo(spawnRoot.CFrame') < companions.index('task.spawn(function()', companions.index('function CompanionService:RefreshPlayer'))
+
 assert 'player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()' in companions
 assert 'for _, player in ipairs(Players:GetPlayers()) do' in companions
 assert 'if player.Parent and player:GetAttribute("ProfileLoaded") then' in companions
