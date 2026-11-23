@@ -12,6 +12,8 @@ local ProfileTemplate = {
         FrostTrialRunes = {},
         EmberTrialRunes = {},
         EmberTrialBossHealth = 100,
+        CrystalTrialPrisms = {},
+        CrystalTrialBossHealth = 160,
     },
     EggInventory = {},
     Companions = {},
