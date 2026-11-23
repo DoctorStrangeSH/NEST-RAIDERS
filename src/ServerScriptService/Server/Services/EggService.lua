@@ -32,6 +32,11 @@ local EGG_SPAWN_POSITIONS = {
         Vector3.new(-38, 20, 1000), Vector3.new(38, 20, 1000), Vector3.new(-38, 20, 1060),
         Vector3.new(38, 20, 1060), Vector3.new(-25, 20, 1085), Vector3.new(25, 20, 1085),
     },
+    Emberlands = {
+        Vector3.new(-48, 16, 1520), Vector3.new(48, 16, 1520), Vector3.new(-48, 16, 1600),
+        Vector3.new(48, 16, 1600), Vector3.new(0, 16, 1630), Vector3.new(-65, 16, 1560),
+        Vector3.new(65, 16, 1560), Vector3.new(-25, 16, 1495), Vector3.new(25, 16, 1495),
+    },
 }
 EggService._hatching = {}
 local COMPANIONS = {}
