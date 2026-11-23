@@ -416,3 +416,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify full flow: collect → visible pickup feedback → own nest → hatch → companion follow → collection → rejoin.
 
 **Acceptance rule:** no feature is marked complete from static CI alone. Roblox Studio runtime and multiplayer tests remain required.
+
+### Playable-first profile clarity and companion formation polish (2026-11-23)
+
+- [x] Publish `ProfilePersistence=TEMPORARY` for the default ephemeral Studio test profile and `SAVED` for a DataStore-backed profile.
+- [x] Show the save mode in the HUD so Studio users understand why progress does not persist by default.
+- [x] Increase lateral spacing between active companions to avoid overlapping models.
+- [x] Keep initial follower placement and follow-loop formation offsets consistent.
+- [x] Reduce unnecessary follower PivotTo replication when position and facing are already close to target.
+- [x] Add CI assertions for profile save-mode messaging and companion spacing/follow updates.
+- [ ] Roblox Studio: confirm HUD says `Сохранение: ТЕСТ` in default Studio mode.
+- [ ] Enable Studio API access and explicitly opt into DataStore testing only in a separate test place; verify HUD says `Сохранение: ВКЛ` and a rejoin restores data.
+- [ ] Verify 2–3 active pet models remain separated and move smoothly on desktop/mobile.
