@@ -468,8 +468,9 @@ assert 'profile.Materials.Elderwood = elderwood - ELDERWOOD_COST' in ancient_cra
 assert 'profile.Coins = coins - COIN_COST' in ancient_crafting
 assert 'EggCount' in ancient_crafting and 'Elderwood' in ancient_crafting and 'Coins' in ancient_crafting
 assert 'ElderwoodWorkshop' in world and 'AncientEggCraftingStation' in world
-assert 'CraftAncientEggPrompt' in world and 'РЕЦЕПТ ДРЕВНОГО ЯЙЦА' in world
-assert '5 лунных лепестков' in world and '3 звёздных осколка' in world
+assert 'CraftAncientEggPrompt' in world and 'AncientEggRecipeSign' in world
+assert 'ЯЙЦО: 10 эссенции · 5 лепестков' in world and '3 звёздных осколка · 300 монет' in world
+assert 'АРТЕФАКТ: 4 лепестка' in world and '2 кристальных · 1 пепельный · 250 монет' in world
 assert 'Нет мастерской создания древних яиц' in world_health
 
 
