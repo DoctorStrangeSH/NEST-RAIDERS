@@ -676,3 +676,16 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add a local victory particle burst and golden heart reveal for the player who defeats the Guardian.
 - [x] Extend world health checks and static regression coverage for required animated parts and victory reveal.
 - [ ] Roblox Studio: inspect all attack poses, verify return-to-idle after each move, simultaneous multiplayer attacks, victory effect, follower spawn and no stuck body parts.
+
+
+### Sprint 4.33 — Whispering Grove hidden cache (2026-11-23)
+- [x] Add four interactable runes to the hidden Whispering Grove platform.
+- [x] Add the ordered puzzle: Moon → Leaf → Dew → Star; an incorrect rune resets personal progress.
+- [x] Persist rune progress in the player profile and restore the quest HUD after rejoin.
+- [x] Add a hidden cache with server-side biome, zone, alive-character and distance validation.
+- [x] Award the one-time cache reward: 5 Moonpetals, 400 coins and 200 XP.
+- [x] Add Moonpetal to the profile material defaults and expose the balance as a player attribute for future crafting.
+- [x] Show secret rune progress in the Ancient Heights quest HUD.
+- [x] Extend world health checks and static regression coverage.
+- [ ] Roblox Studio: test correct and incorrect rune order, rejoin between runes, cache lock before completion, one-time reward, and two-player isolation.
+- [ ] Add Moonpetal to a future recipe and material inventory presentation.
