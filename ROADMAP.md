@@ -336,3 +336,16 @@ CI checks packaging and source structure only, not in-game interaction.
 - [ ] Verify hatch → collection → merge → rejoin, including empty inventory and second-player scenarios.
 
 Automated builds verify source invariants, not real DataStore round-trip behavior.
+
+### Playable-first progression and hatch side-effect safety (2026-11-23)
+
+- [x] Handle players who joined before ProgressionService initialized, as well as future arrivals, using one deduplicated bind path.
+- [x] Update progression zone access and `ProgressionReady` after profile load for both player cohorts.
+- [x] Keep an already-committed hatch and its notification intact if a secondary companion model refresh errors; log the visual fault.
+- [x] Guard optional XP and visual side effects and avoid claiming XP gain when XP update fails.
+- [x] Add CI source checks for early-player progression and isolated hatch effects.
+- [ ] Roblox Studio: join immediately after server starts, confirm `ProgressionReady` and zone unlocks after profile load.
+- [ ] Roblox Studio: hatch egg, verify companion data, follower appearance, XP, and message; test intentional visual failure in a disposable test place.
+- [ ] Verify save/rejoin, multiplayer and mobile interaction before accepting Sprint 4.20.
+
+CI validates package and source invariants, not actual Roblox gameplay.
