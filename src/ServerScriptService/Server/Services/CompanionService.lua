@@ -110,6 +110,12 @@ local DEFINITIONS = {
         Detail = Color3.fromRGB(149, 130, 203),
         Kind = "SkySerpent",
     },
+    HeartwoodGuardian = {
+        Body = Color3.fromRGB(105, 145, 91),
+        Accent = Color3.fromRGB(205, 190, 126),
+        Detail = Color3.fromRGB(79, 105, 65),
+        Kind = "HeartwoodGuardian",
+    },
 }
 
 local function makeShape(model, name, size, offset, color, shape)
@@ -214,6 +220,23 @@ local function buildPet(parent, companion, index)
         makeShape(model, "LeftFin", Vector3.new(0.5, 1.0, 1.4), Vector3.new(-1.05, 1.45, -0.2), definition.Detail, Enum.PartType.Wedge)
         makeShape(model, "RightFin", Vector3.new(0.5, 1.0, 1.4), Vector3.new(1.05, 1.45, -0.2), definition.Detail, Enum.PartType.Wedge)
         makeShape(model, "CloudTail", Vector3.new(0.65, 0.65, 1.5), Vector3.new(0, 1.0, -1.3), definition.Accent)
+    elseif definition.Kind == "HeartwoodGuardian" then
+        makeShape(model, "HeartwoodMuzzle", Vector3.new(0.8, 0.55, 0.65),
+            Vector3.new(0, 1.55, 1.15), definition.Accent)
+        makeShape(model, "HeartwoodCrown", Vector3.new(1.65, 0.5, 1.5),
+            Vector3.new(0, 2.45, 0.1), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "LeftBranchAntler", Vector3.new(0.3, 1.25, 0.3),
+            Vector3.new(-0.55, 3.0, 0.1), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "RightBranchAntler", Vector3.new(0.3, 1.25, 0.3),
+            Vector3.new(0.55, 3.0, 0.1), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "HeartwoodCore", Vector3.new(0.9, 0.9, 0.55),
+            Vector3.new(0, 1.25, 0.95), Color3.fromRGB(190, 239, 133), Enum.PartType.Ball)
+        makeShape(model, "LeftLeafMantle", Vector3.new(0.55, 1.0, 1.35),
+            Vector3.new(-1.0, 1.6, -0.1), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "RightLeafMantle", Vector3.new(0.55, 1.0, 1.35),
+            Vector3.new(1.0, 1.6, -0.1), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "RootTail", Vector3.new(0.65, 0.65, 1.45),
+            Vector3.new(0, 1.0, -1.25), definition.Detail, Enum.PartType.Wedge)
     elseif definition.Kind == "Owl" then
         makeShape(model, "Beak", Vector3.new(0.42, 0.55, 0.42), Vector3.new(0, 1.65, 1.25), Color3.fromRGB(255, 193, 93), Enum.PartType.Wedge)
         makeShape(model, "LeftWing", Vector3.new(0.55, 1.15, 1.25), Vector3.new(-1.05, 1.25, -0.05), definition.Accent)
