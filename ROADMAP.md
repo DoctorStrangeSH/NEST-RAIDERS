@@ -731,3 +731,16 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add world health and static regression coverage for the new arena, combat loop, rewards and HUD.
 - [ ] Roblox Studio: defeat the boss in both phases, test each dodge pattern, verify two-player isolation, rewards and rejoin persistence.
 - [ ] Balance boss health, damage, windups and reward income after hands-on playtesting.
+
+
+### Sprint 4.37 — Forgotten Heart Guardian choreography (2026-11-23)
+- [x] Add eight crystal clusters around the boss arena and validate them in the world health check.
+- [x] Animate the guardian's arms for Crystal Slam, Echo Pulse and Shard Rain using client-local choreography.
+- [x] Add a distinct phase-two awakening sequence with a purple core flare and wide arm spread.
+- [x] Break arena crystal clusters during Shard Rain and phase awakening, with local flying shard debris and timed regrowth.
+- [x] Add a victory collapse animation for the guardian while keeping its reward core visible.
+- [x] Add a one-time mythic companion reward reveal card with a responsive layout and explicit dismiss action.
+- [x] Keep all choreography and breakage client-local so another player's encounter cannot animate or break the shared arena for everyone.
+- [x] Extend static regression checks for animations, crystal clusters, breakage, reward reveal and health validation.
+- [ ] Roblox Studio: test every animation at desktop and mobile aspect ratios; verify crystals regrow and another player sees no local effects.
+- [ ] Review animation timing and visual readability during real combat.
