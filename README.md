@@ -147,3 +147,10 @@ Successful breeding triggers a temporary altar animation: the two selected compa
 - Ember Egg hatch odds: Cinder Fox 60%, Magma Whelp 30%, Ash Phoenix 10%.
 - Access requires level 22 and completion of the Frost Highlands trial.
 - Roblox Studio runtime and multiplayer acceptance are still required.
+
+
+### Ancient Heights gathering
+- Six glowing Elderwood root nodes with server-validated collection.
+- 1–3 Elderwood per harvest, per-player three-minute node cooldowns, and profile persistence.
+- A biome-specific HUD panel displays the saved Elderwood balance.
+- Studio acceptance cases are tracked in [docs/TESTING.md](docs/TESTING.md).
