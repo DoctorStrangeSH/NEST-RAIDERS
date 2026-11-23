@@ -109,8 +109,85 @@ function WorldBuilder:Build()
     makeEgg(eggFolder, Vector3.new(0, 14, 65), Color3.fromRGB(255, 222, 113))
 
     -- Personal nests are created and assigned by PlotService.
+    -- Wayfinding path starts at the spawn and reaches the central egg grove.
+    -- All pieces are decorative: egg prompts remain on the original collectible parts.
+    local wayfinding = Instance.new("Folder")
+    wayfinding.Name = "EggGroveWayfinding"
+    wayfinding.Parent = island
 
-    local sign = part(island, "WelcomeSign", Vector3.new(1, 10, 18), Vector3.new(0, 16, -91), Color3.fromRGB(105, 72, 47), Enum.Material.Wood)
+    for index = 0, 13 do
+        local z = -102 + index * 11
+        local slab = part(wayfinding, "MosaicPath_" .. index,
+            Vector3.new(index % 3 == 0 and 11 or 9, 0.25, 7.5),
+            Vector3.new(0, 10.8, z),
+            index % 2 == 0 and Color3.fromRGB(218, 193, 149) or Color3.fromRGB(235, 215, 170),
+            Enum.Material.Sandstone)
+        slab.CanCollide = false
+    end
+
+    -- Keep the central area open for players; visually frame the egg garden
+    -- without blocking the three existing collectible egg parts.
+    for _, grove in ipairs({
+        {x = -24, z = 20}, {x = 25, z = 24}, {x = 0, z = 65},
+    }) do
+        local zone = Instance.new("Model")
+        zone.Name = "EggGarden_" .. tostring(grove.x) .. "_" .. tostring(grove.z)
+        zone.Parent = wayfinding
+        local ring = part(zone, "GardenBase",
+            Vector3.new(12, 0.5, 12), Vector3.new(grove.x, 10.75, grove.z),
+            Color3.fromRGB(148, 177, 133), Enum.Material.Slate, Enum.PartType.Cylinder)
+        ring.CanCollide = false
+        -- Tall ambient glow allows players to recognize egg sites from afar.
+        local beam = part(zone, "EggBeacon",
+            Vector3.new(1.25, 9, 1.25), Vector3.new(grove.x, 19.2, grove.z),
+            Color3.fromRGB(255, 222, 155), Enum.Material.Neon, Enum.PartType.Cylinder)
+        beam.CanCollide = false
+        beam.CanTouch = false
+        beam.CanQuery = false
+        beam.Transparency = 0.55
+        local glow = Instance.new("PointLight")
+        glow.Color = Color3.fromRGB(255, 217, 147)
+        glow.Range = 20
+        glow.Brightness = 0.8
+        glow.Parent = beam
+        for index = 1, 6 do
+            local angle = index * math.pi / 3
+            local x = grove.x + math.cos(angle) * 7.2
+            local z = grove.z + math.sin(angle) * 7.2
+            local stone = part(zone, "GardenStone_" .. index,
+                Vector3.new(2.2, 1.2, 2.2), Vector3.new(x, 11.2, z),
+                Color3.fromRGB(192, 178, 150), Enum.Material.Slate, Enum.PartType.Ball)
+            stone.CanCollide = false
+        end
+    end
+
+    local function makeWayfindingSign(name, position, titleText, color)
+        local board = part(wayfinding, name,
+            Vector3.new(14, 6, 0.7), position, Color3.fromRGB(101, 75, 58),
+            Enum.Material.WoodPlanks)
+        board.CanCollide = false
+        local gui = Instance.new("SurfaceGui")
+        gui.Name = "WayfindingText"
+        gui.Face = Enum.NormalId.Front
+        gui.LightInfluence = 0
+        gui.CanvasSize = Vector2.new(700, 300)
+        gui.Parent = board
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.fromScale(1, 1)
+        label.BackgroundTransparency = 1
+        label.Text = titleText
+        label.TextColor3 = color
+        label.TextScaled = true
+        label.TextWrapped = true
+        label.Font = Enum.Font.GothamBlack
+        label.Parent = gui
+    end
+    makeWayfindingSign("EggGroveSign", Vector3.new(-18, 14, -39),
+        "ЛУГ ЯИЦ\\nСобери своё первое яйцо", Color3.fromRGB(255, 226, 164))
+    makeWayfindingSign("NestDistrictSign", Vector3.new(27, 14, -39),
+        "ЛИЧНЫЕ ГНЁЗДА\\nВылупи питомца у себя", Color3.fromRGB(192, 245, 207))
+
+    local sign = part(island, "WelcomeSign", Vector3.new(18, 10, 1), Vector3.new(0, 16, -91), Color3.fromRGB(105, 72, 47), Enum.Material.Wood)
     local surface = Instance.new("SurfaceGui")
     surface.Face = Enum.NormalId.Front
     surface.Parent = sign
