@@ -275,6 +275,8 @@ function EggService:_HatchUnlocked(player, station)
     profile.DiscoveredSpecies = type(profile.DiscoveredSpecies) == "table"
         and profile.DiscoveredSpecies or {}
     profile.DiscoveredSpecies[companion.Id] = true
+    profile.DiscoveredBiomes = type(profile.DiscoveredBiomes) == "table" and profile.DiscoveredBiomes or {}
+    profile.DiscoveredBiomes[companion.Id] = companion.OriginBiome or "Meadow"
     profile.ActiveCompanions = profile.ActiveCompanions or {}
     if #profile.ActiveCompanions < 3 then
         table.insert(profile.ActiveCompanions, companion.InstanceId)
