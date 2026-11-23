@@ -14,6 +14,18 @@ local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalo
 local EggService = {}
 local EGG_RESPAWN_SECONDS = 20
 local EGG_CAPACITY = 20
+local ACTIVE_WORLD_EGGS = 3
+local EGG_SPAWN_POSITIONS = {
+    Vector3.new(-24, 14, 20),
+    Vector3.new(25, 14, 24),
+    Vector3.new(0, 14, 65),
+    Vector3.new(-42, 14, -5),
+    Vector3.new(42, 14, -5),
+    Vector3.new(-42, 14, 40),
+    Vector3.new(42, 14, 40),
+    Vector3.new(-35, 14, 75),
+    Vector3.new(35, 14, 75),
+}
 EggService._hatching = {}
 local COMPANIONS = {}
 for _, definition in pairs(CompanionCatalog) do
@@ -98,6 +110,7 @@ function EggService:Collect(player, egg)
 
     local originalSize = egg.Size
     local originalCFrame = egg.CFrame
+    egg:SetAttribute("SpawnSlot", nil)
     egg.CanCollide = false
     local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
     if prompt then prompt.Enabled = false end
@@ -112,20 +125,49 @@ function EggService:Collect(player, egg)
     collectTween:Play()
 
     task.delay(EGG_RESPAWN_SECONDS, function()
-        if egg and egg.Parent then
-            egg.CFrame = originalCFrame
-            egg.Size = originalSize
-            egg.Transparency = 1
-            egg:SetAttribute("Collected", false)
-            egg.CanCollide = true
-            local respawnTween = TweenService:Create(
-                egg,
-                TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-                { Transparency = 0, Size = originalSize }
-            )
-            respawnTween:Play()
-            if prompt then prompt.Enabled = true end
+        if not egg or not egg.Parent then return end
+        local folder = egg.Parent
+        local occupied = {}
+        for _, other in ipairs(folder:GetChildren()) do
+            if other ~= egg and other:GetAttribute("WorldEgg") and not other:GetAttribute("Collected") then
+                local slot = other:GetAttribute("SpawnSlot")
+                if type(slot) == "number" then occupied[slot] = true end
+            end
         end
+        local available = {}
+        for slot = 1, #EGG_SPAWN_POSITIONS do
+            if not occupied[slot] then table.insert(available, slot) end
+        end
+        if #available == 0 then
+            task.delay(2, function()
+                if egg and egg.Parent then
+                    egg:SetAttribute("Collected", true)
+                    task.delay(2, function()
+                        if egg and egg.Parent then
+                            egg:SetAttribute("Collected", false)
+                            egg:SetAttribute("SpawnSlot", nil)
+                            egg.Transparency = 0
+                            if prompt then prompt.Enabled = true end
+                        end
+                    end)
+                end
+            end)
+            return
+        end
+        local slot = available[math.random(1, #available)]
+        egg.CFrame = CFrame.new(EGG_SPAWN_POSITIONS[slot])
+        egg:SetAttribute("SpawnSlot", slot)
+        egg.Size = originalSize
+        egg.Transparency = 1
+        egg:SetAttribute("Collected", false)
+        egg.CanCollide = true
+        local respawnTween = TweenService:Create(
+            egg,
+            TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+            { Transparency = 0, Size = originalSize }
+        )
+        respawnTween:Play()
+        if prompt then prompt.Enabled = true end
     end)
 end
 
@@ -278,9 +320,34 @@ function EggService:Init()
 
     local island = world:WaitForChild("StarterIsland")
     local eggFolder = island:WaitForChild("EggSpawnPoints")
+    local eggs = {}
     for _, egg in ipairs(eggFolder:GetChildren()) do
-        local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
-        if prompt then prompt.Triggered:Connect(function(player) self:Collect(player, egg) end) end
+        if egg:GetAttribute("WorldEgg") then table.insert(eggs, egg) end
+    end
+    local shuffledSlots = {}
+    for slot = 1, #EGG_SPAWN_POSITIONS do table.insert(shuffledSlots, slot) end
+    for index = #shuffledSlots, 2, -1 do
+        local swap = math.random(1, index)
+        shuffledSlots[index], shuffledSlots[swap] = shuffledSlots[swap], shuffledSlots[index]
+    end
+    for index, egg in ipairs(eggs) do
+        if index <= ACTIVE_WORLD_EGGS then
+            local slot = shuffledSlots[index]
+            egg.CFrame = CFrame.new(EGG_SPAWN_POSITIONS[slot])
+            egg:SetAttribute("SpawnSlot", slot)
+            egg:SetAttribute("Collected", false)
+            egg.Transparency = 0
+            local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
+            if prompt then
+                prompt.Enabled = true
+                prompt.Triggered:Connect(function(player) self:Collect(player, egg) end)
+            end
+        else
+            egg:Destroy()
+        end
+    end
+    if #eggs < ACTIVE_WORLD_EGGS then
+        warn(string.format("[NEST RAIDERS] Only %d/%d world eggs were built.", #eggs, ACTIVE_WORLD_EGGS))
     end
 
     local plotsFolder = island:WaitForChild("PlayerPlots")
