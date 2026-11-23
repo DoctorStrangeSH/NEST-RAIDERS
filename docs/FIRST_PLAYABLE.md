@@ -395,3 +395,8 @@ Each boss attack has its own warning color: cyan for Crystal Slam, violet for Ec
 - Three matching unequipped copies can be combined using **ОБЪЕДИНИТЬ ×3**.
 - Each merge consumes the three source instances and creates one new instance at the next level.
 - Level VI (Мифический) is the maximum. Equipped artifacts are never offered as merge ingredients.
+
+## Gatherer artifacts
+- The artifact collection displays the bonus to resource gathering for each equipped Gatherer relic and the combined equipped bonus.
+- Gatherer relics improve the amount awarded by successful Elderwood root and crystal vein harvests; they do not reduce node cooldowns.
+- Three artifacts: Root Harvester (+5%), Moon Forager (+10%), Star Prospector (+15%) at level I. Bonus grows by 25% per upgrade level; equipped total is capped at +50%.
