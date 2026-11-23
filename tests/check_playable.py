@@ -452,7 +452,13 @@ assert 'ElderHeartPrompt' in world_health and 'Тайная тропа рощи:
 # Ancient Egg crafting: resource sink, exact recipe, capacity guard and server-side station validation.
 ancient_crafting = Path("src/ServerScriptService/Server/Services/AncientCraftingService.lua").read_text()
 assert '"AncientCraftingService"' in server and 'function AncientCraftingService:Init()' in ancient_crafting
-assert 'ELDERWOOD_COST = 10' in ancient_crafting and 'COIN_COST = 300' in ancient_crafting
+assert 'ELDERWOOD_COST = 10' in ancient_crafting and 'MOONPETAL_COST = 5' in ancient_crafting
+assert 'STARSHARD_COST = 3' in ancient_crafting and 'COIN_COST = 300' in ancient_crafting
+assert 'profile.Materials.Moonpetal = moonpetals - MOONPETAL_COST' in ancient_crafting
+assert 'profile.Materials.Starshard = starshards - STARSHARD_COST' in ancient_crafting
+assert 'SetAttribute("Moonpetal", profile.Materials.Moonpetal)' in ancient_crafting
+assert 'SetAttribute("Starshard", profile.Materials.Starshard)' in ancient_crafting
+assert 'Не хватает лунных лепестков' in ancient_crafting and 'Не хватает звёздных осколков' in ancient_crafting
 assert 'EGG_CAPACITY = 20' in ancient_crafting and 'profile.EggInventory' in ancient_crafting
 assert 'ProgressionService:CanEnterZone(player, "AncientHeights")' in ancient_crafting
 assert 'CraftAncientEggPrompt' in ancient_crafting and 'MaxActivationDistance + 2' in ancient_crafting
@@ -463,6 +469,7 @@ assert 'profile.Coins = coins - COIN_COST' in ancient_crafting
 assert 'EggCount' in ancient_crafting and 'Elderwood' in ancient_crafting and 'Coins' in ancient_crafting
 assert 'ElderwoodWorkshop' in world and 'AncientEggCraftingStation' in world
 assert 'CraftAncientEggPrompt' in world and 'РЕЦЕПТ ДРЕВНОГО ЯЙЦА' in world
+assert '5 лунных лепестков' in world and '3 звёздных осколка' in world
 assert 'Нет мастерской создания древних яиц' in world_health
 
 
