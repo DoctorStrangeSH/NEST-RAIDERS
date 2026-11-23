@@ -531,3 +531,16 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend world health diagnostics and CI static checks for Frost eggs, runes, and return travel.
 - [ ] Studio runtime: verify portal gates, egg respawn, hatching, collection odds, trial completion, and reconnect persistence.
 - [ ] Desktop/mobile visual, collision, and performance acceptance.
+ 
+### Sprint 4.22.1 — Emberlands heat gameplay slice (2026-11-23)
+- [x] Add the Emberlands volcanic island blockout with basalt pillars, lava channels, and central magma core.
+- [x] Add three server-readable heat volumes with increasing heat rates.
+- [x] Add a full-height cooling sanctuary volume with accelerated cooling.
+- [x] Add Emberlands portal access from Frost Highlands; existing level 22 + frost_trial gate applies.
+- [x] Add the Ember Egg and biome-owned hatch odds: Cinder Fox 60%, Magma Whelp 30%, Ash Phoenix 10%.
+- [x] Add random Emberlands egg spawn positions and collect prompts.
+- [x] Add distinct follower silhouettes and adult active abilities for all three Ember companions.
+- [x] Add server-authoritative per-player heat, gradual cooling, critical damage, and active-pet heat mitigation.
+- [x] Add responsive Russian heat HUD and structural world health checks.
+- [ ] Roblox Studio runtime: verify entry gate, heat rates, cooling sanctuary, companion abilities, egg respawn/hatching, multiplayer isolation, and respawn behavior.
+- [ ] Tune mobile HUD placement, heat balance, volcanic collision, and performance after Studio playtest.
