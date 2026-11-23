@@ -318,6 +318,8 @@ assert 'Emberlands = {' in eggs and 'Vector3.new(-48, 16, 1520)' in eggs
 assert 'Emberlands' in world and 'HeatZones' in world and 'CoolingSanctuary' in world
 assert 'HeatPerSecond' in world and 'CoolingPerSecond' in world and 'CoolingZone' in world
 assert 'EmberPortal' in world and 'EmberReturnPortal' in world
+assert 'EmberCauseway' in world and 'EmberBridgeSegment_' in world
+assert 'EmberCauseway' in world_health and 'EmberBridgeSegment_' in world_health
 assert '"HeatService"' in server and 'function HeatService:Start()' in heat_service
 assert 'TakeDamage' in heat_service and 'HeatPhoenixReady' in heat_service
 assert 'HeatHideUntil' in inventory and 'HeatGuardUntil' in inventory and 'HeatPhoenixReady' in inventory
