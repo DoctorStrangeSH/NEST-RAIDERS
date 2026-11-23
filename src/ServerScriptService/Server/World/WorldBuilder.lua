@@ -362,6 +362,7 @@ function WorldBuilder:Build()
             EmeraldWilds = "Изумрудный лес · уровень 5",
             FrostHighlands = "Ледяные нагорья · уровень 12 + испытание",
             Emberlands = "Пепельные земли · уровень 22 + испытание",
+            CrystalRealm = "Хрустальное королевство · уровень 35 + испытание",
             StarterIsland = "Стартовый остров",
         }
         prompt.ObjectText = zoneLabels[zoneId] or "Неизвестная область"
@@ -681,6 +682,8 @@ function WorldBuilder:Build()
         Color3.fromRGB(255, 125, 55), "Emberlands", Vector3.new(0, 18, 1480))
     makeBiomePortal(ember, "EmberReturnPortal", Vector3.new(-45, 24, 1480),
         Color3.fromRGB(128, 225, 255), "FrostHighlands", Vector3.new(0, 16, 1040))
+    makeBiomePortal(ember, "CrystalPortal", Vector3.new(0, 22, 1658),
+        Color3.fromRGB(180, 130, 255), "CrystalRealm", Vector3.new(0, 24, 2080))
     local emberOddsSign = part(ember, "EmberEggOddsSign", Vector3.new(28, 10, 1),
         Vector3.new(0, 24, 1638), Color3.fromRGB(91, 49, 38), Enum.Material.WoodPlanks)
     emberOddsSign.CanCollide = false
@@ -832,6 +835,178 @@ function WorldBuilder:Build()
     trialLabel.TextWrapped = true
     trialLabel.Font = Enum.Font.GothamBlack
     trialLabel.Parent = trialGui
+
+
+    -- Crystal Realm: a floating sanctuary of luminous quartz, gardens and mineable veins.
+    local crystal = Instance.new("Folder")
+    crystal.Name = "CrystalRealm"
+    crystal.Parent = world
+    part(crystal, "CrystalFloatingFoundation", Vector3.new(225, 38, 225),
+        Vector3.new(0, -3, 2080), Color3.fromRGB(70, 69, 105), Enum.Material.Slate, Enum.PartType.Ball)
+    local crystalTop = part(crystal, "PrismaticPlateau", Vector3.new(10, 205, 205),
+        Vector3.new(0, 18, 2080), Color3.fromRGB(135, 119, 184), Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+    crystalTop.CFrame = CFrame.new(0, 18, 2080) * CFrame.Angles(0, 0, math.rad(90))
+    part(crystal, "RoyalCrystalClearing", Vector3.new(104, 1.5, 92),
+        Vector3.new(0, 23.5, 2082), Color3.fromRGB(175, 159, 218), Enum.Material.SmoothPlastic)
+
+    local crystalPalette = {
+        Color3.fromRGB(115, 225, 255),
+        Color3.fromRGB(190, 145, 255),
+        Color3.fromRGB(255, 174, 225),
+        Color3.fromRGB(171, 255, 218),
+    }
+    local spirePositions = {
+        Vector3.new(-82, 22, 2010), Vector3.new(-88, 22, 2070), Vector3.new(-78, 22, 2140),
+        Vector3.new(82, 22, 2010), Vector3.new(88, 22, 2070), Vector3.new(78, 22, 2140),
+        Vector3.new(-42, 22, 2180), Vector3.new(42, 22, 2180), Vector3.new(0, 22, 1988),
+    }
+    for index, position in ipairs(spirePositions) do
+        local height = 18 + (index % 4) * 7
+        local spire = part(crystal, "RoyalCrystalSpire_" .. index,
+            Vector3.new(8 + (index % 2) * 3, height, 8 + (index % 2) * 3),
+            position + Vector3.new(0, height / 2, 0), crystalPalette[(index - 1) % #crystalPalette + 1],
+            Enum.Material.Neon, Enum.PartType.Crystal)
+        spire.CFrame *= CFrame.Angles(math.rad((index % 3 - 1) * 9), math.rad(index * 19), math.rad((index % 2 == 0) and 8 or -8))
+        spire.CanCollide = false
+        local light = Instance.new("PointLight")
+        light.Color = spire.Color
+        light.Range = 22
+        light.Brightness = 0.8
+        light.Parent = spire
+    end
+
+    local gardenFolder = Instance.new("Folder")
+    gardenFolder.Name = "AuroraGardens"
+    gardenFolder.Parent = crystal
+    for index = 1, 32 do
+        local angle = index * 2.399
+        local radius = 42 + (index % 4) * 7
+        local position = Vector3.new(math.cos(angle) * radius, 24.2, 2080 + math.sin(angle) * radius)
+        local flower = part(gardenFolder, "AuroraBloom_" .. index,
+            Vector3.new(1.5, 1.5, 1.5), position,
+            crystalPalette[(index - 1) % #crystalPalette + 1], Enum.Material.Neon, Enum.PartType.Ball)
+        flower.CanCollide = false
+        if index % 4 == 0 then
+            local glow = Instance.new("PointLight")
+            glow.Color = flower.Color
+            glow.Range = 8
+            glow.Brightness = 0.35
+            glow.Parent = flower
+        end
+    end
+
+    local bridge = Instance.new("Folder")
+    bridge.Name = "CrystalSkyway"
+    bridge.Parent = world
+    for index = 1, 8 do
+        local z = 1690 + (index - 1) * 39
+        local y = 20 + math.sin(index * 0.65) * 2
+        local segment = part(bridge, "CrystalBridgeSegment_" .. index,
+            Vector3.new(18, 2, 42), Vector3.new(0, y, z),
+            Color3.fromRGB(129, 117, 157), Enum.Material.Glass)
+        segment.Transparency = 0.12
+        for side = -1, 1, 2 do
+            local rail = part(bridge, "CrystalBridgeRail_" .. index .. "_" .. side,
+                Vector3.new(1, 2.4, 40), Vector3.new(side * 8.5, y + 1.8, z),
+                Color3.fromRGB(150, 222, 255), Enum.Material.Neon)
+            rail.CanCollide = false
+            rail.Transparency = 0.18
+        end
+    end
+
+    local veins = Instance.new("Folder")
+    veins.Name = "CrystalVeins"
+    veins.Parent = crystal
+    local veinPositions = {
+        Vector3.new(-65, 25, 2040), Vector3.new(65, 25, 2040),
+        Vector3.new(-70, 25, 2110), Vector3.new(70, 25, 2110),
+        Vector3.new(-42, 25, 2160), Vector3.new(42, 25, 2160),
+        Vector3.new(-88, 25, 2080), Vector3.new(88, 25, 2080),
+    }
+    for index, position in ipairs(veinPositions) do
+        local color = crystalPalette[(index - 1) % #crystalPalette + 1]
+        local node = part(veins, "CrystalVein_" .. index,
+            Vector3.new(5, 8 + (index % 3) * 2, 5),
+            position + Vector3.new(0, 4, 0), color, Enum.Material.Crystal, Enum.PartType.Crystal)
+        node.CanCollide = false
+        node:SetAttribute("CrystalNodeId", "RoyalVein_" .. index)
+        local glow = Instance.new("PointLight")
+        glow.Color = color
+        glow.Range = 15
+        glow.Brightness = 1.1
+        glow.Parent = node
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "MineCrystalPrompt"
+        prompt.ActionText = "Добыть"
+        prompt.ObjectText = "Кристальная жила"
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 1.2
+        prompt.MaxActivationDistance = 11
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = node
+    end
+
+    local crystalEggs = Instance.new("Folder")
+    crystalEggs.Name = "EggSpawnPoints"
+    crystalEggs.Parent = crystal
+    for _, position in ipairs({
+        Vector3.new(-25, 26, 2050), Vector3.new(25, 26, 2050),
+        Vector3.new(0, 26, 2120), Vector3.new(-48, 26, 2110),
+        Vector3.new(48, 26, 2110),
+    }) do
+        local egg = part(crystalEggs, "CrystalEgg", Vector3.new(4, 5, 4),
+            position, Color3.fromRGB(175, 145, 255), Enum.Material.Neon, Enum.PartType.Ball)
+        egg:SetAttribute("WorldEgg", true)
+        egg:SetAttribute("BiomeId", "CrystalRealm")
+        egg:SetAttribute("EggId", "CrystalEgg")
+        local shimmer = Instance.new("PointLight")
+        shimmer.Color = egg.Color
+        shimmer.Range = 12
+        shimmer.Brightness = 1.2
+        shimmer.Parent = egg
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "CollectEggPrompt"
+        prompt.ActionText = "Собрать"
+        prompt.ObjectText = "Яйцо призматического сияния"
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.45
+        prompt.MaxActivationDistance = 11
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = egg
+    end
+
+    makeBiomePortal(crystal, "CrystalReturnPortal", Vector3.new(-50, 27, 2080),
+        Color3.fromRGB(255, 155, 140), "Emberlands", Vector3.new(0, 18, 1600))
+    local crystalOddsSign = part(crystal, "CrystalEggOddsSign", Vector3.new(30, 11, 1),
+        Vector3.new(0, 30, 2158), Color3.fromRGB(66, 55, 104), Enum.Material.Slate)
+    crystalOddsSign.CanCollide = false
+    local crystalOddsGui = Instance.new("SurfaceGui")
+    crystalOddsGui.Face = Enum.NormalId.Front
+    crystalOddsGui.Parent = crystalOddsSign
+    local crystalOddsText = Instance.new("TextLabel")
+    crystalOddsText.Size = UDim2.fromScale(1, 1)
+    crystalOddsText.BackgroundTransparency = 1
+    crystalOddsText.Text = "ЯЙЦО ПРИЗМАТИЧЕСКОГО СИЯНИЯ\\nПризматический лис · 60%\\nКристальный оленёнок · 30%\\nДракон авроры · 10%"
+    crystalOddsText.TextColor3 = Color3.fromRGB(239, 226, 255)
+    crystalOddsText.TextScaled = true
+    crystalOddsText.TextWrapped = true
+    crystalOddsText.Font = Enum.Font.GothamBlack
+    crystalOddsText.Parent = crystalOddsGui
+
+    local welcomeSign = part(crystal, "CrystalWelcomeSign", Vector3.new(27, 9, 1),
+        Vector3.new(0, 30, 1990), Color3.fromRGB(67, 57, 102), Enum.Material.Slate)
+    local welcomeGui = Instance.new("SurfaceGui")
+    welcomeGui.Face = Enum.NormalId.Front
+    welcomeGui.Parent = welcomeSign
+    local welcomeText = Instance.new("TextLabel")
+    welcomeText.Size = UDim2.fromScale(1, 1)
+    welcomeText.BackgroundTransparency = 1
+    welcomeText.Text = "ХРУСТАЛЬНОЕ КОРОЛЕВСТВО\\nДобывай жилы и ищи яйца"
+    welcomeText.TextColor3 = Color3.fromRGB(239, 226, 255)
+    welcomeText.TextScaled = true
+    welcomeText.TextWrapped = true
+    welcomeText.Font = Enum.Font.GothamBlack
+    welcomeText.Parent = welcomeGui
 
     return world
 end
