@@ -166,3 +166,13 @@ A successful CI build validates the Roblox XML packaging, **not gameplay**. Trea
 - [ ] Confirm all eleven buttons open their respective feature panels in Roblox Studio (desktop and mobile emulation).
 - [ ] Verify modal close controls and placement modes do not overlap the expanded menu.
 - [ ] Verify runtime startup, save/rejoin and multiplayer. CI alone cannot mark these DONE.
+
+### Playable-first window manager (2026-11-23)
+
+- [x] Add one shared client-side visible-panel coordinator for all eleven modal windows.
+- [x] Automatically hide other gameplay panels when a new panel opens; keep the pet picker nested over its display parent.
+- [x] Add a high-ZIndex `ЗАКРЫТЬ ВСЁ` control visible whenever any modal is open.
+- [x] Add Escape to dismiss ordinary panels, while preserving dedicated placement-mode Escape controls.
+- [ ] Studio runtime acceptance: open every game panel in turn and ensure at most one primary panel is shown.
+- [ ] Studio runtime acceptance: open the pet picker, confirm display remains underneath and close controls function.
+- [ ] Studio runtime acceptance: verify construction/decor placement cancellation, pointer interactions and mobile layout.
