@@ -222,6 +222,9 @@ function AncientTempleBossService:Init()
             progress.AncientTempleBossHealth = math.max(
                 0, progress.AncientTempleBossHealth - PLAYER_HIT_DAMAGE)
             player:SetAttribute("AncientTempleBossHealth", progress.AncientTempleBossHealth)
+            player:SetAttribute("AncientTempleBossPhase",
+                progress.AncientTempleBossHealth > 0
+                    and progress.AncientTempleBossHealth <= BOSS_MAX_HEALTH / 2 and 2 or 1)
             if progress.AncientTempleBossHealth <= 0 then
                 profile.CompletedQuests.ancient_temple_boss = true
                 self._windups[player] = nil
