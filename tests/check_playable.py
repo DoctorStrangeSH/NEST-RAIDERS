@@ -27,6 +27,15 @@ world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua")
 assert 'Создано участков: %d из 6' in world_health
 assert 'Папка PlayerPlots не создана службой PlotService' in world_health
 
+economy = Path("src/ServerScriptService/Server/Services/EconomyService.lua").read_text()
+display_pets = Path("src/ServerScriptService/Server/Services/DisplayPetService.lua").read_text()
+assert 'local function getCompanionIncome(companion)' in economy
+assert 'trait.IncomeBonus' in economy and 'return math.min(math.floor(total + 0.5), MAX_TICK_REWARD)' in economy
+assert 'local function getCompanionIncome(companion)' in display_pets
+assert 'trait.IncomeBonus' in display_pets
+assert 'IncomeBonusPercent' in display_pets
+assert 'math.floor(total + 0.5)' in display_pets
+
 eggs = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
 companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
 inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
