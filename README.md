@@ -131,9 +131,9 @@ Successful breeding triggers a temporary altar animation: the two selected compa
 
  
 ## Frost Highlands — Sprint 4.21
-- Third explorable biome with snowfields, pine trees, glacier crystals, Frost Egg spawns, and a return portal.
+- Third explorable biome with snowfields, pine trees, glacier crystals, Frost Egg spawns, a return portal, and a walkable ice causeway to Emerald Wilds.
 - Frost Portal is gated by level 12 and the completed Emerald Grove trial.
-- Frost Egg hatch odds are disclosed: Frost Fox 60%, Snow Owl 30%, Glacier Bear 10%.
+- Frost Egg hatch odds are disclosed in-world: Frost Fox 60%, Snow Owl 30%, Glacier Bear 10%.
 - Three persistent runes complete the Heart of Winter trial for +180 XP and satisfy the Emberlands quest gate.
 - World egg pickup is restricted to the player's current unlocked biome.
 - All visuals are scripted prototypes pending Roblox Studio art and gameplay acceptance.
