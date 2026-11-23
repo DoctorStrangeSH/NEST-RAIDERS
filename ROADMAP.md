@@ -756,3 +756,13 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Add curated, licensed sound assets for attacks, impacts, phase transition and victory.
 - [ ] Roblox Studio: verify hit feedback timing, camera shake comfort, mobile performance and multiplayer isolation.
 - [ ] Tune damage, cooldowns and windups after hands-on combat testing.
+
+
+### Sprint 4.39 — Forgotten Heart combat readability (2026-11-23)
+- [x] Give Crystal Slam, Echo Pulse and Shard Rain distinct warning-zone colors.
+- [x] Animate the Forgotten Heart boss health bar as health changes.
+- [x] Show floating damage numbers on successful hits, derived from the server-replicated health delta.
+- [x] Extend static regression checks for warning colors, damage numbers and health-bar animation.
+- [ ] Roblox Studio: verify warning colors remain distinguishable in cave lighting and for color-vision accessibility.
+- [ ] Verify floating damage numbers remain readable on mobile and do not obscure the boss prompt.
+- [ ] Confirm health bar tweening remains smooth through phase transition and final hit.
