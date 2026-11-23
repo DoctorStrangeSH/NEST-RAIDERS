@@ -16,10 +16,24 @@ for _, remoteName in ipairs({
     "DisplayPets", "NestDecor", "NestBuild", "IslandVisit",
     "IslandContest", "PublicProfile",
 }) do
-    if not remoteFolder:FindFirstChild(remoteName) then
-        local remote = Instance.new("RemoteFunction")
+    local remote = remoteFolder:FindFirstChild(remoteName)
+    if not remote then
+        remote = Instance.new("RemoteFunction")
         remote.Name = remoteName
         remote.Parent = remoteFolder
+    end
+    -- A published endpoint without a handler makes InvokeServer yield forever.
+    -- Services replace this fallback when their own request handlers initialize.
+    if remote:IsA("RemoteFunction") then
+        remote.OnServerInvoke = function()
+            return {
+                Ok = false,
+                Message = "Система ещё загружается или временно недоступна. Попробуй ещё раз.",
+            }
+        end
+    else
+        warn("[NEST RAIDERS] Unexpected network object: " .. remoteName)
+        remoteFolder:SetAttribute("ServiceError_Remote_" .. remoteName, "Not a RemoteFunction")
     end
 end
 
