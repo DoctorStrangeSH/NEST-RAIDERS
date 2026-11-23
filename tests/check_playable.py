@@ -25,6 +25,7 @@ assert 'folder:SetAttribute("ExpectedCount", #PLOT_DEFINITIONS)' in plots
 assert 'return self._initialized, created' in plots
 world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
 assert 'FrostHighlands' in world_health and 'FrostRunePrompt' in world_health
+assert 'GlacierCauseway' in world_health and 'FrostEggOddsSign' in world_health
 assert 'Создано участков: %d из 6' in world_health
 assert 'Папка PlayerPlots не создана службой PlotService' in world_health
 
@@ -126,6 +127,8 @@ assert 'frost.Name = "FrostHighlands"' in world
 assert 'FrostSnowTop' in world and 'FrostPineTrunk' in world and 'GlacierCrystal' in world
 assert 'FrostRunePrompt' in world and 'Руна сияния' in world and 'Руна ледника' in world and 'Руна зимы' in world
 assert 'FrostPortal' in world and 'FrostReturnPortal' in world
+assert 'GlacierCauseway' in world and 'IceBridgeSegment_' in world
+assert 'FrostEggOddsSign' in world and 'Снежный лис · 60%' in world
 assert 'FrostTrialRunes = {}' in profile_template
 assert 'profile.QuestProgress.FrostTrialRunes' in progression
 assert 'profile.CompletedQuests.frost_trial = true' in progression
