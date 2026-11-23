@@ -122,7 +122,8 @@ local function getSnapshot(profile)
                 Name = companion.Name,
                 Rarity = companion.Rarity,
                 Stars = companion.Stars or 1,
-                Income = math.max(0, math.floor(tonumber(companion.Income) or 0)),
+                Income = math.floor(getCompanionIncome(companion) + 0.5),
+                IncomeBonusPercent = math.floor(math.clamp(tonumber(type(companion.GeneticTrait) == "table" and companion.GeneticTrait.IncomeBonus or 0) or 0, 0, 0.25) * 100 + 0.5),
             })
         end
     end
