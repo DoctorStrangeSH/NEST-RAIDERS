@@ -247,6 +247,18 @@ function WorldHealthCheck:Check()
         if ancientEggCount < 3 then fail(string.format("Яйца Древних высот: %d из 3", ancientEggCount)) end
         if not ancient:FindFirstChild("ElderCanopy") then fail("Нет рощи Древних высот") end
         if not ancient:FindFirstChild("AncientEggOddsSign") then fail("Нет таблицы вероятностей древнего яйца") end
+        local whisperingGrove = ancient:FindFirstChild("WhisperingGrove")
+        local groveAltar = whisperingGrove and whisperingGrove:FindFirstChild("ElderHeartAltar")
+        local grovePrompt = groveAltar and groveAltar:FindFirstChild("ElderHeartPrompt")
+        local groveSteps = 0
+        for _, child in ipairs(whisperingGrove and whisperingGrove:GetChildren() or {}) do
+            if child:IsA("BasePart") and child.Name:match("^GroveStep_%d+$") then groveSteps += 1 end
+        end
+        if not grovePrompt or not grovePrompt:IsA("ProximityPrompt") then fail("Нет алтаря Сердца древней рощи") end
+        if groveSteps < 4 then fail(string.format("Тайная тропа рощи: %d из 4 ступеней", groveSteps)) end
+        if not whisperingGrove or not whisperingGrove:FindFirstChild("WhisperingGrovePlatform") then
+            fail("Нет тайной площадки Шепчущей рощи")
+        end
         local elderwoodNodes = ancient:FindFirstChild("ElderwoodNodes")
         local elderwoodCount = 0
         for _, node in ipairs(elderwoodNodes and elderwoodNodes:GetChildren() or {}) do
