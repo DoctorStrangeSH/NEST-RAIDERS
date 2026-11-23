@@ -4,6 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
+local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local AncientHarvestService = {}
 local NODE_COOLDOWN_SECONDS = 180
@@ -55,13 +56,15 @@ local function harvest(player, node, prompt)
         return
     end
 
-    local amount = math.random(1, 3)
+    local baseAmount = math.random(1, 3)
+    local amount, gatherBonus = ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)
     materials.ElderwoodNodeCooldowns[nodeId] = now + NODE_COOLDOWN_SECONDS
     materials.Elderwood = math.max(0, math.floor(tonumber(materials.Elderwood) or 0)) + amount
     syncBalance(player, profile)
     player:SetAttribute("LastNotice", string.format(
-        "Собрано древесной эссенции: +%d. Всего: %d.",
-        amount, materials.Elderwood))
+        "Собрано древесной эссенции: +%d%s. Всего: %d.",
+        amount, gatherBonus > 0 and string.format(" · бонус артефактов +%d%%", math.floor(gatherBonus * 100 + 0.5)) or "",
+        materials.Elderwood))
 end
 
 function AncientHarvestService:Init()
