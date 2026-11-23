@@ -478,4 +478,25 @@ assert 'Нет пола Храма Древнего древа' in world_health 
 assert 'AncientTempleProgress' in client and 'AncientTempleCompleted' in client
 assert 'ХРАМ ДРЕВНЕГО ДРЕВА' in client and 'AncientTempleProgress' in client
 
+
+# Ancient Temple Guardian: persistent solo boss combat, dodge telegraph and exclusive companion reward.
+ancient_boss = Path("src/ServerScriptService/Server/Services/AncientTempleBossService.lua").read_text()
+companion_catalog = Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+companion_service = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+collection_service = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua").read_text()
+assert '"AncientTempleBossService"' in server and 'function AncientTempleBossService:Init()' in ancient_boss
+assert 'AncientTempleBossHealth = 240' in profile_template and 'AncientTempleBossHealth' in ancient_boss
+assert 'BOSS_MAX_HEALTH = 240' in ancient_boss and 'PLAYER_HIT_DAMAGE = 24' in ancient_boss
+assert 'BOSS_WINDUP_SECONDS = 1.5' in ancient_boss and 'BOSS_ATTACK_RADIUS = 19' in ancient_boss
+assert 'humanoid:TakeDamage(BOSS_DAMAGE)' in ancient_boss and 'AncientTempleBossWindup' in ancient_boss
+assert 'CompletedQuests.ancient_temple_trial' in ancient_boss
+assert 'CompletedQuests.ancient_temple_boss = true' in ancient_boss
+assert 'REWARD_COMPANION_ID = "HeartwoodGuardian"' in ancient_boss
+assert 'HeartwoodGuardian = {' in companion_catalog and 'BossExclusive = true' in companion_catalog
+assert 'Kind = "HeartwoodGuardian"' in companion_service and 'definition.Kind == "HeartwoodGuardian"' in companion_service
+assert 'BossExclusive = definition.BossExclusive == true' in collection_service
+assert 'entry.BossExclusive' in client and 'AncientTempleBossHealth' in client
+assert 'AncientTempleBossPrompt' in world and 'GuardianHeartCore' in world
+assert 'Нет Стража Сердца Древа' in world_health
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
