@@ -3700,7 +3700,10 @@ local function updateBiomeTrialPanel()
         local bossHealth = math.clamp(tonumber(player:GetAttribute("AncientTempleBossHealth")) or 240, 0, 240)
         bossBarFill.Size = UDim2.fromScale(bossHealth / 240, 1)
         if player:GetAttribute("AncientTempleBossWindup") == true then
-            bossStatus.Text = "УДАР КОРНЕЙ! ОТОЙДИ ОТ СТРАЖА!"
+            local attackType = player:GetAttribute("AncientTempleBossAttackType")
+            bossStatus.Text = attackType == "VineSlam"
+                and "ТЯЖЁЛЫЙ УДАР! ОТОЙДИ ДАЛЬШЕ!"
+                or "ВОЛНА КОРНЕЙ! УХОДИ С АРЕНЫ!"
             bossStatus.TextColor3 = Color3.fromRGB(255, 190, 120)
         else
             bossStatus.Text = bossCompleted and "СТРАЖ ПОВЕРЖЕН"
@@ -3767,6 +3770,7 @@ for _, attribute in ipairs({
     "CrystalTrialProgress", "CrystalTrialCompleted", "CrystalTrialBossHealth", "CrystalTrialBossWindup",
     "AncientTempleProgress", "AncientTempleCompleted",
     "AncientTempleBossHealth", "AncientTempleBossCompleted", "AncientTempleBossWindup",
+    "AncientTempleBossAttackType",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
