@@ -91,7 +91,7 @@ function CrystalMiningService:Init()
                 player:SetAttribute("CrystalShards", materials.CrystalShard)
                 player:SetAttribute("LastNotice", string.format(
                     "Добыто кристальных осколков: +%d%s. Всего: %d.",
-                    amount, gatherBonus > 0 and string.format(" · артефакт: +%d ресурс(ов) (шанс +%d%%)",
+                    amount, gatherBonus > 0 and string.format(" · артефакт: +%d дополнительно (средний бонус +%d%%)",
                         extraMaterials, math.floor(gatherBonus * 100 + 0.5)) or "",
                     materials.CrystalShard))
             end)
