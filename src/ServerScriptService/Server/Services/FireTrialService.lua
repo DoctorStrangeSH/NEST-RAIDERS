@@ -124,7 +124,8 @@ function FireTrialService:Init()
                 end
 
                 local now = os.clock()
-                if now - (self._lastPlayerHit[player] or 0) < PLAYER_HIT_COOLDOWN then return end
+                local lastPlayerHit = self._lastPlayerHit[player]
+                if lastPlayerHit and now - lastPlayerHit < PLAYER_HIT_COOLDOWN then return end
                 self._lastPlayerHit[player] = now
 
                 local health = progress.EmberTrialBossHealth
@@ -147,7 +148,8 @@ function FireTrialService:Init()
                 end
 
                 player:SetAttribute("LastNotice", string.format("Удар по Огненному стражу! Осталось здоровья: %d / %d.", health, BOSS_MAX_HEALTH))
-                if now - (self._lastBossAttack[player] or 0) >= BOSS_ATTACK_COOLDOWN
+                local lastBossAttack = self._lastBossAttack[player]
+                if (not lastBossAttack or now - lastBossAttack >= BOSS_ATTACK_COOLDOWN)
                     and not self._windups[player] then
                     self._lastBossAttack[player] = now
                     self._windups[player] = true
