@@ -438,3 +438,13 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Species odds are fixed and visible in the cave: Cave Glimmerbat 65%, Crystal Prowler 25%, Heart Wisp 10%.
 - Cave Glimmerbat is Rare, Crystal Prowler is Epic, and Heart Wisp is Legendary. Each has a distinct follower silhouette, personality, preferred food/toy, income and ability metadata.
 - All three species are registered in CompanionCatalog and BiomeCatalog, so the existing hatch, discovery and Collection Book pipelines handle them without a separate hatch implementation.
+
+
+## Forgotten Heart Guardian — Sprint 4.36
+- The cave guardian becomes attackable after the player has completed the Root → River → Dawn puzzle and claimed the Forgotten Cave treasure chest.
+- Each player's encounter health is stored in `QuestProgress.ForgottenHeartBossHealth` (360 HP). The encounter and completion flag are personal and persist across sessions.
+- The player attacks by using the guardian's proximity prompt. Each successful strike deals 30 damage, with a 0.8-second per-player hit cooldown.
+- At 180 HP the boss enters phase II. Phase I uses Crystal Slam and Echo Pulse; phase II also unlocks Shard Rain.
+- Attacks are server-authoritative and telegraphed with ground markers. Targeted markers are shown only to the player whose encounter is being attacked. Players avoid damage by leaving the marked area before the windup ends.
+- A successful first defeat grants the Mythic boss-exclusive companion `ForgottenHeartGuardian`, 1,200 coins, 5 Starshards and 800 XP. Repeated interactions grant no duplicate reward.
+- The reward companion is permanently recorded in the Collection Book under Пещера забытого сердца and has its own follower silhouette.
