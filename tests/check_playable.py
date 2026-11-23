@@ -9,6 +9,16 @@ import xml.etree.ElementTree as ET
 client = Path("src/StarterPlayer/StarterPlayerScripts/ClientBootstrap.client.lua").read_text()
 server = Path("src/ServerScriptService/Server/Bootstrap.server.lua").read_text()
 watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua").read_text()
+world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
+plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
+assert 'Vector3.new(18, 10, 1)' in world, "Welcome sign should have a readable front face"
+assert 'Vector3.new(9, 5, 1)' in plots, "Personal nest signs should have a readable front face"
+assert 'EggGroveWayfinding' in world
+assert 'EggGroveSign' in world and 'NestDistrictSign' in world
+assert 'GardenBase' in world and 'EggBeacon' in world
+assert 'CollectEggPrompt' in world and 'WorldEgg' in world
+assert 'prompt.ActionText = "Вылупить"' in plots
+
 
 def before(first, second, content=client):
     assert first in content, f"Missing: {first}"
