@@ -3929,6 +3929,63 @@ for _, attribute in ipairs({"CurrentBiome", "CrystalShards"}) do
 end
 updateCrystalPanel()
 
+-- Ancient Heights resource HUD: Elderwood balance is saved server-side.
+local ancientPanel = Instance.new("Frame")
+ancientPanel.Name = "AncientHarvestPanel"
+ancientPanel.AnchorPoint = Vector2.new(1, 0)
+ancientPanel.Position = UDim2.new(1, -24, 0, 110)
+ancientPanel.Size = UDim2.fromOffset(260, 78)
+ancientPanel.BackgroundColor3 = Color3.fromRGB(42, 61, 43)
+ancientPanel.BackgroundTransparency = 0.08
+ancientPanel.Visible = false
+ancientPanel.Parent = gui
+addCorner(ancientPanel, 14)
+addStroke(ancientPanel, Color3.fromRGB(174, 214, 130), 1.5)
+
+local ancientTitle = Instance.new("TextLabel")
+ancientTitle.BackgroundTransparency = 1
+ancientTitle.Position = UDim2.fromOffset(14, 8)
+ancientTitle.Size = UDim2.new(1, -28, 0, 22)
+ancientTitle.Font = Enum.Font.GothamBold
+ancientTitle.Text = "ДРЕВНИЕ ВЫСОТЫ"
+ancientTitle.TextColor3 = Color3.fromRGB(220, 239, 179)
+ancientTitle.TextSize = 13
+ancientTitle.TextXAlignment = Enum.TextXAlignment.Left
+ancientTitle.Parent = ancientPanel
+
+local elderwoodBalance = Instance.new("TextLabel")
+elderwoodBalance.BackgroundTransparency = 1
+elderwoodBalance.Position = UDim2.fromOffset(14, 33)
+elderwoodBalance.Size = UDim2.new(1, -28, 0, 18)
+elderwoodBalance.Font = Enum.Font.GothamBold
+elderwoodBalance.TextColor3 = Color3.fromRGB(236, 241, 210)
+elderwoodBalance.TextSize = 12
+elderwoodBalance.TextXAlignment = Enum.TextXAlignment.Left
+elderwoodBalance.Parent = ancientPanel
+
+local ancientHint = Instance.new("TextLabel")
+ancientHint.BackgroundTransparency = 1
+ancientHint.Position = UDim2.fromOffset(14, 53)
+ancientHint.Size = UDim2.new(1, -28, 0, 16)
+ancientHint.Font = Enum.Font.GothamMedium
+ancientHint.Text = "Ищи светящиеся древние корни"
+ancientHint.TextColor3 = Color3.fromRGB(190, 211, 166)
+ancientHint.TextSize = 10
+ancientHint.TextXAlignment = Enum.TextXAlignment.Left
+ancientHint.Parent = ancientPanel
+
+local function updateAncientPanel()
+    local visible = player:GetAttribute("CurrentBiome") == "AncientHeights"
+    ancientPanel.Visible = visible
+    if visible then
+        elderwoodBalance.Text = "Древесная эссенция: " .. math.max(0, tonumber(player:GetAttribute("Elderwood")) or 0)
+    end
+end
+for _, attribute in ipairs({"CurrentBiome", "Elderwood"}) do
+    player:GetAttributeChangedSignal(attribute):Connect(updateAncientPanel)
+end
+updateAncientPanel()
+
 local guideHighlight = Instance.new("Highlight")
 guideHighlight.Name = "FirstPlayTarget"
 guideHighlight.FillColor = Color3.fromRGB(255, 216, 129)
