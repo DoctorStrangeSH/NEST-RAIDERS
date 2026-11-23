@@ -255,3 +255,12 @@
 - Four glowing ash crystals appear after the event. Each player can collect each node once per event.
 - Ash crystals persist in the profile and are shown in the Russian event HUD alongside the countdown and current event phase.
 - The event is a scripted gameplay prototype. Studio runtime, multiplayer, balance, and mobile acceptance are still required.
+
+
+## Heart of Fire trial — Sprint 4.23
+- Climb twelve basalt steps to the summit altar in Emberlands.
+- Activate three runes: Ember, Cinder, and Inferno. Progress is saved per player.
+- Fight the Heart of Fire Guardian. Each successful interaction deals 25 damage; watch for its 1.4-second windup and move more than 23 studs away to dodge its 18-damage counterattack.
+- Guardian health persists per player. Defeating it completes ember_trial and awards +250 XP once.
+- The existing Crystal Realm gate remains level 35 plus ember_trial.
+- The trial has scripted placeholder visuals and prompt-based attacks. Studio playtesting and mobile/performance acceptance remain outstanding.
