@@ -13,6 +13,7 @@ local EconomyService = require(ServerScriptService.Server.Services.EconomyServic
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local ArtifactCatalog = require(ReplicatedStorage.Shared.Config.ArtifactCatalog)
+local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local InventoryService = {}
 local MAX_ACTIVE_COMPANIONS = 3
@@ -270,6 +271,26 @@ function InventoryService:HandleRequest(player, payload)
             end
         end
         local message = "Тестовые Собиратели готовы: по 3 экземпляра каждого вида."
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
+    end
+
+    if payload.Action == "DevSimulateGatherBonus" then
+        if not RunService:IsStudio() then
+            return { Ok = false, Message = "Проверка добычи доступна только в Roblox Studio." }
+        end
+        -- Uses the real server reward formula but never changes balances or cooldowns.
+        local totalBase, totalExtra = 0, 0
+        for sample = 1, 1000 do
+            local baseAmount = (sample % 3) + 1
+            local _, _, extra = ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)
+            totalBase += baseAmount
+            totalExtra += extra
+        end
+        local expected = ArtifactBonusService:GetGatherBonus(profile)
+        local actualPercent = totalBase > 0 and 100 * totalExtra / totalBase or 0
+        local message = string.format("1000 сборов: +%d дополнительно (%.1f%%). Средний бонус: %.1f%%.",
+            totalExtra, actualPercent, expected * 100)
         player:SetAttribute("LastNotice", message)
         return { Ok = true, Data = makeSnapshot(profile), Message = message }
     end
