@@ -40,9 +40,9 @@ Status legend: [x] done · [ ] not done · [~] in progress
 
 ## Milestone 2 — Open-world progression
 - [ ] Seamless connected biomes with no mandatory world portals.
-- [~] Server-enforced level and quest gates implemented for Starter Island → Emerald Wilds and the Emerald trial → future Frost Highlands; remaining biome gates still need their own gameplay flows.
+- [~] Server-enforced gates implemented for Starter Island → Emerald Wilds, Emerald trial → Frost Highlands, and Frost trial → future Emberlands; remaining late-game biome trials still need their gameplay flows.
 - [ ] Server-side zone checks for egg collection and interactions.
-- [~] Starter Island and Emerald Wilds playable as separate islands; Frost Highlands, Emberlands, Crystal Realm, Ancient Heights, and Void Frontier remain to be built.
+- [~] Starter Island, Emerald Wilds, and Frost Highlands have playable scripted island slices; Emerald and Frost are physically connected by an ice causeway. Emberlands, Crystal Realm, Ancient Heights, and Void Frontier remain to be built.
 - [ ] World landmarks, secrets, caves, traversal routes, and discovery rewards.
 
 ## Milestone 3 — Nest, companions, and economy
@@ -142,7 +142,7 @@ Status legend: [x] done · [ ] not done · [~] in progress
 A milestone is not complete until its acceptance tests pass in Roblox Studio on desktop and mobile emulation. Monetization and public launch are blocked until saving, server authority, exploit resistance, and moderation basics are verified.
 
 ## Current implementation note
-The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, shared companion catalog, server-backed collection book, three-pet fusion with star ranks and visible evolution effects, personal nest pet displays with separately accumulated/collectible income, animated display pets with persistent mood, hunger, energy, feeding, rest, species personalities, favorite foods, and equippable nest toys with server-validated toy play, persistent player-owned nest decorations with buy/place/remove flow, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
+The current code contains a first playable prototype loop: Starter Island blockout, Emerald Wilds and Frost Highlands island slices with a walkable ice causeway, biome-gated egg pickup/hatching and biome-specific species tables, persistent Emerald/Frost trials, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, shared companion catalog, server-backed collection book, three-pet fusion with star ranks and visible evolution effects, personal nest pet displays with separately accumulated/collectible income, animated display pets with persistent mood, hunger, energy, feeding, rest, species personalities, favorite foods, and equippable nest toys with server-validated toy play, persistent player-owned nest decorations with buy/place/remove flow, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
 
 ## Playable-first recovery (2026-11-23)
 
