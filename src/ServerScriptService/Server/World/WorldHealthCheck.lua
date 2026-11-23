@@ -233,6 +233,21 @@ function WorldHealthCheck:Check()
     if not ancient or not ancient:FindFirstChild("AncientLanding") then fail("Нет стартовой площадки Древних высот") end
     if not ancient or not ancient:FindFirstChild("AncientReturnPortal") then fail("Нет обратного портала с Древних высот") end
     if not crystal or not crystal:FindFirstChild("AncientHeightsPortal") then fail("Нет портала к Древним высотам") end
+    if ancient then
+        local ancientEggs = ancient:FindFirstChild("EggSpawnPoints")
+        local ancientEggCount = 0
+        for _, egg in ipairs(ancientEggs and ancientEggs:GetChildren() or {}) do
+            if egg:IsA("BasePart") and egg:GetAttribute("WorldEgg")
+                and egg:GetAttribute("BiomeId") == "AncientHeights"
+                and egg:GetAttribute("EggId") == "AncientEgg"
+                and egg:FindFirstChild("CollectEggPrompt") then
+                ancientEggCount += 1
+            end
+        end
+        if ancientEggCount < 3 then fail(string.format("Яйца Древних высот: %d из 3", ancientEggCount)) end
+        if not ancient:FindFirstChild("ElderCanopy") then fail("Нет рощи Древних высот") end
+        if not ancient:FindFirstChild("AncientEggOddsSign") then fail("Нет таблицы вероятностей древнего яйца") end
+    end
 
     return #issues == 0, issues
 end
