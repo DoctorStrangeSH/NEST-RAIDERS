@@ -603,7 +603,7 @@
 ## Sprint 4.44 — Studio quick-test fixture
 - In Roblox Studio only, open **АРТЕФАКТЫ** and use **ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ**.
 - The server fills each Gatherer type to three level-I copies, allowing equip, harvest, merge and confirmation testing without grinding the rare craft odds.
-- The server rejects this action outside Studio and refuses to exceed the 40-item collection cap.
+- The server rejects this action outside Studio and refuses to exceed the 40-item collection cap. QA instances are tagged as temporary, excluded from saved DataStore snapshots, and cannot be merged with normal crafted instances.
 - [ ] Verify the test button is visible in Studio Play and absent from a published server.
 - [ ] Use the fixture to equip each Gatherer, harvest Elderwood and Crystal nodes, merge three copies, and verify the next tier.
 - [ ] Verify the fixture cannot be invoked in a published server and leaves the inventory unchanged when capacity is insufficient.
