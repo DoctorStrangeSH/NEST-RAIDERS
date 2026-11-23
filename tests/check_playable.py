@@ -728,5 +728,13 @@ assert min(0.50, 0.3375 + 0.3375) == 0.50
 assert 'local expectedExtra = safeBase * bonus' in artifact_bonus
 assert 'local fraction = expectedExtra - extra' in artifact_bonus
 assert 'math.random() < fraction' in artifact_bonus
+assert 'local RunService = game:GetService("RunService")' in inventory_service
+assert 'payload.Action == "DevSeedGathererArtifacts"' in inventory_service
+assert 'if not RunService:IsStudio() then' in inventory_service
+assert 'requiredSlots' in inventory_service and '#profile.Artifacts + requiredSlots > 40' in inventory_service
+assert 'artifactsTestButton' in client and 'RunService:IsStudio() then' in client
+assert 'Action = "DevSeedGathererArtifacts"' in client
+assert 'ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ' in client
+assert 'добычу ресурсов' in client
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
