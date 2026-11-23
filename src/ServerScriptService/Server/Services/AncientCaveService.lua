@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
+local HttpService = game:GetService("HttpService")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
@@ -137,11 +138,23 @@ function AncientCaveService:Init()
                 return
             end
             profile.Materials = type(profile.Materials) == "table" and profile.Materials or {}
+            if #profile.EggInventory >= 20 then
+                player:SetAttribute("LastNotice", "Сумка для яиц заполнена. Освободи место и открой сокровищницу снова.")
+                return
+            end
             profile.Materials.Starshard = math.max(0, math.floor(tonumber(profile.Materials.Starshard) or 0)) + 3
+            table.insert(profile.EggInventory, {
+                Id = "ForgottenCaveEgg",
+                BiomeId = "ForgottenCave",
+                InstanceId = HttpService:GenerateGUID(false),
+                CollectedAt = os.time(),
+                Source = "ForgottenCaveCache",
+            })
             profile.CompletedQuests.forgotten_cave_cache = true
             player:SetAttribute("Starshard", profile.Materials.Starshard)
+            player:SetAttribute("EggCount", #profile.EggInventory)
             player:SetAttribute("ForgottenCaveCacheOpened", true)
-            player:SetAttribute("LastNotice", "Сокровищница открыта! +3 звёздных осколка · +600 монет · +300 опыта.")
+            player:SetAttribute("LastNotice", "Сокровищница открыта! Особое яйцо пещеры · +3 звёздных осколка · +600 монет · +300 опыта.")
             EconomyService:GrantCoins(player, 600, "Сокровищница забытого сердца")
             ProgressionService:AddXP(player, 300)
         end, "Сокровищница не открылась. Попробуй ещё раз.")
