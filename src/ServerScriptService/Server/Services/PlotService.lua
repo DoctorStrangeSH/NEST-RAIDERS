@@ -621,28 +621,58 @@ function PlotService:Init()
     local island = world and world:FindFirstChild("StarterIsland")
     if not island then
         warn("[NEST RAIDERS] StarterIsland missing; plot assignment disabled.")
-        return
+        return false, "StarterIsland missing"
     end
 
-    local folder = Instance.new("Folder")
-    folder.Name = "PlayerPlots"
-    folder.Parent = island
+    -- Keep the expected folder present even if an individual plot fails to
+    -- build; diagnostics can then report the exact number of successful plots.
+    local folder = island:FindFirstChild("PlayerPlots")
+    if not folder then
+        folder = Instance.new("Folder")
+        folder.Name = "PlayerPlots"
+        folder.Parent = island
+    end
 
+    local created = 0
     for _, definition in ipairs(PLOT_DEFINITIONS) do
-        local model, station, ownerLabel = buildPlot(folder, definition)
-        self._plots[definition.Id] = {
-            Id = definition.Id,
-            Model = model,
-            Station = station,
-            BreedingStation = model:FindFirstChild("BreedingStation"),
-            OwnerLabel = ownerLabel,
-            Center = definition.Position,
-        }
+        local existing = folder:FindFirstChild(definition.Id)
+        if existing and existing:IsA("Model") then
+            local station = existing:FindFirstChild("HatchStation")
+            local label = existing:FindFirstChild("OwnerSign")
+                and existing.OwnerSign:FindFirstChildWhichIsA("SurfaceGui")
+                and existing.OwnerSign:FindFirstChildWhichIsA("SurfaceGui"):FindFirstChildWhichIsA("TextLabel")
+            self._plots[definition.Id] = {
+                Id = definition.Id, Model = existing, Station = station,
+                BreedingStation = existing:FindFirstChild("BreedingStation"),
+                OwnerLabel = label, Center = definition.Position,
+            }
+            created += 1
+        else
+            local ok, model, station, ownerLabel = pcall(buildPlot, folder, definition)
+            if ok and model and station then
+                self._plots[definition.Id] = {
+                    Id = definition.Id, Model = model, Station = station,
+                    BreedingStation = model:FindFirstChild("BreedingStation"),
+                    OwnerLabel = ownerLabel, Center = definition.Position,
+                }
+                created += 1
+            else
+                warn("[NEST RAIDERS] Plot build failed for " .. definition.Id .. ": " .. tostring(model))
+            end
+        end
+    end
+
+    self._initialized = created == #PLOT_DEFINITIONS
+    folder:SetAttribute("CreatedCount", created)
+    folder:SetAttribute("ExpectedCount", #PLOT_DEFINITIONS)
+    if not self._initialized then
+        warn(string.format("[NEST RAIDERS] Only %d/%d player plots were created.", created, #PLOT_DEFINITIONS))
     end
 
     Players.PlayerAdded:Connect(function(player) self:BindPlayer(player) end)
     Players.PlayerRemoving:Connect(function(player) self:ReleasePlot(player) end)
     for _, player in ipairs(Players:GetPlayers()) do self:BindPlayer(player) end
+    return self._initialized, created
 end
 
 return PlotService
