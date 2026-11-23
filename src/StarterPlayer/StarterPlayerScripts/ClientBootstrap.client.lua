@@ -3668,11 +3668,17 @@ local function updateBiomeTrialPanel()
         tonumber(player:GetAttribute("WhisperingGroveRuneProgress")) or 0, 0, 4) or 0
     local groveCacheOpened = isAncient and player:GetAttribute("WhisperingGroveCacheOpened") == true
     local showGroveSecret = isAncient and (groveRuneProgress > 0 or groveCacheOpened)
+    local caveCrystalProgress = isAncient and math.clamp(
+        tonumber(player:GetAttribute("ForgottenCaveCrystalProgress")) or 0, 0, 3) or 0
+    local caveCacheOpened = isAncient and player:GetAttribute("ForgottenCaveCacheOpened") == true
+    local showCaveSecret = isAncient and (caveCrystalProgress > 0 or caveCacheOpened)
 
     trialPanel.Position = (isEmber or isCrystal) and UDim2.new(1, -12, 0, 286)
         or (isAncient and UDim2.new(1, -12, 0, 196) or UDim2.new(1, -12, 0, 184))
+    local secretRows = (showGroveSecret and 1 or 0) + (showCaveSecret and 1 or 0)
     trialPanel.Size = UDim2.fromOffset(236,
-        showGroveSecret and 158 or (((isEmber or isCrystal) or ancientBossActive) and 142 or 112))
+        secretRows > 0 and (142 + secretRows * 20)
+            or (((isEmber or isCrystal) or ancientBossActive) and 142 or 112))
     trialPanel.BackgroundColor3 = isAncient and Color3.fromRGB(42, 61, 43)
         or (isCrystal and Color3.fromRGB(48, 39, 76)
         or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51)))
@@ -3705,6 +3711,11 @@ local function updateBiomeTrialPanel()
             trialDescription.Text ..= groveCacheOpened
                 and "\n\nСЕКРЕТ РОЩИ: ТАЙНИК ОТКРЫТ"
                 or string.format("\n\nСЕКРЕТ РОЩИ: РУНЫ %d / 4", groveRuneProgress)
+        end
+        if showCaveSecret then
+            trialDescription.Text ..= caveCacheOpened
+                and "\nСЕРДЦЕ ПЕЩЕРЫ: СОКРОВИЩЕ НАЙДЕНО"
+                or string.format("\nПЕЩЕРА: КРИСТАЛЛЫ %d / 3", caveCrystalProgress)
         end
         bossBarBack.Visible = ancientBossActive
         bossStatus.Visible = count >= 3 and completed
@@ -3790,6 +3801,7 @@ for _, attribute in ipairs({
     "AncientTempleBossHealth", "AncientTempleBossCompleted", "AncientTempleBossWindup",
     "AncientTempleBossAttackType", "AncientTempleBossPhase",
     "WhisperingGroveRuneProgress", "WhisperingGroveCacheOpened",
+    "ForgottenCaveCrystalProgress", "ForgottenCaveCacheOpened",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
