@@ -51,8 +51,8 @@ local function buildPlot(parent, definition)
 
     local prompt = Instance.new("ProximityPrompt")
     prompt.Name = "HatchPrompt"
-    prompt.ActionText = "Hatch Egg"
-    prompt.ObjectText = "Personal Nest"
+    prompt.ActionText = "Вылупить"
+    prompt.ObjectText = "Твоё гнездо"
     prompt.KeyboardKeyCode = Enum.KeyCode.E
     prompt.HoldDuration = 0.5
     prompt.MaxActivationDistance = 12
@@ -111,7 +111,7 @@ local function buildPlot(parent, definition)
         player:SetAttribute("LastNotice", "Алтарь готов. Открой коллекцию и выбери двух взрослых питомцев для разведения.")
     end)
 
-    local sign = makePart(plot, "OwnerSign", Vector3.new(1, 5, 9), CFrame.new(center + Vector3.new(0, 4, -14)), Color3.fromRGB(105, 72, 47), Enum.Material.Wood)
+    local sign = makePart(plot, "OwnerSign", Vector3.new(9, 5, 1), CFrame.new(center + Vector3.new(0, 4, -14)), Color3.fromRGB(105, 72, 47), Enum.Material.Wood)
     local surface = Instance.new("SurfaceGui")
     surface.Face = Enum.NormalId.Front
     surface.Parent = sign
