@@ -626,6 +626,7 @@ hallButton.Parent = gui
 addCorner(hallButton, 12)
 addStroke(hallButton, Color3.fromRGB(171, 184, 230), 1.5)
 
+local materialsPanel
 local materialsButton = Instance.new("TextButton")
 materialsButton.Name = "MaterialsInventoryButton"
 materialsButton.Position = UDim2.fromOffset(18, 644)
@@ -1251,7 +1252,7 @@ emptyLabel.Visible = false
 emptyLabel.Parent = list
 
 -- Unified saved-material inventory: one source of truth for all gathered biome resources.
-local materialsPanel = Instance.new("Frame")
+materialsPanel = Instance.new("Frame")
 materialsPanel.Name = "MaterialsInventoryPanel"
 materialsPanel.AnchorPoint = Vector2.new(0.5, 0.5)
 materialsPanel.Position = UDim2.fromScale(0.5, 0.5)
