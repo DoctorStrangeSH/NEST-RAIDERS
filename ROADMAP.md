@@ -629,3 +629,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add world health checks and static regression coverage for the workshop, recipe, costs, capacity and validation.
 - [ ] Roblox Studio runtime: verify exact costs, insufficient-resource rejection, full-bag rejection, hatch result/odds, rejoin persistence, and two-player isolation.
 - [ ] Balance Elderwood gathering and Ancient Egg recipe cost after playtesting.
+
+
+### Sprint 4.29 — Ancient Tree Temple (2026-11-23)
+- [x] Add a separate floating temple platform and a walkable stone causeway from the Ancient Heights garden.
+- [x] Build a readable temple courtyard with pillars, canopy, entrance inscription, and a rune clue.
+- [x] Add the Root → River → Dawn rune puzzle with per-player persistent progress and wrong-order reset.
+- [x] Add a treasure chest that validates puzzle completion and awards each player only once.
+- [x] Reward +500 coins, +300 XP, and +20 Elderwood from the temple treasure.
+- [x] Add a responsive objective HUD for rune progress and treasure completion.
+- [x] Extend profile defaults, world health checks, and static regression coverage.
+- [ ] Roblox Studio: test causeway traversal, collision, roof clearance, rune order/reset, solo/multiplayer isolation, one-time rewards, and rejoin persistence.
+- [ ] Add temple boss encounter and unique boss-exclusive companion in the next slice.
