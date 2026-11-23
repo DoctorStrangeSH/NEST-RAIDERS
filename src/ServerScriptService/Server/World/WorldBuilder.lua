@@ -711,6 +711,128 @@ function WorldBuilder:Build()
     emberText.Font = Enum.Font.GothamBlack
     emberText.Parent = emberGui
 
+
+    -- Heart of Fire trial arena: a raised basalt platform, three runes and a visible guardian.
+    local trial = Instance.new("Folder")
+    trial.Name = "HeartOfFireTrial"
+    trial.Parent = ember
+
+    local stairFolder = Instance.new("Folder")
+    stairFolder.Name = "TrialApproach"
+    stairFolder.Parent = trial
+    for index = 1, 8 do
+        local alpha = (index - 1) / 7
+        local step = part(stairFolder, "BasaltTrialStep_" .. index,
+            Vector3.new(13, 2.2, 12),
+            Vector3.new(-62 + index * 6, 16 + alpha * 24, 1560),
+            Color3.fromRGB(75, 65, 64), Enum.Material.Basalt)
+        step.CFrame *= CFrame.Angles(0, 0, math.rad(-3))
+    end
+
+    local arena = part(trial, "HeartOfFireArena", Vector3.new(76, 3, 76),
+        Vector3.new(0, 40.5, 1560), Color3.fromRGB(76, 60, 57), Enum.Material.Basalt)
+    arena:SetAttribute("TrialArena", true)
+
+    for index = 1, 12 do
+        local angle = (math.pi * 2 * index) / 12
+        local x, z = math.cos(angle) * 39, 1560 + math.sin(angle) * 39
+        local marker = part(trial, "ArenaEmberMarker_" .. index,
+            Vector3.new(2.2, 5, 2.2), Vector3.new(x, 44.2, z),
+            Color3.fromRGB(255, 115, 54), Enum.Material.Neon, Enum.PartType.Ball)
+        marker.CanCollide = false
+        if index % 2 == 0 then
+            local markerLight = Instance.new("PointLight")
+            markerLight.Color = marker.Color
+            markerLight.Range = 12
+            markerLight.Brightness = 0.7
+            markerLight.Parent = marker
+        end
+    end
+
+    local runeFolder = Instance.new("Folder")
+    runeFolder.Name = "TrialRunes"
+    runeFolder.Parent = trial
+    local runeDefinitions = {
+        {Id = "Ember", Name = "Руна Углей", Position = Vector3.new(-23, 46, 1540), Color = Color3.fromRGB(255, 167, 79)},
+        {Id = "Cinder", Name = "Руна Пепла", Position = Vector3.new(23, 46, 1540), Color = Color3.fromRGB(255, 105, 66)},
+        {Id = "Inferno", Name = "Руна Пламени", Position = Vector3.new(0, 46, 1587), Color = Color3.fromRGB(255, 218, 112)},
+    }
+    for _, definition in ipairs(runeDefinitions) do
+        local pedestal = part(runeFolder, definition.Id .. "RunePedestal",
+            Vector3.new(8, 3, 8), definition.Position - Vector3.new(0, 3, 0),
+            Color3.fromRGB(59, 49, 49), Enum.Material.Basalt)
+        local rune = part(runeFolder, definition.Id .. "Rune",
+            Vector3.new(3.2, 5.2, 1.4), definition.Position,
+            definition.Color, Enum.Material.Neon, Enum.PartType.Ball)
+        rune.CanCollide = false
+        rune:SetAttribute("RuneId", definition.Id)
+        local runeLight = Instance.new("PointLight")
+        runeLight.Color = definition.Color
+        runeLight.Range = 16
+        runeLight.Brightness = 1.4
+        runeLight.Parent = rune
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "EmberTrialRunePrompt"
+        prompt.ActionText = "Пробудить"
+        prompt.ObjectText = definition.Name
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.7
+        prompt.MaxActivationDistance = 11
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = rune
+        pedestal:SetAttribute("RunePedestal", definition.Id)
+    end
+
+    local guardian = Instance.new("Model")
+    guardian.Name = "HeartOfFireGuardian"
+    guardian.Parent = trial
+    local body = part(guardian, "GuardianCore", Vector3.new(12, 15, 10),
+        Vector3.new(0, 52, 1560), Color3.fromRGB(100, 48, 39), Enum.Material.Basalt, Enum.PartType.Ball)
+    body.CanCollide = false
+    local core = part(guardian, "GuardianFlameCore", Vector3.new(6, 8, 6),
+        Vector3.new(0, 53, 1554), Color3.fromRGB(255, 117, 44), Enum.Material.Neon, Enum.PartType.Ball)
+    core.CanCollide = false
+    local coreLight = Instance.new("PointLight")
+    coreLight.Color = Color3.fromRGB(255, 117, 44)
+    coreLight.Range = 30
+    coreLight.Brightness = 2.5
+    coreLight.Parent = core
+    for side = -1, 1, 2 do
+        local horn = part(guardian, "GuardianHorn_" .. side,
+            Vector3.new(3, 9, 3), Vector3.new(side * 6, 61, 1562),
+            Color3.fromRGB(61, 49, 48), Enum.Material.Basalt, Enum.PartType.Ball)
+        horn.CFrame *= CFrame.Angles(0, 0, math.rad(side * 24))
+        horn.CanCollide = false
+        local arm = part(guardian, "GuardianArm_" .. side,
+            Vector3.new(5, 11, 6), Vector3.new(side * 9, 48, 1560),
+            Color3.fromRGB(78, 48, 43), Enum.Material.Basalt, Enum.PartType.Ball)
+        arm.CanCollide = false
+    end
+    local bossPrompt = Instance.new("ProximityPrompt")
+    bossPrompt.Name = "EmberTrialBossPrompt"
+    bossPrompt.ActionText = "Атаковать"
+    bossPrompt.ObjectText = "Огненный страж"
+    bossPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    bossPrompt.HoldDuration = 0.4
+    bossPrompt.MaxActivationDistance = 12
+    bossPrompt.RequiresLineOfSight = false
+    bossPrompt.Parent = core
+
+    local trialSign = part(trial, "HeartOfFireTrialSign", Vector3.new(26, 9, 1),
+        Vector3.new(0, 48, 1516), Color3.fromRGB(73, 42, 37), Enum.Material.WoodPlanks)
+    local trialGui = Instance.new("SurfaceGui")
+    trialGui.Face = Enum.NormalId.Front
+    trialGui.Parent = trialSign
+    local trialLabel = Instance.new("TextLabel")
+    trialLabel.Size = UDim2.fromScale(1, 1)
+    trialLabel.BackgroundTransparency = 1
+    trialLabel.Text = "ИСПЫТАНИЕ ОГНЕННОГО СЕРДЦА\\nПробуди три руны. Победи стража."
+    trialLabel.TextColor3 = Color3.fromRGB(255, 225, 192)
+    trialLabel.TextScaled = true
+    trialLabel.TextWrapped = true
+    trialLabel.Font = Enum.Font.GothamBlack
+    trialLabel.Parent = trialGui
+
     return world
 end
 
