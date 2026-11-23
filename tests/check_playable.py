@@ -497,6 +497,7 @@ assert 'REWARD_COMPANION_ID = "HeartwoodGuardian"' in ancient_boss
 assert 'HeartwoodGuardian = {' in companion_catalog and 'BossExclusive = true' in companion_catalog
 assert 'Kind = "HeartwoodGuardian"' in companion_service and 'definition.Kind == "HeartwoodGuardian"' in companion_service
 assert 'BossExclusive = definition.BossExclusive == true' in collection_service
+assert 'BossExclusive' in inventory and 'не участвует в разведении' in inventory
 assert 'entry.BossExclusive' in client and 'AncientTempleBossHealth' in client
 assert 'AncientTempleBossPrompt' in world and 'GuardianHeartCore' in world
 assert 'Нет Стража Сердца Древа' in world_health
