@@ -306,3 +306,10 @@
 - Beyond the Ancient Heights welcome sign, follow the four glowing stepping stones to a small hidden ledge.
 - Activate the Elder Heart altar once to receive 250 coins, 150 XP, and 8 Elderwood.
 - The discovery is permanent per player and cannot be farmed by repeating the prompt.
+
+
+## Elderwood Workshop
+- Find the workbench beside the Elder Canopy path in Ancient Heights.
+- Craft one Ancient Egg for 10 Elderwood and 300 coins.
+- The crafted egg enters the regular egg bag; return to your own nest's hatch station to hatch it.
+- Its hatch odds are the same as a wild Ancient Egg: Ancient Stag 55%, Root Sprite 30%, Sky Serpent 15%.
