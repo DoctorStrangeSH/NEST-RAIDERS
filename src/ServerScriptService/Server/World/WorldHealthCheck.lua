@@ -259,6 +259,22 @@ function WorldHealthCheck:Check()
         if not whisperingGrove or not whisperingGrove:FindFirstChild("WhisperingGrovePlatform") then
             fail("Нет тайной площадки Шепчущей рощи")
         end
+        local cacheModel = whisperingGrove and whisperingGrove:FindFirstChild("WhisperingGroveCache")
+        local cacheBase = cacheModel and cacheModel:FindFirstChild("WhisperingGroveCacheBase")
+        local cachePrompt = cacheBase and cacheBase:FindFirstChild("WhisperingGroveCachePrompt")
+        if not cachePrompt or not cachePrompt:IsA("ProximityPrompt") then
+            fail("Нет тайника четырёх рун в Шепчущей роще")
+        end
+        local cacheRuneCount = 0
+        for _, child in ipairs(whisperingGrove and whisperingGrove:GetChildren() or {}) do
+            if child:IsA("BasePart") and child:GetAttribute("GroveCacheRuneId")
+                and child:FindFirstChild("GroveCacheRunePrompt") then
+                cacheRuneCount += 1
+            end
+        end
+        if cacheRuneCount < 4 then
+            fail(string.format("Руны тайника рощи: %d из 4", cacheRuneCount))
+        end
         local elderwoodNodes = ancient:FindFirstChild("ElderwoodNodes")
         local elderwoodCount = 0
         for _, node in ipairs(elderwoodNodes and elderwoodNodes:GetChildren() or {}) do
