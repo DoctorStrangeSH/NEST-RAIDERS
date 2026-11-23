@@ -396,3 +396,13 @@
 - [ ] Confirm a different player can harvest that node independently.
 - [ ] Rejoin and confirm Elderwood balance and node cooldowns persist.
 - [ ] Confirm the panel is hidden outside Ancient Heights and readable on mobile emulation.
+
+
+## Whispering Grove secret discovery — Studio acceptance
+- [ ] Follow the four stepping stones from the Ancient Canopy to the hidden ledge; verify the route is traversable without unintended gaps.
+- [ ] Verify the altar prompt appears only within interaction distance.
+- [ ] Activate the altar as an eligible player; verify exactly +250 coins, +150 XP, and +8 Elderwood.
+- [ ] Rejoin and activate again; verify the reward cannot be claimed twice.
+- [ ] Verify a player outside Ancient Heights, outside prompt range, or without the level/trial unlock receives no reward.
+- [ ] Test two players claiming independently; one player's claim must not consume the other's reward.
+- [ ] Verify platform, stepping stones, pillars, altar, and sign collision/camera readability on desktop and mobile.
