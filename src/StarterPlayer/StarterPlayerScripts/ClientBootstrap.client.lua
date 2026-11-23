@@ -6,6 +6,11 @@ local Workspace = game:GetService("Workspace")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
+-- Stable, bounded camera zoom: prevent accidental infinite zoom in/out.
+player.CameraMode = Enum.CameraMode.Classic
+player.CameraMinZoomDistance = 7
+player.CameraMaxZoomDistance = 24
+
 -- Keep a visible boot diagnostic instead of leaving players in an empty world.
 local bootGui = Instance.new("ScreenGui")
 bootGui.Name = "NestRaidersBootDiagnostic"
@@ -73,6 +78,21 @@ gui.Name = "NestRaidersHUD"
 gui.ResetOnSpawn = false
 gui:SetAttribute("ClientReady", false)
 gui.Parent = playerGui
+
+-- Scale the complete HUD to the available viewport, especially on phones.
+local hudScale = Instance.new("UIScale")
+hudScale.Name = "ResponsiveHudScale"
+hudScale.Parent = gui
+local camera = Workspace.CurrentCamera
+local function updateHudScale()
+    local viewport = camera and camera.ViewportSize or Vector2.new(1280, 720)
+    local scale = math.min(viewport.X / 900, viewport.Y / 620, 1)
+    hudScale.Scale = math.clamp(scale, 0.72, 1)
+end
+updateHudScale()
+if camera then
+    camera:GetPropertyChangedSignal("ViewportSize"):Connect(updateHudScale)
+end
 
 local function addCorner(parent, radius)
     local corner = Instance.new("UICorner")
