@@ -12,11 +12,6 @@ assert 'player.CameraMaxZoomDistance = 24' in client
 assert 'ResponsiveHudScale' in client and 'camera:GetPropertyChangedSignal("ViewportSize")' in client
 assert 'МЕНЮ' in client and '☰  МЕНЮ' not in client
 assert '🪙' not in client, "Avoid unsupported currency emoji glyphs in UI"
-assert 'local collectTween = TweenService:Create(' in eggs
-assert 'collectTween:Play()' in eggs and 'respawnTween:Play()' in eggs
-assert 'CFrame.Angles(0, math.pi, 0)' in companions
-assert '* 3.6' in companions
-assert 'Lerp(target, 0.22)' in companions
 
 server = Path("src/ServerScriptService/Server/Bootstrap.server.lua").read_text()
 watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua").read_text()
@@ -76,7 +71,12 @@ assert 'local function bindPlayer(player)' in companions, "Companion service mus
 assert 'Players.PlayerAdded:Connect(bindPlayer)' in companions
 assert 'player.CharacterAdded:Connect(function()' in companions
 assert 'local spawnRoot = character and character:FindFirstChild("HumanoidRootPart")' in companions
-assert 'pet:PivotTo(spawnRoot.CFrame * CFrame.new(side, -2.2, behind))' in companions
+assert 'pet:PivotTo(spawnRoot.CFrame * CFrame.new(side, -2.2, behind) * CFrame.Angles(0, math.pi, 0))' in companions
+assert 'CFrame.Angles(0, math.pi, 0)' in companions
+assert '* 3.6' in companions
+assert 'Lerp(target, 0.22)' in companions
+assert 'local collectTween = TweenService:Create(' in eggs
+assert 'collectTween:Play()' in eggs and 'respawnTween:Play()' in eggs
 assert companions.index('pet:PivotTo(spawnRoot.CFrame') < companions.index('task.spawn(function()', companions.index('function CompanionService:RefreshPlayer'))
 
 assert 'player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()' in companions
