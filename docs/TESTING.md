@@ -406,3 +406,16 @@
 - [ ] Verify a player outside Ancient Heights, outside prompt range, or without the level/trial unlock receives no reward.
 - [ ] Test two players claiming independently; one player's claim must not consume the other's reward.
 - [ ] Verify platform, stepping stones, pillars, altar, and sign collision/camera readability on desktop and mobile.
+
+
+## Elderwood workshop — Studio acceptance
+- [ ] Travel to Ancient Heights and locate the Elderwood Workshop beside the Elder Canopy path.
+- [ ] Confirm the recipe sign clearly shows 10 Elderwood + 300 coins.
+- [ ] Craft with sufficient materials; verify exactly 10 Elderwood and 300 coins are deducted and EggCount increases by one.
+- [ ] Confirm the crafted egg appears in the normal inventory and can be hatched at the player's own nest.
+- [ ] Confirm the hatch uses the Ancient Egg catalog and 55/30/15 species weights.
+- [ ] With fewer than 10 Elderwood or fewer than 300 coins, verify crafting is rejected and no balance changes.
+- [ ] With 20 eggs in the bag, verify crafting is rejected and no resources are consumed.
+- [ ] Verify players outside Ancient Heights, without the zone unlock, dead, or outside prompt range cannot craft.
+- [ ] Rejoin and verify the crafted egg and remaining resources persist in a private published test.
+- [ ] In a two-player session, verify each player's resources and crafted eggs remain independent.
