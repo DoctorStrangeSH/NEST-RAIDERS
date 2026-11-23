@@ -199,3 +199,7 @@ Ancient Heights now contains a connected side dungeon with a crystal-order puzzl
 
 ### Forgotten Cave companions
 The cave treasure chest grants an exclusive egg with three possible companions: Cave Glimmerbat (65%), Crystal Prowler (25%) and Heart Wisp (10%). Each has a distinct follower model and ability.
+
+
+### Forgotten Heart Guardian
+The cave treasure claim awakens a personal 360-HP boss encounter. Fight through two phases and dodge Crystal Slam, Echo Pulse and Shard Rain. Victory grants the Mythic Forgotten Heart Guardian companion, 1,200 coins, 5 Starshards and 800 XP once per player.
