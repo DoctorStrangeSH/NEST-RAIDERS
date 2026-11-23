@@ -218,6 +218,7 @@ function ForgottenHeartBossService:Init()
             end
             if hit then
                 humanoid:TakeDamage(attack.Damage + (phase == 2 and 5 or 0))
+                player:SetAttribute("ForgottenHeartBossDamagePulse", (player:GetAttribute("ForgottenHeartBossDamagePulse") or 0) + 1)
                 player:SetAttribute("LastNotice", "Кристальная атака задела тебя! Следи за метками на земле.")
             else
                 player:SetAttribute("LastNotice", "Ты уклонился от атаки Хранителя!")
@@ -249,6 +250,7 @@ function ForgottenHeartBossService:Init()
             if self._lastHit[player] and now - self._lastHit[player] < HIT_COOLDOWN then return end
             self._lastHit[player] = now
             progress.ForgottenHeartBossHealth = math.max(0, progress.ForgottenHeartBossHealth - HIT_DAMAGE)
+            player:SetAttribute("ForgottenHeartBossHitPulse", (player:GetAttribute("ForgottenHeartBossHitPulse") or 0) + 1)
             publish(player, profile, progress)
 
             if progress.ForgottenHeartBossHealth <= 0 then
