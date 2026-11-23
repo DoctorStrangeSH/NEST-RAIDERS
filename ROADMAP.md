@@ -613,5 +613,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Replicate the saved Elderwood balance and show a biome-specific HUD panel.
 - [x] Register the harvesting service in server bootstrap and validate all six nodes during world health checks.
 - [x] Add static regression checks for service registration, persistence, validation, world nodes, and HUD.
-- [ ] Roblox Studio runtime: test collection, cooldowns, reconnect persistence, multiplayer isolation, and mobile prompt/HUD readability.
+- [x] Add the hidden Whispering Grove, reached by a four-stone traversal route beyond the welcome sign.
+- [x] Add a server-validated Elder Heart altar with a persistent one-time reward: +250 coins, +150 XP, and +8 Elderwood.
+- [x] Extend world health checks and static regression coverage for the secret route and altar.
+- [ ] Roblox Studio runtime: test gathering, cooldowns, reconnect persistence, multiplayer isolation, secret traversal, one-time reward, and mobile readability.
 - [ ] Add a meaningful Elderwood sink (crafting or unlock) before expanding the resource economy.
