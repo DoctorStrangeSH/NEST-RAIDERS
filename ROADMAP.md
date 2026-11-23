@@ -556,3 +556,16 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add static CI coverage for event phases, surge damage, sanctuary safety, reward persistence, and HUD wiring.
 - [ ] Roblox Studio runtime: verify event cadence, wave visibility/speed, jump/dodge readability, damage, sanctuary safety, multiplayer reward claims, and reconnect persistence.
 - [ ] Tune surge damage, reward lifetime, and mobile HUD layout after playtesting.
+
+
+### Sprint 4.23 — Heart of Fire trial (2026-11-23)
+- [x] Build a raised basalt trial altar above the ambient magma heat volume, with a climbable twelve-step approach.
+- [x] Add three unique interactable runes: Ember, Cinder, and Inferno.
+- [x] Persist rune progress and individual guardian health in the player profile.
+- [x] Add the visible Heart of Fire Guardian and server-validated strike interaction.
+- [x] Add a telegraphed guardian counterattack; players can dodge by leaving its attack radius before impact.
+- [x] Award +250 XP once after defeating the guardian and complete ember_trial, satisfying the existing level-35 Crystal Realm gate.
+- [x] Add a Russian trial HUD with rune progress, guardian health, and dodge warning.
+- [x] Extend world health diagnostics and static CI regression coverage.
+- [ ] Roblox Studio runtime: test approach collision, rune interactions, solo/multiplayer encounter isolation, guardian attack/dodge timing, profile persistence, and one-time reward.
+- [ ] Tune boss health/damage, attack telegraph, and mobile HUD after Studio playtest.
