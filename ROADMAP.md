@@ -653,3 +653,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add boss health / attack warning HUD and extend world health checks and static regression coverage.
 - [ ] Roblox Studio: verify solo/multiplayer health isolation, alternating attack cadence, dodge radii, damage, death/respawn, rejoin persistence, unique companion ownership, follower appearance, and collection-book label.
 - [ ] Tune boss HP, attack timing, damage and companion income after live playtesting.
+
+
+### Sprint 4.31 — Heartwood Guardian: phase two & trophy (2026-11-23)
+- [x] Add a phase-two threshold at 50% boss health, tracked independently per player.
+- [x] Add the Thorn Burst attack to phase two (22 damage, 32-stud radius, 2-second warning).
+- [x] Add local-only core pulse, color shift, light burst and particle telegraphs so each player's boss phase remains private.
+- [x] Add a permanent Heartwood Guardian trophy to the player's nest after victory.
+- [x] Extend the trophy display with a dedicated Ancient Temple style and label.
+- [x] Extend world health checks and static regression coverage for phase two, particles and trophy display.
+- [ ] Roblox Studio: verify phase switch exactly at 120 HP, all three attack patterns, visual effects, trophy persistence, nest display after rejoin and two-player isolation.
+- [ ] Tune phase-two attack cadence and visual intensity after playtesting.
