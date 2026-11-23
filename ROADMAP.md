@@ -765,4 +765,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend static regression checks for warning colors, damage numbers and health-bar animation.
 - [ ] Roblox Studio: verify warning colors remain distinguishable in cave lighting and for color-vision accessibility.
 - [ ] Verify floating damage numbers remain readable on mobile and do not obscure the boss prompt.
-- [ ] Confirm health bar tweening remains smooth through phase transition and final hit.
+- [ ] Confirm health bar tweening remains smooth through phase transition and final hit.\n\n### Sprint 4.40 — Unified material inventory (2026-11-23)
+
+- [x] Add one Russian-language material inventory reachable from the main feature menu.
+- [x] Show Elderwood, Moonpetal, Starshard, Crystal Shards, and Ash Crystals in one responsive panel with source descriptions and live balances.
+- [x] Publish saved Elderwood, Moonpetal, and Starshard balances during profile load so returning players see their resources before visiting the biome that awards them.
+- [x] Keep existing biome HUDs and server-authoritative gathering/reward logic unchanged.
+- [x] Add CI static regression checks for menu access, all five balances, profile publication, and modal close behavior.
+- [ ] Roblox Studio: verify all five saved balances appear after profile load and update immediately after gathering/rewards.
+- [ ] Verify panel opens/closes from the feature menu, is exclusive with other modals, and remains readable on 375px mobile and desktop.
+- [ ] Rejoin a private published test experience and confirm Moonpetal, Starshard, and Elderwood values persist.
+
+**Scope note:** This is a unified read-only inventory view; it does not add new resource sources, sinks, or alter economy balance.\n
