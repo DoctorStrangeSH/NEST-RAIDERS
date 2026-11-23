@@ -253,6 +253,9 @@ function WorldHealthCheck:Check()
         local caveClue = forgottenCave and forgottenCave:FindFirstChild("ForgottenCaveClue")
         if not caveBridge or not caveFloor then fail("Нет моста или пола пещеры забытого сердца") end
         if not caveClue then fail("Нет подсказки к кристаллам пещеры") end
+        if not forgottenCave or not forgottenCave:FindFirstChild("ForgottenCaveEggOddsSign") then
+            fail("Нет таблицы вероятностей яйца забытого сердца")
+        end
         local caveCrystalCount = 0
         for _, child in ipairs(forgottenCave and forgottenCave:GetChildren() or {}) do
             if child:IsA("BasePart") and child:GetAttribute("CaveCrystalId")
