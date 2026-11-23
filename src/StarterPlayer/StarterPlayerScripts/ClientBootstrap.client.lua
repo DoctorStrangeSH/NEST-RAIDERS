@@ -3551,6 +3551,86 @@ guideText.TextXAlignment = Enum.TextXAlignment.Left
 guideText.TextYAlignment = Enum.TextYAlignment.Center
 guideText.Parent = guide
 
+-- The Emerald trial stays visible while exploring the second biome.
+local trialPanel = Instance.new("Frame")
+trialPanel.Name = "EmeraldTrialPanel"
+trialPanel.AnchorPoint = Vector2.new(1, 0)
+trialPanel.Position = UDim2.new(1, -12, 0, 184)
+trialPanel.Size = UDim2.fromOffset(236, 112)
+trialPanel.BackgroundColor3 = Color3.fromRGB(30, 57, 51)
+trialPanel.BackgroundTransparency = 0.04
+trialPanel.BorderSizePixel = 0
+trialPanel.Visible = false
+trialPanel.Parent = gui
+addCorner(trialPanel, 13)
+addStroke(trialPanel, Color3.fromRGB(117, 225, 159), 1.5)
+
+local trialTitle = Instance.new("TextLabel")
+trialTitle.Position = UDim2.fromOffset(12, 8)
+trialTitle.Size = UDim2.new(1, -24, 0, 22)
+trialTitle.BackgroundTransparency = 1
+trialTitle.Font = Enum.Font.GothamBlack
+trialTitle.TextSize = 13
+trialTitle.TextColor3 = Color3.fromRGB(188, 255, 202)
+trialTitle.TextXAlignment = Enum.TextXAlignment.Left
+trialTitle.Text = "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ"
+trialTitle.Parent = trialPanel
+
+local trialDescription = Instance.new("TextLabel")
+trialDescription.Position = UDim2.fromOffset(12, 33)
+trialDescription.Size = UDim2.new(1, -24, 0, 38)
+trialDescription.BackgroundTransparency = 1
+trialDescription.Font = Enum.Font.GothamMedium
+trialDescription.TextSize = 12
+trialDescription.TextWrapped = true
+trialDescription.TextYAlignment = Enum.TextYAlignment.Top
+trialDescription.TextXAlignment = Enum.TextXAlignment.Left
+trialDescription.TextColor3 = Color3.fromRGB(235, 245, 226)
+trialDescription.Parent = trialPanel
+
+local trialBarBack = Instance.new("Frame")
+trialBarBack.Position = UDim2.fromOffset(12, 80)
+trialBarBack.Size = UDim2.new(1, -24, 0, 9)
+trialBarBack.BackgroundColor3 = Color3.fromRGB(18, 37, 34)
+trialBarBack.BorderSizePixel = 0
+trialBarBack.Parent = trialPanel
+addCorner(trialBarBack, 5)
+
+local trialBarFill = Instance.new("Frame")
+trialBarFill.Size = UDim2.fromScale(0, 1)
+trialBarFill.BackgroundColor3 = Color3.fromRGB(115, 235, 154)
+trialBarFill.BorderSizePixel = 0
+trialBarFill.Parent = trialBarBack
+addCorner(trialBarFill, 5)
+
+local trialStatus = Instance.new("TextLabel")
+trialStatus.Position = UDim2.fromOffset(12, 92)
+trialStatus.Size = UDim2.new(1, -24, 0, 14)
+trialStatus.BackgroundTransparency = 1
+trialStatus.Font = Enum.Font.GothamBold
+trialStatus.TextSize = 10
+trialStatus.TextColor3 = Color3.fromRGB(186, 226, 196)
+trialStatus.TextXAlignment = Enum.TextXAlignment.Right
+trialStatus.Parent = trialPanel
+
+local function updateEmeraldTrialPanel()
+    local inEmerald = player:GetAttribute("CurrentBiome") == "EmeraldWilds"
+    trialPanel.Visible = inEmerald
+    if not inEmerald then return end
+    local count = math.clamp(tonumber(player:GetAttribute("EmeraldTrialProgress")) or 0, 0, 3)
+    local completed = player:GetAttribute("EmeraldTrialCompleted") == true
+    trialDescription.Text = completed
+        and "Древняя роща признала тебя. Испытание завершено!"
+        or "Найди три светящиеся руны и активируй каждую."
+    trialBarFill.Size = UDim2.fromScale(count / 3, 1)
+    trialStatus.Text = completed and "ИСПЫТАНИЕ ПРОЙДЕНО" or string.format("ПРОБУЖДЕНО РУН: %d / 3", count)
+end
+
+for _, attribute in ipairs({"CurrentBiome", "EmeraldTrialProgress", "EmeraldTrialCompleted"}) do
+    player:GetAttributeChangedSignal(attribute):Connect(updateEmeraldTrialPanel)
+end
+updateEmeraldTrialPanel()
+
 local guideHighlight = Instance.new("Highlight")
 guideHighlight.Name = "FirstPlayTarget"
 guideHighlight.FillColor = Color3.fromRGB(255, 216, 129)
