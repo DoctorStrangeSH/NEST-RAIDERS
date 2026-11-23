@@ -369,3 +369,7 @@ Watch the Guardian's arms to read each attack: both arms rise before Crystal Sla
 
 ## Combat feedback
 A successful strike makes the Guardian recoil and flash with crystal sparks. A boss hit triggers a brief red screen flash and stronger camera shake; a successful dodge does not. These are local visual cues, while all combat outcomes remain server-authoritative.
+
+
+## Combat readability
+Each boss attack has its own warning color: cyan for Crystal Slam, violet for Echo Pulse and pink for Shard Rain. The health bar eases smoothly to the current value, and successful hits show floating damage numbers.
