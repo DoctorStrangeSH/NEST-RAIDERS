@@ -88,6 +88,11 @@ function ProgressionService:Init()
                         player:SetAttribute("LastNotice", "Эти руны откликаются только в Изумрудном лесу.")
                         return
                     end
+                    local character = player.Character
+                    local root = character and character:FindFirstChild("HumanoidRootPart")
+                    if not root or (root.Position - descendant.Parent.Position).Magnitude > descendant.MaxActivationDistance + 2 then
+                        return
+                    end
                     local profile = PlayerDataService:GetProfile(player)
                     if not profile then
                         player:SetAttribute("LastNotice", "Сохранение ещё загружается. Попробуй немного позже.")
@@ -145,6 +150,9 @@ function ProgressionService:Init()
                     local root = character and character:FindFirstChild("HumanoidRootPart")
                     if not root then
                         player:SetAttribute("LastNotice", "Персонаж ещё загружается. Попробуй снова.")
+                        return
+                    end
+                    if (root.Position - descendant.Parent.Position).Magnitude > descendant.MaxActivationDistance + 2 then
                         return
                     end
                     character:PivotTo(CFrame.new(destination + Vector3.new(0, 4, 0)))
