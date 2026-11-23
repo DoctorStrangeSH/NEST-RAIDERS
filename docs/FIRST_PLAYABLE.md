@@ -345,3 +345,7 @@
 
 ## Whispering Grove hidden cache
 Explore the stepping stones beyond the Elder Heart altar. Four rune pads conceal a second treasure. Read the sequence from the grove's clue: Moon → Leaf → Dew → Star. An incorrect touch resets your personal sequence. The hidden cache grants Moonpetals, coins and XP once per player.
+
+
+## Forgotten Heart Cave
+A stone bridge leads from Ancient Heights to a hidden cave. Inside, read the clue and awaken three crystals in order: Root → River → Dawn. A wrong activation resets your personal sequence. The treasure chamber awards Starshards, coins and XP once per player.
