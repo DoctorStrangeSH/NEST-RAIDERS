@@ -211,3 +211,7 @@ The Forgotten Heart arena now has eight breakable crystal clusters, local attack
 
 ### Combat feedback
 Guardian strikes now trigger local hit reactions, core flashes and crystal sparks. Taking damage triggers a red-screen flash and camera shake; combat outcomes remain server-authoritative.
+
+
+### Combat readability
+Boss attacks now have distinct warning colors, a smoothly animated health bar and floating damage numbers based on actual health changes.
