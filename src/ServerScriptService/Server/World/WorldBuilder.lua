@@ -865,7 +865,7 @@ function WorldBuilder:Build()
         local spire = part(crystal, "RoyalCrystalSpire_" .. index,
             Vector3.new(8 + (index % 2) * 3, height, 8 + (index % 2) * 3),
             position + Vector3.new(0, height / 2, 0), crystalPalette[(index - 1) % #crystalPalette + 1],
-            Enum.Material.Neon, Enum.PartType.Crystal)
+            Enum.Material.Neon, Enum.PartType.Block)
         spire.CFrame *= CFrame.Angles(math.rad((index % 3 - 1) * 9), math.rad(index * 19), math.rad((index % 2 == 0) and 8 or -8))
         spire.CanCollide = false
         local light = Instance.new("PointLight")
