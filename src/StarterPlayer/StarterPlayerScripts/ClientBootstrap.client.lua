@@ -626,6 +626,19 @@ hallButton.Parent = gui
 addCorner(hallButton, 12)
 addStroke(hallButton, Color3.fromRGB(171, 184, 230), 1.5)
 
+local materialsButton = Instance.new("TextButton")
+materialsButton.Name = "MaterialsInventoryButton"
+materialsButton.Position = UDim2.fromOffset(18, 644)
+materialsButton.Size = UDim2.fromOffset(250, 42)
+materialsButton.BackgroundColor3 = Color3.fromRGB(91, 112, 145)
+materialsButton.Text = "МОИ МАТЕРИАЛЫ"
+materialsButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+materialsButton.TextSize = 13
+materialsButton.Font = Enum.Font.GothamBlack
+materialsButton.Parent = gui
+addCorner(materialsButton, 12)
+addStroke(materialsButton, Color3.fromRGB(176, 202, 239), 1.5)
+
 local profileButton = Instance.new("TextButton")
 profileButton.Name = "MyPublicProfileButton"
 profileButton.Position = UDim2.fromOffset(18, 692)
@@ -643,7 +656,7 @@ addStroke(profileButton, Color3.fromRGB(160, 220, 192), 1.5)
 -- Previously the last buttons were fixed at Y=692 and disappeared off small screens.
 local menuButtons = {
     inventoryButton, shopButton, collectionButton, nestButton, displayButton,
-    decorButton, buildButton, visitButton, contestButton, hallButton, profileButton,
+    decorButton, buildButton, visitButton, contestButton, hallButton, materialsButton, profileButton,
 }
 local navToggle = Instance.new("TextButton")
 navToggle.Name = "MenuToggle"
@@ -1237,11 +1250,136 @@ emptyLabel.TextWrapped = true
 emptyLabel.Visible = false
 emptyLabel.Parent = list
 
+-- Unified saved-material inventory: one source of truth for all gathered biome resources.
+local materialsPanel = Instance.new("Frame")
+materialsPanel.Name = "MaterialsInventoryPanel"
+materialsPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+materialsPanel.Position = UDim2.fromScale(0.5, 0.5)
+materialsPanel.Size = UDim2.new(0.88, 0, 0.66, 0)
+materialsPanel.BackgroundColor3 = Color3.fromRGB(27, 39, 58)
+materialsPanel.BorderSizePixel = 0
+materialsPanel.Visible = false
+materialsPanel.Parent = gui
+addCorner(materialsPanel, 18)
+addStroke(materialsPanel, Color3.fromRGB(176, 202, 239), 2)
+local materialsSize = Instance.new("UISizeConstraint")
+materialsSize.MinSize = Vector2.new(290, 320)
+materialsSize.MaxSize = Vector2.new(500, 430)
+materialsSize.Parent = materialsPanel
+
+local materialsTitle = Instance.new("TextLabel")
+materialsTitle.BackgroundTransparency = 1
+materialsTitle.Position = UDim2.fromOffset(18, 14)
+materialsTitle.Size = UDim2.new(1, -76, 0, 30)
+materialsTitle.Font = Enum.Font.GothamBlack
+materialsTitle.Text = "МОИ МАТЕРИАЛЫ"
+materialsTitle.TextColor3 = Color3.fromRGB(238, 245, 255)
+materialsTitle.TextSize = 18
+materialsTitle.TextXAlignment = Enum.TextXAlignment.Left
+materialsTitle.Parent = materialsPanel
+
+local materialsClose = Instance.new("TextButton")
+materialsClose.Position = UDim2.new(1, -48, 0, 10)
+materialsClose.Size = UDim2.fromOffset(36, 36)
+materialsClose.BackgroundColor3 = Color3.fromRGB(143, 68, 68)
+materialsClose.Text = "×"
+materialsClose.TextColor3 = Color3.fromRGB(255, 255, 255)
+materialsClose.TextSize = 24
+materialsClose.Font = Enum.Font.GothamBold
+materialsClose.Parent = materialsPanel
+addCorner(materialsClose, 10)
+
+local materialsHint = Instance.new("TextLabel")
+materialsHint.BackgroundTransparency = 1
+materialsHint.Position = UDim2.fromOffset(18, 48)
+materialsHint.Size = UDim2.new(1, -36, 0, 34)
+materialsHint.Font = Enum.Font.Gotham
+materialsHint.Text = "Ресурсы сохраняются в профиле и используются для рецептов и открытий."
+materialsHint.TextColor3 = Color3.fromRGB(177, 197, 218)
+materialsHint.TextSize = 11
+materialsHint.TextWrapped = true
+materialsHint.TextXAlignment = Enum.TextXAlignment.Left
+materialsHint.Parent = materialsPanel
+
+local materialsList = Instance.new("Frame")
+materialsList.BackgroundTransparency = 1
+materialsList.Position = UDim2.fromOffset(14, 88)
+materialsList.Size = UDim2.new(1, -28, 1, -102)
+materialsList.Parent = materialsPanel
+local materialsLayout = Instance.new("UIListLayout")
+materialsLayout.Padding = UDim.new(0, 7)
+materialsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+materialsLayout.Parent = materialsList
+
+local materialRows = {}
+local materialDefinitions = {
+    { Id = "Elderwood", Attribute = "Elderwood", Name = "Древесная эссенция", Detail = "Древние корни и мастерская", Color = Color3.fromRGB(173, 218, 145) },
+    { Id = "Moonpetal", Attribute = "Moonpetal", Name = "Лунные лепестки", Detail = "Секретные тайники Шепчущей рощи", Color = Color3.fromRGB(211, 186, 255) },
+    { Id = "Starshard", Attribute = "Starshard", Name = "Звёздные осколки", Detail = "Сокровища и испытания Пещеры", Color = Color3.fromRGB(255, 218, 143) },
+    { Id = "CrystalShard", Attribute = "CrystalShards", Name = "Кристальные осколки", Detail = "Жилы Хрустального королевства", Color = Color3.fromRGB(151, 222, 255) },
+    { Id = "AshCrystal", Attribute = "AshCrystals", Name = "Пепельные кристаллы", Detail = "Последствия извержений Эмберлендс", Color = Color3.fromRGB(255, 177, 126) },
+}
+for index, definition in ipairs(materialDefinitions) do
+    local row = Instance.new("Frame")
+    row.Name = definition.Id .. "MaterialRow"
+    row.LayoutOrder = index
+    row.Size = UDim2.new(1, 0, 0, 48)
+    row.BackgroundColor3 = Color3.fromRGB(39, 55, 75)
+    row.BorderSizePixel = 0
+    row.Parent = materialsList
+    addCorner(row, 10)
+    local name = Instance.new("TextLabel")
+    name.BackgroundTransparency = 1
+    name.Position = UDim2.fromOffset(12, 5)
+    name.Size = UDim2.new(1, -100, 0, 20)
+    name.Font = Enum.Font.GothamBold
+    name.Text = definition.Name
+    name.TextColor3 = definition.Color
+    name.TextSize = 13
+    name.TextXAlignment = Enum.TextXAlignment.Left
+    name.Parent = row
+    local detail = Instance.new("TextLabel")
+    detail.BackgroundTransparency = 1
+    detail.Position = UDim2.fromOffset(12, 26)
+    detail.Size = UDim2.new(1, -100, 0, 15)
+    detail.Font = Enum.Font.Gotham
+    detail.Text = definition.Detail
+    detail.TextColor3 = Color3.fromRGB(174, 191, 211)
+    detail.TextSize = 10
+    detail.TextXAlignment = Enum.TextXAlignment.Left
+    detail.Parent = row
+    local amount = Instance.new("TextLabel")
+    amount.Name = "Amount"
+    amount.BackgroundTransparency = 1
+    amount.AnchorPoint = Vector2.new(1, 0.5)
+    amount.Position = UDim2.new(1, -12, 0.5, 0)
+    amount.Size = UDim2.fromOffset(78, 28)
+    amount.Font = Enum.Font.GothamBlack
+    amount.Text = "0"
+    amount.TextColor3 = Color3.fromRGB(255, 255, 255)
+    amount.TextSize = 19
+    amount.TextXAlignment = Enum.TextXAlignment.Right
+    amount.Parent = row
+    materialRows[definition.Attribute] = amount
+end
+
+local function updateMaterialsInventory()
+    for attribute, label in pairs(materialRows) do
+        label.Text = tostring(math.max(0, math.floor(tonumber(player:GetAttribute(attribute)) or 0)))
+    end
+end
+for _, definition in ipairs(materialDefinitions) do
+    player:GetAttributeChangedSignal(definition.Attribute):Connect(updateMaterialsInventory)
+end
+player:GetAttributeChangedSignal("ProfileLoaded"):Connect(updateMaterialsInventory)
+materialsClose.Activated:Connect(function() materialsPanel.Visible = false end)
+updateMaterialsInventory()
+
 -- Keep panels mutually exclusive regardless of which gameplay action opens them.
 -- Picker is the sole nested dialog and retains its companion display underneath.
 local modalPanels = {
     shopPanel, nestPanel, displayPanel, buildPanel, visitPanel,
-    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel,
+    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel,
 }
 local closingOtherPanels = false
 local closeAllButton = Instance.new("TextButton")
@@ -2714,6 +2852,9 @@ visitFilterButton.Activated:Connect(function()
     if lastVisitResponse then renderVisitList(lastVisitResponse) end
 end)
 
+materialsButton.Activated:Connect(function()
+    materialsPanel.Visible = not materialsPanel.Visible
+end)
 profileButton.Activated:Connect(function() openPublicProfile(player.UserId) end)
 profileClose.Activated:Connect(function() profilePanel.Visible = false end)
 
