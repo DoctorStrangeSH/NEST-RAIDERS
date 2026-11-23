@@ -88,9 +88,10 @@ local function validPlayer(player, target, prompt)
         and (root.Position - target.Position).Magnitude <= prompt.MaxActivationDistance + 2
 end
 
-local function createWarning(position, radius, color, duration)
+local function createWarning(position, radius, color, duration, targetUserId)
     local marker = Instance.new("Part")
     marker.Name = "ForgottenHeartAttackWarning"
+    marker:SetAttribute("TargetUserId", targetUserId)
     marker.Shape = Enum.PartType.Cylinder
     marker.Size = Vector3.new(0.22, radius * 2, radius * 2)
     marker.CFrame = CFrame.new(position.X, position.Y + 0.22, position.Z) * CFrame.Angles(0, 0, math.rad(90))
@@ -192,7 +193,7 @@ function ForgottenHeartBossService:Init()
             table.insert(markers, targetOnFloor)
         end
         for _, markerPosition in ipairs(markers) do
-            createWarning(markerPosition, attack.Radius, Color3.fromRGB(109, 220, 255), attack.Windup)
+            createWarning(markerPosition, attack.Radius, Color3.fromRGB(109, 220, 255), attack.Windup, player.UserId)
         end
         task.delay(attack.Windup, function()
             self._windups[player] = nil
