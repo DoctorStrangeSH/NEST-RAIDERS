@@ -230,7 +230,7 @@
 - Frost Highlands is the third explorable island, reached from Emerald Wilds through a portal gated by level 12 and the completed Emerald Grove trial.
 - The island includes a snowfield, pine grove, luminous glacier crystals, three Frost Egg spawn points, three trial rune shrines, and a return portal to Emerald Wilds. A nine-section walkable ice causeway physically connects the island to Emerald Wilds; portals are optional fast travel.
 - The Frost Egg uses its own disclosed hatch table: Frost Fox 60%, Snow Owl 30%, Glacier Bear 10%. The same odds are printed on an in-world sign beside the egg grove.
-- The three new species have dedicated companion catalog entries and distinct low-poly fox, owl, and bear follower/display models.
+- The three new species have dedicated companion catalog entries and distinct low-poly fox, owl, and bear follower/display models. At companion level 7, Frost Fox finds a coin cache, Snow Owl grants XP, and Glacier Bear stores coins in the nest.
 - Activate the Aurora, Glacier, and Winter runes to complete the Heart of Winter trial and receive 180 XP. Rune progress and completion are stored in the player profile.
 - Completing the Frost trial satisfies the configured quest requirement for Emberlands; the next zone still requires level 22.
 - World egg collection now checks that the player is in the matching unlocked biome; prompts cannot be used remotely from another island.
