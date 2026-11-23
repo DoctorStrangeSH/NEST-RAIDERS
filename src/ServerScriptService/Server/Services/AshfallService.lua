@@ -123,11 +123,12 @@ local function spawnAshCrystals(eventFolder, eventId)
             end
             materials.AshfallClaimedNodes = type(materials.AshfallClaimedNodes) == "table"
                 and materials.AshfallClaimedNodes or {}
-            if materials.AshfallClaimedNodes[index] == true then
+            local nodeKey = tostring(index)
+            if materials.AshfallClaimedNodes[nodeKey] == true then
                 player:SetAttribute("LastNotice", "Ты уже подобрал этот кристалл после извержения.")
                 return
             end
-            materials.AshfallClaimedNodes[index] = true
+            materials.AshfallClaimedNodes[nodeKey] = true
             materials.AshCrystal = math.max(0, math.floor(tonumber(materials.AshCrystal) or 0)) + REWARD_AMOUNT
             player:SetAttribute("AshCrystals", materials.AshCrystal)
             player:SetAttribute("LastNotice", "Получен пепельный кристалл! Всего: " .. materials.AshCrystal)
