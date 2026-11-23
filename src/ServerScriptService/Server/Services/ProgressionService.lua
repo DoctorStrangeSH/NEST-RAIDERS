@@ -82,6 +82,47 @@ function ProgressionService:Init()
     local world = workspace:WaitForChild("NestRaidersWorld", 30)
     if world then
         for _, descendant in ipairs(world:GetDescendants()) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "EmeraldRunePrompt" then
+                descendant.Triggered:Connect(function(player)
+                    if player:GetAttribute("CurrentBiome") ~= "EmeraldWilds" then
+                        player:SetAttribute("LastNotice", "Эти руны откликаются только в Изумрудном лесу.")
+                        return
+                    end
+                    local profile = PlayerDataService:GetProfile(player)
+                    if not profile then
+                        player:SetAttribute("LastNotice", "Сохранение ещё загружается. Попробуй немного позже.")
+                        return
+                    end
+                    local runeId = descendant.Parent:GetAttribute("RuneId")
+                    if type(runeId) ~= "string"
+                        or (runeId ~= "Grove" and runeId ~= "River" and runeId ~= "Dawn") then
+                        warn("[NEST RAIDERS] Ignored invalid Emerald trial rune.")
+                        return
+                    end
+                    profile.QuestProgress = type(profile.QuestProgress) == "table" and profile.QuestProgress or {}
+                    profile.QuestProgress.EmeraldTrialRunes = type(profile.QuestProgress.EmeraldTrialRunes) == "table"
+                        and profile.QuestProgress.EmeraldTrialRunes or {}
+                    if profile.QuestProgress.EmeraldTrialRunes[runeId] then
+                        player:SetAttribute("LastNotice", "Эта древняя руна уже пробуждена.")
+                        return
+                    end
+                    profile.QuestProgress.EmeraldTrialRunes[runeId] = true
+                    local runes = profile.QuestProgress.EmeraldTrialRunes
+                    local count = (runes.Grove and 1 or 0) + (runes.River and 1 or 0) + (runes.Dawn and 1 or 0)
+                    player:SetAttribute("EmeraldTrialProgress", count)
+                    if count >= 3 and profile.CompletedQuests.emerald_trial ~= true then
+                        profile.CompletedQuests.emerald_trial = true
+                        player:SetAttribute("EmeraldTrialCompleted", true)
+                        self:AddXP(player, 100)
+                        self:RefreshZoneUnlocks(player)
+                        player:SetAttribute("LastNotice", "Испытание Изумрудной рощи пройдено! Все три руны пробуждены. +100 опыта. Путь к Северным высотам открыт при достижении 12 уровня.")
+                    else
+                        player:SetAttribute("LastNotice", string.format("Древняя руна пробуждена! Испытание: %d / 3", count))
+                    end
+                end)
+            end
+        end
+        for _, descendant in ipairs(world:GetDescendants()) do
             if descendant:IsA("ProximityPrompt") and descendant.Name == "ZoneTravelPrompt" then
                 descendant.Triggered:Connect(function(player)
                     local zoneId = descendant.Parent:GetAttribute("ZoneId")
@@ -124,6 +165,12 @@ function ProgressionService:Init()
             end
             if not player.Parent then return end
             self:RefreshZoneUnlocks(player)
+            local profile = PlayerDataService:GetProfile(player)
+            local runes = profile and profile.QuestProgress and profile.QuestProgress.EmeraldTrialRunes or {}
+            local count = (runes.Grove and 1 or 0) + (runes.River and 1 or 0) + (runes.Dawn and 1 or 0)
+            player:SetAttribute("EmeraldTrialProgress", count)
+            player:SetAttribute("EmeraldTrialCompleted", profile and profile.CompletedQuests.emerald_trial == true or false)
+            player:SetAttribute("CurrentBiome", "StarterIsland")
             player:SetAttribute("ProgressionReady", true)
         end)
     end
