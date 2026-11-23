@@ -413,7 +413,7 @@ function WorldBuilder:Build()
         Vector3.new(-52, 19, 1072), Vector3.new(52, 19, 1072),
     }) do
         local crystal = part(frost, "GlacierCrystal", Vector3.new(5, 13, 5),
-            position, Color3.fromRGB(112, 219, 255), Enum.Material.Neon, Enum.PartType.Crystal)
+            position, Color3.fromRGB(112, 219, 255), Enum.Material.Neon, Enum.PartType.Block)
         crystal.CanCollide = false
         local light = Instance.new("PointLight")
         light.Color = Color3.fromRGB(135, 220, 255)
@@ -456,7 +456,7 @@ function WorldBuilder:Build()
         part(frostRunes, definition.Id .. "RunePedestal", Vector3.new(5, 2, 5),
             definition.Position - Vector3.new(0, 1, 0), Color3.fromRGB(93, 113, 133), Enum.Material.Slate)
         local crystal = part(frostRunes, definition.Id .. "RuneCrystal", Vector3.new(2.2, 4.2, 2.2),
-            definition.Position + Vector3.new(0, 2, 0), definition.Color, Enum.Material.Neon, Enum.PartType.Crystal)
+            definition.Position + Vector3.new(0, 2, 0), definition.Color, Enum.Material.Neon, Enum.PartType.Block)
         crystal.CanCollide = false
         crystal:SetAttribute("RuneId", definition.Id)
         local light = Instance.new("PointLight")
