@@ -18,5 +18,22 @@ local BiomeCatalog = {
             },
         },
     },
+    EmeraldWilds = {
+        Id = "EmeraldWilds",
+        Name = "Изумрудный лес",
+        DefaultEggId = "EmeraldEgg",
+        Eggs = {
+            EmeraldEgg = {
+                Id = "EmeraldEgg",
+                Name = "Яйцо древней рощи",
+                Rarity = "Необычное",
+                SpeciesWeights = {
+                    EmeraldFox = 50,
+                    GlowMoth = 32,
+                    AncientSprout = 18,
+                },
+            },
+        },
+    },
 }
 return BiomeCatalog
