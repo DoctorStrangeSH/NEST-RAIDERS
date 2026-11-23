@@ -378,3 +378,12 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The recipe is charged only after all checks pass.
 - Crafted eggs enter the normal saved egg inventory as AncientEgg / AncientHeights / Crafting and hatch through the player's own nest station.
 - The existing BiomeCatalog remains the single source of truth for Ancient Egg species weights (55/30/15); crafting does not reroll or modify odds.
+
+
+## Ancient Tree Temple — Sprint 4.29
+- A side-island temple in Ancient Heights is connected by a solid stone causeway.
+- The temple contains a three-rune puzzle. The required order is Root → River → Dawn; activating a wrong rune resets only that player's sequence.
+- Rune progress is saved in `QuestProgress.AncientTempleRunes` and is independent for each player.
+- After solving the puzzle, each player can claim the temple chest once. The one-time reward is 500 coins, 300 XP, and 20 Elderwood.
+- The objective HUD displays progress and completion while the player is in Ancient Heights.
+- A dedicated boss encounter and boss-exclusive companion are reserved for the next sprint.
