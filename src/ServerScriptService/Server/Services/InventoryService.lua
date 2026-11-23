@@ -381,6 +381,24 @@ function InventoryService:HandleRequest(player, payload)
                 return { Ok = false, Message = "Не удалось начислить опыт." }
             end
             message = target.Name .. " поделился искрой роста: +" .. reward .. " XP!"
+        elseif ability.Id == "FrostCache" then
+            local reward = 80 + level * 12 + stars * 18
+            if not EconomyService:GrantCoins(player, reward, "Морозный тайник") then
+                return { Ok = false, Message = "Не удалось выдать награду." }
+            end
+            message = target.Name .. " нашёл под снегом тайник: +" .. reward .. " монет!"
+        elseif ability.Id == "AuroraGaze" then
+            local reward = 45 + level * 6 + stars * 12
+            if not ProgressionService:AddXP(player, reward) then
+                return { Ok = false, Message = "Не удалось начислить опыт." }
+            end
+            message = target.Name .. " увидел древнее сияние: +" .. reward .. " XP!"
+        elseif ability.Id == "GlacierGuard" then
+            profile.Nest = type(profile.Nest) == "table" and profile.Nest or {}
+            local reward = 160 + level * 20 + stars * 30
+            local stored = math.max(0, math.floor(tonumber(profile.Nest.StoredCoins) or 0))
+            profile.Nest.StoredCoins = math.min(2_000_000_000, stored + reward)
+            message = target.Name .. " укрепил гнездо: +" .. reward .. " монет в хранилище!"
         else
             return { Ok = false, Message = "Неизвестная способность питомца." }
         end
