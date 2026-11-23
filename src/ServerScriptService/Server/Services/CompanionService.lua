@@ -32,6 +32,24 @@ local DEFINITIONS = {
         Detail = Color3.fromRGB(106, 123, 210),
         Kind = "Dragon",
     },
+    FrostFox = {
+        Body = Color3.fromRGB(166, 218, 242),
+        Accent = Color3.fromRGB(245, 252, 255),
+        Detail = Color3.fromRGB(90, 142, 181),
+        Kind = "Fox",
+    },
+    SnowOwl = {
+        Body = Color3.fromRGB(226, 241, 250),
+        Accent = Color3.fromRGB(116, 183, 218),
+        Detail = Color3.fromRGB(70, 111, 151),
+        Kind = "Owl",
+    },
+    GlacierBear = {
+        Body = Color3.fromRGB(139, 190, 220),
+        Accent = Color3.fromRGB(239, 248, 255),
+        Detail = Color3.fromRGB(75, 119, 157),
+        Kind = "Bear",
+    },
     EmberFox = {
         Body = Color3.fromRGB(224, 105, 55),
         Accent = Color3.fromRGB(255, 190, 93),
@@ -108,6 +126,18 @@ local function buildPet(parent, companion, index)
             makeShape(model, "Foot", Vector3.new(0.65, 0.45, 0.65), Vector3.new(x, 0.55, 0.55), definition.Detail)
             makeShape(model, "Foot", Vector3.new(0.65, 0.45, 0.65), Vector3.new(x, 0.55, -0.55), definition.Detail)
         end
+    elseif definition.Kind == "Owl" then
+        makeShape(model, "Beak", Vector3.new(0.42, 0.55, 0.42), Vector3.new(0, 1.65, 1.25), Color3.fromRGB(255, 193, 93), Enum.PartType.Wedge)
+        makeShape(model, "LeftWing", Vector3.new(0.55, 1.15, 1.25), Vector3.new(-1.05, 1.25, -0.05), definition.Accent)
+        makeShape(model, "RightWing", Vector3.new(0.55, 1.15, 1.25), Vector3.new(1.05, 1.25, -0.05), definition.Accent)
+        makeShape(model, "LeftTuft", Vector3.new(0.38, 0.75, 0.38), Vector3.new(-0.45, 2.55, 0.35), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "RightTuft", Vector3.new(0.38, 0.75, 0.38), Vector3.new(0.45, 2.55, 0.35), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "ChestFeathers", Vector3.new(1.25, 0.9, 0.3), Vector3.new(0, 1.1, 0.95), definition.Accent)
+    elseif definition.Kind == "Bear" then
+        makeShape(model, "Muzzle", Vector3.new(0.85, 0.62, 0.62), Vector3.new(0, 1.58, 1.15), definition.Accent)
+        makeShape(model, "LeftEar", Vector3.new(0.62, 0.62, 0.48), Vector3.new(-0.58, 2.48, 0.45), definition.Detail)
+        makeShape(model, "RightEar", Vector3.new(0.62, 0.62, 0.48), Vector3.new(0.58, 2.48, 0.45), definition.Detail)
+        makeShape(model, "BellyPatch", Vector3.new(1.25, 0.95, 0.28), Vector3.new(0, 1.05, 0.86), definition.Accent)
     elseif definition.Kind == "Fox" then
         makeShape(model, "Muzzle", Vector3.new(0.75, 0.48, 0.55), Vector3.new(0, 1.58, 1.2), definition.Accent)
         makeShape(model, "LeftEar", Vector3.new(0.48, 0.8, 0.42), Vector3.new(-0.42, 2.55, 0.55), definition.Detail, Enum.PartType.Wedge)
