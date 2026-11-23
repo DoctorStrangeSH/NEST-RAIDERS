@@ -1831,7 +1831,7 @@ function WorldBuilder:Build()
     caveOddsText.Parent = caveOddsGui
 
     local bossArena = part(forgottenCave, "ForgottenHeartBossArena",
-        Vector3.new(40, 0.5, 34), Vector3.new(171, 19.25, 2586),
+        Vector3.new(34, 0.5, 30), Vector3.new(174, 19.25, 2600),
         Color3.fromRGB(66, 79, 87), Enum.Material.Slate)
     bossArena.CanCollide = true
     bossArena.Transparency = 0.18
@@ -1840,16 +1840,16 @@ function WorldBuilder:Build()
     guardian.Name = "ForgottenHeartGuardian"
     guardian.Parent = forgottenCave
     local guardianBody = part(guardian, "GuardianBody",
-        Vector3.new(8, 7, 7), Vector3.new(171, 24, 2586),
+        Vector3.new(8, 7, 7), Vector3.new(174, 24, 2600),
         Color3.fromRGB(75, 94, 111), Enum.Material.Slate, Enum.PartType.Ball)
     guardianBody.CanCollide = false
     guardian.PrimaryPart = guardianBody
     local guardianHead = part(guardian, "GuardianHead",
-        Vector3.new(5.2, 4.8, 4.8), Vector3.new(171, 29.2, 2586),
+        Vector3.new(5.2, 4.8, 4.8), Vector3.new(174, 29.2, 2600),
         Color3.fromRGB(88, 111, 132), Enum.Material.Slate, Enum.PartType.Ball)
     guardianHead.CanCollide = false
     local guardianCore = part(guardian, "ForgottenHeartCore",
-        Vector3.new(3.2, 3.2, 2.2), Vector3.new(171, 25.5, 2581.8),
+        Vector3.new(3.2, 3.2, 2.2), Vector3.new(174, 25.5, 2595.8),
         Color3.fromRGB(118, 222, 255), Enum.Material.Neon, Enum.PartType.Ball)
     guardianCore.CanCollide = false
     local guardianLight = Instance.new("PointLight")
@@ -1859,11 +1859,11 @@ function WorldBuilder:Build()
     guardianLight.Parent = guardianCore
     for _, side in ipairs({-1, 1}) do
         local arm = part(guardian, "GuardianArm_" .. side,
-            Vector3.new(3.4, 7.5, 3.4), Vector3.new(171 + side * 7.1, 22.8, 2586),
+            Vector3.new(3.4, 7.5, 3.4), Vector3.new(174 + side * 7.1, 22.8, 2600),
             Color3.fromRGB(78, 103, 119), Enum.Material.Slate, Enum.PartType.Ball)
         arm.CanCollide = false
         local shoulder = part(guardian, "GuardianShoulderCrystal_" .. side,
-            Vector3.new(2.1, 3.1, 2.1), Vector3.new(171 + side * 7.5, 27, 2585.5),
+            Vector3.new(2.1, 3.1, 2.1), Vector3.new(174 + side * 7.5, 27, 2599.5),
             Color3.fromRGB(155, 207, 232), Enum.Material.Neon, Enum.PartType.Wedge)
         shoulder.CanCollide = false
     end
@@ -1871,7 +1871,7 @@ function WorldBuilder:Build()
         local angle = math.rad((index - 1) * 72)
         local shard = part(guardian, "GuardianCrownShard_" .. index,
             Vector3.new(1.4, 3.4, 1.4),
-            Vector3.new(171 + math.cos(angle) * 3.2, 32.1, 2586 + math.sin(angle) * 3.2),
+            Vector3.new(174 + math.cos(angle) * 3.2, 32.1, 2600 + math.sin(angle) * 3.2),
             Color3.fromRGB(136, 225, 255), Enum.Material.Neon, Enum.PartType.Wedge)
         shard.CanCollide = false
     end
@@ -1886,7 +1886,7 @@ function WorldBuilder:Build()
     bossPrompt.Parent = guardianCore
 
     local bossTitle = part(forgottenCave, "ForgottenHeartBossSign",
-        Vector3.new(15, 5, 1), Vector3.new(171, 24, 2562.8),
+        Vector3.new(15, 5, 1), Vector3.new(174, 24, 2565.2),
         Color3.fromRGB(44, 58, 70), Enum.Material.Metal)
     bossTitle.CanCollide = false
     local bossTitleGui = Instance.new("SurfaceGui")
