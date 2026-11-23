@@ -1501,6 +1501,27 @@ artifactsLayout.Padding = UDim.new(0, 8)
 artifactsLayout.SortOrder = Enum.SortOrder.LayoutOrder
 artifactsLayout.Parent = artifactsList
 
+if RunService:IsStudio() then
+    local simulateButton = Instance.new("TextButton")
+    simulateButton.Name = "GathererSimulationButton"
+    simulateButton.LayoutOrder = -1
+    simulateButton.Size = UDim2.new(1, -8, 0, 36)
+    simulateButton.BackgroundColor3 = Color3.fromRGB(52, 92, 122)
+    simulateButton.Text = "ТЕСТ: 1000 СБОРОВ БЕЗ НАЧИСЛЕНИЯ"
+    simulateButton.TextColor3 = Color3.fromRGB(235, 250, 255)
+    simulateButton.TextSize = 10
+    simulateButton.Font = Enum.Font.GothamBlack
+    simulateButton.Parent = artifactsList
+    addCorner(simulateButton, 9)
+    simulateButton.Activated:Connect(function()
+        local data, message = invokeInventory({ Action = "DevSimulateGatherBonus" })
+        if data then
+            renderArtifacts(data)
+            showNotice(message or "Проверка бонуса завершена.")
+        end
+    end)
+end
+
 renderArtifacts = function(data)
     for _, child in ipairs(artifactsList:GetChildren()) do
         if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
@@ -1824,7 +1845,7 @@ invokeInventory = function(payload)
         showNotice(response.Message or "Не удалось выполнить действие.")
         return nil
     end
-    return response.Data
+    return response.Data, response.Message
 end
 
 local selectedBreedingId = nil
