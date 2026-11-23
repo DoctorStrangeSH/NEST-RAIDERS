@@ -17,15 +17,16 @@ local EGG_RESPAWN_SECONDS = 20
 local EGG_CAPACITY = 20
 local ACTIVE_WORLD_EGGS = 3
 local EGG_SPAWN_POSITIONS = {
-    Vector3.new(-24, 14, 20),
-    Vector3.new(25, 14, 24),
-    Vector3.new(0, 14, 65),
-    Vector3.new(-42, 14, -5),
-    Vector3.new(42, 14, -5),
-    Vector3.new(-42, 14, 40),
-    Vector3.new(42, 14, 40),
-    Vector3.new(-35, 14, 75),
-    Vector3.new(35, 14, 75),
+    Meadow = {
+        Vector3.new(-24, 14, 20), Vector3.new(25, 14, 24), Vector3.new(0, 14, 65),
+        Vector3.new(-42, 14, -5), Vector3.new(42, 14, -5), Vector3.new(-42, 14, 40),
+        Vector3.new(42, 14, 40), Vector3.new(-35, 14, 75), Vector3.new(35, 14, 75),
+    },
+    EmeraldWilds = {
+        Vector3.new(-22, 20, 500), Vector3.new(22, 20, 500), Vector3.new(0, 20, 548),
+        Vector3.new(-38, 20, 480), Vector3.new(38, 20, 480), Vector3.new(-38, 20, 540),
+        Vector3.new(38, 20, 540), Vector3.new(-25, 20, 565), Vector3.new(25, 20, 565),
+    },
 }
 EggService._hatching = {}
 local COMPANIONS = {}
@@ -151,18 +152,20 @@ function EggService:Collect(player, egg)
                 if type(slot) == "number" then occupied[slot] = true end
             end
         end
+        local biomeId = egg:GetAttribute("BiomeId") or "Meadow"
+        local spawnPositions = EGG_SPAWN_POSITIONS[biomeId] or EGG_SPAWN_POSITIONS.Meadow
         local available = {}
-        for slot = 1, #EGG_SPAWN_POSITIONS do
+        for slot = 1, #spawnPositions do
             if not occupied[slot] then table.insert(available, slot) end
         end
         if #available == 0 then
             warn("[NEST RAIDERS] No free egg spawn slot; using a fallback slot.")
-            for slot = 1, #EGG_SPAWN_POSITIONS do table.insert(available, slot) end
+            for slot = 1, #spawnPositions do table.insert(available, slot) end
         end
         local slot = available[math.random(1, #available)]
-        egg.CFrame = CFrame.new(EGG_SPAWN_POSITIONS[slot])
+        egg.CFrame = CFrame.new(spawnPositions[slot])
         egg:SetAttribute("SpawnSlot", slot)
-        local spawnDefinition = BiomeCatalog.Meadow
+        local spawnDefinition = BiomeCatalog[biomeId] or BiomeCatalog.Meadow
         egg:SetAttribute("BiomeId", spawnDefinition.Id)
         egg:SetAttribute("EggId", spawnDefinition.DefaultEggId)
         egg.Size = originalSize
@@ -329,40 +332,48 @@ function EggService:Init()
         return
     end
 
-    local island = world:WaitForChild("StarterIsland")
-    local eggFolder = island:WaitForChild("EggSpawnPoints")
-    local eggs = {}
-    for _, egg in ipairs(eggFolder:GetChildren()) do
-        if egg:GetAttribute("WorldEgg") then table.insert(eggs, egg) end
-    end
-    local shuffledSlots = {}
-    for slot = 1, #EGG_SPAWN_POSITIONS do table.insert(shuffledSlots, slot) end
-    for index = #shuffledSlots, 2, -1 do
-        local swap = math.random(1, index)
-        shuffledSlots[index], shuffledSlots[swap] = shuffledSlots[swap], shuffledSlots[index]
-    end
-    for index, egg in ipairs(eggs) do
-        if index <= ACTIVE_WORLD_EGGS then
-            local slot = shuffledSlots[index]
-            egg.CFrame = CFrame.new(EGG_SPAWN_POSITIONS[slot])
-            egg:SetAttribute("SpawnSlot", slot)
-            local spawnDefinition = BiomeCatalog.Meadow
-            egg:SetAttribute("BiomeId", spawnDefinition.Id)
-            egg:SetAttribute("EggId", spawnDefinition.DefaultEggId)
-            egg:SetAttribute("Collected", false)
-            egg.Transparency = 0
-            local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
-            if prompt then
-                prompt.Enabled = true
-                prompt.Triggered:Connect(function(player) self:Collect(player, egg) end)
+    local biomeFolders = {}
+    for biomeId, spawnPositions in pairs(EGG_SPAWN_POSITIONS) do
+        local biomeFolder = world:FindFirstChild(biomeId)
+        local eggFolder = biomeFolder and biomeFolder:FindFirstChild("EggSpawnPoints")
+        if eggFolder then
+            local eggs = {}
+            for _, egg in ipairs(eggFolder:GetChildren()) do
+                if egg:GetAttribute("WorldEgg") then table.insert(eggs, egg) end
+            end
+            local shuffledSlots = {}
+            for slot = 1, #spawnPositions do table.insert(shuffledSlots, slot) end
+            for index = #shuffledSlots, 2, -1 do
+                local swap = math.random(1, index)
+                shuffledSlots[index], shuffledSlots[swap] = shuffledSlots[swap], shuffledSlots[index]
+            end
+            for index, egg in ipairs(eggs) do
+                if index <= ACTIVE_WORLD_EGGS then
+                    local slot = shuffledSlots[index]
+                    local spawnDefinition = BiomeCatalog[biomeId] or BiomeCatalog.Meadow
+                    egg.CFrame = CFrame.new(spawnPositions[slot])
+                    egg:SetAttribute("SpawnSlot", slot)
+                    egg:SetAttribute("BiomeId", spawnDefinition.Id)
+                    egg:SetAttribute("EggId", spawnDefinition.DefaultEggId)
+                    egg:SetAttribute("Collected", false)
+                    egg.Transparency = 0
+                    local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
+                    if prompt then
+                        prompt.Enabled = true
+                        prompt.Triggered:Connect(function(player) self:Collect(player, egg) end)
+                    end
+                else
+                    egg:Destroy()
+                end
+            end
+            if #eggs < ACTIVE_WORLD_EGGS then
+                warn(string.format("[NEST RAIDERS] %s has %d/%d world eggs.", biomeId, #eggs, ACTIVE_WORLD_EGGS))
             end
         else
-            egg:Destroy()
+            warn("[NEST RAIDERS] Missing egg folder for biome: " .. biomeId)
         end
     end
-    if #eggs < ACTIVE_WORLD_EGGS then
-        warn(string.format("[NEST RAIDERS] Only %d/%d world eggs were built.", #eggs, ACTIVE_WORLD_EGGS))
-    end
+    local island = world:WaitForChild("StarterIsland")
 
     local plotsFolder = island:WaitForChild("PlayerPlots")
     for _, plot in ipairs(plotsFolder:GetChildren()) do
