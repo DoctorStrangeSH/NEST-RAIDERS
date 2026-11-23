@@ -39,6 +39,7 @@ assert 'profile.Nest.StoredIncomeRemainder' in display_pets
 assert 'local payout = math.floor(accumulated)' in display_pets
 assert 'return math.floor(total * 100 + 0.5) / 100' in display_pets
 
+eggs = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
 biomes = Path("src/ReplicatedStorage/Shared/Config/BiomeCatalog.lua").read_text()
 assert 'local BiomeCatalog = {' in biomes
 assert 'DefaultEggId = "MeadowEgg"' in biomes
@@ -48,7 +49,6 @@ assert 'chooseCompanion(egg.Id or "MeadowEgg")' in eggs
 assert 'BiomeId = egg:GetAttribute("BiomeId") or "Meadow"' in eggs
 assert 'OriginBiome = egg.BiomeId or "Meadow"' in eggs
 
-eggs = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
 companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
 inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
 book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua").read_text()
