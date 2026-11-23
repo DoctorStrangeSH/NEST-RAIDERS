@@ -157,3 +157,12 @@ The current code contains a first playable prototype loop: Starter Island blocko
 - [ ] Only after all blockers are cleared: start Sprint 4.21.
 
 A successful CI build validates the Roblox XML packaging, **not gameplay**. Treat these steps as code-integrated but not runtime-verified.
+
+### Playable-first UI navigation pass (2026-11-23)
+
+- [x] Replace eleven offscreen fixed-position feature buttons with one collapsible, scrollable menu.
+- [x] Adjust menu, status HUD, and typography for narrow viewports and camera viewport changes.
+- [x] Preserve existing feature button handlers; close the menu when a feature is selected.
+- [ ] Confirm all eleven buttons open their respective feature panels in Roblox Studio (desktop and mobile emulation).
+- [ ] Verify modal close controls and placement modes do not overlap the expanded menu.
+- [ ] Verify runtime startup, save/rejoin and multiplayer. CI alone cannot mark these DONE.
