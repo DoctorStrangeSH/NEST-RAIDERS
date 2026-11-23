@@ -440,4 +440,20 @@ assert 'ProgressionService:AddXP(player, 150)' in ancient_secret
 assert 'WhisperingGrove' in world and 'GroveStep_' in world and 'ElderHeartAltar' in world
 assert 'ElderHeartPrompt' in world_health and 'Тайная тропа рощи:' in world_health
 
+
+# Ancient Egg crafting: resource sink, exact recipe, capacity guard and server-side station validation.
+ancient_crafting = Path("src/ServerScriptService/Server/Services/AncientCraftingService.lua").read_text()
+assert '"AncientCraftingService"' in server and 'function AncientCraftingService:Init()' in ancient_crafting
+assert 'ELDERWOOD_COST = 10' in ancient_crafting and 'COIN_COST = 300' in ancient_crafting
+assert 'EGG_CAPACITY = 20' in ancient_crafting and 'profile.EggInventory' in ancient_crafting
+assert 'ProgressionService:CanEnterZone(player, "AncientHeights")' in ancient_crafting
+assert 'CraftAncientEggPrompt' in ancient_crafting and 'MaxActivationDistance + 2' in ancient_crafting
+assert 'Id = EGG_ID' in ancient_crafting and 'BiomeId = "AncientHeights"' in ancient_crafting
+assert 'profile.Materials.Elderwood = elderwood - ELDERWOOD_COST' in ancient_crafting
+assert 'profile.Coins = coins - COIN_COST' in ancient_crafting
+assert 'EggCount' in ancient_crafting and 'Elderwood' in ancient_crafting and 'Coins' in ancient_crafting
+assert 'ElderwoodWorkshop' in world and 'AncientEggCraftingStation' in world
+assert 'CraftAncientEggPrompt' in world and 'РЕЦЕПТ ДРЕВНОГО ЯЙЦА' in world
+assert 'Нет мастерской создания древних яиц' in world_health
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
