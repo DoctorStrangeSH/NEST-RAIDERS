@@ -120,7 +120,7 @@ assert '{ Id = "FrostHighlands", DisplayName = "Ледяные нагорья", 
 assert '{ Id = "Emberlands", DisplayName = "Пепельные земли", RequiredLevel = 22, RequiredQuest = "frost_trial" }' in game_config
 
 assert 'FrostHighlands = {' in eggs and 'Vector3.new(-22, 20, 1020)' in eggs
-assert 'player:GetAttribute("CurrentBiome") ~= requiredZone' in eggs
+assert '(player:GetAttribute("CurrentBiome") or "StarterIsland") ~= requiredZone' in eggs
 assert 'ProgressionService:CanEnterZone(player, requiredZone)' in eggs
 assert 'frost.Name = "FrostHighlands"' in world
 assert 'FrostSnowTop' in world and 'FrostPineTrunk' in world and 'GlacierCrystal' in world
