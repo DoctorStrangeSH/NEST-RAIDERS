@@ -17,6 +17,17 @@ inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua")
 book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua").read_text()
 profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
 player_data = Path("src/ServerScriptService/Server/Services/PlayerDataService.lua").read_text()
+progression = Path("src/ServerScriptService/Server/Services/ProgressionService.lua").read_text()
+assert 'Players.PlayerAdded:Connect(bindPlayer)' in progression
+assert 'for _, player in ipairs(Players:GetPlayers()) do' in progression
+assert 'if boundPlayers[player] then return end' in progression
+assert 'self:RefreshZoneUnlocks(player)' in progression
+assert 'player:SetAttribute("ProgressionReady", true)' in progression
+assert 'local visualOk, visualError = pcall(function()' in eggs
+assert 'CompanionService:RefreshPlayer(player)' in eggs
+assert 'local xpOk, xpError = pcall(function()' in eggs
+assert 'Hatch companion visual refresh failed' in eggs
+
 assert 'local function restoreDiscoveredSpecies(data)' in player_data
 assert 'restoreDiscoveredSpecies(data)' in player_data
 assert player_data.index('restoreDiscoveredSpecies(data)', player_data.index('local function publishProfile')) < player_data.index('player:SetAttribute("ProfileLoaded", true)')
