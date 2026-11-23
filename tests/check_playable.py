@@ -473,6 +473,22 @@ assert '5 лунных лепестков' in world and '3 звёздных ос
 assert 'Нет мастерской создания древних яиц' in world_health
 
 
+# Artifact crafting, saved collection, two equipment slots and passive-income bonus.
+artifact_catalog = Path("src/ReplicatedStorage/Shared/Config/ArtifactCatalog.lua").read_text()
+assert 'RootSigil' in artifact_catalog and 'MoonPendant' in artifact_catalog and 'StarPrism' in artifact_catalog
+assert 'IncomeBonus = 0.03' in artifact_catalog and 'IncomeBonus = 0.06' in artifact_catalog and 'IncomeBonus = 0.10' in artifact_catalog
+assert 'Artifacts = {}' in profile_template and 'EquippedArtifacts = {}' in profile_template
+assert 'ArtifactCatalog' in inventory and 'payload.Action == "CraftArtifact"' in inventory
+assert 'payload.Action == "EquipArtifact" or payload.Action == "UnequipArtifact"' in inventory
+assert '#profile.EquippedArtifacts >= 2' in inventory and 'ArtifactInstanceId' in inventory
+assert 'CrystalShard = 2' in inventory and 'AshCrystal = 1' in inventory
+assert 'ProgressionService:CanEnterZone(player, "AncientHeights")' in inventory
+assert 'Artifacts = artifacts' in inventory and 'MaxEquippedArtifacts = 2' in inventory
+assert 'ArtifactCatalog' in economy and 'artifactBonus' in economy and 'total *= (1 + artifactBonus)' in economy
+assert 'ArtifactsButton' in client and 'ArtifactsPanel' in client and 'CraftArtifact' in client
+assert 'EquipArtifact' in client and 'UnequipArtifact' in client and 'artifactsPanel,' in client
+assert 'АРТЕФАКТ' in world and '2 кристальных' in world and '1 пепельный' in world
+
 # Ancient Tree Temple: walkable side-island, ordered runes, personal treasure claim and objective HUD.
 ancient_temple = Path("src/ServerScriptService/Server/Services/AncientTempleService.lua").read_text()
 assert '"AncientTempleService"' in server and 'function AncientTempleService:Init()' in ancient_temple
