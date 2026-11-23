@@ -300,3 +300,9 @@
 - Each root has an independent three-minute cooldown for each player.
 - Elderwood balance is shown in the Ancient Heights HUD and saved in the player profile.
 - Gathering requires the Ancient Heights unlock; client-side UI cannot grant materials.
+
+
+## Whispering Grove secret
+- Beyond the Ancient Heights welcome sign, follow the four glowing stepping stones to a small hidden ledge.
+- Activate the Elder Heart altar once to receive 250 coins, 150 XP, and 8 Elderwood.
+- The discovery is permanent per player and cannot be farmed by repeating the prompt.
