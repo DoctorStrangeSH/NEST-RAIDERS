@@ -4038,6 +4038,128 @@ local function updateForgottenBossPhaseVisual()
     end
 end
 
+local forgottenBossShakeUntil = 0
+local forgottenBossShakeStrength = 0
+local forgottenBossShakeBound = false
+
+local function requestForgottenBossCameraShake(duration, strength)
+    forgottenBossShakeUntil = math.max(forgottenBossShakeUntil, os.clock() + duration)
+    forgottenBossShakeStrength = math.max(forgottenBossShakeStrength, strength)
+    if forgottenBossShakeBound then return end
+    forgottenBossShakeBound = true
+    RunService:BindToRenderStep("ForgottenHeartBossCameraShake", Enum.RenderPriority.Camera.Value + 1, function()
+        local remaining = forgottenBossShakeUntil - os.clock()
+        if remaining <= 0 then
+            RunService:UnbindFromRenderStep("ForgottenHeartBossCameraShake")
+            forgottenBossShakeBound = false
+            forgottenBossShakeStrength = 0
+            return
+        end
+        local cameraNow = Workspace.CurrentCamera
+        if not cameraNow then return end
+        local fade = math.clamp(remaining / 0.22, 0, 1)
+        local amount = forgottenBossShakeStrength * fade
+        cameraNow.CFrame *= CFrame.new(
+            (math.random() - 0.5) * amount,
+            (math.random() - 0.5) * amount,
+            0
+        ) * CFrame.Angles(
+            math.rad((math.random() - 0.5) * amount * 1.8),
+            math.rad((math.random() - 0.5) * amount * 1.8),
+            0
+        )
+    end)
+end
+
+local function playForgottenBossHitReaction()
+    local guardian = getForgottenBossModel()
+    local core, light = getForgottenBossVisual()
+    if not guardian or not core then return end
+    local body = guardian:FindFirstChild("GuardianBody")
+    local head = guardian:FindFirstChild("GuardianHead")
+    if body then
+        local original = body.Size
+        TweenService:Create(body, TweenInfo.new(0.09, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = original * Vector3.new(1.12, 0.88, 1.12),
+            Color = Color3.fromRGB(133, 164, 183),
+        }):Play()
+        task.delay(0.11, function()
+            if body.Parent then
+                TweenService:Create(body, TweenInfo.new(0.22, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), {
+                    Size = original,
+                    Color = Color3.fromRGB(75, 94, 111),
+                }):Play()
+            end
+        end)
+    end
+    if head then
+        local original = head.CFrame
+        TweenService:Create(head, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            CFrame = original * CFrame.new(0, 0.35, -0.35),
+        }):Play()
+        task.delay(0.1, function()
+            if head.Parent then
+                TweenService:Create(head, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                    CFrame = original,
+                }):Play()
+            end
+        end)
+    end
+    local originalColor = core.Color
+    local originalSize = core.Size
+    TweenService:Create(core, TweenInfo.new(0.08), {
+        Color = Color3.fromRGB(255, 244, 206),
+        Size = originalSize * 1.24,
+    }):Play()
+    if light then
+        TweenService:Create(light, TweenInfo.new(0.08), {
+            Brightness = 8,
+            Range = 40,
+        }):Play()
+    end
+    task.delay(0.12, function()
+        if not core.Parent then return end
+        TweenService:Create(core, TweenInfo.new(0.24, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Color = originalColor,
+            Size = originalSize,
+        }):Play()
+        if light then
+            TweenService:Create(light, TweenInfo.new(0.24), {
+                Brightness = player:GetAttribute("ForgottenHeartBossPhase") == 2 and 3.4 or 2.2,
+                Range = player:GetAttribute("ForgottenHeartBossPhase") == 2 and 30 or 24,
+            }):Play()
+        end
+    end)
+    createForgottenBossDebris(core.Position, math.random(1, 8), 4)
+    requestForgottenBossCameraShake(0.2, 0.16)
+end
+
+local damageFlash = Instance.new("Frame")
+damageFlash.Name = "ForgottenHeartDamageFlash"
+damageFlash.Size = UDim2.fromScale(1, 1)
+damageFlash.BackgroundColor3 = Color3.fromRGB(255, 65, 82)
+damageFlash.BackgroundTransparency = 1
+damageFlash.BorderSizePixel = 0
+damageFlash.ZIndex = 20
+damageFlash.Parent = gui
+
+local function playForgottenBossPlayerDamageFeedback()
+    TweenService:Create(damageFlash, TweenInfo.new(0.07), {
+        BackgroundTransparency = 0.68,
+    }):Play()
+    task.delay(0.09, function()
+        if damageFlash.Parent then
+            TweenService:Create(damageFlash, TweenInfo.new(0.32, Enum.EasingStyle.Quad), {
+                BackgroundTransparency = 1,
+            }):Play()
+        end
+    end)
+    requestForgottenBossCameraShake(0.32, 0.32)
+end
+
+player:GetAttributeChangedSignal("ForgottenHeartBossHitPulse"):Connect(playForgottenBossHitReaction)
+player:GetAttributeChangedSignal("ForgottenHeartBossDamagePulse"):Connect(playForgottenBossPlayerDamageFeedback)
+
 local function createForgottenBossDebris(origin, index, count)
     local Debris = game:GetService("Debris")
     for shardIndex = 1, count do
