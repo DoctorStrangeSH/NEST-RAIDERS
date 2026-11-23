@@ -352,3 +352,12 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Ancient Egg hatch weights are 55% Ancient Stag, 30% Root Sprite, and 15% Sky Serpent.
 - Egg collection, respawn, hatch validation, inventory capacity, discovery tracking, and genetic rolls reuse the existing server-authoritative egg pipeline.
 - Ancient species have distinct follower silhouettes. Their active ability kits are intentionally not advertised until their server-authoritative implementations are added.
+
+
+## Ancient Heights gathering — Sprint 4.27
+- Six glowing Elderwood root nodes are distributed along the Elder Canopy path.
+- Harvesting is available only while the player is in Ancient Heights and has the required level/trial unlock.
+- Each player has an independent three-minute cooldown for every node.
+- A successful harvest grants 1–3 Elderwood, persisted in Materials.Elderwood.
+- The Ancient Heights HUD displays the saved balance; client UI never grants resources.
+- Elderwood is a progression material; its crafting/unlock sink is intentionally deferred until the first gathering playtest.
