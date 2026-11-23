@@ -508,3 +508,8 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Bonuses are applied to the successful base yield of Elderwood roots in Ancient Heights and crystal veins in Crystal Realm, after existing companion mining bonuses.
 - Fractional expected bonus yield is rolled once per successful node harvest. It does not bypass or shorten the existing per-node cooldown.
 - Crafting weights total 100: existing income artifacts retain their 6:3:1 relative ratio at 48/24/8; Gatherer artifacts use 12/6/2 (20% combined family chance).
+
+### Studio QA fixture — Gatherer artifacts
+- The artifact collection exposes a temporary QA action only when the client is running in Roblox Studio.
+- The server independently enforces `RunService:IsStudio()`, fills each of the three Gatherer types to three level-I instances, and enforces the 40-item collection limit.
+- This fixture is for local gameplay verification only; it is unavailable in published servers and does not alter crafting odds or normal player progression.
