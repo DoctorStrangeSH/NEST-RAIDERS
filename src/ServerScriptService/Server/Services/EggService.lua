@@ -27,6 +27,11 @@ local EGG_SPAWN_POSITIONS = {
         Vector3.new(-38, 20, 480), Vector3.new(38, 20, 480), Vector3.new(-38, 20, 540),
         Vector3.new(38, 20, 540), Vector3.new(-25, 20, 565), Vector3.new(25, 20, 565),
     },
+    FrostHighlands = {
+        Vector3.new(-22, 20, 1020), Vector3.new(22, 20, 1020), Vector3.new(0, 20, 1068),
+        Vector3.new(-38, 20, 1000), Vector3.new(38, 20, 1000), Vector3.new(-38, 20, 1060),
+        Vector3.new(38, 20, 1060), Vector3.new(-25, 20, 1085), Vector3.new(25, 20, 1085),
+    },
 }
 EggService._hatching = {}
 local COMPANIONS = {}
@@ -111,6 +116,18 @@ function EggService:Collect(player, egg)
     local root = character and character:FindFirstChild("HumanoidRootPart")
     if not root or (root.Position - egg.Position).Magnitude > 14 then return end
 
+    local biomeId = egg:GetAttribute("BiomeId") or "Meadow"
+    local requiredZone = biomeId == "Meadow" and "StarterIsland" or biomeId
+    if player:GetAttribute("CurrentBiome") ~= requiredZone then
+        player:SetAttribute("LastNotice", "Собирай яйца только в том биоме, где находишься.")
+        return
+    end
+    local allowed = ProgressionService:CanEnterZone(player, requiredZone)
+    if not allowed then
+        player:SetAttribute("LastNotice", "Сначала открой этот биом, чтобы собирать его яйца.")
+        return
+    end
+
     local profile = PlayerDataService:GetProfile(player)
     if not profile or #profile.EggInventory >= EGG_CAPACITY then
         player:SetAttribute("LastNotice", "Сумка для яиц заполнена!")
@@ -125,7 +142,8 @@ function EggService:Collect(player, egg)
         CollectedAt = os.time(),
     })
     syncAttributes(player, profile)
-    player:SetAttribute("LastNotice", "Ты подобрал яйцо луга!")
+    local biome = BiomeCatalog[biomeId] or BiomeCatalog.Meadow
+    player:SetAttribute("LastNotice", "Ты подобрал: " .. (biome.Eggs[biome.DefaultEggId].Name or "яйцо") .. "!")
 
     local originalSize = egg.Size
     egg:SetAttribute("SpawnSlot", nil)
