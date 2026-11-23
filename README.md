@@ -172,3 +172,9 @@ Successful breeding triggers a temporary altar animation: the two selected compa
 - Cross the stone causeway in Ancient Heights to reach the temple.
 - Solve the Root → River → Dawn rune sequence and open the treasure chest.
 - Each player earns the 500-coin, 300-XP, 20-Elderwood reward once; puzzle progress is saved per player.
+
+
+### Heartwood Guardian
+- Complete the temple puzzle and treasure claim, then defeat the Guardian in a per-player boss encounter.
+- Dodge alternating Vine Slam and Root Wave attacks.
+- Victory grants 600 XP and the legendary boss-exclusive Heartwood Guardian companion.
