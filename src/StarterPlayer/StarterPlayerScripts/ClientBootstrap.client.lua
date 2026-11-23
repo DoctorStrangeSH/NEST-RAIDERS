@@ -1585,16 +1585,80 @@ local function renderArtifacts(data)
             mergeButton.Parent = card
             addCorner(mergeButton, 9)
             mergeButton.Activated:Connect(function()
-                local updated = invokeInventory({
-                    Action = "MergeArtifacts",
-                    ArtifactInstanceIds = {
-                        mergeIds[1].InstanceId, mergeIds[2].InstanceId, mergeIds[3].InstanceId,
-                    },
-                })
-                if updated then
-                    renderArtifacts(updated)
-                    showNotice("Артефакт успешно улучшен!")
-                end
+                if artifactsPanel:FindFirstChild("ArtifactMergeConfirm") then return end
+                local overlay = Instance.new("Frame")
+                overlay.Name = "ArtifactMergeConfirm"
+                overlay.Size = UDim2.fromScale(1, 1)
+                overlay.BackgroundColor3 = Color3.fromRGB(12, 15, 28)
+                overlay.BackgroundTransparency = 0.18
+                overlay.BorderSizePixel = 0
+                overlay.Active = true
+                overlay.ZIndex = 20
+                overlay.Parent = artifactsPanel
+
+                local dialog = Instance.new("Frame")
+                dialog.AnchorPoint = Vector2.new(0.5, 0.5)
+                dialog.Position = UDim2.fromScale(0.5, 0.5)
+                dialog.Size = UDim2.new(0.88, 0, 0, 188)
+                dialog.BackgroundColor3 = Color3.fromRGB(48, 43, 76)
+                dialog.BorderSizePixel = 0
+                dialog.ZIndex = 21
+                dialog.Parent = overlay
+                addCorner(dialog, 14)
+
+                local nextTiers = { "II · Улучшенный", "III · Редкий", "IV · Эпический", "V · Легендарный", "VI · Мифический" }
+                local preview = Instance.new("TextLabel")
+                preview.BackgroundTransparency = 1
+                preview.Position = UDim2.fromOffset(14, 12)
+                preview.Size = UDim2.new(1, -28, 0, 82)
+                preview.Font = Enum.Font.GothamBold
+                preview.Text = string.format("ОБЪЕДИНИТЬ ТРИ АРТЕФАКТА?\n%s\nРезультат: %s · %s",
+                    artifact.Name or artifact.Id, artifact.Name or artifact.Id, nextTiers[level] or "Максимальный уровень")
+                preview.TextColor3 = Color3.fromRGB(245, 232, 255)
+                preview.TextSize = 13
+                preview.TextWrapped = true
+                preview.ZIndex = 22
+                preview.Parent = dialog
+
+                local cancel = Instance.new("TextButton")
+                cancel.Position = UDim2.new(0, 12, 1, -52)
+                cancel.Size = UDim2.new(0.46, -8, 0, 38)
+                cancel.BackgroundColor3 = Color3.fromRGB(87, 91, 111)
+                cancel.Text = "ОТМЕНА"
+                cancel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                cancel.TextSize = 11
+                cancel.Font = Enum.Font.GothamBlack
+                cancel.ZIndex = 22
+                cancel.Parent = dialog
+                addCorner(cancel, 9)
+                cancel.Activated:Connect(function() overlay:Destroy() end)
+
+                local confirm = Instance.new("TextButton")
+                confirm.Position = UDim2.new(0.54, 0, 1, -52)
+                confirm.Size = UDim2.new(0.46, -12, 0, 38)
+                confirm.BackgroundColor3 = Color3.fromRGB(117, 83, 157)
+                confirm.Text = "УЛУЧШИТЬ"
+                confirm.TextColor3 = Color3.fromRGB(255, 255, 255)
+                confirm.TextSize = 11
+                confirm.Font = Enum.Font.GothamBlack
+                confirm.ZIndex = 22
+                confirm.Parent = dialog
+                addCorner(confirm, 9)
+                confirm.Activated:Connect(function()
+                    confirm.Active = false
+                    confirm.Text = "..."
+                    local updated = invokeInventory({
+                        Action = "MergeArtifacts",
+                        ArtifactInstanceIds = {
+                            mergeIds[1].InstanceId, mergeIds[2].InstanceId, mergeIds[3].InstanceId,
+                        },
+                    })
+                    overlay:Destroy()
+                    if updated then
+                        renderArtifacts(updated)
+                        showNotice("Артефакт успешно улучшен!")
+                    end
+                end)
             end)
         end
     end
