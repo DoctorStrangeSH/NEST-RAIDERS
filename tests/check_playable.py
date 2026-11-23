@@ -330,4 +330,21 @@ assert 'Emberlands = "Пепельные земли · уровень 22 + ис�
 assert 'CoolingZone' in world_health and 'HeatZones' in world_health
 
 
+
+# Emberlands ashfall event: server-owned warnings, moving surges and persistent rewards.
+ashfall = Path("src/ServerScriptService/Server/Services/AshfallService.lua").read_text()
+profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+player_data = Path("src/ServerScriptService/Server/Services/PlayerDataService.lua").read_text()
+assert '"AshfallService"' in server and 'function AshfallService:Start()' in ashfall
+assert 'WARNING_SECONDS = 20' in ashfall and 'SURGE_COUNT = 3' in ashfall
+assert 'AshfallPhase' in ashfall and '"WARNING"' in ashfall and '"ERUPTION"' in ashfall
+assert 'AshfallLavaSurge_' in ashfall and 'wave.Position = Vector3.new(0, 18.2, z)' in ashfall
+assert 'self:_damageAt(z)' in ashfall and 'humanoid:TakeDamage(SURGE_DAMAGE)' in ashfall
+assert 'root.Position.Z > 1500' in ashfall, "Lava surges must not damage players in the cooling sanctuary"
+assert 'CollectAshCrystalPrompt' in ashfall and 'claimed[player.UserId]' in ashfall
+assert 'profile.Materials.AshCrystal' in ashfall and 'AshCrystal = 0' in profile_template
+assert 'player:SetAttribute("AshCrystals"' in player_data
+assert 'AshfallEventPanel' in client and 'updateAshfallPanel' in client
+assert 'Пепельные кристаллы:' in client and 'ИЗВЕРЖЕНИЕ ЧЕРЕЗ' in client
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
