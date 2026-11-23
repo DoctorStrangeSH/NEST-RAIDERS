@@ -308,3 +308,11 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Ember Egg odds are 60% Cinder Fox, 30% Magma Whelp, and 10% Ash Phoenix. The egg uses the existing biome-owned hatch table and random spawn pool.
 - The client HUD displays server-replicated temperature, danger warnings, sanctuary state, and protection.
 - Structural CI checks cover the Ember island, heat/cooling volumes, egg prompts, and portals. Roblox Studio runtime, multiplayer, balance, and mobile acceptance remain outstanding.
+
+ 
+## Ashfall world event — Sprint 4.22.2
+- When players are in Emberlands, the server schedules a volcanic event. The first warning begins after a short arrival grace period; later events follow the configured interval.
+- A 20-second warning precedes three moving lava surges. The server checks player positions and applies damage with a per-player cooldown; the cooling sanctuary is explicitly outside the surge damage boundary.
+- After the surges, four ash-crystal nodes appear for 75 seconds. Each player may claim each node once per event. Ash crystals are stored in the persistent profile material inventory and replicated to the client HUD.
+- The Russian HUD displays the warning countdown, active eruption, aftermath timer, and saved ash-crystal balance.
+- Static CI checks cover event wiring and safety conditions. Studio runtime, multiplayer claims, reward persistence, balance, and mobile acceptance remain outstanding.
