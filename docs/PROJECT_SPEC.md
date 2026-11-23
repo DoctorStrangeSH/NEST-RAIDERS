@@ -490,3 +490,11 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Craft odds: Root Sigil 60% (+3% passive income), Moon Pendant 30% (+6%), Star Prism 10% (+10%).
 - Bonuses stack additively and are capped at +20% to passive income from active companions.
 - The UI displays owned artifacts, rarity, effect and equipment state. All crafting, ownership and equipment changes are server-authoritative.
+
+## Artifact upgrade levels — Sprint 4.43
+- Each artifact instance stores an integer `Level` from 1 to 6.
+- Tier labels: I Обычный, II Улучшенный, III Редкий, IV Эпический, V Легендарный, VI Мифический.
+- Three unique artifacts of the same catalog ID and level merge into one new instance at the next level.
+- Equipped artifacts cannot be consumed by a merge. Server validation rejects malformed, duplicate, unowned, mixed-type, mixed-level and max-level inputs.
+- Passive-income bonus is base catalog bonus × `(1 + 0.25 × (Level - 1))`; the sum of equipped bonuses remains capped at +20%.
+- The artifact UI offers merge actions only for groups of at least three unequipped copies.
