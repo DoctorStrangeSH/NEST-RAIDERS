@@ -111,7 +111,12 @@ local function grantGuardianTrophy(player, profile)
         Place = 1,
         ClaimedAt = os.time(),
     }
-    PlotService:ApplyContestTrophies(player)
+    local ok, err = pcall(function()
+        PlotService:ApplyContestTrophies(player)
+    end)
+    if not ok then
+        warn("[NEST RAIDERS] Guardian trophy was saved but its nest display could not refresh: " .. tostring(err))
+    end
     return true
 end
 
@@ -171,7 +176,12 @@ local function grantUniqueCompanion(player, profile)
     end
     player:SetAttribute("CompanionCount", #profile.Companions)
     player:SetAttribute("ActiveCompanionCount", #profile.ActiveCompanions)
-    CompanionService:RefreshPlayer(player)
+    local ok, err = pcall(function()
+        CompanionService:RefreshPlayer(player)
+    end)
+    if not ok then
+        warn("[NEST RAIDERS] Guardian companion was saved but its follower model could not refresh: " .. tostring(err))
+    end
 end
 
 function AncientTempleBossService:Init()
