@@ -604,3 +604,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add structural world-health checks and static CI regression coverage for the new biome slice.
 - [ ] Roblox Studio runtime: verify the level-50 + crystal_trial gate, arrival/return travel, egg collection and respawn, hatch odds, follower visuals, multiplayer isolation, and profile persistence.
 - [ ] Tune island collision, mobile readability, traversal boundaries, and performance after Studio playtest.
+
+
+### Sprint 4.27 — Ancient Heights resource loop (2026-11-23)
+- [x] Add six glowing Elderwood root nodes to the Ancient Heights garden.
+- [x] Add server-authoritative harvesting with distance, biome, profile, and level/trial gate validation.
+- [x] Persist Elderwood and per-player, per-node three-minute cooldowns.
+- [x] Replicate the saved Elderwood balance and show a biome-specific HUD panel.
+- [x] Register the harvesting service in server bootstrap and validate all six nodes during world health checks.
+- [x] Add static regression checks for service registration, persistence, validation, world nodes, and HUD.
+- [ ] Roblox Studio runtime: test collection, cooldowns, reconnect persistence, multiplayer isolation, and mobile prompt/HUD readability.
+- [ ] Add a meaningful Elderwood sink (crafting or unlock) before expanding the resource economy.
