@@ -16,6 +16,14 @@ assert 'Vector3.new(9, 5, 1)' in plots, "Personal nest signs should have a reada
 assert 'EggGroveWayfinding' in world
 assert 'EggGroveSign' in world and 'NestDistrictSign' in world
 assert 'GardenBase' in world and 'EggBeacon' in world
+# Cylinder geometry: Roblox cylinders are X-axis aligned before rotation.
+# A 90-degree Z rotation makes the X dimension the vertical thickness.
+assert 'Vector3.new(0.5, 12, 12)' in world, "Egg garden platforms must be flat"
+assert 'CFrame.new(grove.x, 10.4, grove.z) * CFrame.Angles(0, 0, math.rad(90))' in world
+assert 'Vector3.new(1.4, 6, 6)' in world, "Egg pedestals must be horizontal"
+assert 'Vector3.new(2, 13, 11)' in plots, "Nest bowl cylinder must be shallow"
+assert 'Vector3.new(0.45, 6.8, 6.8)' in plots, "Breeding ring must be flat"
+assert 'Vector3.new(0.55, 3.4, 3.4)' in plots, "Breeding parent pads must be flat"
 assert 'CollectEggPrompt' in world and 'WorldEgg' in world
 assert 'prompt.ActionText = "Вылупить"' in plots
 
