@@ -21,6 +21,7 @@ local BOSS_ATTACKS = {
         Damage = 30,
         Radius = 15,
         WindupSeconds = 1.8,
+        Phase = 1,
     },
     {
         Id = "RootWave",
