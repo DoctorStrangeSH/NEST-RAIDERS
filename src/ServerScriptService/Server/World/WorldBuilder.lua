@@ -1168,6 +1168,42 @@ function WorldBuilder:Build()
     local path = part(ancientGarden, "ElderStonePath", Vector3.new(12, 1.2, 68),
         Vector3.new(0, 19.1, 2604), Color3.fromRGB(150, 133, 105), Enum.Material.Slate)
     path.CanCollide = true
+
+    local elderwoodNodes = Instance.new("Folder")
+    elderwoodNodes.Name = "ElderwoodNodes"
+    elderwoodNodes.Parent = ancient
+    local elderwoodPositions = {
+        Vector3.new(-17, 20.2, 2585), Vector3.new(17, 20.2, 2585),
+        Vector3.new(-19, 20.2, 2602), Vector3.new(19, 20.2, 2602),
+        Vector3.new(0, 20.2, 2618), Vector3.new(0, 20.2, 2571),
+    }
+    for index, position in ipairs(elderwoodPositions) do
+        local rootNode = part(elderwoodNodes, "ElderwoodNode_" .. index,
+            Vector3.new(3.4, 1.8, 3.4), position,
+            Color3.fromRGB(108, 133, 79), Enum.Material.Wood, Enum.PartType.Ball)
+        rootNode:SetAttribute("ElderwoodNodeId", "ElderRoot_" .. index)
+        local glow = part(elderwoodNodes, "ElderwoodGlow_" .. index,
+            Vector3.new(1.15, 1.15, 1.15), position + Vector3.new(0, 1.1, 0),
+            Color3.fromRGB(183, 226, 132), Enum.Material.Neon, Enum.PartType.Ball)
+        glow.CanCollide = false
+        glow.CanTouch = false
+        glow.CanQuery = false
+        local light = Instance.new("PointLight")
+        light.Color = glow.Color
+        light.Range = 9
+        light.Brightness = 0.65
+        light.Parent = glow
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "HarvestElderwoodPrompt"
+        prompt.ActionText = "Собрать"
+        prompt.ObjectText = "Древний корень"
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.7
+        prompt.MaxActivationDistance = 10
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = rootNode
+    end
+
     for index = 1, 8 do
         local side = index % 2 == 0 and -1 or 1
         local z = 2572 + math.floor((index - 1) / 2) * 17
