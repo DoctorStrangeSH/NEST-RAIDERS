@@ -183,3 +183,7 @@ Successful breeding triggers a temporary altar animation: the two selected compa
 ### Guardian phase two and trophy
 - At half health the Guardian unlocks Thorn Burst, a wide, telegraphed attack.
 - Defeating the boss also awards the permanent “СЕРДЦЕ ДРЕВА” trophy, displayed in the player's personal nest.
+
+
+### Guardian animations
+The Heartwood Guardian now has distinct Vine Slam, Root Wave and Thorn Burst attack choreography, plus a gold particle reveal for the player who defeats it. The shared model animation is cosmetic; combat progress remains isolated per player.
