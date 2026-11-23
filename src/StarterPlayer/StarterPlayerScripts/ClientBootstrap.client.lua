@@ -923,6 +923,12 @@ dragCancelButton.Visible = false
 dragCancelButton.Parent = gui
 addCorner(dragCancelButton, 8)
 
+-- Forward declarations keep early button callbacks bound to the real editor state.
+local buildHint, buildRotateButton, buildCancelButton, buildConfirmButton
+local activeBuildPlacement = nil
+local buildRotation = 0
+local stopBuildPlacement
+
 buildHint = Instance.new("TextLabel")
 buildHint.Name = "BuildPlacementHint"
 buildHint.AnchorPoint = Vector2.new(0.5, 1)
@@ -940,7 +946,6 @@ addCorner(buildHint, 8)
 
 buildRotateButton = Instance.new("TextButton")
 buildRotateButton.Name = "BuildPlacementRotate"
-buildRotateButton.AnchorPoint = Vector2.new(1, 1)
 buildRotateButton.AnchorPoint = Vector2.new(0.5, 1)
 buildRotateButton.Position = UDim2.new(0.5, 0, 1, -18)
 buildRotateButton.Size = UDim2.fromOffset(112, 34)
@@ -1963,10 +1968,7 @@ local function invokeBuild(payload)
 end
 
 local renderBuild
-local buildHint, buildRotateButton, buildCancelButton, buildConfirmButton
-local activeBuildPlacement = nil
 local buildPreview = nil
-local buildRotation = 0
 local buildScreenPosition = nil
 local buildInputConnections = {}
 
@@ -1983,7 +1985,7 @@ local function getBuildGrass()
     return nil
 end
 
-local function stopBuildPlacement(reopen)
+stopBuildPlacement = function(reopen)
     activeBuildPlacement = nil
     buildScreenPosition = nil
     if buildPreview then buildPreview:Destroy(); buildPreview = nil end
