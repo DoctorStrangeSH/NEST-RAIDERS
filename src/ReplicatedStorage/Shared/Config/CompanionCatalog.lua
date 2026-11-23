@@ -294,7 +294,6 @@ local CompanionCatalog = {
         Personality = "Благородный", PersonalityDescription = "Любит тишину рощ и заботу о маленьких ростках.",
         FavoriteFood = "Золотые жёлуди", FavoriteToy = "CozyPlush",
         PetMoodBonus = 10, PlayMoodBonus = 4, EggId = "AncientEgg",
-        Ability = { Id = "ElderGrace", Name = "Благодать древних", Description = "Находит дополнительную награду в Древних высотах.", UnlockLevel = 7, CooldownSeconds = 360 },
     },
     RootSprite = {
         Id = "RootSprite", Name = "Дух корней", Rarity = "Эпический",
@@ -311,7 +310,6 @@ local CompanionCatalog = {
         Personality = "Мечтательный", PersonalityDescription = "Обожает высоту, ветер и сияющие облака.",
         FavoriteFood = "Звёздный нектар", FavoriteToy = "WindSpinner",
         PetMoodBonus = 4, PlayMoodBonus = 12, EggId = "AncientEgg",
-        Ability = { Id = "SkywardFortune", Name = "Удача высот", Description = "Находит редкие награды среди облаков.", UnlockLevel = 7, CooldownSeconds = 420 },
     },
 }
 
