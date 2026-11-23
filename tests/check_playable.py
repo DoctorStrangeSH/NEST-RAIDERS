@@ -24,6 +24,8 @@ assert 'folder:SetAttribute("CreatedCount", created)' in plots
 assert 'folder:SetAttribute("ExpectedCount", #PLOT_DEFINITIONS)' in plots
 assert 'return self._initialized, created' in plots
 world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
+grove_secret = Path("src/ServerScriptService/Server/Services/AncientSecretService.lua").read_text()
+profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
 assert 'FrostHighlands' in world_health and 'FrostRunePrompt' in world_health
 assert 'GlacierCauseway' in world_health and 'FrostEggOddsSign' in world_health
 
@@ -523,5 +525,18 @@ assert 'burst:Emit(84)' in client and 'AncientTempleBossCompleted' in client
 assert 'Нет анимируемой части Стража:' in world_health
 assert '"GuardianArm_" .. side' in world and '"GuardianBranch_" .. side' in world
 assert '"GuardianBody"' in world and '"GuardianHead"' in world
+assert 'GroveCacheRune_' in world and 'WhisperingGroveCache' in world
+assert 'GroveCacheRunePrompt' in world and 'WhisperingGroveCachePrompt' in world
+assert 'GROVE_RUNE_ORDER = { "Moon", "Leaf", "Dew", "Star" }' in grove_secret
+assert 'profile.QuestProgress.GroveCacheRunes' in grove_secret
+assert 'whispering_grove_cache' in grove_secret and 'Moonpetal' in grove_secret
+assert 'EconomyService:GrantCoins(player, 400' in grove_secret
+assert 'ProgressionService:AddXP(player, 200)' in grove_secret
+assert 'WhisperingGroveRuneProgress' in client and 'WhisperingGroveCacheOpened' in client
+assert 'СЕКРЕТ РОЩИ: РУНЫ %d / 4' in client
+assert 'Whispering Grove four-rune cache' not in client
+assert 'GroveCacheRunes = {}' in profile_template and 'Moonpetal = 0' in profile_template
+assert 'Нет тайника четырёх рун в Шепчущей роще' in world_health
+assert 'Руны тайника рощи:' in world_health
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
