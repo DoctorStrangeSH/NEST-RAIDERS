@@ -40,9 +40,9 @@ Status legend: [x] done · [ ] not done · [~] in progress
 
 ## Milestone 2 — Open-world progression
 - [ ] Seamless connected biomes with no mandatory world portals.
-- [~] Server-enforced gates implemented for Starter Island → Emerald Wilds, Emerald trial → Frost Highlands, and Frost trial → future Emberlands; remaining late-game biome trials still need their gameplay flows.
+- [~] Server-enforced gates implemented for Starter Island → Emerald Wilds, Emerald trial → Frost Highlands, and Frost trial → Emberlands; remaining late-game biome trials still need their gameplay flows.
 - [ ] Server-side zone checks for egg collection and interactions.
-- [~] Starter Island, Emerald Wilds, and Frost Highlands have playable scripted island slices; Emerald and Frost are physically connected by an ice causeway. Emberlands, Crystal Realm, Ancient Heights, and Void Frontier remain to be built.
+- [~] Starter Island, Emerald Wilds, Frost Highlands, and Emberlands have scripted playable slices; the expansion islands are linked by walkable causeways. Heat gameplay still needs Studio acceptance; Crystal Realm, Ancient Heights, and Void Frontier remain to be built.
 - [ ] World landmarks, secrets, caves, traversal routes, and discovery rewards.
 
 ## Milestone 3 — Nest, companions, and economy
