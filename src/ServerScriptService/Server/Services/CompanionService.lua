@@ -11,7 +11,7 @@ CompanionService._folders = {}
 CompanionService._displayFolders = {}
 CompanionService._generations = {}
 local MAX_VISIBLE_COMPANIONS = 3
-local FOLLOW_INTERVAL = 0.15
+local FOLLOW_INTERVAL = 0.12
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -363,9 +363,9 @@ function CompanionService:RefreshPlayer(player)
     local spawnRoot = character and character:FindFirstChild("HumanoidRootPart")
     if spawnRoot then
         for index, pet in ipairs(followers) do
-            local side = (index - (#followers + 1) / 2) * 2.6
+            local side = (index - (#followers + 1) / 2) * 3.6
             local behind = 4 + math.floor((index - 1) / 2) * 2.1
-            pet:PivotTo(spawnRoot.CFrame * CFrame.new(side, -2.2, behind))
+            pet:PivotTo(spawnRoot.CFrame * CFrame.new(side, -2.2, behind) * CFrame.Angles(0, math.pi, 0))
         end
     end
 
@@ -378,8 +378,8 @@ function CompanionService:RefreshPlayer(player)
                     if pet.Parent then
                         local side = (index - (#followers + 1) / 2) * 2.6
                         local behind = 4 + math.floor((index - 1) / 2) * 2.1
-                        local target = root.CFrame * CFrame.new(side, -2.2, behind)
-                        pet:PivotTo(pet:GetPivot():Lerp(target, 0.35))
+                        local target = root.CFrame * CFrame.new(side, -2.2, behind) * CFrame.Angles(0, math.pi, 0)
+                        pet:PivotTo(pet:GetPivot():Lerp(target, 0.22))
                     end
                 end
             end
