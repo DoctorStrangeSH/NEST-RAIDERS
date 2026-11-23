@@ -518,3 +518,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Improve portal denial messaging so missing level and missing trial are explained separately.
 - [ ] Roblox Studio: test all three runes, reconnect persistence, duplicate activation, and XP reward exactly once.
 - [ ] Verify Frost Highlands gate rejects level 12 without the trial and accepts level 12 with the trial.
+
+### Sprint 4.21 — Frost Highlands vertical slice (2026-11-23)
+- [x] Add the third explorable island with a snowfield, pine grove, glacier crystals, and a two-way route to Emerald Wilds.
+- [x] Gate Frost Highlands behind level 12 and the completed Emerald Grove trial.
+- [x] Add the Frost Egg with a biome-specific hatch table: Frost Fox 60%, Snow Owl 30%, Glacier Bear 10%.
+- [x] Add three collectible Frost species with distinct low-poly follower/display silhouettes.
+- [x] Add three persistent trial runes (Aurora, Glacier, Winter), a one-time +180 XP reward, and the Emberlands quest gate.
+- [x] Extend the shared objective panel to show either Emerald or Frost trial progress.
+- [x] Enforce current-biome and unlock checks for world egg collection.
+- [x] Extend world health diagnostics and CI static checks for Frost eggs, runes, and return travel.
+- [ ] Studio runtime: verify portal gates, egg respawn, hatching, collection odds, trial completion, and reconnect persistence.
+- [ ] Desktop/mobile visual, collision, and performance acceptance.
