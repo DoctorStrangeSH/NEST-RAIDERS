@@ -49,16 +49,6 @@ assert 'chooseCompanion(egg.Id or "MeadowEgg")' in eggs
 assert 'BiomeId = egg:GetAttribute("BiomeId") or "Meadow"' in eggs
 assert 'OriginBiome = egg.BiomeId or "Meadow"' in eggs
 
-assert 'EmeraldWilds = {' in biomes and 'EmeraldEgg' in biomes
-assert 'EmeraldFox = 50' in biomes and 'GlowMoth = 32' in biomes and 'AncientSprout = 18' in biomes
-assert 'emerald.Name = "EmeraldWilds"' in world
-assert 'ZoneTravelPrompt' in world and 'EmeraldPortal' in world and 'ReturnPortal' in world
-assert 'EmeraldFloatingFoundation' in world and 'EmeraldEgg' in world
-assert 'EmeraldWilds = {' in eggs and 'spawnPositions = EGG_SPAWN_POSITIONS[biomeId]' in eggs
-assert 'for biomeId, spawnPositions in pairs(EGG_SPAWN_POSITIONS) do' in eggs
-assert 'local allowed, reason = self:CanEnterZone(player, zoneId)' in progression
-assert 'character:PivotTo(CFrame.new(destination + Vector3.new(0, 4, 0)))' in progression
-assert '{ Id = "EmeraldWilds", DisplayName = "Изумрудный лес", RequiredLevel = 5, RequiredQuest = nil }' in game_config
 
 
 companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
@@ -86,6 +76,16 @@ assert 'current:Lerp(target, 0.3)' in companions
 assert 'current.LookVector:Dot(target.LookVector)' in companions
 
 assert 'Players.PlayerAdded:Connect(bindPlayer)' in progression
+assert 'EmeraldWilds = {' in biomes and 'EmeraldEgg' in biomes
+assert 'EmeraldFox = 50' in biomes and 'GlowMoth = 32' in biomes and 'AncientSprout = 18' in biomes
+assert 'emerald.Name = "EmeraldWilds"' in world
+assert 'ZoneTravelPrompt' in world and 'EmeraldPortal' in world and 'ReturnPortal' in world
+assert 'EmeraldFloatingFoundation' in world and 'EmeraldEgg' in world
+assert 'EmeraldWilds = {' in eggs and 'spawnPositions = EGG_SPAWN_POSITIONS[biomeId]' in eggs
+assert 'for biomeId, spawnPositions in pairs(EGG_SPAWN_POSITIONS) do' in eggs
+assert 'local allowed, reason = self:CanEnterZone(player, zoneId)' in progression
+assert 'character:PivotTo(CFrame.new(destination + Vector3.new(0, 4, 0)))' in progression
+assert '{ Id = "EmeraldWilds", DisplayName = "Изумрудный лес", RequiredLevel = 5, RequiredQuest = nil }' in game_config
 assert 'for _, player in ipairs(Players:GetPlayers()) do' in progression
 assert 'if boundPlayers[player] then return end' in progression
 assert 'self:RefreshZoneUnlocks(player)' in progression
