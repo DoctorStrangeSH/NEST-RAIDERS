@@ -207,6 +207,33 @@ function WorldHealthCheck:Check()
         if not ember or not ember:FindFirstChild("CrystalPortal") then fail("Нет входного портала из Пепельных земель в Хрустальное королевство") end
     end
 
+
+    local prismTrial = crystal and crystal:FindFirstChild("PrismTrial")
+    if not prismTrial then
+        fail("Нет арены Испытания призмы")
+    else
+        if not prismTrial:FindFirstChild("PrismTrialPlatform") then fail("Нет платформы Испытания призмы") end
+        local prismCount = 0
+        for _, descendant in ipairs(prismTrial:GetDescendants()) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "CrystalPrismPrompt" then
+                prismCount += 1
+            end
+        end
+        if prismCount < 3 then fail(string.format("Призмы испытания: %d из 3", prismCount)) end
+        if not prismTrial:FindFirstChild("PrismLightBeam_1") or not prismTrial:FindFirstChild("PrismLightBeam_2") then
+            fail("Нет световых лучей призматического механизма")
+        end
+        local guardian = prismTrial:FindFirstChild("PrismGuardian")
+        local core = guardian and guardian:FindFirstChild("GuardianPrismCore")
+        local bossPrompt = core and core:FindFirstChild("CrystalTrialBossPrompt")
+        if not bossPrompt or not bossPrompt:IsA("ProximityPrompt") then fail("Нет взаимодействия с Хранителем призмы") end
+        if not prismTrial:FindFirstChild("CrystalTrialSign") then fail("Нет подсказки к последовательности призм") end
+    end
+    local ancient = world and world:FindFirstChild("AncientHeights")
+    if not ancient or not ancient:FindFirstChild("AncientLanding") then fail("Нет стартовой площадки Древних высот") end
+    if not ancient or not ancient:FindFirstChild("AncientReturnPortal") then fail("Нет обратного портала с Древних высот") end
+    if not crystal or not crystal:FindFirstChild("AncientHeightsPortal") then fail("Нет портала к Древним высотам") end
+
     return #issues == 0, issues
 end
 
