@@ -19,6 +19,8 @@ local ProfileTemplate = {
     DiscoveredSpecies = {},
     Materials = {
         AshCrystal = 0,
+        CrystalShard = 0,
+        CrystalNodeCooldowns = {},
         LastAshfallClaimEventId = "",
         AshfallClaimedNodes = {},
     },
