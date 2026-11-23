@@ -26,6 +26,8 @@ assert 'return self._initialized, created' in plots
 world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
 grove_secret = Path("src/ServerScriptService/Server/Services/AncientSecretService.lua").read_text()
 ancient_cave = Path("src/ServerScriptService/Server/Services/AncientCaveService.lua").read_text()
+forgotten_boss = Path("src/ServerScriptService/Server/Services/ForgottenHeartBossService.lua").read_text()
+collection_book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua").read_text()
 companion_catalog = Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
 biome_catalog = Path("src/ReplicatedStorage/Shared/Config/BiomeCatalog.lua").read_text()
 companion_service = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
@@ -571,5 +573,22 @@ assert 'BatEarLeft' in companion_service and 'CrystalCrest' in companion_service
 assert 'Id = "ForgottenCaveEgg"' in ancient_cave and 'Source = "ForgottenCaveCache"' in ancient_cave
 assert 'player:SetAttribute("EggCount", #profile.EggInventory)' in ancient_cave
 assert 'local function chooseCompanion(eggId)' in Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
+
+assert 'ForgottenHeartBossService' in server
+assert 'ForgottenHeartGuardian' in companion_catalog
+assert 'BossExclusive = true' in companion_catalog and 'AcquisitionBiome = "Пещера забытого сердца"' in companion_catalog
+assert 'ForgottenHeartBossHealth = 360' in profile_template
+assert 'ForgottenHeartBossGuardian' not in companion_catalog
+assert 'ForgottenHeartBossPrompt' in world and 'ForgottenHeartBossArena' in world and 'ForgottenHeartBossSign' in world
+assert 'Нет арены или взаимодействия с Хранителем забытого сердца' in world_health
+assert 'ForgottenHeartBossHealth' in forgotten_boss and 'MAX_HEALTH = 360' in forgotten_boss
+assert 'Id = "CrystalSlam"' in forgotten_boss and 'Id = "EchoPulse"' in forgotten_boss and 'Id = "ShardRain"' in forgotten_boss
+assert 'Pattern = "Target"' in forgotten_boss and 'Pattern = "Boss"' in forgotten_boss and 'Pattern = "Triple"' in forgotten_boss
+assert 'forgotten_cave_cache' in forgotten_boss and 'forgotten_heart_boss' in forgotten_boss
+assert 'TargetUserId' in forgotten_boss and 'ForgottenHeartAttackWarning' in client
+assert 'ForgottenHeartBossUnlocked' in client and 'ForgottenHeartBossHealth' in client
+assert 'ХРАНИТЕЛЬ ЗАБЫТОГО СЕРДЦА' in client and 'КРИСТАЛЬНЫЙ ДОЖДЬ' in client
+assert 'ForgottenHeartGuardian' in companion_service and 'ChestHeart' in companion_service
+assert 'AcquisitionBiome' in collection_book
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
