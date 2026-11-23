@@ -3480,6 +3480,101 @@ player:GetAttributeChangedSignal("LastNotice"):Connect(function()
     showNotice(message)
 end)
 updateStats()
+-- First playable onboarding: guide the existing server-authoritative egg loop.
+-- The client only highlights an object; it cannot grant eggs or hatch companions.
+local guide = Instance.new("Frame")
+guide.Name = "FirstPlayGuide"
+guide.AnchorPoint = Vector2.new(1, 0)
+guide.Position = UDim2.new(1, -12, 0, 66)
+guide.Size = UDim2.fromOffset(236, 108)
+guide.BackgroundColor3 = Color3.fromRGB(27, 51, 60)
+guide.BackgroundTransparency = 0.06
+guide.BorderSizePixel = 0
+guide.Parent = gui
+addCorner(guide, 13)
+addStroke(guide, Color3.fromRGB(242, 201, 123), 1.5)
+
+local guideText = Instance.new("TextLabel")
+guideText.Name = "GuideText"
+guideText.Position = UDim2.fromOffset(12, 8)
+guideText.Size = UDim2.new(1, -24, 1, -16)
+guideText.BackgroundTransparency = 1
+guideText.Font = Enum.Font.GothamBold
+guideText.TextSize = 13
+guideText.TextColor3 = Color3.fromRGB(245, 236, 205)
+guideText.TextWrapped = true
+guideText.TextXAlignment = Enum.TextXAlignment.Left
+guideText.TextYAlignment = Enum.TextYAlignment.Center
+guideText.Parent = guide
+
+local guideHighlight = Instance.new("Highlight")
+guideHighlight.Name = "FirstPlayTarget"
+guideHighlight.FillColor = Color3.fromRGB(255, 216, 129)
+guideHighlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+guideHighlight.FillTransparency = 0.65
+guideHighlight.OutlineTransparency = 0
+guideHighlight.Enabled = false
+guideHighlight.Parent = Workspace.CurrentCamera or Workspace
+
+local function firstPlayTarget()
+    local world = Workspace:FindFirstChild("NestRaidersWorld")
+    local island = world and world:FindFirstChild("StarterIsland")
+    if not island then return nil end
+    local eggs = tonumber(player:GetAttribute("EggCount")) or 0
+    if eggs > 0 then
+        local plots = island:FindFirstChild("PlayerPlots")
+        for _, plot in ipairs(plots and plots:GetChildren() or {}) do
+            if plot:GetAttribute("OwnerUserId") == player.UserId then
+                return plot:FindFirstChild("HatchStation")
+            end
+        end
+        return nil
+    end
+    local eggsFolder = island:FindFirstChild("EggSpawnPoints")
+    local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    local nearest, bestDistance
+    for _, egg in ipairs(eggsFolder and eggsFolder:GetChildren() or {}) do
+        if egg:GetAttribute("WorldEgg") and not egg:GetAttribute("Collected") then
+            local distance = root and (root.Position - egg.Position).Magnitude or 0
+            if not bestDistance or distance < bestDistance then
+                nearest, bestDistance = egg, distance
+            end
+        end
+    end
+    return nearest
+end
+
+local function updateFirstPlayGuide()
+    if not player:GetAttribute("ProfileLoaded") then
+        guideText.Text = "ПЕРВОЕ ПРИКЛЮЧЕНИЕ\\nПодключаем сохранение..."
+        guideHighlight.Enabled = false
+        return
+    end
+    if (tonumber(player:GetAttribute("CompanionCount")) or 0) > 0 then
+        guideText.Text = "✓ ПЕРВЫЙ ПИТОМЕЦ!\\nОткрой ☰ МЕНЮ → МОИ ПИТОМЦЫ."
+        guideHighlight.Enabled = false
+        guide.Visible = true
+        return
+    end
+    local hasEgg = (tonumber(player:GetAttribute("EggCount")) or 0) > 0
+    guideText.Text = hasEgg
+        and "ШАГ 2 / 2 · ВЫЛУПЛЕНИЕ\\nИди к светящемуся гнезду на своём участке. Нажми E / коснись кнопки."
+        or "ШАГ 1 / 2 · ПЕРВОЕ ЯЙЦО\\nНайди подсвеченное яйцо на острове. Подойди и нажми E / коснись кнопки."
+    local target = firstPlayTarget()
+    guideHighlight.Adornee = target
+    guideHighlight.Enabled = target ~= nil
+end
+for _, attribute in ipairs({"ProfileLoaded", "EggCount", "CompanionCount", "PlotId"}) do
+    player:GetAttributeChangedSignal(attribute):Connect(updateFirstPlayGuide)
+end
+task.spawn(function()
+    while guide.Parent do
+        updateFirstPlayGuide()
+        task.wait(2)
+    end
+    guideHighlight:Destroy()
+end)
+
 -- Mark the HUD usable only after every panel, action and event binding has finished.
 -- A partially constructed ScreenGui is not proof that the client initialized.
 gui:SetAttribute("ClientReady", true)
