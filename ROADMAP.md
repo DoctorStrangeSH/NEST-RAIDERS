@@ -389,3 +389,30 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add CI checks for resilient creation and actionable diagnostics.
 - [ ] Import newest artifact into Roblox Studio and confirm WorldHealth becomes READY and six plots are visible.
 - [ ] If still degraded, capture Output: `[NEST RAIDERS] Plot build failed`, `Service Init failed: PlotService`, and the new created-count diagnostic.
+
+## Player test feedback — usability and gameplay stabilization (2026-11-23)
+
+### Fixed in this pass
+- [x] Bound camera zoom (7–24 studs) so scroll input cannot zoom infinitely.
+- [x] Add viewport-based UIScale to the complete HUD, with a bounded mobile-friendly scale.
+- [x] Replace unsupported coin emoji glyphs and menu glyphs with readable text labels.
+- [x] Animate collected eggs flying toward the player and shrinking away; animate respawn.
+- [x] Increase active companion spacing, rotate models to face forward, and soften server follow interpolation.
+- [x] Add source regression checks for camera, scaling, pickup animation, pet spacing and orientation.
+
+### Remaining player feedback — tracked, not claimed fixed
+- [ ] Redesign navigation and modal layering; prevent menu and tutorial panels from obscuring important controls.
+- [ ] Replace remaining unsupported icon glyphs with a consistent icon system or clear text labels.
+- [ ] Rebuild the pet collection screen as child-friendly cards with large actions, rarity, stats and clear active slots.
+- [ ] Fix and test own-plot assignment/hatch ownership end-to-end; player-facing plot name must match server ownership.
+- [ ] Replace the three fixed meadow egg locations with randomized spawn slots; then add biome-specific egg pools and rarity/species tables.
+- [ ] Add deterministic rarity, species, size and mutation rolls from biome-specific weighted tables; display odds before purchase.
+- [ ] Complete island construction placement, validation, save/load and mobile controls.
+- [ ] Verify multiplayer plot allocation, isolation, concurrent egg collection and companion ownership.
+- [ ] Complete persistent profile load/save and Studio DataStore setup; clearly distinguish ephemeral Studio test profiles from published persistence.
+- [ ] Profile diagnostics: show load/save state and errors in HUD without exposing internal secrets.
+- [ ] Optimize follower replication and movement for multiple players; profile server frame time and part counts.
+- [ ] Test responsive layouts at 375px, 768px and desktop; ensure every modal scrolls and closes reliably.
+- [ ] Verify full flow: collect → visible pickup feedback → own nest → hatch → companion follow → collection → rejoin.
+
+**Acceptance rule:** no feature is marked complete from static CI alone. Roblox Studio runtime and multiplayer tests remain required.
