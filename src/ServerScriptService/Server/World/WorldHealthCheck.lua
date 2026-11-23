@@ -247,6 +247,28 @@ function WorldHealthCheck:Check()
         if ancientEggCount < 3 then fail(string.format("Яйца Древних высот: %d из 3", ancientEggCount)) end
         if not ancient:FindFirstChild("ElderCanopy") then fail("Нет рощи Древних высот") end
         if not ancient:FindFirstChild("AncientEggOddsSign") then fail("Нет таблицы вероятностей древнего яйца") end
+        local forgottenCave = ancient:FindFirstChild("ForgottenHeartCave")
+        local caveBridge = forgottenCave and forgottenCave:FindFirstChild("ForgottenCaveBridge")
+        local caveFloor = forgottenCave and forgottenCave:FindFirstChild("ForgottenCaveFloor")
+        local caveClue = forgottenCave and forgottenCave:FindFirstChild("ForgottenCaveClue")
+        if not caveBridge or not caveFloor then fail("Нет моста или пола пещеры забытого сердца") end
+        if not caveClue then fail("Нет подсказки к кристаллам пещеры") end
+        local caveCrystalCount = 0
+        for _, child in ipairs(forgottenCave and forgottenCave:GetChildren() or {}) do
+            if child:IsA("BasePart") and child:GetAttribute("CaveCrystalId")
+                and child:FindFirstChild("CaveCrystalPrompt") then
+                caveCrystalCount += 1
+            end
+        end
+        if caveCrystalCount < 3 then
+            fail(string.format("Кристаллы пещеры: %d из 3", caveCrystalCount))
+        end
+        local caveCache = forgottenCave and forgottenCave:FindFirstChild("ForgottenCaveCache")
+        local caveChest = caveCache and caveCache:FindFirstChild("ForgottenCaveChest")
+        local caveChestPrompt = caveChest and caveChest:FindFirstChild("ForgottenCaveChestPrompt")
+        if not caveChestPrompt or not caveChestPrompt:IsA("ProximityPrompt") then
+            fail("Нет сокровищницы забытого сердца")
+        end
         local whisperingGrove = ancient:FindFirstChild("WhisperingGrove")
         local groveAltar = whisperingGrove and whisperingGrove:FindFirstChild("ElderHeartAltar")
         local grovePrompt = groveAltar and groveAltar:FindFirstChild("ElderHeartPrompt")
