@@ -374,3 +374,14 @@
 - [ ] Verify the parent preview models are temporary copies and do not duplicate, mutate, equip, or remove the player's saved companions.
 - [ ] Verify preview models and their lights are removed after the energy transfer and all temporary effects are cleaned up.
 - [ ] Verify simultaneous rituals by different players do not mix parent previews or effects.
+
+## Ancient Heights — Studio acceptance
+- [ ] Confirm a player below level 50 cannot enter even after completing the prism trial.
+- [ ] Confirm a level-50 player without crystal_trial cannot enter.
+- [ ] Confirm an eligible player can travel from Crystal Realm and return safely.
+- [ ] Confirm only three Ancient Egg pickups are active and each has a working collect prompt.
+- [ ] Collect one Ancient Egg; verify it enters inventory, disappears, and respawns after the normal timer at a free spawn slot.
+- [ ] Verify hatching uses the Ancient Egg table (55% / 30% / 15%) and grants the matching Ancient species.
+- [ ] Verify the three follower silhouettes, genetic ornaments, collection discoveries, and profile updates.
+- [ ] Test two players independently; one player's egg collection must not grant or remove another player's inventory item.
+- [ ] Check landing, path, trees, rune pillars, egg stands, collision, and camera readability on desktop and mobile emulation.
