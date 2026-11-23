@@ -36,6 +36,13 @@ assert 'gui:SetAttribute("ClientReady", true)' in client
 assert client.rindex('gui:SetAttribute("ClientReady", true)') > client.rindex('updateStats()')
 assert 'hud:GetAttribute("ClientReady") == true' in watchdog
 assert 'GetAttributeChangedSignal("ClientReady")' in watchdog
+assert 'FirstPlayGuide' in client, "First-play onboarding missing"
+assert 'FirstPlayTarget' in client, "Egg/hatch target highlight missing"
+assert 'function firstPlayTarget()' in client
+assert 'function updateFirstPlayGuide()' in client
+assert 'WorldEgg' in client and 'HatchStation' in client
+assert client.index('function updateFirstPlayGuide()') < client.index('gui:SetAttribute("ClientReady", true)')
+
 assert 'if hasHud() then return end' not in watchdog
 
 
