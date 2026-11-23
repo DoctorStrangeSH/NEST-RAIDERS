@@ -3,6 +3,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
@@ -95,16 +96,34 @@ function EggService:Collect(player, egg)
     syncAttributes(player, profile)
     player:SetAttribute("LastNotice", "Ты подобрал яйцо луга!")
 
-    egg.Transparency = 1
+    local originalSize = egg.Size
+    local originalCFrame = egg.CFrame
     egg.CanCollide = false
     local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
     if prompt then prompt.Enabled = false end
 
+    -- Clear visual feedback: the egg flies toward the avatar and shrinks away.
+    local collectTarget = root.CFrame * CFrame.new(0, 0.5, -1.5)
+    local collectTween = TweenService:Create(
+        egg,
+        TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.In),
+        { CFrame = collectTarget, Size = Vector3.new(0.15, 0.15, 0.15), Transparency = 1 }
+    )
+    collectTween:Play()
+
     task.delay(EGG_RESPAWN_SECONDS, function()
         if egg and egg.Parent then
+            egg.CFrame = originalCFrame
+            egg.Size = originalSize
+            egg.Transparency = 1
             egg:SetAttribute("Collected", false)
-            egg.Transparency = 0
             egg.CanCollide = true
+            local respawnTween = TweenService:Create(
+                egg,
+                TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+                { Transparency = 0, Size = originalSize }
+            )
+            respawnTween:Play()
             if prompt then prompt.Enabled = true end
         end
     end)
