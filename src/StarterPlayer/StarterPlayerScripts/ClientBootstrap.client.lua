@@ -36,12 +36,12 @@ bootText.Font = Enum.Font.GothamBold
 bootText.TextSize = 16
 bootText.TextWrapped = true
 bootText.TextColor3 = Color3.fromRGB(245, 242, 226)
-bootText.Text = "NEST RAIDERS\\nПодключаем игровые системы..."
+bootText.Text = "NEST RAIDERS\nПодключаем игровые системы..."
 bootText.Parent = bootCard
 
 local remotes = ReplicatedStorage:WaitForChild("NestRaidersRemotes", 20)
 if not remotes then
-    bootText.Text = "NEST RAIDERS\\nСервер не запустил игровые службы. Открой View → Output в Roblox Studio и проверь красные ошибки."
+    bootText.Text = "NEST RAIDERS\nСервер не запустил игровые службы. Открой View → Output в Roblox Studio и проверь красные ошибки."
     warn("[NEST RAIDERS] Boot failed: NestRaidersRemotes was not created by the server.")
     return
 end
@@ -49,7 +49,7 @@ end
 local function waitRemote(name)
     local remote = remotes:WaitForChild(name, 20)
     if not remote then
-        bootText.Text = "NEST RAIDERS\\nНе создана серверная функция: " .. name .. ". Проверь ошибки в Output."
+        bootText.Text = "NEST RAIDERS\nНе создана серверная функция: " .. name .. ". Проверь ошибки в Output."
         warn("[NEST RAIDERS] Boot failed: missing RemoteFunction " .. name)
     end
     return remote
@@ -3502,7 +3502,7 @@ local function updateStats()
     end
     local persistence = player:GetAttribute("ProfilePersistence")
     local saveLabel = persistence == "SAVED" and "Сохранение: ВКЛ" or "Сохранение: ТЕСТ"
-    stats.Text = string.format("Монеты: %d\\nЯйца: %d    Питомцы: %d\\nУровень: %d\\nГнездо: %s\\n%s",
+    stats.Text = string.format("Монеты: %d\nЯйца: %d    Питомцы: %d\nУровень: %d\nГнездо: %s\n%s",
         player:GetAttribute("Coins") or 0,
         player:GetAttribute("EggCount") or 0,
         player:GetAttribute("CompanionCount") or 0,
