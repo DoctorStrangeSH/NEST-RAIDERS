@@ -791,3 +791,19 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Rejoin a private published test and verify the crafted egg and remaining materials persist.
 
 **Design intent:** the Whispering Grove and Forgotten Heart Cave rewards now feed into the Ancient Heights crafting loop. The existing Ancient Egg odds remain unchanged.
+
+### Sprint 4.42 — Artifact collection and equipment (2026-11-23)
+
+- [x] Add a saved artifact catalog with three weighted rarities: Root Sigil (60%), Moon Pendant (30%), Star Prism (10%).
+- [x] Add a server-validated artifact crafting action at the Ancient Heights workshop.
+- [x] Charge 4 Moonpetals, 2 Starshards, 2 Crystal Shards, 1 Ash Crystal and 250 coins only after every check passes.
+- [x] Save crafted artifact instances and two equipped artifact slots in the player profile.
+- [x] Add collection UI with artifact details, rarity, equip/unequip controls and a two-slot limit.
+- [x] Apply equipped artifact income bonuses to active companion passive income (3%, 6%, 10%; maximum combined bonus 20%).
+- [x] Replicate updated resource balances after successful crafting and extend static regression checks.
+- [ ] Roblox Studio: craft all three rarities over repeated attempts and verify costs, saved ownership and exact rarity.
+- [ ] Verify only two artifacts can be equipped, unequip frees a slot, and unowned IDs are rejected.
+- [ ] Verify passive income changes only while artifacts are equipped and remains correct after rejoin.
+- [ ] Test collection panel on 375px mobile and desktop; verify workshop range and biome restrictions.
+
+**Scope note:** Artifact effects currently boost passive income from active companions. Gathering and hatch-rate bonuses are reserved for later balance-tested artifact families.
