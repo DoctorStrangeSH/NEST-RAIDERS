@@ -1638,6 +1638,70 @@ function WorldBuilder:Build()
     heartPrompt.RequiresLineOfSight = false
     heartPrompt.Parent = elderHeart
 
+    -- A second, optional grove secret: four runes reveal a cache hidden behind the altar.
+    local groveCacheRunes = {
+        { Id = "Moon", Name = "Луна", Color = Color3.fromRGB(176, 190, 255), Offset = Vector3.new(-7, 0, -7) },
+        { Id = "Leaf", Name = "Лист", Color = Color3.fromRGB(154, 224, 125), Offset = Vector3.new(7, 0, -7) },
+        { Id = "Dew", Name = "Роса", Color = Color3.fromRGB(126, 215, 235), Offset = Vector3.new(7, 0, 7) },
+        { Id = "Star", Name = "Звезда", Color = Color3.fromRGB(255, 218, 135), Offset = Vector3.new(-7, 0, 7) },
+    }
+    for index, definition in ipairs(groveCacheRunes) do
+        local runePosition = Vector3.new(18, 20.1, 2680) + definition.Offset
+        local runeStone = part(whisperingGrove, "GroveCacheRune_" .. definition.Id,
+            Vector3.new(2.6, 0.8, 2.6), runePosition,
+            Color3.fromRGB(75, 88, 65), Enum.Material.Slate, Enum.PartType.Cylinder)
+        runeStone:SetAttribute("GroveCacheRuneId", definition.Id)
+        local runeGlow = part(whisperingGrove, "GroveCacheRuneGlow_" .. definition.Id,
+            Vector3.new(1.35, 0.22, 1.35), runePosition + Vector3.new(0, 0.52, 0),
+            definition.Color, Enum.Material.Neon, Enum.PartType.Cylinder)
+        runeGlow.CanCollide = false
+        runeGlow.CanTouch = false
+        runeGlow.CanQuery = false
+        local runeLight = Instance.new("PointLight")
+        runeLight.Color = definition.Color
+        runeLight.Range = 7
+        runeLight.Brightness = 0.55
+        runeLight.Parent = runeGlow
+        local runePrompt = Instance.new("ProximityPrompt")
+        runePrompt.Name = "GroveCacheRunePrompt"
+        runePrompt.ActionText = "Коснуться"
+        runePrompt.ObjectText = "Руна: " .. definition.Name
+        runePrompt.KeyboardKeyCode = Enum.KeyCode.E
+        runePrompt.HoldDuration = 0.35
+        runePrompt.MaxActivationDistance = 8
+        runePrompt.RequiresLineOfSight = false
+        runePrompt.Parent = runeStone
+    end
+
+    local hiddenCache = Instance.new("Model")
+    hiddenCache.Name = "WhisperingGroveCache"
+    hiddenCache.Parent = whisperingGrove
+    local cacheBase = part(hiddenCache, "WhisperingGroveCacheBase",
+        Vector3.new(5, 2.8, 4), Vector3.new(18, 20.2, 2691),
+        Color3.fromRGB(86, 72, 56), Enum.Material.WoodPlanks)
+    local cacheLid = part(hiddenCache, "WhisperingGroveCacheLid",
+        Vector3.new(5.2, 1.1, 4.2), Vector3.new(18, 22.1, 2691),
+        Color3.fromRGB(128, 101, 68), Enum.Material.Wood)
+    cacheLid.CanCollide = false
+    local cacheGem = part(hiddenCache, "WhisperingGroveCacheGem",
+        Vector3.new(1.2, 1.2, 1.2), Vector3.new(18, 23.1, 2689),
+        Color3.fromRGB(176, 190, 255), Enum.Material.Neon, Enum.PartType.Ball)
+    cacheGem.CanCollide = false
+    local cacheLight = Instance.new("PointLight")
+    cacheLight.Color = cacheGem.Color
+    cacheLight.Range = 11
+    cacheLight.Brightness = 0.8
+    cacheLight.Parent = cacheGem
+    local cachePrompt = Instance.new("ProximityPrompt")
+    cachePrompt.Name = "WhisperingGroveCachePrompt"
+    cachePrompt.ActionText = "Открыть"
+    cachePrompt.ObjectText = "Тайник четырёх рун"
+    cachePrompt.KeyboardKeyCode = Enum.KeyCode.E
+    cachePrompt.HoldDuration = 0.9
+    cachePrompt.MaxActivationDistance = 9
+    cachePrompt.RequiresLineOfSight = false
+    cachePrompt.Parent = cacheBase
+
     local groveSign = part(whisperingGrove, "WhisperingGroveSign",
         Vector3.new(18, 6, 1), Vector3.new(18, 25, 2700),
         Color3.fromRGB(66, 77, 55), Enum.Material.WoodPlanks)
