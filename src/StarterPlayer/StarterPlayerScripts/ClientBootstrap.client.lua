@@ -3965,6 +3965,105 @@ player:GetAttributeChangedSignal("AncientTempleBossWindup"):Connect(function()
 end)
 updateGuardianPhaseVisual()
 
+-- The Forgotten Heart Guardian has its own local-only core animation and phase colors.
+local forgottenBossVisualGeneration = 0
+local function getForgottenBossVisual()
+    local world = Workspace:FindFirstChild("NestRaidersWorld")
+    local ancient = world and world:FindFirstChild("AncientHeights")
+    local cave = ancient and ancient:FindFirstChild("ForgottenHeartCave")
+    local guardian = cave and cave:FindFirstChild("ForgottenHeartGuardian")
+    local core = guardian and guardian:FindFirstChild("ForgottenHeartCore")
+    local light = core and core:FindFirstChildOfClass("PointLight")
+    return core, light
+end
+
+local function updateForgottenBossPhaseVisual()
+    local core, light = getForgottenBossVisual()
+    if not core then return end
+    local phaseTwo = player:GetAttribute("ForgottenHeartBossPhase") == 2
+    local color = phaseTwo and Color3.fromRGB(190, 119, 255) or Color3.fromRGB(102, 213, 255)
+    TweenService:Create(core, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {
+        Color = color,
+        Size = Vector3.new(3.2, 3.2, 2.2),
+    }):Play()
+    if light then
+        TweenService:Create(light, TweenInfo.new(0.3), {
+            Color = color,
+            Brightness = phaseTwo and 3.4 or 2.2,
+            Range = phaseTwo and 30 or 24,
+        }):Play()
+    end
+end
+
+local function playForgottenBossTelegraph()
+    forgottenBossVisualGeneration += 1
+    local generation = forgottenBossVisualGeneration
+    local core, light = getForgottenBossVisual()
+    if not core then return end
+    local phaseTwo = player:GetAttribute("ForgottenHeartBossPhase") == 2
+    local attackType = player:GetAttribute("ForgottenHeartBossAttackType")
+    local color = attackType == "ShardRain"
+        and Color3.fromRGB(255, 166, 220)
+        or (attackType == "EchoPulse"
+            and Color3.fromRGB(177, 146, 255)
+            or Color3.fromRGB(125, 232, 255))
+    TweenService:Create(core, TweenInfo.new(0.28, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Color = color,
+        Size = phaseTwo and Vector3.new(5.2, 5.2, 3.5) or Vector3.new(4.5, 4.5, 3),
+    }):Play()
+    if light then
+        TweenService:Create(light, TweenInfo.new(0.28), {
+            Color = color,
+            Brightness = 6,
+            Range = phaseTwo and 38 or 31,
+        }):Play()
+    end
+    task.delay(0.65, function()
+        if generation ~= forgottenBossVisualGeneration or not core.Parent then return end
+        updateForgottenBossPhaseVisual()
+    end)
+end
+
+local function playForgottenBossVictory()
+    forgottenBossVisualGeneration += 1
+    local generation = forgottenBossVisualGeneration
+    local core, light = getForgottenBossVisual()
+    if not core then return end
+    local color = Color3.fromRGB(255, 224, 151)
+    TweenService:Create(core, TweenInfo.new(0.55, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Color = color,
+        Size = Vector3.new(6, 6, 4),
+    }):Play()
+    if light then
+        TweenService:Create(light, TweenInfo.new(0.55), {
+            Color = color,
+            Brightness = 8,
+            Range = 46,
+        }):Play()
+    end
+    task.delay(2, function()
+        if generation == forgottenBossVisualGeneration and core.Parent then
+            updateForgottenBossPhaseVisual()
+        end
+    end)
+end
+
+player:GetAttributeChangedSignal("ForgottenHeartBossPhase"):Connect(updateForgottenBossPhaseVisual)
+player:GetAttributeChangedSignal("ForgottenHeartBossWindup"):Connect(function()
+    if player:GetAttribute("ForgottenHeartBossWindup") == true then
+        playForgottenBossTelegraph()
+    else
+        forgottenBossVisualGeneration += 1
+        updateForgottenBossPhaseVisual()
+    end
+end)
+player:GetAttributeChangedSignal("ForgottenHeartBossCompleted"):Connect(function()
+    if player:GetAttribute("ForgottenHeartBossCompleted") == true then
+        playForgottenBossVictory()
+    end
+end)
+updateForgottenBossPhaseVisual()
+
 
 -- Volcanic heat HUD: values are replicated from the server, never client-authoritative.
 local heatPanel = Instance.new("Frame")
