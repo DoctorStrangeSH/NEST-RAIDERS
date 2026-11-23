@@ -590,5 +590,13 @@ assert 'ForgottenHeartBossUnlocked' in client and 'ForgottenHeartBossHealth' in 
 assert 'ХРАНИТЕЛЬ ЗАБЫТОГО СЕРДЦА' in client and 'КРИСТАЛЬНЫЙ ДОЖДЬ' in client
 assert 'ForgottenHeartGuardian' in companion_service and 'ChestHeart' in companion_service
 assert 'AcquisitionBiome' in collection_book
+assert 'ForgottenHeartArenaCrystal_' in world and 'CrystalCore' in world and 'CrystalShard' in world
+assert 'bossArenaCrystalCount ~= 8' in world_health
+assert 'playForgottenBossTelegraph' in client and 'CrystalSlam' in client and 'EchoPulse' in client and 'ShardRain' in client
+assert 'breakForgottenBossArenaCrystals' in client and 'createForgottenBossDebris' in client
+assert 'playForgottenBossPhaseTwo' in client and 'playForgottenBossVictory' in client
+assert 'showForgottenHeartRewardReveal' in client and 'ЗАБРАТЬ НАГРАДУ' in client
+assert 'ForgottenHeartBossRewardReveal' in forgotten_boss and 'ForgottenHeartBossRewardReveal' in client
+assert 'forgottenBossArmBaseCache' in client
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
