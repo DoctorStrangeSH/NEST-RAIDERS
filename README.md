@@ -154,3 +154,9 @@ Successful breeding triggers a temporary altar animation: the two selected compa
 - 1–3 Elderwood per harvest, per-player three-minute node cooldowns, and profile persistence.
 - A biome-specific HUD panel displays the saved Elderwood balance.
 - Studio acceptance cases are tracked in [docs/TESTING.md](docs/TESTING.md).
+
+
+### Whispering Grove secret
+- A hidden stepping-stone route leads to a small shrine beyond the Elder Canopy.
+- The Elder Heart altar grants a one-time, profile-saved reward of 250 coins, 150 XP, and 8 Elderwood.
+- Server-side validation prevents repeat claims and out-of-zone reward requests.
