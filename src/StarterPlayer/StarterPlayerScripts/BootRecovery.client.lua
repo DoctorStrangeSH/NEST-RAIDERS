@@ -1,15 +1,16 @@
 -- Independently running watchdog: a failure in ClientBootstrap must never leave a silent empty screen.
--- This script does not replace gameplay UI and disappears as soon as the real HUD is present.
+-- A partially created HUD is not ready: wait for ClientReady from the end of ClientBootstrap.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 
-local function hasHud()
-    return playerGui:FindFirstChild("NestRaidersHUD") ~= nil
+local function isHudReady()
+    local hud = playerGui:FindFirstChild("NestRaidersHUD")
+    return hud ~= nil and hud:GetAttribute("ClientReady") == true
 end
 
 task.wait(12)
-if hasHud() then return end
+if isHudReady() then return end
 
 local screen = Instance.new("ScreenGui")
 screen.Name = "NestRaidersRecovery"
@@ -72,7 +73,7 @@ retryCorner.CornerRadius = UDim.new(0, 9)
 retryCorner.Parent = retry
 
 local function report()
-    if hasHud() then
+    if isHudReady() then
         screen:Destroy()
         return
     end
@@ -91,13 +92,25 @@ local function report()
     if #failures > 0 then
         details.Text = "Ошибка запуска:\n" .. string.sub(table.concat(failures, "\n"), 1, 500)
     else
-        details.Text = "Интерфейс не появился за 12 секунд. Проверь красные ошибки ClientBootstrap в View → Output. Системы на сервере могут быть загружены, но клиентский скрипт завершился с ошибкой."
+        details.Text = "Интерфейс не завершил запуск за 12 секунд. Проверь красные ошибки ClientBootstrap в View → Output: часть HUD могла появиться до сбоя."
     end
 end
 retry.Activated:Connect(report)
 report()
-playerGui.ChildAdded:Connect(function(child)
-    if child.Name == "NestRaidersHUD" and screen.Parent then
-        screen:Destroy()
-    end
-end)
+-- Listen to both late HUD creation and the actual finished-init signal.
+local observedHud
+local readinessConnection
+local function watchHud(hud)
+    if not hud or hud.Name ~= "NestRaidersHUD" or hud == observedHud then return end
+    if readinessConnection then readinessConnection:Disconnect() end
+    observedHud = hud
+    readinessConnection = hud:GetAttributeChangedSignal("ClientReady"):Connect(function()
+        if isHudReady() then
+            if screen.Parent then screen:Destroy() end
+            if readinessConnection then readinessConnection:Disconnect() end
+        end
+    end)
+    if isHudReady() and screen.Parent then screen:Destroy() end
+end
+watchHud(playerGui:FindFirstChild("NestRaidersHUD"))
+playerGui.ChildAdded:Connect(watchHud)
