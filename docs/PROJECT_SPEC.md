@@ -298,3 +298,13 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Frost trial progress (Aurora, Glacier, Winter) is persistent; completing all three grants +180 XP once and satisfies the configured Emberlands quest prerequisite. Emberlands still requires level 22.
 - Egg collection is rejected unless the player's server-owned current biome matches the egg's unlocked biome.
 - These are scripted placeholder visuals. Studio runtime, persistence, collision, mobile, and performance acceptance remain mandatory before this slice is considered release-ready.
+
+ 
+## Emberlands — Heat gameplay slice (Sprint 4.22.1)
+- Emberlands is gated by the existing progression configuration: level 22 and the completed `frost_trial` quest.
+- The volcanic blockout contains a central magma core, basalt pillars, lava channels, three server-readable heat volumes, and a cooling sanctuary.
+- The server-owned HeatService replicates each player's heat value and danger/sanctuary state. Heat rises only inside configured volumes, cools outside them, and cools faster inside the sanctuary. At critical heat, the server applies gradual damage.
+- Active Cinder Fox, Magma Whelp, and Ash Phoenix companions provide passive heat reduction. Their level-7 active abilities provide temporary heat resistance, a stronger temporary heat ward, and a one-time per-life rescue from critical heat respectively.
+- Ember Egg odds are 60% Cinder Fox, 30% Magma Whelp, and 10% Ash Phoenix. The egg uses the existing biome-owned hatch table and random spawn pool.
+- The client HUD displays server-replicated temperature, danger warnings, sanctuary state, and protection.
+- Structural CI checks cover the Ember island, heat/cooling volumes, egg prompts, and portals. Roblox Studio runtime, multiplayer, balance, and mobile acceptance remain outstanding.
