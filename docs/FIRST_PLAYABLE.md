@@ -236,3 +236,14 @@
 - World egg collection now checks that the player is in the matching unlocked biome; prompts cannot be used remotely from another island.
 - CI static checks and world structural health checks cover the Frost island, egg prompts, trial runes, and return portal.
 - Studio runtime, persistence, collision, and mobile acceptance are still required; a successful Rojo build is not proof of gameplay.
+
+ 
+## Emberlands — Sprint 4.22.1
+- Third expansion biome prototype after Frost Highlands: volcanic island, lava channels, basalt pillars, and magma core.
+- Entry is already gated at level 22 and the completed Heart of Winter trial.
+- Heat rises in three invisible server-readable hazard volumes, cools gradually outside them, and drops quickly inside the turquoise cooling sanctuary.
+- At 100 heat, the server applies gradual damage and shows a critical warning. Heat resets on character respawn.
+- Active Ember companions mitigate heat: Cinder Fox 12%, Magma Whelp 22%, Ash Phoenix 8%. Level-7 active abilities add temporary resistance, full short-duration immunity, or one rescue from critical heat per life.
+- Ember Egg hatch odds: Cinder Fox 60%, Magma Whelp 30%, Ash Phoenix 10%. Eggs use the shared collection/hatching flow and biome-specific spawn pool.
+- The Russian HUD shows heat percentage, protection, and danger/sanctuary status.
+- Visuals are scripted prototypes. Studio playtesting, collision review, and mobile/performance acceptance are not yet complete.
