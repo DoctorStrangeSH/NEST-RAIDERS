@@ -143,3 +143,17 @@ A milestone is not complete until its acceptance tests pass in Roblox Studio on 
 
 ## Current implementation note
 The current code contains a first playable prototype loop: Starter Island blockout, server-validated egg pickup/hatching, six personal nest plots, server-owned companion inventory, equip/unequip UI for up to three active pets, equipped-pet passive income, a server-validated egg shop with disclosed starter odds, shared companion catalog, server-backed collection book, three-pet fusion with star ranks and visible evolution effects, personal nest pet displays with separately accumulated/collectible income, animated display pets with persistent mood, hunger, energy, feeding, rest, species personalities, favorite foods, and equippable nest toys with server-validated toy play, persistent player-owned nest decorations with buy/place/remove flow, placeholder companion followers, and a basic HUD. The code has not been runtime-tested in Roblox Studio. Default Studio profiles are ephemeral; persistent DataStore and session-lock behavior still require a private published test experience. Creator Store asset integration remains manual.
+
+## Playable-first recovery (2026-11-23)
+
+- [x] Register client RemoteFunctions before attempting world generation.
+- [x] Catch world build errors and expose them on `NestRaidersRemotes.WorldError`.
+- [x] Catch per-service module load failures; expose `ServiceError_<ServiceName>` attributes and continue loading independent services.
+- [x] Enrich the playable Starter Island with flowerbeds, path lanterns and egg pedestals (scripted placeholder scenery).
+- [x] GitHub Actions Rojo build completed for commit `bc4001ec` (run 45110496860).
+- [ ] **BLOCKER: Roblox Studio runtime** — confirm HUD appears, egg prompts respond, service errors are absent, and plots initialize.
+- [ ] **BLOCKER: visual acceptance** — inspect scenery, collisions, mobile performance and readability in Roblox Studio.
+- [ ] Verify full breeding ritual, save/rejoin, two-player behavior, and DataStore in a private test experience.
+- [ ] Only after all blockers are cleared: start Sprint 4.21.
+
+A successful CI build validates the Roblox XML packaging, **not gameplay**. Treat these steps as code-integrated but not runtime-verified.
