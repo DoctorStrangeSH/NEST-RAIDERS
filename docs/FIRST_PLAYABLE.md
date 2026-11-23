@@ -274,3 +274,13 @@
 - Collect the Prismatic Radiance Egg. Hatch odds: Prism Fox 60%, Crystal Fawn 30%, Aurora Dragon 10%.
 - Crystal Shards, mining cooldowns and egg/pet progress are saved through the existing profile system.
 - Studio playtesting, balance, mobile and performance acceptance remain outstanding.
+
+
+## Crystal Prism Trial — Sprint 4.25
+- Enter Crystal Realm after reaching level 35 and completing the Heart of Fire trial.
+- On the trial platform, follow the visible clue and activate the prisms in order: Azure → Rose → Crown. Activating a wrong prism resets only your own sequence; already aligned sequences survive reconnects.
+- After aligning all three beams, attack the Prism Guardian. Each strike deals 20 damage. Watch for the 1.55-second warning and move outside the 24-stud radius to dodge its 22-damage pulse.
+- Defeating the Guardian grants +500 XP once and completes `crystal_trial`.
+- At level 50, the completed trial unlocks the Ancient Heights portal. The current build includes its first landing platform and a return portal; the full biome is not built yet.
+- The Russian HUD tracks prism progress, guardian health, and the dodge warning.
+- Static CI and Rojo place build pass. Roblox Studio gameplay, multiplayer, persistence, mobile, collision, and performance tests remain required.
