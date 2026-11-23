@@ -3665,7 +3665,7 @@ local function updateBiomeTrialPanel()
         or (isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202))
 
     if isEmber then
-        trialDescription.Text = completed and "Огненный страж повержен. Путь в Хрустальное королевство открыт на 35 уровне!"
+        trialDescription.Text = completed and "Огненный страж повержен! Ты выполнил испытание для Хрустального королевства. Осталось достичь 35 уровня."
             or (count >= 3 and "Руны пробуждены! Атакуй Огненного стража и уклоняйся от его огненной волны."
                 or "Найди три руны на вершине вулкана. Затем сразись с Огненным стражем.")
         trialBarFill.BackgroundColor3 = Color3.fromRGB(255, 173, 91)
