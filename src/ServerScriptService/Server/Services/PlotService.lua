@@ -472,11 +472,13 @@ function PlotService:ApplyContestTrophies(player)
         Cozy = "УЮТ",
         Nature = "ПРИРОДА",
         Fantasy = "ФЭНТЕЗИ",
+        AncientTemple = "СЕРДЦЕ ДРЕВА",
     }
     local categoryColors = {
         Cozy = Color3.fromRGB(245, 174, 115),
         Nature = Color3.fromRGB(116, 207, 137),
         Fantasy = Color3.fromRGB(166, 143, 240),
+        AncientTemple = Color3.fromRGB(153, 211, 113),
     }
 
     for index = 1, math.min(#entries, 6) do
@@ -526,7 +528,9 @@ function PlotService:ApplyContestTrophies(player)
         local label = Instance.new("TextLabel")
         label.Size = UDim2.fromScale(1, 1)
         label.BackgroundTransparency = 1
-        label.Text = (categoryNames[trophyData.Category] or "КОНКУРС") .. " · " .. tostring(trophyData.Place)
+        label.Text = trophyData.Category == "AncientTemple"
+            and "СЕРДЦЕ ДРЕВА"
+            or ((categoryNames[trophyData.Category] or "КОНКУРС") .. " · " .. tostring(trophyData.Place))
         label.TextColor3 = Color3.fromRGB(255, 255, 245)
         label.TextScaled = true
         label.Font = Enum.Font.GothamBlack
