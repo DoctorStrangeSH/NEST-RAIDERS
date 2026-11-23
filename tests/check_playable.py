@@ -11,6 +11,13 @@ server = Path("src/ServerScriptService/Server/Bootstrap.server.lua").read_text()
 watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua").read_text()
 world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
 plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
+assert 'local folder = island:FindFirstChild("PlayerPlots")' in plots
+assert 'local ok, model, station, ownerLabel = pcall(buildPlot, folder, definition)' in plots
+assert 'folder:SetAttribute("CreatedCount", created)' in plots
+assert 'folder:SetAttribute("ExpectedCount", #PLOT_DEFINITIONS)' in plots
+assert 'return self._initialized, created' in plots
+assert 'Создано участков: %d из 6' in health if 'health' in locals() else True
+
 eggs = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
 companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
 inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
