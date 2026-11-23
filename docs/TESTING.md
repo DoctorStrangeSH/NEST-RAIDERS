@@ -573,3 +573,13 @@
 - [ ] Compare passive income with no artifacts and with each artifact combination; verify additive bonuses and the 20% cap.
 - [ ] Rejoin and verify collection, equipment and passive-income bonus persist.
 - [ ] Verify artifact panel, long artifact names and buttons fit 375px mobile and desktop.
+
+## Sprint 4.43 — Artifact upgrades acceptance
+- [ ] Craft or otherwise obtain three copies of one artifact type at level I; merge and verify one level-II instance replaces exactly three inputs.
+- [ ] Repeat through levels III–VI and verify level labels and scaled bonuses.
+- [ ] Attempt to merge mixed artifact types and mixed levels; verify rejection and no inventory changes.
+- [ ] Attempt duplicate IDs, unowned IDs, fewer/more than three IDs, and equipped items; verify rejection and no inventory changes.
+- [ ] Attempt to merge a level-VI artifact; verify maximum-level rejection.
+- [ ] Rejoin after a successful merge; verify artifact ID, instance ID, level and equipment state persist.
+- [ ] Equip upgraded artifacts and compare passive-income payouts; verify the combined +20% cap.
+- [ ] Verify the UI only offers unequipped merge groups and remains usable at 375px width.
