@@ -166,3 +166,9 @@ Successful breeding triggers a temporary altar animation: the two selected compa
 - Craft an Ancient Egg in the Ancient Heights workbench for 10 Elderwood and 300 coins.
 - Crafted eggs use the existing Ancient Heights hatch pool and normal personal nest hatch flow.
 - Server checks zone access, character distance, loaded profile, resources and egg capacity before charging.
+
+
+### Ancient Tree Temple
+- Cross the stone causeway in Ancient Heights to reach the temple.
+- Solve the Root → River → Dawn rune sequence and open the treasure chest.
+- Each player earns the 500-coin, 300-XP, 20-Elderwood reward once; puzzle progress is saved per player.
