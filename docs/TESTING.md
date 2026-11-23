@@ -445,3 +445,13 @@
 - [ ] Defeat the boss and confirm exactly one Heartwood Guardian is added, 600 XP is granted, and no duplicate reward is possible.
 - [ ] Confirm the new companion appears in the collection book as boss-exclusive and follows the player if an active slot is available.
 - [ ] Verify boss HUD warnings and health bar at 375px, 768px and desktop widths.
+
+
+## Heartwood Guardian phase two & trophy — Studio acceptance
+- [ ] Deal damage until the Guardian reaches exactly 120 HP; verify phase two and its HUD appear immediately.
+- [ ] Verify Thorn Burst only appears in phase two, warns for 2 seconds, deals 22 damage within 32 studs, and can be dodged.
+- [ ] Confirm Vine Slam and Root Wave remain available in phase two.
+- [ ] Verify the core pulse, phase color, light burst and particles play on warning and reset afterward.
+- [ ] In a two-player session, put one player in phase two and keep the other in phase one; verify their HUD and local boss visuals do not cross-contaminate.
+- [ ] Defeat the boss and verify the “СЕРДЦЕ ДРЕВА” trophy appears in the player's nest.
+- [ ] Rejoin and verify the trophy remains displayed and no duplicate trophy is created.
