@@ -360,3 +360,12 @@ CI validates package and source invariants, not actual Roblox gameplay.
 - [ ] Multi-player/mobile Studio acceptance before marking Sprint 4.20 done.
 
 Source and automated packaging checks do not substitute for actual gameplay testing.
+
+### Playable-first egg safety validation (2026-11-23)
+
+- [x] Validate hatch species identifiers, display name, rarity, income and the inherited trait's display name **before** removing an egg from inventory.
+- [x] Keep malformed legacy breeding eggs in inventory and show a user-visible error instead of risking a partially completed hatch.
+- [x] Add source regression checks that enforce validation-before-consumption order.
+- [ ] Roblox Studio: hatch a valid natural egg and breeding egg, verify accurate inventory decrement and companion creation.
+- [ ] In a disposable Studio test save, inject an egg with missing `GeneticTrait.Name`; verify no egg disappears.
+- [ ] Verify multiplayer, companion visuals and DataStore round trip; CI source checks do not replace Studio gameplay tests.
