@@ -526,3 +526,14 @@
 - [ ] Confirm the mythic companion reveal card appears once, fits 375px-wide mobile screens and closes with its button.
 - [ ] Rejoin after defeating the boss and confirm the reward reveal does not replay.
 - [ ] In a two-player Studio session, confirm one player's animations and crystal breakage are not visible to the other player.
+
+
+## Forgotten Heart combat feedback — Studio acceptance
+- [ ] Strike the boss and confirm its body compresses, head recoils, core flashes and crystal sparks appear.
+- [ ] Confirm the hit camera shake is subtle and does not interfere with aiming or movement.
+- [ ] Stand inside a boss warning zone and verify the damage flash and stronger camera shake play on a hit.
+- [ ] Dodge an attack and verify no damage flash is shown.
+- [ ] Test on a 375px-wide mobile viewport and confirm the flash does not block ProximityPrompt controls.
+- [ ] In a two-player Studio session, confirm combat feedback is local to the player whose encounter generated it.
+- [ ] Verify effects stop cleanly after leaving the cave, dying, respawning or defeating the boss.
+- [ ] Add and test curated audio only after approved sound assets and usage rights are confirmed.
