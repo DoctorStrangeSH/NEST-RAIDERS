@@ -138,3 +138,12 @@ Successful breeding triggers a temporary altar animation: the two selected compa
 - Frost Fox, Snow Owl, and Glacier Bear each unlock a unique server-validated active ability at companion level 7.
 - World egg pickup is restricted to the player's current unlocked biome.
 - All visuals are scripted prototypes pending Roblox Studio art and gameplay acceptance.
+
+ 
+### Emberlands — Sprint 4.22.1
+- Volcanic island prototype with server-driven heat zones and a cooling sanctuary.
+- Heat increases near magma, cools outside danger areas, and causes gradual server-side damage at critical temperature.
+- Active Ember companions provide heat resistance and unique adult abilities.
+- Ember Egg hatch odds: Cinder Fox 60%, Magma Whelp 30%, Ash Phoenix 10%.
+- Access requires level 22 and completion of the Frost Highlands trial.
+- Roblox Studio runtime and multiplayer acceptance are still required.
