@@ -365,3 +365,7 @@ Victory grants the Mythic **Страж забытого сердца**, 1,200 co
 
 ## Guardian choreography and reward reveal
 Watch the Guardian's arms to read each attack: both arms rise before Crystal Slam, spread for Echo Pulse, and lift high for Shard Rain. At phase II the heart turns violet and the arena crystals burst into shards. The crystals regrow after a short pause. Defeating the Guardian triggers a one-time mythic companion reveal.
+
+
+## Combat feedback
+A successful strike makes the Guardian recoil and flash with crystal sparks. A boss hit triggers a brief red screen flash and stronger camera shake; a successful dodge does not. These are local visual cues, while all combat outcomes remain server-authoritative.
