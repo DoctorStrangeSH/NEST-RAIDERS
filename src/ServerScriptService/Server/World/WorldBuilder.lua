@@ -724,20 +724,20 @@ function WorldBuilder:Build()
         local alpha = (index - 1) / 7
         local step = part(stairFolder, "BasaltTrialStep_" .. index,
             Vector3.new(13, 2.2, 12),
-            Vector3.new(-62 + index * 6, 16 + alpha * 24, 1560),
+            Vector3.new(-62 + index * 6, 16 + alpha * 36, 1560),
             Color3.fromRGB(75, 65, 64), Enum.Material.Basalt)
         step.CFrame *= CFrame.Angles(0, 0, math.rad(-3))
     end
 
     local arena = part(trial, "HeartOfFireArena", Vector3.new(76, 3, 76),
-        Vector3.new(0, 40.5, 1560), Color3.fromRGB(76, 60, 57), Enum.Material.Basalt)
+        Vector3.new(0, 50.5, 1560), Color3.fromRGB(76, 60, 57), Enum.Material.Basalt)
     arena:SetAttribute("TrialArena", true)
 
     for index = 1, 12 do
         local angle = (math.pi * 2 * index) / 12
         local x, z = math.cos(angle) * 39, 1560 + math.sin(angle) * 39
         local marker = part(trial, "ArenaEmberMarker_" .. index,
-            Vector3.new(2.2, 5, 2.2), Vector3.new(x, 44.2, z),
+            Vector3.new(2.2, 5, 2.2), Vector3.new(x, 54.2, z),
             Color3.fromRGB(255, 115, 54), Enum.Material.Neon, Enum.PartType.Ball)
         marker.CanCollide = false
         if index % 2 == 0 then
@@ -753,9 +753,9 @@ function WorldBuilder:Build()
     runeFolder.Name = "TrialRunes"
     runeFolder.Parent = trial
     local runeDefinitions = {
-        {Id = "Ember", Name = "Руна Углей", Position = Vector3.new(-23, 46, 1540), Color = Color3.fromRGB(255, 167, 79)},
-        {Id = "Cinder", Name = "Руна Пепла", Position = Vector3.new(23, 46, 1540), Color = Color3.fromRGB(255, 105, 66)},
-        {Id = "Inferno", Name = "Руна Пламени", Position = Vector3.new(0, 46, 1587), Color = Color3.fromRGB(255, 218, 112)},
+        {Id = "Ember", Name = "Руна Углей", Position = Vector3.new(-23, 56, 1540), Color = Color3.fromRGB(255, 167, 79)},
+        {Id = "Cinder", Name = "Руна Пепла", Position = Vector3.new(23, 56, 1540), Color = Color3.fromRGB(255, 105, 66)},
+        {Id = "Inferno", Name = "Руна Пламени", Position = Vector3.new(0, 56, 1587), Color = Color3.fromRGB(255, 218, 112)},
     }
     for _, definition in ipairs(runeDefinitions) do
         local pedestal = part(runeFolder, definition.Id .. "RunePedestal",
@@ -787,10 +787,10 @@ function WorldBuilder:Build()
     guardian.Name = "HeartOfFireGuardian"
     guardian.Parent = trial
     local body = part(guardian, "GuardianCore", Vector3.new(12, 15, 10),
-        Vector3.new(0, 52, 1560), Color3.fromRGB(100, 48, 39), Enum.Material.Basalt, Enum.PartType.Ball)
+        Vector3.new(0, 62, 1560), Color3.fromRGB(100, 48, 39), Enum.Material.Basalt, Enum.PartType.Ball)
     body.CanCollide = false
     local core = part(guardian, "GuardianFlameCore", Vector3.new(6, 8, 6),
-        Vector3.new(0, 53, 1554), Color3.fromRGB(255, 117, 44), Enum.Material.Neon, Enum.PartType.Ball)
+        Vector3.new(0, 63, 1554), Color3.fromRGB(255, 117, 44), Enum.Material.Neon, Enum.PartType.Ball)
     core.CanCollide = false
     local coreLight = Instance.new("PointLight")
     coreLight.Color = Color3.fromRGB(255, 117, 44)
@@ -799,12 +799,12 @@ function WorldBuilder:Build()
     coreLight.Parent = core
     for side = -1, 1, 2 do
         local horn = part(guardian, "GuardianHorn_" .. side,
-            Vector3.new(3, 9, 3), Vector3.new(side * 6, 61, 1562),
+            Vector3.new(3, 9, 3), Vector3.new(side * 6, 71, 1562),
             Color3.fromRGB(61, 49, 48), Enum.Material.Basalt, Enum.PartType.Ball)
         horn.CFrame *= CFrame.Angles(0, 0, math.rad(side * 24))
         horn.CanCollide = false
         local arm = part(guardian, "GuardianArm_" .. side,
-            Vector3.new(5, 11, 6), Vector3.new(side * 9, 48, 1560),
+            Vector3.new(5, 11, 6), Vector3.new(side * 9, 58, 1560),
             Color3.fromRGB(78, 48, 43), Enum.Material.Basalt, Enum.PartType.Ball)
         arm.CanCollide = false
     end
@@ -819,7 +819,7 @@ function WorldBuilder:Build()
     bossPrompt.Parent = core
 
     local trialSign = part(trial, "HeartOfFireTrialSign", Vector3.new(26, 9, 1),
-        Vector3.new(0, 48, 1516), Color3.fromRGB(73, 42, 37), Enum.Material.WoodPlanks)
+        Vector3.new(0, 58, 1516), Color3.fromRGB(73, 42, 37), Enum.Material.WoodPlanks)
     local trialGui = Instance.new("SurfaceGui")
     trialGui.Face = Enum.NormalId.Front
     trialGui.Parent = trialSign
