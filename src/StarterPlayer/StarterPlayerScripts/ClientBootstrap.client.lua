@@ -71,7 +71,8 @@ bootGui:Destroy()
 local gui = Instance.new("ScreenGui")
 gui.Name = "NestRaidersHUD"
 gui.ResetOnSpawn = false
-gui.Parent = player:WaitForChild("PlayerGui")
+gui:SetAttribute("ClientReady", false)
+gui.Parent = playerGui
 
 local function addCorner(parent, radius)
     local corner = Instance.new("UICorner")
@@ -3479,3 +3480,7 @@ player:GetAttributeChangedSignal("LastNotice"):Connect(function()
     showNotice(message)
 end)
 updateStats()
+-- Mark the HUD usable only after every panel, action and event binding has finished.
+-- A partially constructed ScreenGui is not proof that the client initialized.
+gui:SetAttribute("ClientReady", true)
+print("[NEST RAIDERS] Client HUD initialized.")
