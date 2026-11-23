@@ -512,4 +512,4 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 ### Studio QA fixture — Gatherer artifacts
 - The artifact collection exposes a temporary QA action only when the client is running in Roblox Studio.
 - The server independently enforces `RunService:IsStudio()`, fills each of the three Gatherer types to three level-I instances, and enforces the 40-item collection limit.
-- This fixture is for local gameplay verification only; it is unavailable in published servers and does not alter crafting odds or normal player progression.
+- This fixture is for local gameplay verification only; it is unavailable in published servers and does not alter crafting odds or normal player progression. QA instances are tagged `DevOnly`, excluded from persistent save snapshots (including equipped IDs), and cannot be merged with normal crafted instances.
