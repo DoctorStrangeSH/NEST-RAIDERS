@@ -489,6 +489,21 @@ assert 'ArtifactsButton' in client and 'ArtifactsPanel' in client and 'CraftArti
 assert 'EquipArtifact' in client and 'UnequipArtifact' in client and 'artifactsPanel,' in client
 assert 'АРТЕФАКТ' in world and '2 кристальных' in world and '1 пепельный' in world
 
+# Artifact upgrade tiers and safe three-to-one merging.
+assert 'artifact.Level = math.clamp(math.floor(tonumber(artifact.Level) or 1), 1, 6)' in inventory
+assert 'payload.Action == "MergeArtifacts"' in inventory
+assert 'type(payload.ArtifactInstanceIds) ~= "table" or #payload.ArtifactInstanceIds ~= 3' in inventory
+assert 'selectedSet[instanceId]' in inventory and 'seenArtifactIds' in inventory
+assert 'artifact.Id ~= first.Id' in inventory and 'targetLevel >= 6' in inventory
+assert 'equippedSet[artifact.InstanceId]' in inventory
+assert 'Level = targetLevel + 1' in inventory
+assert 'Level = 1' in inventory and 'TierName = tierNames[level]' in inventory
+assert 'IncomeBonus = incomeBonus' in inventory and 'total *= (1 + artifactBonus)' in economy
+assert 'scaledBonus = (tonumber(definition.IncomeBonus) or 0) * (1 + (level - 1) * 0.25)' in economy
+assert 'Action = "MergeArtifacts"' in client and 'ArtifactInstanceIds' in client
+assert 'ОБЪЕДИНИТЬ ×3' in client and 'not artifact.Equipped' in client
+assert 'СЛОТЫ:' in client and 'artifact.TierName' in client
+
 # Ancient Tree Temple: walkable side-island, ordered runes, personal treasure claim and objective HUD.
 ancient_temple = Path("src/ServerScriptService/Server/Services/AncientTempleService.lua").read_text()
 assert '"AncientTempleService"' in server and 'function AncientTempleService:Init()' in ancient_temple
