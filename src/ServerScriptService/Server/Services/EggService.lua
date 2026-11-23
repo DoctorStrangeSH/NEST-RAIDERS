@@ -196,10 +196,23 @@ function EggService:Hatch(player, station)
 
     syncAttributes(player, profile)
     player:SetAttribute("ActiveCompanionCount", #profile.ActiveCompanions)
-    ProgressionService:AddXP(player, 15)
-    CompanionService:RefreshPlayer(player)
+    -- Commit the pet and counters first; visual refresh is a secondary effect.
+    -- A broken model should not prevent the successful hatch notification.
+    local xpOk, xpError = pcall(function()
+        ProgressionService:AddXP(player, 15)
+    end)
+    if not xpOk then
+        warn("[NEST RAIDERS] Hatch XP update failed: " .. tostring(xpError))
+    end
+    local visualOk, visualError = pcall(function()
+        CompanionService:RefreshPlayer(player)
+    end)
+    if not visualOk then
+        warn("[NEST RAIDERS] Hatch companion visual refresh failed: " .. tostring(visualError))
+    end
     local originMessage = egg.Origin == "Breeding" and " · наследие родителей" or ""
-    player:SetAttribute("LastNotice", "Вылупился питомец: " .. definition.Name .. " (" .. definition.Rarity .. ") · " .. geneticTrait.Name .. originMessage .. "! +15 опыта")
+    local xpMessage = xpOk and " +15 опыта" or ""
+    player:SetAttribute("LastNotice", "Вылупился питомец: " .. definition.Name .. " (" .. definition.Rarity .. ") · " .. geneticTrait.Name .. originMessage .. "!" .. xpMessage)
 end
 
 function EggService:Init()
