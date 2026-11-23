@@ -180,6 +180,33 @@ function WorldHealthCheck:Check()
         end
     end
 
+
+    local crystal = world and world:FindFirstChild("CrystalRealm")
+    if not crystal then
+        fail("Хрустальное королевство не создано")
+    else
+        if not crystal:FindFirstChild("PrismaticPlateau") then fail("Нет плато Хрустального королевства") end
+        if not crystal:FindFirstChild("CrystalReturnPortal") then fail("Нет обратного портала из Хрустального королевства") end
+        local crystalVeins = crystal:FindFirstChild("CrystalVeins")
+        local veinCount = 0
+        for _, node in ipairs(crystalVeins and crystalVeins:GetChildren() or {}) do
+            if node:IsA("BasePart") and type(node:GetAttribute("CrystalNodeId")) == "string"
+                and node:FindFirstChild("MineCrystalPrompt") then veinCount += 1 end
+        end
+        if veinCount < 6 then fail(string.format("Кристальные жилы: %d из 6", veinCount)) end
+        local crystalEggs = crystal:FindFirstChild("EggSpawnPoints")
+        local crystalEggCount = 0
+        for _, egg in ipairs(crystalEggs and crystalEggs:GetChildren() or {}) do
+            if egg:IsA("BasePart") and egg:GetAttribute("WorldEgg")
+                and egg:GetAttribute("BiomeId") == "CrystalRealm"
+                and egg:FindFirstChild("CollectEggPrompt") then crystalEggCount += 1 end
+        end
+        if crystalEggCount < 3 then fail("Яйца Хрустального королевства: " .. crystalEggCount .. " из 3") end
+        if not crystal:FindFirstChild("CrystalEggOddsSign") then fail("Нет таблицы вероятностей кристального яйца") end
+        if not world:FindFirstChild("CrystalSkyway") then fail("Нет небесного моста к Хрустальному королевству") end
+        if not ember or not ember:FindFirstChild("CrystalPortal") then fail("Нет входного портала из Пепельных земель в Хрустальное королевство") end
+    end
+
     return #issues == 0, issues
 end
 
