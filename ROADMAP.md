@@ -436,3 +436,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Keep purchases server-authoritative and inventory / balance validated.
 - [x] Add regression checks for remote catalogue access and plot-local world mutations.
 - [ ] Roblox Studio: open the build menu from spawn, buy an affordable item, walk to the owned plot, place / move / remove it, and verify a second player cannot mutate the first player's plot.
+
+### Randomized Starter Island egg sites (2026-11-23)
+
+- [x] Add nine visible egg-grove spawn locations across the Starter Island.
+- [x] Keep three world eggs active at a time and choose distinct initial locations on server startup.
+- [x] Move collected eggs to a randomly selected unoccupied spawn site after the respawn delay.
+- [x] Track occupied spawn slots server-side through egg attributes to prevent normal respawns stacking on the same site.
+- [x] Add CI regression checks for the spawn pool, initial shuffle, and free-slot selection.
+- [ ] Roblox Studio: collect eggs repeatedly and verify the three active eggs move between the nine marked sites without overlapping.
+- [ ] Multiplayer: verify simultaneous players cannot duplicate or collect the same egg twice.
+- [ ] Future biome expansion: add biome-specific egg pools, rarity/species tables, and disclosed odds; this change randomizes locations only.
