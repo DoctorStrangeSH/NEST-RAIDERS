@@ -376,33 +376,44 @@ function CompanionService:RefreshPlayer(player)
 end
 
 function CompanionService:Init()
-    Players.PlayerAdded:Connect(function(player)
+    -- A player may already exist when this service starts. Register identical
+    -- profile and respawn listeners for both existing and new players.
+    local boundPlayers = {}
+    local function bindPlayer(player)
+        if boundPlayers[player] then return end
+        boundPlayers[player] = true
+
         player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
-            if player:GetAttribute("ProfileLoaded") then self:RefreshPlayer(player) end
+            if player.Parent and player:GetAttribute("ProfileLoaded") then
+                self:RefreshPlayer(player)
+            end
         end)
         player.CharacterAdded:Connect(function()
             task.delay(0.5, function()
-                if player.Parent then self:RefreshPlayer(player) end
+                if player.Parent and player:GetAttribute("ProfileLoaded") then
+                    self:RefreshPlayer(player)
+                end
             end)
         end)
-    end)
 
+        if player:GetAttribute("ProfileLoaded") then
+            task.defer(function()
+                if player.Parent then self:RefreshPlayer(player) end
+            end)
+        end
+    end
+
+    Players.PlayerAdded:Connect(bindPlayer)
     Players.PlayerRemoving:Connect(function(player)
+        boundPlayers[player] = nil
         self._generations[player] = nil
         self:ClearPlayer(player)
         local displayFolder = self._displayFolders[player]
         if displayFolder then displayFolder:Destroy() end
         self._displayFolders[player] = nil
     end)
-
     for _, player in ipairs(Players:GetPlayers()) do
-        if player:GetAttribute("ProfileLoaded") then
-            task.defer(function() self:RefreshPlayer(player) end)
-        else
-            player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
-                if player:GetAttribute("ProfileLoaded") then self:RefreshPlayer(player) end
-            end)
-        end
+        bindPlayer(player)
     end
 end
 
