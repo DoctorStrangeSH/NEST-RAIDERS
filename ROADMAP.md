@@ -491,3 +491,17 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add static regression coverage for discovery provenance and catalog-derived odds.
 - [ ] Roblox Studio: hatch each Meadow species and verify the collection book reports the meadow as its discovery source and odds 55/30/15.
 - [ ] Verify an old profile without DiscoveredBiomes opens the collection book without errors.
+
+### Emerald Wilds — first explorable biome slice (2026-11-23)
+
+- [x] Build a separate Emerald Wilds island with its own walkable terrain, ancient trees, clearing and welcome sign.
+- [x] Add a two-way portal connection between Starter Island and Emerald Wilds.
+- [x] Gate Emerald Wilds entry at level 5; remove the placeholder quest requirement because no starter-trial quest flow exists yet.
+- [x] Add three EmeraldEgg world pickups with a separate randomized respawn pool.
+- [x] Route each biome's collected egg to its own species table and preserve its biome ID through hatching.
+- [x] Add Emerald Fox, Glow Moth and Ancient Sprout species with 50/32/18 relative hatch weights.
+- [x] Add static checks for world presence, travel gating, and biome-specific egg pool wiring.
+- [ ] Roblox Studio: test level 1 denial, level 5 entry, return portal, collecting/hatching EmeraldEgg, and egg respawn positions.
+- [ ] Confirm egg prompts, collision and island bounds on a live server with multiple players.
+- [ ] Add an actual Emerald trial quest and update the gate only when the quest can be completed in-game.
+- [ ] Add biome-specific collection-book display verification and unique environment audio/ambient effects.
