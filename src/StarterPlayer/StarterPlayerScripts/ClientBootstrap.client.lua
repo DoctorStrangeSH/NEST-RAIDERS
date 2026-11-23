@@ -3836,6 +3836,7 @@ for _, attribute in ipairs({
     "ForgottenCaveCrystalProgress", "ForgottenCaveCacheOpened",
     "ForgottenHeartBossHealth", "ForgottenHeartBossPhase", "ForgottenHeartBossCompleted",
     "ForgottenHeartBossUnlocked", "ForgottenHeartBossWindup", "ForgottenHeartBossAttackType",
+    "ForgottenHeartBossRewardReveal",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
@@ -4193,6 +4194,160 @@ local function playForgottenBossPhaseTwo()
     task.delay(1.25, resetForgottenBossArms)
 end
 
+local function showForgottenHeartRewardReveal()
+    local existing = playerGui:FindFirstChild("ForgottenHeartRewardReveal")
+    if existing then existing:Destroy() end
+
+    local screen = Instance.new("ScreenGui")
+    screen.Name = "ForgottenHeartRewardReveal"
+    screen.IgnoreGuiInset = true
+    screen.ResetOnSpawn = false
+    screen.DisplayOrder = 140
+    screen.Parent = playerGui
+
+    local dim = Instance.new("Frame")
+    dim.Size = UDim2.fromScale(1, 1)
+    dim.BackgroundColor3 = Color3.fromRGB(8, 13, 24)
+    dim.BackgroundTransparency = 1
+    dim.BorderSizePixel = 0
+    dim.Parent = screen
+
+    local card = Instance.new("Frame")
+    card.AnchorPoint = Vector2.new(0.5, 0.5)
+    card.Position = UDim2.fromScale(0.5, 0.53)
+    card.Size = UDim2.fromScale(0.88, 0.46)
+    card.BackgroundColor3 = Color3.fromRGB(31, 42, 61)
+    card.BackgroundTransparency = 0.04
+    card.BorderSizePixel = 0
+    card.Parent = dim
+    local cardConstraint = Instance.new("UISizeConstraint")
+    cardConstraint.MinSize = Vector2.new(280, 250)
+    cardConstraint.MaxSize = Vector2.new(500, 360)
+    cardConstraint.Parent = card
+    local cardCorner = Instance.new("UICorner")
+    cardCorner.CornerRadius = UDim.new(0, 22)
+    cardCorner.Parent = card
+    local cardStroke = Instance.new("UIStroke")
+    cardStroke.Color = Color3.fromRGB(146, 205, 255)
+    cardStroke.Thickness = 2
+    cardStroke.Transparency = 0.12
+    cardStroke.Parent = card
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(37, 63, 88)),
+        ColorSequenceKeypoint.new(0.55, Color3.fromRGB(42, 46, 76)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(67, 43, 82)),
+    })
+    gradient.Rotation = 25
+    gradient.Parent = card
+
+    local eyebrow = Instance.new("TextLabel")
+    eyebrow.BackgroundTransparency = 1
+    eyebrow.Position = UDim2.fromScale(0.08, 0.08)
+    eyebrow.Size = UDim2.fromScale(0.84, 0.1)
+    eyebrow.Font = Enum.Font.GothamBold
+    eyebrow.Text = "ДРЕВНЯЯ СИЛА ПРИЗНАЛА ТЕБЯ"
+    eyebrow.TextColor3 = Color3.fromRGB(174, 224, 255)
+    eyebrow.TextScaled = true
+    eyebrow.Parent = card
+
+    local emblem = Instance.new("Frame")
+    emblem.AnchorPoint = Vector2.new(0.5, 0.5)
+    emblem.Position = UDim2.fromScale(0.5, 0.39)
+    emblem.Size = UDim2.fromOffset(82, 82)
+    emblem.BackgroundColor3 = Color3.fromRGB(83, 125, 160)
+    emblem.BorderSizePixel = 0
+    emblem.Parent = card
+    local emblemCorner = Instance.new("UICorner")
+    emblemCorner.CornerRadius = UDim.new(1, 0)
+    emblemCorner.Parent = emblem
+    local emblemStroke = Instance.new("UIStroke")
+    emblemStroke.Color = Color3.fromRGB(190, 232, 255)
+    emblemStroke.Thickness = 2
+    emblemStroke.Parent = emblem
+    local emblemText = Instance.new("TextLabel")
+    emblemText.Size = UDim2.fromScale(1, 1)
+    emblemText.BackgroundTransparency = 1
+    emblemText.Text = "✦"
+    emblemText.TextColor3 = Color3.fromRGB(225, 246, 255)
+    emblemText.Font = Enum.Font.GothamBlack
+    emblemText.TextScaled = true
+    emblemText.Parent = emblem
+
+    local rarity = Instance.new("TextLabel")
+    rarity.BackgroundTransparency = 1
+    rarity.Position = UDim2.fromScale(0.08, 0.59)
+    rarity.Size = UDim2.fromScale(0.84, 0.09)
+    rarity.Font = Enum.Font.GothamBlack
+    rarity.Text = "МИФИЧЕСКИЙ ПИТОМЕЦ"
+    rarity.TextColor3 = Color3.fromRGB(204, 165, 255)
+    rarity.TextScaled = true
+    rarity.Parent = card
+
+    local petName = Instance.new("TextLabel")
+    petName.BackgroundTransparency = 1
+    petName.Position = UDim2.fromScale(0.06, 0.69)
+    petName.Size = UDim2.fromScale(0.88, 0.12)
+    petName.Font = Enum.Font.GothamBlack
+    petName.Text = "СТРАЖ ЗАБЫТОГО СЕРДЦА"
+    petName.TextColor3 = Color3.fromRGB(245, 247, 255)
+    petName.TextScaled = true
+    petName.Parent = card
+
+    local close = Instance.new("TextButton")
+    close.AnchorPoint = Vector2.new(0.5, 1)
+    close.Position = UDim2.fromScale(0.5, 0.94)
+    close.Size = UDim2.fromOffset(160, 34)
+    close.BackgroundColor3 = Color3.fromRGB(116, 174, 211)
+    close.TextColor3 = Color3.fromRGB(16, 28, 42)
+    close.Font = Enum.Font.GothamBold
+    close.TextSize = 14
+    close.Text = "ЗАБРАТЬ НАГРАДУ"
+    close.AutoButtonColor = true
+    close.Parent = card
+    local closeCorner = Instance.new("UICorner")
+    closeCorner.CornerRadius = UDim.new(0, 11)
+    closeCorner.Parent = close
+
+    local closed = false
+    local function dismiss()
+        if closed then return end
+        closed = true
+        TweenService:Create(dim, TweenInfo.new(0.22), {BackgroundTransparency = 1}):Play()
+        TweenService:Create(card, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            Position = UDim2.fromScale(0.5, 0.58),
+            BackgroundTransparency = 1,
+        }):Play()
+        task.delay(0.24, function()
+            if screen.Parent then screen:Destroy() end
+        end)
+    end
+    close.Activated:Connect(dismiss)
+
+    card.Size = UDim2.fromScale(0.78, 0.4)
+    TweenService:Create(dim, TweenInfo.new(0.25), {BackgroundTransparency = 0.28}):Play()
+    TweenService:Create(card, TweenInfo.new(0.42, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = UDim2.fromScale(0.88, 0.46),
+        Position = UDim2.fromScale(0.5, 0.5),
+    }):Play()
+    TweenService:Create(emblem, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Rotation = 360,
+    }):Play()
+    task.spawn(function()
+        while screen.Parent and not closed do
+            TweenService:Create(emblem, TweenInfo.new(1.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+                BackgroundColor3 = Color3.fromRGB(119, 151, 205),
+            }):Play()
+            task.wait(1.1)
+            if not screen.Parent or closed then break end
+            TweenService:Create(emblem, TweenInfo.new(1.1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+                BackgroundColor3 = Color3.fromRGB(83, 125, 160),
+            }):Play()
+            task.wait(1.1)
+        end
+    end)
+end
+
 local function playForgottenBossVictory()
     forgottenBossVisualGeneration += 1
     forgottenBossAttackGeneration += 1
@@ -4258,9 +4413,10 @@ player:GetAttributeChangedSignal("ForgottenHeartBossWindup"):Connect(function()
         updateForgottenBossPhaseVisual()
     end
 end)
-player:GetAttributeChangedSignal("ForgottenHeartBossCompleted"):Connect(function()
-    if player:GetAttribute("ForgottenHeartBossCompleted") == true then
+player:GetAttributeChangedSignal("ForgottenHeartBossRewardReveal"):Connect(function()
+    if player:GetAttribute("ForgottenHeartBossRewardReveal") == true then
         playForgottenBossVictory()
+        showForgottenHeartRewardReveal()
     end
 end)
 updateForgottenBossPhaseVisual()
