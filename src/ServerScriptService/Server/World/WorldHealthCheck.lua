@@ -64,6 +64,17 @@ function WorldHealthCheck:Check()
         end
     end
 
+    local causeway = world and world:FindFirstChild("GlacierCauseway")
+    local causewayCount = 0
+    for _, segment in ipairs(causeway and causeway:GetChildren() or {}) do
+        if segment:IsA("BasePart") and segment.Name:match("^IceBridgeSegment_") then
+            causewayCount += 1
+        end
+    end
+    if causewayCount < 9 then
+        fail(string.format("Ледяной мост: %d из 9 секций", causewayCount))
+    end
+
     local frost = world and world:FindFirstChild("FrostHighlands")
     if not frost then
         fail("Ледяные нагорья не созданы")
@@ -92,6 +103,9 @@ function WorldHealthCheck:Check()
         end
         if not frost:FindFirstChild("FrostReturnPortal") then
             fail("Нет обратного портала из Ледяных нагорий")
+        end
+        if not frost:FindFirstChild("FrostEggOddsSign") then
+            fail("Нет таблички с вероятностями яйца вечной зимы")
         end
         local emerald = world:FindFirstChild("EmeraldWilds")
         if not emerald or not emerald:FindFirstChild("FrostPortal") then
