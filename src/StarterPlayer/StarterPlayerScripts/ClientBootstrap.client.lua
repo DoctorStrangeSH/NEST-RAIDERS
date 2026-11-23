@@ -3613,31 +3613,94 @@ trialStatus.TextColor3 = Color3.fromRGB(186, 226, 196)
 trialStatus.TextXAlignment = Enum.TextXAlignment.Right
 trialStatus.Parent = trialPanel
 
+local bossBarBack = Instance.new("Frame")
+bossBarBack.Position = UDim2.fromOffset(12, 112)
+bossBarBack.Size = UDim2.new(1, -24, 0, 9)
+bossBarBack.BackgroundColor3 = Color3.fromRGB(57, 28, 25)
+bossBarBack.BorderSizePixel = 0
+bossBarBack.Visible = false
+bossBarBack.Parent = trialPanel
+addCorner(bossBarBack, 5)
+
+local bossBarFill = Instance.new("Frame")
+bossBarFill.Size = UDim2.fromScale(1, 1)
+bossBarFill.BackgroundColor3 = Color3.fromRGB(255, 111, 65)
+bossBarFill.BorderSizePixel = 0
+bossBarFill.Parent = bossBarBack
+addCorner(bossBarFill, 5)
+
+local bossStatus = Instance.new("TextLabel")
+bossStatus.Position = UDim2.fromOffset(12, 124)
+bossStatus.Size = UDim2.new(1, -24, 0, 14)
+bossStatus.BackgroundTransparency = 1
+bossStatus.Font = Enum.Font.GothamBold
+bossStatus.TextSize = 10
+bossStatus.TextColor3 = Color3.fromRGB(255, 190, 145)
+bossStatus.TextXAlignment = Enum.TextXAlignment.Right
+bossStatus.Visible = false
+bossStatus.Parent = trialPanel
+
 local function updateBiomeTrialPanel()
     local biomeId = player:GetAttribute("CurrentBiome")
     local isEmerald = biomeId == "EmeraldWilds"
     local isFrost = biomeId == "FrostHighlands"
-    trialPanel.Visible = isEmerald or isFrost
+    local isEmber = biomeId == "Emberlands"
+    trialPanel.Visible = isEmerald or isFrost or isEmber
     if not trialPanel.Visible then return end
 
-    local countAttribute = isFrost and "FrostTrialProgress" or "EmeraldTrialProgress"
-    local completeAttribute = isFrost and "FrostTrialCompleted" or "EmeraldTrialCompleted"
+    local countAttribute = isFrost and "FrostTrialProgress"
+        or (isEmber and "EmberTrialProgress" or "EmeraldTrialProgress")
+    local completeAttribute = isFrost and "FrostTrialCompleted"
+        or (isEmber and "EmberTrialCompleted" or "EmeraldTrialCompleted")
     local count = math.clamp(tonumber(player:GetAttribute(countAttribute)) or 0, 0, 3)
     local completed = player:GetAttribute(completeAttribute) == true
 
-    trialTitle.Text = isFrost and "ИСПЫТАНИЕ СЕРДЦА ЗИМЫ" or "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ"
-    trialTitle.TextColor3 = isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202)
-    trialDescription.Text = isFrost
-        and (completed and "Сердце зимы пробудилось. Испытание завершено!" or "Найди три ледяные руны и пробуди каждую.")
-        or (completed and "Древняя роща признала тебя. Испытание завершено!" or "Найди три светящиеся руны и активируй каждую.")
-    trialBarFill.BackgroundColor3 = isFrost and Color3.fromRGB(125, 211, 255) or Color3.fromRGB(115, 235, 154)
-    trialBarFill.Size = UDim2.fromScale(count / 3, 1)
-    trialStatus.Text = completed and "ИСПЫТАНИЕ ПРОЙДЕНО" or string.format("ПРОБУЖДЕНО РУН: %d / 3", count)
+    trialPanel.Position = isEmber and UDim2.new(1, -12, 0, 286) or UDim2.new(1, -12, 0, 184)
+    trialPanel.Size = UDim2.fromOffset(236, isEmber and 142 or 112)
+    trialPanel.BackgroundColor3 = isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51)
+
+    trialTitle.Text = isEmber and "ИСПЫТАНИЕ ОГНЕННОГО СЕРДЦА"
+        or (isFrost and "ИСПЫТАНИЕ СЕРДЦА ЗИМЫ" or "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ")
+    trialTitle.TextColor3 = isEmber and Color3.fromRGB(255, 183, 125)
+        or (isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202))
+
+    if isEmber then
+        trialDescription.Text = completed and "Огненный страж повержен. Путь в Хрустальное королевство открыт на 35 уровне!"
+            or (count >= 3 and "Руны пробуждены! Атакуй Огненного стража и уклоняйся от его огненной волны."
+                or "Найди три руны на вершине вулкана. Затем сразись с Огненным стражем.")
+        trialBarFill.BackgroundColor3 = Color3.fromRGB(255, 173, 91)
+        trialBarFill.Size = UDim2.fromScale(count / 3, 1)
+        trialStatus.Text = completed and "ИСПЫТАНИЕ ПРОЙДЕНО"
+            or string.format("ПРОБУЖДЕНО РУН: %d / 3", count)
+        bossBarBack.Visible = count >= 3 and not completed
+        bossStatus.Visible = count >= 3
+        local bossHealth = math.clamp(tonumber(player:GetAttribute("EmberTrialBossHealth")) or 100, 0, 100)
+        bossBarFill.Size = UDim2.fromScale(bossHealth / 100, 1)
+        if player:GetAttribute("EmberTrialBossWindup") == true then
+            bossStatus.Text = "АТАКА СТРАЖА! УВОРАЧИВАЙСЯ!"
+            bossStatus.TextColor3 = Color3.fromRGB(255, 105, 80)
+        else
+            bossStatus.Text = completed and "СТРАЖ ПОВЕРЖЕН"
+                or string.format("ЗДОРОВЬЕ СТРАЖА: %d / 100", bossHealth)
+            bossStatus.TextColor3 = Color3.fromRGB(255, 190, 145)
+        end
+    else
+        bossBarBack.Visible = false
+        bossStatus.Visible = false
+        trialDescription.Text = isFrost
+            and (completed and "Сердце зимы пробудилось. Испытание завершено!" or "Найди три ледяные руны и пробуди каждую.")
+            or (completed and "Древняя роща признала тебя. Испытание завершено!" or "Найди три светящиеся руны и активируй каждую.")
+        trialBarFill.BackgroundColor3 = isFrost and Color3.fromRGB(125, 211, 255) or Color3.fromRGB(115, 235, 154)
+        trialBarFill.Size = UDim2.fromScale(count / 3, 1)
+        trialStatus.Text = completed and "ИСПЫТАНИЕ ПРОЙДЕНО"
+            or string.format("ПРОБУЖДЕНО РУН: %d / 3", count)
+    end
 end
 
 for _, attribute in ipairs({
     "CurrentBiome", "EmeraldTrialProgress", "EmeraldTrialCompleted",
-    "FrostTrialProgress", "FrostTrialCompleted",
+    "FrostTrialProgress", "FrostTrialCompleted", "EmberTrialProgress",
+    "EmberTrialCompleted", "EmberTrialBossHealth", "EmberTrialBossWindup",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
