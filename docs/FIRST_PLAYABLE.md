@@ -377,3 +377,8 @@ Each boss attack has its own warning color: cyan for Crystal Slam, violet for Ec
 - Review current balances for Elderwood, Moonpetal, Starshard, Crystal Shards, and Ash Crystals.
 - Values are read-only and update when the server replicates a new balance.
 - The panel is available regardless of the current biome; biome-specific HUDs continue to show local objectives and events.\n
+
+## Advanced Ancient Egg crafting
+- The Ancient Heights workshop recipe is 10 Elderwood + 5 Moonpetals + 3 Starshards + 300 coins.
+- Moonpetals come from the Whispering Grove cache; Starshards come from the Forgotten Heart Cave rewards.
+- All requirements are shown on the workshop sign. Crafting produces a normal Ancient Egg in the saved egg bag and uses the standard hatch station.
