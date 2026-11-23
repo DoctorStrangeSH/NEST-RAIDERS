@@ -349,4 +349,22 @@ assert 'player:SetAttribute("AshCrystals"' in player_data
 assert 'AshfallEventPanel' in client and 'updateAshfallPanel' in client
 assert 'Пепельные кристаллы:' in client and 'ИЗВЕРЖЕНИЕ ЧЕРЕЗ' in client
 
+
+# Heart of Fire trial: persistent runes, individual boss encounter, dodge and one-time reward.
+fire_trial = Path("src/ServerScriptService/Server/Services/FireTrialService.lua").read_text()
+assert '"FireTrialService"' in server and 'function FireTrialService:Init()' in fire_trial
+assert 'EmberTrialRunes = {}' in Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+assert 'EmberTrialBossHealth = 100' in Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+assert 'EmberTrialRunePrompt' in fire_trial and 'EmberTrialBossPrompt' in fire_trial
+assert 'profile.CompletedQuests.ember_trial = true' in fire_trial
+assert 'REWARD_XP = 250' in fire_trial and 'ProgressionService:AddXP(player, REWARD_XP)' in fire_trial
+assert 'BOSS_WINDUP_SECONDS = 1.4' in fire_trial and 'BOSS_ATTACK_RADIUS = 23' in fire_trial
+assert 'currentHumanoid:TakeDamage(BOSS_DAMAGE)' in fire_trial and 'EmberTrialBossWindup' in fire_trial
+assert 'EmberTrialBossHealth' in client and 'EmberTrialBossWindup' in client
+assert 'ИСПЫТАНИЕ ОГНЕННОГО СЕРДЦА' in client and 'ЗДОРОВЬЕ СТРАЖА:' in client
+assert 'HeartOfFireTrial' in world and 'HeartOfFireGuardian' in world
+assert 'EmberTrialRunePrompt' in world and 'EmberTrialBossPrompt' in world
+assert 'EmberTrialRunePrompt' in world_health and 'EmberTrialBossPrompt' in world_health
+assert 'BasaltTrialStep_' in world and 'Подъём к алтарю:' in world_health
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
