@@ -1337,6 +1337,156 @@ function WorldBuilder:Build()
     recipeLabel.Font = Enum.Font.GothamBlack
     recipeLabel.Parent = recipeGui
 
+    -- Temple of the Ancient Tree: a side-island reached by a solid stone causeway.
+    local ancientTemple = Instance.new("Folder")
+    ancientTemple.Name = "AncientTreeTemple"
+    ancientTemple.Parent = ancient
+    local templeFoundation = part(ancientTemple, "TempleFloatingFoundation",
+        Vector3.new(62, 18, 58), Vector3.new(78, 8, 2600),
+        Color3.fromRGB(75, 83, 67), Enum.Material.Rock, Enum.PartType.Ball)
+    templeFoundation.CanCollide = false
+    local templeApproach = part(ancientTemple, "TempleCauseway",
+        Vector3.new(22, 2, 18), Vector3.new(43, 19.5, 2600),
+        Color3.fromRGB(133, 126, 103), Enum.Material.Slate)
+    for index = 1, 3 do
+        local inlay = part(ancientTemple, "CausewayRune_" .. index,
+            Vector3.new(1.1, 0.18, 12), Vector3.new(37 + index * 5, 20.6, 2600),
+            Color3.fromRGB(174, 218, 133), Enum.Material.Neon)
+        inlay.CanCollide = false
+    end
+
+    local templeFloor = part(ancientTemple, "TempleSanctuaryFloor",
+        Vector3.new(52, 2, 48), Vector3.new(78, 20.5, 2600),
+        Color3.fromRGB(143, 137, 112), Enum.Material.Slate)
+    templeFloor:SetAttribute("TempleWalkable", true)
+    local templeColors = {
+        Stone = Color3.fromRGB(104, 111, 88),
+        Rune = Color3.fromRGB(181, 226, 139),
+        Gold = Color3.fromRGB(224, 190, 111),
+    }
+    local columnPositions = {
+        Vector3.new(55, 28, 2583), Vector3.new(101, 28, 2583),
+        Vector3.new(55, 28, 2617), Vector3.new(101, 28, 2617),
+    }
+    for index, position in ipairs(columnPositions) do
+        local column = part(ancientTemple, "TemplePillar_" .. index,
+            Vector3.new(5, 16, 5), position, templeColors.Stone, Enum.Material.Rock)
+        local capital = part(ancientTemple, "TemplePillarCapital_" .. index,
+            Vector3.new(7, 1.8, 7), position + Vector3.new(0, 8.4, 0),
+            Color3.fromRGB(169, 157, 122), Enum.Material.Slate)
+        local base = part(ancientTemple, "TemplePillarBase_" .. index,
+            Vector3.new(7, 1.8, 7), position - Vector3.new(0, 8.4, 0),
+            Color3.fromRGB(169, 157, 122), Enum.Material.Slate)
+    end
+    local lintel = part(ancientTemple, "TempleEntranceLintel",
+        Vector3.new(52, 4, 5), Vector3.new(78, 37, 2583),
+        Color3.fromRGB(121, 119, 94), Enum.Material.Rock)
+    local rearWall = part(ancientTemple, "TempleRearWall",
+        Vector3.new(4, 15, 40), Vector3.new(103, 28, 2600),
+        Color3.fromRGB(101, 108, 87), Enum.Material.Rock)
+    local roof = part(ancientTemple, "TempleCanopyRoof",
+        Vector3.new(54, 3, 50), Vector3.new(78, 39.5, 2600),
+        Color3.fromRGB(86, 105, 78), Enum.Material.Slate)
+    roof.Transparency = 0.2
+    roof.CanCollide = false
+
+    local templeHeader = part(ancientTemple, "TempleWelcomeInscription",
+        Vector3.new(25, 7, 1), Vector3.new(78, 27, 2578),
+        Color3.fromRGB(65, 78, 57), Enum.Material.WoodPlanks)
+    templeHeader.CanCollide = false
+    local headerGui = Instance.new("SurfaceGui")
+    headerGui.Face = Enum.NormalId.Front
+    headerGui.Parent = templeHeader
+    local headerText = Instance.new("TextLabel")
+    headerText.Size = UDim2.fromScale(1, 1)
+    headerText.BackgroundTransparency = 1
+    headerText.Text = "ХРАМ ДРЕВНЕГО ДРЕВА\\nТри руны пробудят сердце"
+    headerText.TextColor3 = Color3.fromRGB(231, 242, 194)
+    headerText.TextScaled = true
+    headerText.TextWrapped = true
+    headerText.Font = Enum.Font.GothamBlack
+    headerText.Parent = headerGui
+
+    local templeRuneFolder = Instance.new("Folder")
+    templeRuneFolder.Name = "TempleRunes"
+    templeRuneFolder.Parent = ancientTemple
+    local templeRuneDefinitions = {
+        {Id = "Root", Name = "Руна Корней", Hint = "Корни помнят начало", Position = Vector3.new(66, 25, 2590), Color = Color3.fromRGB(153, 211, 113)},
+        {Id = "River", Name = "Руна Реки", Hint = "Река несёт жизнь", Position = Vector3.new(90, 25, 2590), Color = Color3.fromRGB(111, 202, 190)},
+        {Id = "Dawn", Name = "Руна Рассвета", Hint = "Рассвет завершает круг", Position = Vector3.new(78, 25, 2610), Color = Color3.fromRGB(246, 207, 126)},
+    }
+    for index, definition in ipairs(templeRuneDefinitions) do
+        local pedestal = part(templeRuneFolder, definition.Id .. "RunePedestal",
+            Vector3.new(7, 2.5, 7), definition.Position - Vector3.new(0, 2.1, 0),
+            Color3.fromRGB(85, 91, 72), Enum.Material.Slate)
+        local rune = part(templeRuneFolder, definition.Id .. "RuneStone",
+            Vector3.new(3, 4.2, 1.4), definition.Position,
+            definition.Color, Enum.Material.Neon, Enum.PartType.Block)
+        rune.CanCollide = false
+        rune:SetAttribute("TempleRuneId", definition.Id)
+        local runeLight = Instance.new("PointLight")
+        runeLight.Color = definition.Color
+        runeLight.Range = 13
+        runeLight.Brightness = 1
+        runeLight.Parent = rune
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "AncientTempleRunePrompt"
+        prompt.ActionText = "Пробудить"
+        prompt.ObjectText = definition.Name
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.6
+        prompt.MaxActivationDistance = 10
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = rune
+        pedestal:SetAttribute("TempleRuneId", definition.Id)
+    end
+
+    local templeClue = part(ancientTemple, "AncientTempleClueSign",
+        Vector3.new(17, 6, 1), Vector3.new(78, 25, 2584),
+        Color3.fromRGB(65, 78, 57), Enum.Material.WoodPlanks)
+    templeClue.CanCollide = false
+    local clueGui = Instance.new("SurfaceGui")
+    clueGui.Face = Enum.NormalId.Front
+    clueGui.Parent = templeClue
+    local clueText = Instance.new("TextLabel")
+    clueText.Size = UDim2.fromScale(1, 1)
+    clueText.BackgroundTransparency = 1
+    clueText.Text = "ПОРЯДОК ПРОБУЖДЕНИЯ\\nКОРНИ → РЕКА → РАССВЕТ"
+    clueText.TextColor3 = Color3.fromRGB(240, 231, 188)
+    clueText.TextScaled = true
+    clueText.TextWrapped = true
+    clueText.Font = Enum.Font.GothamBlack
+    clueText.Parent = clueGui
+
+    local templeTreasure = Instance.new("Model")
+    templeTreasure.Name = "AncientTempleTreasure"
+    templeTreasure.Parent = ancientTemple
+    local chestBase = part(templeTreasure, "AncientTempleChest",
+        Vector3.new(8, 4, 5), Vector3.new(78, 23.5, 2620),
+        Color3.fromRGB(115, 79, 48), Enum.Material.WoodPlanks)
+    local chestLid = part(templeTreasure, "AncientTempleChestLid",
+        Vector3.new(8.2, 1.6, 5.2), Vector3.new(78, 26.3, 2620),
+        Color3.fromRGB(193, 151, 75), Enum.Material.Metal)
+    chestLid.CanCollide = false
+    local chestGem = part(templeTreasure, "AncientTempleChestGem",
+        Vector3.new(1.5, 1.5, 1.5), Vector3.new(78, 27.5, 2617.2),
+        Color3.fromRGB(190, 238, 146), Enum.Material.Neon, Enum.PartType.Ball)
+    chestGem.CanCollide = false
+    local chestLight = Instance.new("PointLight")
+    chestLight.Color = chestGem.Color
+    chestLight.Range = 12
+    chestLight.Brightness = 1
+    chestLight.Parent = chestGem
+    local chestPrompt = Instance.new("ProximityPrompt")
+    chestPrompt.Name = "AncientTempleChestPrompt"
+    chestPrompt.ActionText = "Открыть"
+    chestPrompt.ObjectText = "Сундук Сердца рощи"
+    chestPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    chestPrompt.HoldDuration = 1
+    chestPrompt.MaxActivationDistance = 11
+    chestPrompt.RequiresLineOfSight = false
+    chestPrompt.Parent = chestBase
+
     -- A tucked-away ledge beyond the welcome sign rewards players who explore.
     local whisperingGrove = Instance.new("Folder")
     whisperingGrove.Name = "WhisperingGrove"
