@@ -455,3 +455,13 @@
 - [ ] In a two-player session, put one player in phase two and keep the other in phase one; verify their HUD and local boss visuals do not cross-contaminate.
 - [ ] Defeat the boss and verify the “СЕРДЦЕ ДРЕВА” trophy appears in the player's nest.
 - [ ] Rejoin and verify the trophy remains displayed and no duplicate trophy is created.
+
+
+## Heartwood Guardian animation & victory — Studio acceptance
+- [ ] Trigger Vine Slam and confirm both arms rise, strike down, and return to the exact idle pose.
+- [ ] Trigger Root Wave and confirm the body recoils, head lifts, arms spread, then all parts return.
+- [ ] Trigger Thorn Burst in phase two and confirm arms, branches and crown flare before resetting.
+- [ ] Trigger attacks quickly from two players and confirm no limb remains stuck or drifts from its original position.
+- [ ] Confirm the local core pulse remains independent from shared body animation and each player's HUD / phase stays private.
+- [ ] Defeat the Guardian and confirm only the winning player sees the gold victory reveal, then receives the unique follower and nest trophy.
+- [ ] Rejoin and verify the follower, trophy and completed state persist without replaying the victory effect on spawn.
