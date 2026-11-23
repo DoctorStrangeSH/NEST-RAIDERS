@@ -1483,7 +1483,8 @@ local function renderArtifacts(data)
         if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
     end
     local artifacts = data and data.Artifacts or {}
-    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d", data and data.EquippedArtifactCount or 0, data and data.MaxEquippedArtifacts or 2)
+    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d  ·  КОЛЛЕКЦИЯ: %d / 40",
+        data and data.EquippedArtifactCount or 0, data and data.MaxEquippedArtifacts or 2, #artifacts)
     if #artifacts == 0 then
         local empty = Instance.new("TextLabel")
         empty.Size = UDim2.new(1, -8, 0, 70)
@@ -1496,41 +1497,62 @@ local function renderArtifacts(data)
         empty.Parent = artifactsList
         return
     end
+
+    local groups = {}
+    for _, artifact in ipairs(artifacts) do
+        local key = tostring(artifact.Id) .. ":" .. tostring(artifact.Level or 1)
+        groups[key] = groups[key] or {}
+        table.insert(groups[key], artifact)
+    end
+    local mergeGroups = {}
+    for key, group in pairs(groups) do
+        if #group >= 3 and (group[1].Level or 1) < 6 then
+            mergeGroups[key] = { group[1], group[2], group[3] }
+        end
+    end
+
     for index, artifact in ipairs(artifacts) do
         local card = Instance.new("Frame")
         card.Name = "Artifact_" .. tostring(artifact.InstanceId)
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 92)
+        card.Size = UDim2.new(1, -8, 0, 112)
         card.BackgroundColor3 = Color3.fromRGB(48, 48, 76)
         card.BorderSizePixel = 0
         card.Parent = artifactsList
         addCorner(card, 12)
+
+        local level = math.clamp(math.floor(tonumber(artifact.Level) or 1), 1, 6)
         local name = Instance.new("TextLabel")
         name.BackgroundTransparency = 1
         name.Position = UDim2.fromOffset(12, 8)
         name.Size = UDim2.new(1, -132, 0, 22)
         name.Font = Enum.Font.GothamBlack
-        name.Text = (artifact.Name or artifact.Id) .. " · " .. (artifact.Rarity or "")
-        name.TextColor3 = artifact.Rarity == "Эпический" and Color3.fromRGB(220, 169, 255)
-            or (artifact.Rarity == "Редкий" and Color3.fromRGB(130, 194, 255) or Color3.fromRGB(222, 222, 232))
+        name.Text = (artifact.Name or artifact.Id) .. " · ур. " .. tostring(level)
+        name.TextColor3 = level >= 6 and Color3.fromRGB(255, 215, 125)
+            or (level >= 4 and Color3.fromRGB(220, 169, 255)
+            or (level >= 3 and Color3.fromRGB(130, 194, 255) or Color3.fromRGB(222, 222, 232)))
         name.TextSize = 12
         name.TextXAlignment = Enum.TextXAlignment.Left
         name.Parent = card
+
         local detail = Instance.new("TextLabel")
         detail.BackgroundTransparency = 1
         detail.Position = UDim2.fromOffset(12, 34)
-        detail.Size = UDim2.new(1, -132, 0, 42)
+        detail.Size = UDim2.new(1, -132, 0, 66)
         detail.Font = Enum.Font.Gotham
-        detail.Text = string.format("%s\nБонус дохода: +%d%%", artifact.Description or "", math.floor((artifact.IncomeBonus or 0) * 100 + 0.5))
+        detail.Text = string.format("%s\n%s\nБонус дохода: +%d%%",
+            artifact.Rarity or "", artifact.Description or "",
+            math.floor((artifact.IncomeBonus or 0) * 100 + 0.5))
         detail.TextColor3 = Color3.fromRGB(190, 194, 214)
         detail.TextSize = 10
         detail.TextWrapped = true
         detail.TextXAlignment = Enum.TextXAlignment.Left
         detail.Parent = card
+
         local toggle = Instance.new("TextButton")
-        toggle.AnchorPoint = Vector2.new(1, 0.5)
-        toggle.Position = UDim2.new(1, -10, 0.5, 0)
-        toggle.Size = UDim2.fromOffset(106, 36)
+        toggle.AnchorPoint = Vector2.new(1, 0)
+        toggle.Position = UDim2.new(1, -10, 0, 10)
+        toggle.Size = UDim2.fromOffset(106, 34)
         toggle.BackgroundColor3 = artifact.Equipped and Color3.fromRGB(137, 77, 88) or Color3.fromRGB(89, 125, 103)
         toggle.Text = artifact.Equipped and "СНЯТЬ" or "ЭКИПИРОВАТЬ"
         toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1545,6 +1567,34 @@ local function renderArtifacts(data)
             })
             if updated then renderArtifacts(updated) end
         end)
+
+        local groupKey = tostring(artifact.Id) .. ":" .. tostring(level)
+        local mergeIds = mergeGroups[groupKey]
+        if mergeIds and artifact.InstanceId == mergeIds[1].InstanceId then
+            local mergeButton = Instance.new("TextButton")
+            mergeButton.AnchorPoint = Vector2.new(1, 1)
+            mergeButton.Position = UDim2.new(1, -10, 1, -9)
+            mergeButton.Size = UDim2.fromOffset(106, 32)
+            mergeButton.BackgroundColor3 = Color3.fromRGB(117, 83, 157)
+            mergeButton.Text = "ОБЪЕДИНИТЬ ×3"
+            mergeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            mergeButton.TextSize = 9
+            mergeButton.Font = Enum.Font.GothamBlack
+            mergeButton.Parent = card
+            addCorner(mergeButton, 9)
+            mergeButton.Activated:Connect(function()
+                local updated = invokeInventory({
+                    Action = "MergeArtifacts",
+                    ArtifactInstanceIds = {
+                        mergeIds[1].InstanceId, mergeIds[2].InstanceId, mergeIds[3].InstanceId,
+                    },
+                })
+                if updated then
+                    renderArtifacts(updated)
+                    showNotice("Артефакт успешно улучшен!")
+                end
+            end)
+        end
     end
 end
 
