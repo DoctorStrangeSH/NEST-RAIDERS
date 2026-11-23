@@ -24,6 +24,7 @@ assert 'folder:SetAttribute("CreatedCount", created)' in plots
 assert 'folder:SetAttribute("ExpectedCount", #PLOT_DEFINITIONS)' in plots
 assert 'return self._initialized, created' in plots
 world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
+assert 'FrostHighlands' in health and 'FrostRunePrompt' in health
 assert 'Создано участков: %d из 6' in world_health
 assert 'Папка PlayerPlots не создана службой PlotService' in world_health
 
@@ -122,7 +123,6 @@ assert 'profile.CompletedQuests.frost_trial = true' in progression
 assert 'self:AddXP(player, 180)' in progression
 assert 'FrostTrialProgress' in progression and 'FrostTrialCompleted' in progression
 assert 'updateBiomeTrialPanel' in client and 'FrostTrialProgress' in client
-assert 'FrostHighlands' in health and 'FrostRunePrompt' in health
 
 
 assert 'for _, player in ipairs(Players:GetPlayers()) do' in progression
