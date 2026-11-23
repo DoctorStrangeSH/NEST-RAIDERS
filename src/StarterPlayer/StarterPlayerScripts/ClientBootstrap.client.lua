@@ -1500,9 +1500,11 @@ local function renderArtifacts(data)
 
     local groups = {}
     for _, artifact in ipairs(artifacts) do
-        local key = tostring(artifact.Id) .. ":" .. tostring(artifact.Level or 1)
-        groups[key] = groups[key] or {}
-        table.insert(groups[key], artifact)
+        if not artifact.Equipped then
+            local key = tostring(artifact.Id) .. ":" .. tostring(artifact.Level or 1)
+            groups[key] = groups[key] or {}
+            table.insert(groups[key], artifact)
+        end
     end
     local mergeGroups = {}
     for key, group in pairs(groups) do
