@@ -30,17 +30,22 @@ assert 'Папка PlayerPlots не создана службой PlotService' i
 economy = Path("src/ServerScriptService/Server/Services/EconomyService.lua").read_text()
 display_pets = Path("src/ServerScriptService/Server/Services/DisplayPetService.lua").read_text()
 assert 'local function getCompanionIncome(companion)' in economy
-assert 'trait.IncomeBonus' in economy and 'return math.min(math.floor(total + 0.5), MAX_TICK_REWARD)' in economy
+assert 'trait.IncomeBonus' in economy and 'profile.CompanionIncomeRemainder' in economy
+assert 'local payout = math.min(math.floor(accumulated), MAX_TICK_REWARD)' in economy
 assert 'local function getCompanionIncome(companion)' in display_pets
 assert 'trait.IncomeBonus' in display_pets
 assert 'IncomeBonusPercent' in display_pets
-assert 'math.floor(total + 0.5)' in display_pets
+assert 'profile.Nest.StoredIncomeRemainder' in display_pets
+assert 'local payout = math.floor(accumulated)' in display_pets
+assert 'return math.floor(total * 100 + 0.5) / 100' in display_pets
 
 eggs = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
 companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
 inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
 book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua").read_text()
 profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+assert 'CompanionIncomeRemainder = 0' in profile_template
+assert 'StoredIncomeRemainder = 0' in profile_template
 player_data = Path("src/ServerScriptService/Server/Services/PlayerDataService.lua").read_text()
 progression = Path("src/ServerScriptService/Server/Services/ProgressionService.lua").read_text()
 assert 'ProfilePersistence' in player_data
