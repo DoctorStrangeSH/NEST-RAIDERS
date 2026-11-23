@@ -387,7 +387,7 @@ Each boss attack has its own warning color: cyan for Crystal Slam, violet for Ec
 - Open **АРТЕФАКТЫ** from the feature menu to view owned artifacts and equipped slots.
 - Crafting requires standing within 16 studs of the Ancient Heights workshop, while in Ancient Heights.
 - Recipe: 4 Moonpetals + 2 Starshards + 2 Crystal Shards + 1 Ash Crystal + 250 coins.
-- A crafted artifact is randomly selected: Root Sigil (60%), Moon Pendant (30%), Star Prism (10%).
+- A crafted artifact is randomly selected from six entries: Root Sigil (48%), Moon Pendant (24%), Star Prism (8%), Root Harvester (12%), Moon Forager (6%), Star Prospector (2%). Gatherer artifacts account for 20% of crafts.
 - Equip up to two artifacts. Their passive-income bonuses stack additively, up to +20% total.
 
 ## Artifact upgrades
