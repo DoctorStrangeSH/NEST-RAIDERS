@@ -207,19 +207,12 @@ function AncientTempleBossService:Init()
     -- never controls per-player health, attack timing, or damage validation.
     local animationBase = {}
     for _, descendant in ipairs(guardian:GetDescendants()) do
-        if descendant:IsA("BasePart") then
+        if descendant:IsA("BasePart") and descendant ~= core then
             animationBase[descendant] = {
                 CFrame = descendant.CFrame,
                 Size = descendant.Size,
             }
         end
-    end
-    local guardianLight = core:FindFirstChildOfClass("PointLight")
-    if guardianLight then
-        animationBase[guardianLight] = {
-            Brightness = guardianLight.Brightness,
-            Range = guardianLight.Range,
-        }
     end
     self._animationGeneration = 0
     self._animationTweens = {}
@@ -242,8 +235,6 @@ function AncientTempleBossService:Init()
                 local reset = {}
                 if properties.CFrame then reset.CFrame = properties.CFrame end
                 if properties.Size then reset.Size = properties.Size end
-                if properties.Brightness then reset.Brightness = properties.Brightness end
-                if properties.Range then reset.Range = properties.Range end
                 animate(instance, duration or 0.35, reset)
             end
         end
@@ -324,12 +315,6 @@ function AncientTempleBossService:Init()
                 animate(leaf.Part, 0.62, {
                     CFrame = leaf.CFrame * CFrame.Angles(math.rad(direction * 24), 0, math.rad(direction * 18)),
                 }, Enum.EasingStyle.Back)
-            end
-            if guardianLight then
-                animate(guardianLight, 0.62, {
-                    Brightness = 7,
-                    Range = 42,
-                })
             end
             task.delay(0.82, function() restoreGuardian(generation, 0.58) end)
         end
