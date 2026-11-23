@@ -206,19 +206,27 @@ function EggService:Init()
         end
     end
 
-    Players.PlayerAdded:Connect(function(player)
-        player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
-            if player:GetAttribute("ProfileLoaded") then
-                local profile = PlayerDataService:GetProfile(player)
-                if profile then syncAttributes(player, profile) end
-            end
-        end)
-    end)
-    for _, player in ipairs(Players:GetPlayers()) do
-        task.defer(function()
+    -- The first player can join before EggService:Init is reached.
+    -- Bind the same load-complete signal for existing AND future players;
+    -- reading the profile only once misses an in-flight DataStore load.
+    local boundPlayers = {}
+    local function bindPlayer(player)
+        if boundPlayers[player] then return end
+        boundPlayers[player] = true
+        local function syncWhenReady()
+            if not player:GetAttribute("ProfileLoaded") then return end
             local profile = PlayerDataService:GetProfile(player)
             if profile then syncAttributes(player, profile) end
-        end)
+        end
+        player:GetAttributeChangedSignal("ProfileLoaded"):Connect(syncWhenReady)
+        syncWhenReady()
+    end
+    Players.PlayerAdded:Connect(bindPlayer)
+    Players.PlayerRemoving:Connect(function(player)
+        boundPlayers[player] = nil
+    end)
+    for _, player in ipairs(Players:GetPlayers()) do
+        bindPlayer(player)
     end
 end
 
