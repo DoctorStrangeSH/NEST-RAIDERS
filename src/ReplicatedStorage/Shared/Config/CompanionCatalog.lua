@@ -342,6 +342,7 @@ local CompanionCatalog = {
         Id = "ForgottenHeartGuardian", Name = "Страж забытого сердца", Rarity = "Мифический",
         Income = 240, Weight = 0, BossExclusive = true,
         AcquisitionLabel = "Только за победу над Хранителем забытого сердца",
+        AcquisitionBiome = "Пещера забытого сердца",
         Description = "Маленький древний голем, в чьей груди пульсирует кристалл забытого сердца.",
         Personality = "Непоколебимый", PersonalityDescription = "Молча охраняет гнездо и защищает тех, кого считает друзьями.",
         FavoriteFood = "Звёздный нектар", FavoriteToy = "CozyPlush",
