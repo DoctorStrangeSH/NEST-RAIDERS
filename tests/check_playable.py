@@ -367,4 +367,22 @@ assert 'EmberTrialRunePrompt' in world and 'EmberTrialBossPrompt' in world
 assert 'EmberTrialRunePrompt' in world_health and 'EmberTrialBossPrompt' in world_health
 assert 'BasaltTrialStep_' in world and 'Подъём к алтарю:' in world_health
 
+
+# Crystal Realm: gated destination, mineable veins, saved shards, unique egg table and species.
+crystal_mining = Path("src/ServerScriptService/Server/Services/CrystalMiningService.lua").read_text()
+biomes = Path("src/ReplicatedStorage/Shared/Config/BiomeCatalog.lua").read_text()
+companions = Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+assert '"CrystalMiningService"' in server and 'function CrystalMiningService:Init()' in crystal_mining
+assert 'CrystalNodeCooldowns' in crystal_mining and 'materials.CrystalShard' in crystal_mining
+assert 'CrystalShard = 0' in profile_template and 'CrystalNodeCooldowns = {}' in profile_template
+assert 'player:SetAttribute("CrystalShards"' in player_data
+assert 'CrystalRealm = {' in biomes and 'CrystalEgg' in biomes
+assert 'PrismFox = {' in companions and 'CrystalDeer = {' in companions and 'AuroraDragon = {' in companions
+assert 'CrystalRealm = {' in Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
+assert 'CrystalPortal' in world and 'CrystalReturnPortal' in world and 'CrystalSkyway' in world
+assert 'CrystalVeins' in world and 'MineCrystalPrompt' in world
+assert 'CrystalMiningPanel' in client and 'CrystalShards' in client
+assert 'CrystalRealm' in world_health and 'Кристальные жилы:' in world_health
+assert 'Enum.Material.Crystal' not in world and 'Enum.PartType.Crystal' not in world
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
