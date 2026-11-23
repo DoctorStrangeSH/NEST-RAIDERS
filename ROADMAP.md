@@ -716,3 +716,18 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Extend static regression coverage for species, weights, models and reward flow.
 - [ ] Roblox Studio: solve the cave puzzle, claim and hatch the egg, verify all three possible species, follower silhouettes, ability data, collection discovery and persistence.
 - [ ] Balance income and abilities after playtesting.
+
+
+### Sprint 4.36 — Forgotten Heart Guardian boss (2026-11-23)
+- [x] Build a dedicated cave arena, guardian model, glowing core, crystal crown, arena sign and attack prompt.
+- [x] Add a server-authoritative per-player boss encounter with persistent 360 HP and a two-phase threshold at 50%.
+- [x] Add three telegraphed attacks: Crystal Slam (targeted ground marker), Echo Pulse (wide radius) and Shard Rain (three marked zones).
+- [x] Make warning markers visible only to the player whose encounter triggered the attack.
+- [x] Add a responsive boss HUD with health, phase, attack warnings and completion state.
+- [x] Add local core phase, telegraph and victory visuals.
+- [x] Gate the encounter behind the Forgotten Cave treasure chest.
+- [x] Reward the unique Mythic Forgotten Heart Guardian companion, 1,200 coins, 5 Starshards and 800 XP once per player.
+- [x] Add a unique follower silhouette and Collection Book source location for the boss reward.
+- [x] Add world health and static regression coverage for the new arena, combat loop, rewards and HUD.
+- [ ] Roblox Studio: defeat the boss in both phases, test each dodge pattern, verify two-player isolation, rewards and rejoin persistence.
+- [ ] Balance boss health, damage, windups and reward income after hands-on playtesting.
