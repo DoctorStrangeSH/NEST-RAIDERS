@@ -479,3 +479,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Roblox Studio: collect and hatch MeadowEgg; verify only MeadowFox, MossTurtle and SproutDragon can hatch with 55/30/15 relative weights.
 - [ ] Add the next physical biome zone and its egg pool only after its terrain, unlock gate and spawn points are present in the playable world.
 - [ ] Extend the egg shop odds display to read the same biome catalog source so displayed odds cannot drift from hatch logic.
+
+### Collection book biome provenance and truthful egg odds (2026-11-23)
+
+- [x] Record the first biome where each species is discovered when it hatches.
+- [x] Keep biome discovery data backward-compatible for existing profiles.
+- [x] Derive each natural species' egg chance from the same BiomeCatalog species weights used by EggService.
+- [x] Show the discovered biome on found species in the collection book.
+- [x] Show the correct egg name and catalog-derived chance for undiscovered natural species.
+- [x] Keep breeding-only hybrids clearly labeled as breeding-only.
+- [x] Add static regression coverage for discovery provenance and catalog-derived odds.
+- [ ] Roblox Studio: hatch each Meadow species and verify the collection book reports the meadow as its discovery source and odds 55/30/15.
+- [ ] Verify an old profile without DiscoveredBiomes opens the collection book without errors.
