@@ -72,6 +72,12 @@ assert 'Players.PlayerRemoving:Connect(function(player)' in eggs
 assert 'for index, candidate in ipairs(profile.EggInventory) do' in eggs, "Hatch should scan inventory"
 assert 'hatchIndex, egg = index, candidate' in eggs
 assert 'table.remove(profile.EggInventory, hatchIndex)' in eggs, "Hatch should consume selected egg"
+assert 'type(geneticTrait.Name) ~= "string"' in eggs
+assert 'type(definition.Name) ~= "string"' in eggs
+assert 'type(definition.Income) ~= "number"' in eggs
+assert 'Данные яйца повреждены. Яйцо сохранено' in eggs
+assert eggs.index('type(geneticTrait.Name) ~= "string"') < eggs.index('table.remove(profile.EggInventory, hatchIndex)')
+
 assert 'table.remove(profile.EggInventory, 1)' not in eggs, "Incubating first egg blocks other eggs"
 assert 'Все яйца ещё инкубируются.' in eggs
 
