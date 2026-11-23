@@ -3445,6 +3445,9 @@ local function renderCollectionBook(data)
             local origin = entry.DiscoveredBiome and ("  ·  Найден: " .. tostring(entry.BiomeName)) or ""
             details.Text = string.format("%s  ·  В коллекции: %d  ·  +%d монет / 10 сек.%s",
                 entry.Rarity, entry.OwnedCount, entry.Income, origin)
+        elseif entry.BossExclusive then
+            details.Text = string.format("%s  ·  %s", entry.Rarity,
+                entry.AcquisitionLabel or "Только за победу над боссом")
         elseif entry.HybridOnly then
             details.Text = string.format("%s  ·  Только через разведение", entry.Rarity)
         else
@@ -3658,9 +3661,12 @@ local function updateBiomeTrialPanel()
         or (isFrost and "FrostTrialCompleted" or (isEmber and "EmberTrialCompleted" or "EmeraldTrialCompleted")))
     local count = math.clamp(tonumber(player:GetAttribute(countAttribute)) or 0, 0, 3)
     local completed = player:GetAttribute(completeAttribute) == true
+    local bossCompleted = isAncient and player:GetAttribute("AncientTempleBossCompleted") == true
+    local ancientBossActive = isAncient and count >= 3 and completed and not bossCompleted
 
-    trialPanel.Position = (isEmber or isCrystal) and UDim2.new(1, -12, 0, 286) or UDim2.new(1, -12, 0, 184)
-    trialPanel.Size = UDim2.fromOffset(236, (isEmber or isCrystal) and 142 or 112)
+    trialPanel.Position = (isEmber or isCrystal) and UDim2.new(1, -12, 0, 286)
+        or (isAncient and UDim2.new(1, -12, 0, 196) or UDim2.new(1, -12, 0, 184))
+    trialPanel.Size = UDim2.fromOffset(236, ((isEmber or isCrystal) or ancientBossActive) and 142 or 112)
     trialPanel.BackgroundColor3 = isAncient and Color3.fromRGB(42, 61, 43)
         or (isCrystal and Color3.fromRGB(48, 39, 76)
         or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51)))
@@ -3675,16 +3681,32 @@ local function updateBiomeTrialPanel()
         or (isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202))))
 
     if isAncient then
-        trialDescription.Text = completed
-            and "Сердце храма пробуждено! Сокровище уже твоё."
-            or (count >= 3 and "Все руны отвечают. Открой сундук в глубине храма."
-                or "Пробуди руны в порядке: Корни → Река → Рассвет. Ошибка сбросит цепочку.")
+        if bossCompleted then
+            trialDescription.Text = "Страж повержен! Уникальный питомец уже добавлен в твою коллекцию."
+        elseif ancientBossActive then
+            trialDescription.Text = "Сокровище получено. Атакуй Стража и отходи во время предупреждения об ударе."
+        elseif count >= 3 and not completed then
+            trialDescription.Text = "Все руны отвечают. Забери сокровище из сундука, затем сразись со Стражем."
+        else
+            trialDescription.Text = "Пробуди руны в порядке: Корни → Река → Рассвет. Ошибка сбросит цепочку."
+        end
         trialBarFill.BackgroundColor3 = Color3.fromRGB(174, 218, 133)
         trialBarFill.Size = UDim2.fromScale(count / 3, 1)
-        trialStatus.Text = completed and "СОКРОВИЩЕ ПОЛУЧЕНО"
-            or string.format("ПРОБУЖДЕНО РУН: %d / 3", count)
-        bossBarBack.Visible = false
-        bossStatus.Visible = false
+        trialStatus.Text = bossCompleted and "СТРАЖ ПОВЕРЖЕН"
+            or (completed and "СОКРОВИЩЕ ПОЛУЧЕНО"
+            or string.format("ПРОБУЖДЕНО РУН: %d / 3", count))
+        bossBarBack.Visible = ancientBossActive
+        bossStatus.Visible = count >= 3 and completed
+        local bossHealth = math.clamp(tonumber(player:GetAttribute("AncientTempleBossHealth")) or 240, 0, 240)
+        bossBarFill.Size = UDim2.fromScale(bossHealth / 240, 1)
+        if player:GetAttribute("AncientTempleBossWindup") == true then
+            bossStatus.Text = "УДАР КОРНЕЙ! ОТОЙДИ ОТ СТРАЖА!"
+            bossStatus.TextColor3 = Color3.fromRGB(255, 190, 120)
+        else
+            bossStatus.Text = bossCompleted and "СТРАЖ ПОВЕРЖЕН"
+                or string.format("ЗДОРОВЬЕ СТРАЖА: %d / 240", bossHealth)
+            bossStatus.TextColor3 = Color3.fromRGB(220, 239, 179)
+        end
     elseif isCrystal then
         trialDescription.Text = completed and "Хранитель повержен! Путь к Древним высотам открыт. Осталось достичь 50 уровня."
             or (count >= 3 and "Три луча соединены! Атакуй Хранителя и уклоняйся от призматической волны."
@@ -3744,6 +3766,7 @@ for _, attribute in ipairs({
     "EmberTrialCompleted", "EmberTrialBossHealth", "EmberTrialBossWindup",
     "CrystalTrialProgress", "CrystalTrialCompleted", "CrystalTrialBossHealth", "CrystalTrialBossWindup",
     "AncientTempleProgress", "AncientTempleCompleted",
+    "AncientTempleBossHealth", "AncientTempleBossCompleted", "AncientTempleBossWindup",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
