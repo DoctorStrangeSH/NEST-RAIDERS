@@ -1464,14 +1464,14 @@ function WorldBuilder:Build()
     templeTreasure.Name = "AncientTempleTreasure"
     templeTreasure.Parent = ancientTemple
     local chestBase = part(templeTreasure, "AncientTempleChest",
-        Vector3.new(8, 4, 5), Vector3.new(78, 23.5, 2620),
+        Vector3.new(8, 4, 5), Vector3.new(94, 23.5, 2615),
         Color3.fromRGB(115, 79, 48), Enum.Material.WoodPlanks)
     local chestLid = part(templeTreasure, "AncientTempleChestLid",
-        Vector3.new(8.2, 1.6, 5.2), Vector3.new(78, 26.3, 2620),
+        Vector3.new(8.2, 1.6, 5.2), Vector3.new(94, 26.3, 2615),
         Color3.fromRGB(193, 151, 75), Enum.Material.Metal)
     chestLid.CanCollide = false
     local chestGem = part(templeTreasure, "AncientTempleChestGem",
-        Vector3.new(1.5, 1.5, 1.5), Vector3.new(78, 27.5, 2617.2),
+        Vector3.new(1.5, 1.5, 1.5), Vector3.new(94, 27.5, 2612.2),
         Color3.fromRGB(190, 238, 146), Enum.Material.Neon, Enum.PartType.Ball)
     chestGem.CanCollide = false
     local chestLight = Instance.new("PointLight")
