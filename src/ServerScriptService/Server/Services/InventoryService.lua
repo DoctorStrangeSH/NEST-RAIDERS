@@ -59,12 +59,18 @@ end
 local function normalizeProfile(profile)
     profile.Artifacts = type(profile.Artifacts) == "table" and profile.Artifacts or {}
     profile.EquippedArtifacts = type(profile.EquippedArtifacts) == "table" and profile.EquippedArtifacts or {}
-    local ownedArtifacts = {}
+    local cleanArtifacts, ownedArtifacts = {}, {}
+    local seenArtifactIds = {}
     for _, artifact in ipairs(profile.Artifacts) do
-        if type(artifact) == "table" and type(artifact.InstanceId) == "string" and ArtifactCatalog[artifact.Id] then
+        if type(artifact) == "table" and type(artifact.InstanceId) == "string"
+            and #artifact.InstanceId <= 80 and ArtifactCatalog[artifact.Id]
+            and not seenArtifactIds[artifact.InstanceId] then
+            seenArtifactIds[artifact.InstanceId] = true
             ownedArtifacts[artifact.InstanceId] = true
+            table.insert(cleanArtifacts, artifact)
         end
     end
+    profile.Artifacts = cleanArtifacts
     local equippedArtifacts, seenArtifacts = {}, {}
     for _, instanceId in ipairs(profile.EquippedArtifacts) do
         if ownedArtifacts[instanceId] and not seenArtifacts[instanceId] and #equippedArtifacts < 2 then
