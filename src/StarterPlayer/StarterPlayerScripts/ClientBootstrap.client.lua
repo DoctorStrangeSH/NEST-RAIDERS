@@ -3500,15 +3500,18 @@ local function updateStats()
         stats.Text = "Загрузка гнезда..."
         return
     end
-    stats.Text = string.format("Монеты: %d\nЯйца: %d    Питомцы: %d\nУровень: %d\nГнездо: %s",
+    local persistence = player:GetAttribute("ProfilePersistence")
+    local saveLabel = persistence == "SAVED" and "Сохранение: ВКЛ" or "Сохранение: ТЕСТ"
+    stats.Text = string.format("Монеты: %d\\nЯйца: %d    Питомцы: %d\\nУровень: %d\\nГнездо: %s\\n%s",
         player:GetAttribute("Coins") or 0,
         player:GetAttribute("EggCount") or 0,
         player:GetAttribute("CompanionCount") or 0,
         player:GetAttribute("Level") or 1,
-        player:GetAttribute("PlotId") or "Назначается...")
+        player:GetAttribute("PlotId") or "Назначается...",
+        saveLabel)
 end
 
-for _, attribute in ipairs({"ProfileLoaded", "Coins", "EggCount", "CompanionCount", "Level", "PlotId"}) do
+for _, attribute in ipairs({"ProfileLoaded", "ProfilePersistence", "Coins", "EggCount", "CompanionCount", "Level", "PlotId"}) do
     player:GetAttributeChangedSignal(attribute):Connect(updateStats)
 end
 
