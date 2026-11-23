@@ -349,3 +349,14 @@ Automated builds verify source invariants, not real DataStore round-trip behavio
 - [ ] Verify save/rejoin, multiplayer and mobile interaction before accepting Sprint 4.20.
 
 CI validates package and source invariants, not actual Roblox gameplay.
+
+### Playable-first hatch reward and follower spawn fixes (2026-11-23)
+
+- [x] Only display `+15 опыта` after `ProgressionService:AddXP` actually returns `true`; a successful pcall around a `false` result is not a successful award.
+- [x] Place newly hatched/respawned active pet models behind the player's current HumanoidRootPart before their follow animation starts; prevent an initial glide from world origin.
+- [x] Add static CI checks for confirmed XP rewards and near-player initial pet placement.
+- [ ] Roblox Studio: hatch an egg on a distant personal plot and verify a new pet appears beside the avatar, not at origin.
+- [ ] Roblox Studio: verify follow movement, character reset, XP, hatch notices, inventory and collection after hatch.
+- [ ] Multi-player/mobile Studio acceptance before marking Sprint 4.20 done.
+
+Source and automated packaging checks do not substitute for actual gameplay testing.
