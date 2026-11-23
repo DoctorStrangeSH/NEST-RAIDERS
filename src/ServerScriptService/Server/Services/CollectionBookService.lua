@@ -6,14 +6,21 @@ local PlayerDataService = require(ServerScriptService.Server.Services.PlayerData
 local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 
 local CollectionBookService = {}
-CollectionBookService._lastRequest = {}
-local REQUEST_COOLDOWN = 0.35
-
 local function buildSnapshot(profile)
     local ownedCounts = {}
     for _, companion in ipairs(profile.Companions) do
         if type(companion.Id) == "string" then
             ownedCounts[companion.Id] = (ownedCounts[companion.Id] or 0) + 1
+        end
+    end
+
+    -- Backfill discoveries from still-owned companions for profiles created
+    -- before DiscoveredSpecies existed; past consumed species cannot be inferred.
+    profile.DiscoveredSpecies = type(profile.DiscoveredSpecies) == "table"
+        and profile.DiscoveredSpecies or {}
+    for speciesId, count in pairs(ownedCounts) do
+        if count > 0 and CompanionCatalog[speciesId] then
+            profile.DiscoveredSpecies[speciesId] = true
         end
     end
 
@@ -23,7 +30,8 @@ local function buildSnapshot(profile)
     for _, definition in pairs(CompanionCatalog) do
         total += 1
         local count = ownedCounts[definition.Id] or 0
-        if count > 0 then discovered += 1 end
+        local isDiscovered = profile.DiscoveredSpecies[definition.Id] == true
+        if isDiscovered then discovered += 1 end
         table.insert(entries, {
             Id = definition.Id,
             Name = definition.Name,
@@ -33,7 +41,7 @@ local function buildSnapshot(profile)
             HatchChance = definition.Weight,
             HybridOnly = definition.Hybrid == true,
             OwnedCount = count,
-            Discovered = count > 0,
+            Discovered = isDiscovered,
         })
     end
     table.sort(entries, function(a, b)
@@ -54,11 +62,7 @@ function CollectionBookService:HandleRequest(player, payload)
         return { Ok = false, Message = "Некорректный запрос." }
     end
 
-    local now = os.clock()
-    if now - (self._lastRequest[player] or 0) < REQUEST_COOLDOWN then
-        return { Ok = false, Message = "Подожди немного." }
-    end
-    self._lastRequest[player] = now
+    -- Collection lookup is read-only and should never be rate-limited.
 
     local profile = PlayerDataService:GetProfile(player)
     if not profile or not player:GetAttribute("ProfileLoaded") then
@@ -86,9 +90,6 @@ function CollectionBookService:Init()
         return self:HandleRequest(player, payload)
     end
 
-    Players.PlayerRemoving:Connect(function(player)
-        self._lastRequest[player] = nil
-    end)
 end
 
 return CollectionBookService
