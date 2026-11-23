@@ -176,3 +176,13 @@ A successful CI build validates the Roblox XML packaging, **not gameplay**. Trea
 - [ ] Studio runtime acceptance: open every game panel in turn and ensure at most one primary panel is shown.
 - [ ] Studio runtime acceptance: open the pet picker, confirm display remains underneath and close controls function.
 - [ ] Studio runtime acceptance: verify construction/decor placement cancellation, pointer interactions and mobile layout.
+
+### Playable-first building placement usability (2026-11-23)
+
+- [x] Add an explicit `ПОСТАВИТЬ ✓` action during building placement, accessible on touch screens.
+- [x] Touch on the island now selects/previews the target instead of submitting immediately; server remains authoritative for placement.
+- [x] Update placement preview immediately when edit mode starts and retain existing desktop click-to-place controls.
+- [x] Keep rotate/cancel actions on screen while the placement preview is active.
+- [ ] Studio acceptance: touch multiple positions, confirm the final position is the only one submitted.
+- [ ] Studio acceptance: test touch button safe area, all footprint sizes, edge rejection, rotate/cancel, and server rejections.
+- [ ] Confirm all UI/input interactions in real Roblox Studio Play mode before declaring this gameplay-ready.
