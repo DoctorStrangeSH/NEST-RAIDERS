@@ -3455,6 +3455,26 @@ end
 inventoryButton.Activated:Connect(openInventory)
 closeButton.Activated:Connect(function() inventoryPanel.Visible = false end)
 
+-- A hatched pet changes replicated CompanionCount. Keep already-open inventory
+-- and collection windows synchronized without requiring players to close/reopen.
+local refreshingCompanionWindows = false
+player:GetAttributeChangedSignal("CompanionCount"):Connect(function()
+    if not inventoryPanel.Visible and not bookPanel.Visible then return end
+    if refreshingCompanionWindows then return end
+    refreshingCompanionWindows = true
+    task.defer(function()
+        if inventoryPanel.Visible then
+            local data = invokeInventory({ Action = "Get" })
+            if data and inventoryPanel.Visible then renderInventory(data) end
+        end
+        if bookPanel.Visible then
+            local data = invokeCollectionBook()
+            if data and bookPanel.Visible then renderCollectionBook(data) end
+        end
+        refreshingCompanionWindows = false
+    end)
+end)
+
 local function updateStats()
     if not player:GetAttribute("ProfileLoaded") then
         stats.Text = "Загрузка гнезда..."
