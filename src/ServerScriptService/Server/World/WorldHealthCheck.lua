@@ -137,6 +137,7 @@ function WorldHealthCheck:Check()
             if segment:IsA("BasePart") and segment.Name:match("^EmberBridgeSegment_") then bridgeCount += 1 end
         end
         if bridgeCount < 9 then fail(string.format("Базальтовый мост: %d из 9 секций", bridgeCount)) end
+        if not ember:FindFirstChild("EmberEggOddsSign") then fail("Нет таблички с вероятностями Яйца пепельного пламени") end
         local emberEggs = ember:FindFirstChild("EggSpawnPoints")
         local eggCount = 0
         for _, egg in ipairs(emberEggs and emberEggs:GetChildren() or {}) do
