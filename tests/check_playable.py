@@ -605,6 +605,7 @@ assert 'createForgottenBossDebris = function' in client
 assert 'warningColor = attack.Id == "CrystalSlam"' in forgotten_boss
 assert 'Color3.fromRGB(183, 139, 255)' in forgotten_boss and 'Color3.fromRGB(255, 145, 207)' in forgotten_boss
 assert 'showForgottenBossDamageNumber' in client and 'ForgottenHeartDamageNumber' in client
+assert 'if lastForgottenBossHealth == nil then' in client
 assert 'TweenInfo.new(0.28, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)' in client
 assert 'Size = UDim2.fromScale(caveBossHealth / 360, 1)' in client
 
