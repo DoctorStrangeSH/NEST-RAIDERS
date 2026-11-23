@@ -487,8 +487,10 @@ collection_service = Path("src/ServerScriptService/Server/Services/CollectionBoo
 assert '"AncientTempleBossService"' in server and 'function AncientTempleBossService:Init()' in ancient_boss
 assert 'AncientTempleBossHealth = 240' in profile_template and 'AncientTempleBossHealth' in ancient_boss
 assert 'BOSS_MAX_HEALTH = 240' in ancient_boss and 'PLAYER_HIT_DAMAGE = 24' in ancient_boss
-assert 'BOSS_WINDUP_SECONDS = 1.5' in ancient_boss and 'BOSS_ATTACK_RADIUS = 19' in ancient_boss
-assert 'humanoid:TakeDamage(BOSS_DAMAGE)' in ancient_boss and 'AncientTempleBossWindup' in ancient_boss
+assert 'Id = "VineSlam"' in ancient_boss and 'Id = "RootWave"' in ancient_boss
+assert 'Damage = 30' in ancient_boss and 'Damage = 18' in ancient_boss
+assert 'WindupSeconds = 1.8' in ancient_boss and 'WindupSeconds = 1.25' in ancient_boss
+assert 'humanoid:TakeDamage(attack.Damage)' in ancient_boss and 'AncientTempleBossWindup' in ancient_boss
 assert 'CompletedQuests.ancient_temple_trial' in ancient_boss
 assert 'CompletedQuests.ancient_temple_boss = true' in ancient_boss
 assert 'REWARD_COMPANION_ID = "HeartwoodGuardian"' in ancient_boss
