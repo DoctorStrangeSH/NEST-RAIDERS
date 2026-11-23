@@ -1390,6 +1390,8 @@ materialsClose.Activated:Connect(function() materialsPanel.Visible = false end)
 updateMaterialsInventory()
 
 -- Artifact collection and two-slot equipment. Crafting is server-validated at the Ancient Heights workshop.
+-- Forward declarations: UI callbacks below run after these helpers are assigned.
+local showNotice, invokeInventory, renderArtifacts
 artifactsPanel = Instance.new("Frame")
 artifactsPanel.Name = "ArtifactsPanel"
 artifactsPanel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -1499,7 +1501,7 @@ artifactsLayout.Padding = UDim.new(0, 8)
 artifactsLayout.SortOrder = Enum.SortOrder.LayoutOrder
 artifactsLayout.Parent = artifactsList
 
-local function renderArtifacts(data)
+renderArtifacts = function(data)
     for _, child in ipairs(artifactsList:GetChildren()) do
         if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
     end
@@ -1786,7 +1788,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
-local function showNotice(message)
+showNotice = function(message)
     local notice = gui:FindFirstChild("Notice")
     if not notice then
         notice = Instance.new("TextLabel")
@@ -1810,7 +1812,7 @@ local function showNotice(message)
     end)
 end
 
-local function invokeInventory(payload)
+invokeInventory = function(payload)
     local success, response = pcall(function()
         return inventoryRemote:InvokeServer(payload)
     end)
