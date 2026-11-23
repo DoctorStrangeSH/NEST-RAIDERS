@@ -537,3 +537,12 @@
 - [ ] In a two-player Studio session, confirm combat feedback is local to the player whose encounter generated it.
 - [ ] Verify effects stop cleanly after leaving the cave, dying, respawning or defeating the boss.
 - [ ] Add and test curated audio only after approved sound assets and usage rights are confirmed.
+
+
+## Forgotten Heart combat readability — Studio acceptance
+- [ ] Confirm Crystal Slam warning zones are cyan, Echo Pulse zones violet and Shard Rain zones pink.
+- [ ] Check that all three warning colors remain visible against the cave floor and crystal lighting.
+- [ ] Hit the boss and verify a floating damage number matches the actual health reduction.
+- [ ] Verify no damage number appears when the player dodges or the health value does not change.
+- [ ] Confirm the health bar animates smoothly and changes to the phase-II accent at 180 HP.
+- [ ] Check damage number placement on desktop and 375px-wide mobile screens; ensure it does not cover the interaction prompt.
