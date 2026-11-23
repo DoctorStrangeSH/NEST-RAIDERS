@@ -1489,6 +1489,62 @@ function WorldBuilder:Build()
     chestPrompt.RequiresLineOfSight = false
     chestPrompt.Parent = chestBase
 
+    -- The temple guardian wakes for each player only after their own rune trial.
+    local templeGuardian = Instance.new("Model")
+    templeGuardian.Name = "AncientTempleGuardian"
+    templeGuardian.Parent = ancientTemple
+    local guardianBody = part(templeGuardian, "GuardianBody",
+        Vector3.new(11, 14, 9), Vector3.new(78, 29, 2598),
+        Color3.fromRGB(105, 91, 65), Enum.Material.Wood)
+    guardianBody.CanCollide = false
+    local guardianHead = part(templeGuardian, "GuardianHead",
+        Vector3.new(8, 7, 7), Vector3.new(78, 38, 2598),
+        Color3.fromRGB(126, 111, 76), Enum.Material.Wood, Enum.PartType.Ball)
+    guardianHead.CanCollide = false
+    local guardianCore = part(templeGuardian, "GuardianHeartCore",
+        Vector3.new(4, 4, 2), Vector3.new(78, 30, 2592.8),
+        Color3.fromRGB(190, 239, 133), Enum.Material.Neon, Enum.PartType.Ball)
+    guardianCore.CanCollide = false
+    local guardianLight = Instance.new("PointLight")
+    guardianLight.Color = guardianCore.Color
+    guardianLight.Range = 28
+    guardianLight.Brightness = 2
+    guardianLight.Parent = guardianCore
+    for side = -1, 1, 2 do
+        local arm = part(templeGuardian, "GuardianArm_" .. side,
+            Vector3.new(4, 10, 5), Vector3.new(78 + side * 8, 28, 2598),
+            Color3.fromRGB(93, 111, 70), Enum.Material.Wood, Enum.PartType.Ball)
+        arm.CanCollide = false
+        local branch = part(templeGuardian, "GuardianBranch_" .. side,
+            Vector3.new(2, 9, 2), Vector3.new(78 + side * 4, 44, 2598),
+            Color3.fromRGB(113, 145, 82), Enum.Material.Wood, Enum.PartType.Wedge)
+        branch.CFrame *= CFrame.Angles(0, 0, math.rad(side * 28))
+        branch.CanCollide = false
+        local leg = part(templeGuardian, "GuardianRootLeg_" .. side,
+            Vector3.new(4, 7, 4), Vector3.new(78 + side * 3, 19, 2598),
+            Color3.fromRGB(83, 74, 56), Enum.Material.Wood, Enum.PartType.Ball)
+        leg.CanCollide = false
+    end
+    for index = 1, 5 do
+        local angle = (index - 1) * math.pi * 2 / 5
+        local leaf = part(templeGuardian, "GuardianCrownLeaf_" .. index,
+            Vector3.new(2.2, 5.5, 1.8),
+            Vector3.new(78 + math.cos(angle) * 4, 43, 2598 + math.sin(angle) * 4),
+            index % 2 == 0 and Color3.fromRGB(128, 177, 91) or Color3.fromRGB(169, 201, 111),
+            Enum.Material.Grass, Enum.PartType.Wedge)
+        leaf.CFrame *= CFrame.Angles(0, -angle, math.rad(-18))
+        leaf.CanCollide = false
+    end
+    local guardianPrompt = Instance.new("ProximityPrompt")
+    guardianPrompt.Name = "AncientTempleBossPrompt"
+    guardianPrompt.ActionText = "Ударить"
+    guardianPrompt.ObjectText = "Страж Сердца Древа"
+    guardianPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    guardianPrompt.HoldDuration = 0.35
+    guardianPrompt.MaxActivationDistance = 12
+    guardianPrompt.RequiresLineOfSight = false
+    guardianPrompt.Parent = guardianCore
+
     -- A tucked-away ledge beyond the welcome sign rewards players who explore.
     local whisperingGrove = Instance.new("Folder")
     whisperingGrove.Name = "WhisperingGrove"
