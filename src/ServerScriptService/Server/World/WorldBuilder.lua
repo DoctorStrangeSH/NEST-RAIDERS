@@ -479,6 +479,47 @@ function WorldBuilder:Build()
         Color3.fromRGB(132, 224, 255), "FrostHighlands", Vector3.new(0, 16, 1040))
     makeBiomePortal(frost, "FrostReturnPortal", Vector3.new(40, 24, 970),
         Color3.fromRGB(113, 255, 180), "EmeraldWilds", Vector3.new(0, 16, 520))
+    -- A walkable ice causeway makes the third biome physically connected;
+    -- portals remain as optional fast travel, not the only route.
+    local causeway = Instance.new("Folder")
+    causeway.Name = "GlacierCauseway"
+    causeway.Parent = world
+    for index = 1, 9 do
+        local z = 620 + (index - 1) * 40
+        local x = index % 2 == 0 and 4 or -4
+        local segment = part(causeway, "IceBridgeSegment_" .. index,
+            Vector3.new(20, 2, 44), Vector3.new(x, 16.5, z),
+            Color3.fromRGB(151, 207, 232), Enum.Material.Ice)
+        segment.Material = Enum.Material.Ice
+        local beacon = part(causeway, "BridgeBeacon_" .. index,
+            Vector3.new(1.2, 3.2, 1.2), Vector3.new(x + (index % 2 == 0 and 8 or -8), 19, z),
+            Color3.fromRGB(126, 221, 255), Enum.Material.Neon, Enum.PartType.Ball)
+        beacon.CanCollide = false
+        if index % 2 == 1 then
+            local light = Instance.new("PointLight")
+            light.Color = Color3.fromRGB(126, 221, 255)
+            light.Range = 12
+            light.Brightness = 0.35
+            light.Parent = beacon
+        end
+    end
+
+    local oddsSign = part(frost, "FrostEggOddsSign", Vector3.new(28, 10, 1),
+        Vector3.new(0, 24, 1088), Color3.fromRGB(62, 93, 121), Enum.Material.WoodPlanks)
+    oddsSign.CanCollide = false
+    local oddsGui = Instance.new("SurfaceGui")
+    oddsGui.Face = Enum.NormalId.Front
+    oddsGui.Parent = oddsSign
+    local oddsLabel = Instance.new("TextLabel")
+    oddsLabel.Size = UDim2.fromScale(1, 1)
+    oddsLabel.BackgroundTransparency = 1
+    oddsLabel.Text = "ЯЙЦО ВЕЧНОЙ ЗИМЫ\\nСнежный лис · 60%\\nПолярная сова · 30%\\nЛедниковый медвежонок · 10%"
+    oddsLabel.TextColor3 = Color3.fromRGB(230, 248, 255)
+    oddsLabel.TextScaled = true
+    oddsLabel.TextWrapped = true
+    oddsLabel.Font = Enum.Font.GothamBlack
+    oddsLabel.Parent = oddsGui
+
     local frostSign = part(frost, "FrostWelcomeSign", Vector3.new(22, 9, 1),
         Vector3.new(0, 25, 972), Color3.fromRGB(73, 101, 127), Enum.Material.WoodPlanks)
     local frostGui = Instance.new("SurfaceGui")
