@@ -26,6 +26,9 @@ assert 'return self._initialized, created' in plots
 world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
 grove_secret = Path("src/ServerScriptService/Server/Services/AncientSecretService.lua").read_text()
 ancient_cave = Path("src/ServerScriptService/Server/Services/AncientCaveService.lua").read_text()
+companion_catalog = Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+biome_catalog = Path("src/ReplicatedStorage/Shared/Config/BiomeCatalog.lua").read_text()
+companion_service = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
 profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
 assert 'FrostHighlands' in world_health and 'FrostRunePrompt' in world_health
 assert 'GlacierCauseway' in world_health and 'FrostEggOddsSign' in world_health
@@ -558,5 +561,15 @@ assert 'ПЕЩЕРА: КРИСТАЛЛЫ %d / 3' in client
 assert 'Нет моста или пола пещеры забытого сердца' in world_health
 assert 'Кристаллы пещеры: %d из 3' in world_health
 assert 'Нет сокровищницы забытого сердца' in world_health
+assert 'ForgottenCaveEggOddsSign' in world and 'Нет таблицы вероятностей яйца забытого сердца' in world_health
+assert 'ForgottenCaveEgg' in biome_catalog
+assert 'CaveGlimmerbat = 65' in biome_catalog and 'CrystalProwler = 25' in biome_catalog and 'HeartWisp = 10' in biome_catalog
+assert 'Id = "CaveGlimmerbat"' in companion_catalog and 'EggId = "ForgottenCaveEgg"' in companion_catalog
+assert 'Id = "CrystalProwler"' in companion_catalog and 'Id = "HeartWisp"' in companion_catalog
+assert 'Kind = "CaveGlimmerbat"' in companion_service and 'Kind = "CrystalProwler"' in companion_service and 'Kind = "HeartWisp"' in companion_service
+assert 'BatEarLeft' in companion_service and 'CrystalCrest' in companion_service and 'HeartWisp' in companion_service
+assert 'Id = "ForgottenCaveEgg"' in ancient_cave and 'Source = "ForgottenCaveCache"' in ancient_cave
+assert 'player:SetAttribute("EggCount", #profile.EggInventory)' in ancient_cave
+assert 'local function chooseCompanion(eggId)' in Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
