@@ -353,3 +353,11 @@ A stone bridge leads from Ancient Heights to a hidden cave. Inside, read the clu
 
 ## Forgotten Cave egg
 The Forgotten Heart treasure chest also contains one exclusive egg. Make room in your egg inventory before claiming it, then hatch it at your own nest. The visible odds are 65% Twilight Bat, 25% Crystal Prowler and 10% Heart Wisp.
+
+
+## Forgotten Heart Guardian boss
+After opening the cave chest, the guardian awakens in the arena at the back of the cave. Use the guardian's interaction prompt to attack (30 damage per hit). Its health is personal and saved. At half health it enters phase II and unlocks Shard Rain.
+- **Crystal Slam:** leave the blue target circle before it detonates.
+- **Echo Pulse:** run beyond the wide ring around the guardian.
+- **Shard Rain:** leave all three marked circles.
+Victory grants the Mythic **Страж забытого сердца**, 1,200 coins, 5 Starshards and 800 XP once per player.
