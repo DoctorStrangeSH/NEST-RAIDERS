@@ -63,7 +63,7 @@ local function harvest(player, node, prompt)
     syncBalance(player, profile)
     player:SetAttribute("LastNotice", string.format(
         "Собрано древесной эссенции: +%d%s. Всего: %d.",
-        amount, gatherBonus > 0 and string.format(" · артефакт: +%d ресурс(ов) (шанс +%d%%)",
+        amount, gatherBonus > 0 and string.format(" · артефакт: +%d дополнительно (средний бонус +%d%%)",
             extraMaterials, math.floor(gatherBonus * 100 + 0.5)) or "",
         materials.Elderwood))
 end
