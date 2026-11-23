@@ -23,6 +23,8 @@ local ProfileTemplate = {
         AshCrystal = 0,
         CrystalShard = 0,
         CrystalNodeCooldowns = {},
+        Elderwood = 0,
+        ElderwoodNodeCooldowns = {},
         LastAshfallClaimEventId = "",
         AshfallClaimedNodes = {},
     },
