@@ -16,6 +16,13 @@ companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua"
 inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
 book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua").read_text()
 profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+player_data = Path("src/ServerScriptService/Server/Services/PlayerDataService.lua").read_text()
+assert 'local function restoreDiscoveredSpecies(data)' in player_data
+assert 'restoreDiscoveredSpecies(data)' in player_data
+assert player_data.index('restoreDiscoveredSpecies(data)', player_data.index('local function publishProfile')) < player_data.index('player:SetAttribute("ProfileLoaded", true)')
+assert 'discovered[companion.Id] = true' in player_data
+assert 'CompanionCatalog[companion.Id]' in player_data
+
 assert 'DiscoveredSpecies = {}' in profile_template
 assert 'profile.DiscoveredSpecies[companion.Id] = true' in eggs
 assert 'profile.DiscoveredSpecies[speciesId] = true' in book
