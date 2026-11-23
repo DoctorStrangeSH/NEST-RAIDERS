@@ -288,3 +288,14 @@ The fix is committed, but the in-game flow is still not runtime-verified.
 - [ ] Roblox Studio: hatch a pet, confirm follower appears; reset character and confirm follower remains visible.
 - [ ] Roblox Studio: exercise the same path with an early-joining player and two concurrent players.
 - [ ] Verify inventory, pet display, and saved progress before closing Sprint 4.20.
+
+### Playable-first hatch queue unblock (2026-11-23)
+
+- [x] Change EggService:Hatch to select the first **ready** egg rather than always the first entry.
+- [x] Preserve egg ordering and remove only the egg actually hatched; incubating breeding eggs remain untouched.
+- [x] When no eggs are ready, display time to the soonest incubating egg instead of blocking silently.
+- [x] Add CI static regression assertions for selected-index removal and hatchable-egg scan.
+- [ ] Roblox Studio: put an incubating breeding egg first and a ready meadow egg second; verify only the meadow egg hatches.
+- [ ] Roblox Studio: verify all-incubating feedback, ready breeding egg inheritance, inventory and companion counts, and persistence.
+
+**Not runtime-verified:** source and CI checks cannot prove in-game behavior.
