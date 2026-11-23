@@ -544,3 +544,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add responsive Russian heat HUD and structural world health checks.
 - [ ] Roblox Studio runtime: verify entry gate, heat rates, cooling sanctuary, companion abilities, egg respawn/hatching, multiplayer isolation, and respawn behavior.
 - [ ] Tune mobile HUD placement, heat balance, volcanic collision, and performance after Studio playtest.
+
+ 
+### Sprint 4.22.2 — Ashfall world event (2026-11-23)
+- [x] Add a server-scheduled volcanic warning phase with a 20-second countdown.
+- [x] Add three visible moving lava surges with server-authoritative player damage and per-player hit cooldowns.
+- [x] Keep the cooling sanctuary outside the surge damage boundary.
+- [x] Spawn four collectible ash crystals after the eruption; each player can claim each node once per event.
+- [x] Persist ash crystals in the player profile and replicate the balance to the HUD.
+- [x] Add a Russian event HUD for warning, eruption, aftermath, countdown, and saved crystal balance.
+- [x] Add static CI coverage for event phases, surge damage, sanctuary safety, reward persistence, and HUD wiring.
+- [ ] Roblox Studio runtime: verify event cadence, wave visibility/speed, jump/dodge readability, damage, sanctuary safety, multiplayer reward claims, and reconnect persistence.
+- [ ] Tune surge damage, reward lifetime, and mobile HUD layout after playtesting.
