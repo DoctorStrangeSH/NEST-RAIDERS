@@ -203,3 +203,7 @@ The cave treasure chest grants an exclusive egg with three possible companions: 
 
 ### Forgotten Heart Guardian
 The cave treasure claim awakens a personal 360-HP boss encounter. Fight through two phases and dodge Crystal Slam, Echo Pulse and Shard Rain. Victory grants the Mythic Forgotten Heart Guardian companion, 1,200 coins, 5 Starshards and 800 XP once per player.
+
+
+### Guardian arena effects
+The Forgotten Heart arena now has eight breakable crystal clusters, local attack choreography, a violet phase-two awakening, flying crystal debris, regrowth and a one-time mythic companion reveal after victory.
