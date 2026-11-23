@@ -395,3 +395,10 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The boss alternates two telegraphed attacks: Vine Slam (30 damage, 15-stud radius, 1.8-second warning) and Root Wave (18 damage, 26-stud radius, 1.25-second warning). Moving outside the active attack radius before impact avoids damage.
 - A one-time victory grants 600 XP and the legendary Heartwood Guardian companion. The companion is never included in natural egg pools and is labeled as boss-exclusive in the collection book. Boss-exclusive companions cannot be used as breeding parents, so this reward remains exclusive to the boss encounter.
 - The reward is added to the collection and automatically activated only when an active companion slot is available.
+
+
+## Heartwood Guardian — Sprint 4.31
+- At 120 HP (50% of maximum), the Guardian enters phase two for that player. The phase is saved implicitly through that player's boss health and is independent of other players.
+- Phase two adds Thorn Burst: 22 damage, 32-stud radius and a 2-second warning. Vine Slam and Root Wave remain in the attack rotation.
+- The local client plays a core pulse, color shift, light burst and particle telegraph for the active player's attack. These visuals must not overwrite another player's phase or health.
+- Defeating the Guardian grants a permanent trophy entry in `Nest.IslandTrophies.AncientTempleGuardian`. The trophy is displayed in the player's nest with the label “СЕРДЦЕ ДРЕВА”.
