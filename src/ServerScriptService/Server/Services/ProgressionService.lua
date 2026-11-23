@@ -79,6 +79,38 @@ function ProgressionService:AddXP(player, amount)
 end
 
 function ProgressionService:Init()
+    local world = workspace:WaitForChild("NestRaidersWorld", 30)
+    if world then
+        for _, descendant in ipairs(world:GetDescendants()) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "ZoneTravelPrompt" then
+                descendant.Triggered:Connect(function(player)
+                    local zoneId = descendant.Parent:GetAttribute("ZoneId")
+                    local destination = descendant.Parent:GetAttribute("Destination")
+                    if type(zoneId) ~= "string" or typeof(destination) ~= "Vector3" then return end
+                    local allowed, reason = self:CanEnterZone(player, zoneId)
+                    if not allowed then
+                        local zone = self:GetZone(zoneId)
+                        local required = zone and zone.RequiredLevel or 1
+                        player:SetAttribute("LastNotice", string.format("Нужно достичь %d уровня, чтобы открыть эту область.", required))
+                        return
+                    end
+                    local character = player.Character
+                    local root = character and character:FindFirstChild("HumanoidRootPart")
+                    if not root then
+                        player:SetAttribute("LastNotice", "Персонаж ещё загружается. Попробуй снова.")
+                        return
+                    end
+                    character:PivotTo(CFrame.new(destination + Vector3.new(0, 4, 0)))
+                    player:SetAttribute("CurrentBiome", zoneId)
+                    player:SetAttribute("LastNotice", zoneId == "EmeraldWilds"
+                        and "Добро пожаловать в Изумрудный лес!" or "Ты вернулся на стартовый остров.")
+                end)
+            end
+        end
+    else
+        warn("[NEST RAIDERS] World unavailable; biome portals were not connected.")
+    end
+
     -- Players may join while Bootstrap is still initializing services.
     -- Reconcile both existing and future players without duplicate workers.
     local boundPlayers = {}
