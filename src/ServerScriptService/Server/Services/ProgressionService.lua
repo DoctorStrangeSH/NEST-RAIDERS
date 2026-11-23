@@ -134,6 +134,11 @@ function ProgressionService:Init()
                         player:SetAttribute("LastNotice", "Ледяные руны откликаются только в Ледяных нагорьях.")
                         return
                     end
+                    local zoneAllowed = self:CanEnterZone(player, "FrostHighlands")
+                    if not zoneAllowed then
+                        player:SetAttribute("LastNotice", "Сначала открой Ледяные нагорья.")
+                        return
+                    end
                     local character = player.Character
                     local root = character and character:FindFirstChild("HumanoidRootPart")
                     if not root or (root.Position - descendant.Parent.Position).Magnitude > descendant.MaxActivationDistance + 2 then
