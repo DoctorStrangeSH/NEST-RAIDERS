@@ -311,3 +311,17 @@ The fix is committed, but the in-game flow is still not runtime-verified.
 - [ ] Roblox Studio: confirm collection/species counts and pet followers with one and two players.
 
 CI checks packaging and source structure only, not in-game interaction.
+
+### Playable-first permanent species collection (2026-11-23)
+
+- [x] Add `DiscoveredSpecies` to the version-compatible player profile defaults.
+- [x] Record each hatched companion's species as a permanent discovery, even if the last owned copy is later consumed or merged.
+- [x] Backfill current owned species into discovery history when older profiles open the collection book.
+- [x] Keep `OwnedCount` tied to actually owned companions, separate from the permanent `Discovered` badge.
+- [x] Remove the action-style cooldown from read-only collection book queries.
+- [x] Add static CI checks for persistent discovery tracking and unthrottled collection reads.
+- [ ] Roblox Studio: hatch a new species, reopen collection, merge/remove all copies and verify its discovery remains.
+- [ ] Roblox Studio with DataStore enabled: rejoin and verify discovery persists.
+- [ ] Existing historic profiles: discoveries of species consumed **before this update** cannot be reconstructed if no copies remain.
+
+**Validation:** GitHub Actions checks syntax packaging and source invariants; the in-game collection flow still requires a real Studio Play test.
