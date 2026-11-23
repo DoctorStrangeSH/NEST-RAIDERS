@@ -399,6 +399,15 @@ function InventoryService:HandleRequest(player, payload)
             local stored = math.max(0, math.floor(tonumber(profile.Nest.StoredCoins) or 0))
             profile.Nest.StoredCoins = math.min(2_000_000_000, stored + reward)
             message = target.Name .. " укрепил гнездо: +" .. reward .. " монет в хранилище!"
+        elseif ability.Id == "CinderHide" then
+            player:SetAttribute("HeatHideUntil", os.clock() + 35)
+            message = target.Name .. " укрыл тебя угольной шёрсткой на 35 секунд!"
+        elseif ability.Id == "MagmaWard" then
+            player:SetAttribute("HeatGuardUntil", os.clock() + 18)
+            message = target.Name .. " создал магмовую защиту на 18 секунд!"
+        elseif ability.Id == "PhoenixRenewal" then
+            player:SetAttribute("HeatPhoenixReady", true)
+            message = target.Name .. " готов возродить тебя при критическом перегреве!"
         else
             return { Ok = false, Message = "Неизвестная способность питомца." }
         end
