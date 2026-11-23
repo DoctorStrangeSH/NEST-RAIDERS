@@ -521,5 +521,7 @@ assert 'Id = "VineSlam"' in ancient_boss and 'Id = "RootWave"' in ancient_boss a
 assert 'local function playGuardianVictoryEffect()' in client
 assert 'burst:Emit(84)' in client and 'AncientTempleBossCompleted' in client
 assert 'Нет анимируемой части Стража:' in world_health
+assert '"GuardianArm_" .. side' in world and '"GuardianBranch_" .. side' in world
+assert '"GuardianBody"' in world and '"GuardianHead"' in world
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
