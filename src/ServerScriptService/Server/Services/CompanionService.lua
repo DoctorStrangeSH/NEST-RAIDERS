@@ -92,6 +92,24 @@ local DEFINITIONS = {
         Detail = Color3.fromRGB(82, 102, 66),
         Kind = "BriarGuardian",
     },
+    AncientStag = {
+        Body = Color3.fromRGB(132, 112, 79),
+        Accent = Color3.fromRGB(189, 164, 112),
+        Detail = Color3.fromRGB(105, 151, 91),
+        Kind = "AncientStag",
+    },
+    RootSprite = {
+        Body = Color3.fromRGB(104, 163, 103),
+        Accent = Color3.fromRGB(184, 204, 119),
+        Detail = Color3.fromRGB(82, 119, 76),
+        Kind = "RootSprite",
+    },
+    SkySerpent = {
+        Body = Color3.fromRGB(112, 167, 194),
+        Accent = Color3.fromRGB(202, 225, 222),
+        Detail = Color3.fromRGB(149, 130, 203),
+        Kind = "SkySerpent",
+    },
 }
 
 local function makeShape(model, name, size, offset, color, shape)
@@ -174,6 +192,28 @@ local function buildPet(parent, companion, index)
             makeShape(model, "Foot", Vector3.new(0.65, 0.45, 0.65), Vector3.new(x, 0.55, 0.55), definition.Detail)
             makeShape(model, "Foot", Vector3.new(0.65, 0.45, 0.65), Vector3.new(x, 0.55, -0.55), definition.Detail)
         end
+
+    elseif definition.Kind == "AncientStag" then
+        makeShape(model, "Muzzle", Vector3.new(0.8, 0.5, 0.6), Vector3.new(0, 1.6, 1.15), definition.Accent)
+        makeShape(model, "LeftEar", Vector3.new(0.4, 0.65, 0.35), Vector3.new(-0.55, 2.35, 0.35), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "RightEar", Vector3.new(0.4, 0.65, 0.35), Vector3.new(0.55, 2.35, 0.35), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "LeftAntler", Vector3.new(0.25, 1.25, 0.25), Vector3.new(-0.42, 3.0, 0.15), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "RightAntler", Vector3.new(0.25, 1.25, 0.25), Vector3.new(0.42, 3.0, 0.15), definition.Accent, Enum.PartType.Wedge)
+        makeShape(model, "LeafTail", Vector3.new(0.65, 0.8, 0.65), Vector3.new(0, 1.25, -1.05), definition.Detail)
+    elseif definition.Kind == "RootSprite" then
+        makeShape(model, "MossCap", Vector3.new(2.0, 0.55, 1.8), Vector3.new(0, 2.2, 0), definition.Accent)
+        for index = 1, 3 do
+            local angle = index * math.pi * 2 / 3
+            makeShape(model, "RootVine", Vector3.new(0.3, 1.15, 0.3),
+                Vector3.new(math.cos(angle) * 0.9, 0.75, math.sin(angle) * 0.9), definition.Detail)
+        end
+        makeShape(model, "Sprout", Vector3.new(0.45, 0.85, 0.3), Vector3.new(0, 2.85, 0), definition.Detail, Enum.PartType.Wedge)
+    elseif definition.Kind == "SkySerpent" then
+        makeShape(model, "SerpentSnout", Vector3.new(0.75, 0.45, 0.9), Vector3.new(0, 1.6, 1.15), definition.Accent)
+        makeShape(model, "Crest", Vector3.new(0.3, 0.85, 0.3), Vector3.new(0, 2.55, 0.25), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "LeftFin", Vector3.new(0.5, 1.0, 1.4), Vector3.new(-1.05, 1.45, -0.2), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "RightFin", Vector3.new(0.5, 1.0, 1.4), Vector3.new(1.05, 1.45, -0.2), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "CloudTail", Vector3.new(0.65, 0.65, 1.5), Vector3.new(0, 1.0, -1.3), definition.Accent)
     elseif definition.Kind == "Owl" then
         makeShape(model, "Beak", Vector3.new(0.42, 0.55, 0.42), Vector3.new(0, 1.65, 1.25), Color3.fromRGB(255, 193, 93), Enum.PartType.Wedge)
         makeShape(model, "LeftWing", Vector3.new(0.55, 1.15, 1.25), Vector3.new(-1.05, 1.25, -0.05), definition.Accent)
