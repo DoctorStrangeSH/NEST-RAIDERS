@@ -1,10 +1,6 @@
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerFolder = ServerScriptService:WaitForChild("Server")
 local ServicesFolder = ServerFolder:WaitForChild("Services")
-local WorldBuilder = require(ServerFolder:WaitForChild("World"):WaitForChild("WorldBuilder"))
-
-WorldBuilder:Build()
-
 -- Publish every client endpoint before loading optional gameplay services.
 -- This prevents the client HUD from waiting forever when a later service fails.
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -27,32 +23,53 @@ for _, remoteName in ipairs({
     end
 end
 
+-- Build the world after endpoints exist; world errors must never hide all UI.
+local worldOk, worldError = pcall(function()
+    local builder = require(ServerFolder:WaitForChild("World"):WaitForChild("WorldBuilder"))
+    builder:Build()
+end)
+if not worldOk then
+    warn("[NEST RAIDERS] World build failed: " .. tostring(worldError))
+    remoteFolder:SetAttribute("WorldError", tostring(worldError))
+end
+
 local serviceNames = { "PlayerDataService", "ProgressionService", "PlotService", "NestService", "NestDecorService", "NestBuildService", "IslandVisitService", "IslandContestService", "PublicProfileService", "CompanionService", "DisplayPetService", "InventoryService", "EggShopService", "CollectionBookService", "EggService", "EconomyService" }
 local services = {}
 for _, serviceName in ipairs(serviceNames) do
-    services[serviceName] = require(ServicesFolder:WaitForChild(serviceName))
+    local ok, result = pcall(function()
+        return require(ServicesFolder:WaitForChild(serviceName, 10))
+    end)
+    if ok and type(result) == "table" then
+        services[serviceName] = result
+    else
+        local message = tostring(result)
+        warn("[NEST RAIDERS] Service Load failed: " .. serviceName .. " | " .. message)
+        remoteFolder:SetAttribute("ServiceError_" .. serviceName, message)
+    end
 end
 
 for _, serviceName in ipairs(serviceNames) do
     local service = services[serviceName]
-    if type(service.Init) == "function" then
+    if service and type(service.Init) == "function" then
         local ok, err = pcall(function() service:Init() end)
         if not ok then
             warn("[NEST RAIDERS] Service Init failed: " .. serviceName .. " | " .. tostring(err))
+            remoteFolder:SetAttribute("ServiceError_" .. serviceName, tostring(err))
         end
     end
 end
 
 for _, serviceName in ipairs(serviceNames) do
     local service = services[serviceName]
-    if type(service.Start) == "function" then
+    if service and type(service.Start) == "function" then
         task.spawn(function()
             local ok, err = pcall(function() service:Start() end)
             if not ok then
                 warn("[NEST RAIDERS] Service Start failed: " .. serviceName .. " | " .. tostring(err))
+                remoteFolder:SetAttribute("ServiceError_" .. serviceName, tostring(err))
             end
         end)
     end
 end
 
-print("[NEST RAIDERS] Starter Island and gameplay services initialized.")
+print("[NEST RAIDERS] Boot sequence dispatched; check Output and NestRaidersRemotes attributes for service errors.")
