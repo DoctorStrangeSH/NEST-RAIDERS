@@ -13,7 +13,7 @@ GameConfig.Progression = {
     XPScalePerLevel = 1.18,
     Zones = {
         { Id = "StarterIsland", DisplayName = "Starter Island", RequiredLevel = 1, RequiredQuest = nil },
-        { Id = "EmeraldWilds", DisplayName = "Emerald Wilds", RequiredLevel = 5, RequiredQuest = "starter_explorer" },
+        { Id = "EmeraldWilds", DisplayName = "Изумрудный лес", RequiredLevel = 5, RequiredQuest = nil },
         { Id = "FrostHighlands", DisplayName = "Frost Highlands", RequiredLevel = 12, RequiredQuest = "emerald_trial" },
         { Id = "Emberlands", DisplayName = "Emberlands", RequiredLevel = 22, RequiredQuest = "frost_trial" },
         { Id = "CrystalRealm", DisplayName = "Crystal Realm", RequiredLevel = 35, RequiredQuest = "ember_trial" },
