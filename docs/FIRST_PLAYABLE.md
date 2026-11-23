@@ -349,3 +349,7 @@ Explore the stepping stones beyond the Elder Heart altar. Four rune pads conceal
 
 ## Forgotten Heart Cave
 A stone bridge leads from Ancient Heights to a hidden cave. Inside, read the clue and awaken three crystals in order: Root → River → Dawn. A wrong activation resets your personal sequence. The treasure chamber awards Starshards, coins and XP once per player.
+
+
+## Forgotten Cave egg
+The Forgotten Heart treasure chest also contains one exclusive egg. Make room in your egg inventory before claiming it, then hatch it at your own nest. The visible odds are 65% Twilight Bat, 25% Crystal Prowler and 10% Heart Wisp.
