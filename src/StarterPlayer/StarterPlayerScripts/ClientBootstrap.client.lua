@@ -941,7 +941,8 @@ addCorner(buildHint, 8)
 buildRotateButton = Instance.new("TextButton")
 buildRotateButton.Name = "BuildPlacementRotate"
 buildRotateButton.AnchorPoint = Vector2.new(1, 1)
-buildRotateButton.Position = UDim2.new(1, -138, 1, -18)
+buildRotateButton.AnchorPoint = Vector2.new(0.5, 1)
+buildRotateButton.Position = UDim2.new(0.5, 0, 1, -18)
 buildRotateButton.Size = UDim2.fromOffset(112, 34)
 buildRotateButton.BackgroundColor3 = Color3.fromRGB(112, 101, 164)
 buildRotateButton.Text = "ПОВОРОТ ↻"
@@ -971,6 +972,20 @@ addCorner(buildCancelButton, 8)
 buildCancelButton.Activated:Connect(function()
     if activeBuildPlacement then stopBuildPlacement(true) end
 end)
+
+buildConfirmButton = Instance.new("TextButton")
+buildConfirmButton.Name = "BuildPlacementConfirm"
+buildConfirmButton.AnchorPoint = Vector2.new(1, 1)
+buildConfirmButton.Position = UDim2.new(1, -18, 1, -18)
+buildConfirmButton.Size = UDim2.fromOffset(112, 34)
+buildConfirmButton.BackgroundColor3 = Color3.fromRGB(62, 145, 112)
+buildConfirmButton.Text = "ПОСТАВИТЬ ✓"
+buildConfirmButton.TextColor3 = Color3.new(1, 1, 1)
+buildConfirmButton.TextSize = 10
+buildConfirmButton.Font = Enum.Font.GothamBlack
+buildConfirmButton.Visible = false
+buildConfirmButton.Parent = gui
+addCorner(buildConfirmButton, 8)
 
 local decorLayout = Instance.new("UIListLayout")
 decorLayout.Padding = UDim.new(0, 8)
@@ -1948,7 +1963,7 @@ local function invokeBuild(payload)
 end
 
 local renderBuild
-local buildHint, buildRotateButton, buildCancelButton
+local buildHint, buildRotateButton, buildCancelButton, buildConfirmButton
 local activeBuildPlacement = nil
 local buildPreview = nil
 local buildRotation = 0
@@ -1977,6 +1992,7 @@ local function stopBuildPlacement(reopen)
     buildHint.Visible = false
     buildRotateButton.Visible = false
     buildCancelButton.Visible = false
+    buildConfirmButton.Visible = false
     if reopen then
         buildPanel.Visible = true
         local latest = invokeBuild({ Action = "Get" })
@@ -2054,6 +2070,12 @@ local function confirmBuildPlacement(screenPosition)
     end
 end
 
+buildConfirmButton.Activated:Connect(function()
+    if activeBuildPlacement and buildScreenPosition then
+        confirmBuildPlacement(buildScreenPosition)
+    end
+end)
+
 local function startBuildPlacement(state)
     stopBuildPlacement(false)
     local grass = getBuildGrass()
@@ -2064,7 +2086,8 @@ local function startBuildPlacement(state)
     activeBuildPlacement = state
     activeBuildPlacement.Grass = grass
     buildRotation = state.Rotation or 0
-    buildScreenPosition = UserInputService:GetMouseLocation()
+    buildScreenPosition = UserInputService.MouseEnabled and UserInputService:GetMouseLocation()
+        or Vector2.new(Workspace.CurrentCamera.ViewportSize.X / 2, Workspace.CurrentCamera.ViewportSize.Y / 2)
     buildPanel.Visible = false
 
     buildPreview = Instance.new("Part")
@@ -2078,11 +2101,13 @@ local function startBuildPlacement(state)
     buildPreview.Color = Color3.fromRGB(93, 231, 153)
     buildPreview.Transparency = 0.35
     buildPreview.Parent = Workspace
+    updateBuildPreview(buildScreenPosition)
 
-    buildHint.Text = "Выбери место · R — поворот · Esc — отмена"
+    buildHint.Text = "Выбери точку на острове · зелёный = можно · красный = занято"
     buildHint.Visible = true
     buildRotateButton.Visible = true
     buildCancelButton.Visible = true
+    buildConfirmButton.Visible = true
 
     table.insert(buildInputConnections, UserInputService.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
@@ -2103,7 +2128,9 @@ local function startBuildPlacement(state)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             confirmBuildPlacement(UserInputService:GetMouseLocation())
         elseif input.UserInputType == Enum.UserInputType.Touch then
-            confirmBuildPlacement(input.Position)
+            -- Touch sets the desired position; confirmation is always explicit.
+            buildScreenPosition = input.Position
+            updateBuildPreview(buildScreenPosition)
         end
     end))
     table.insert(buildInputConnections, RunService.RenderStepped:Connect(function()
