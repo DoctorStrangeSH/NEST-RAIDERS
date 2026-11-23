@@ -262,6 +262,7 @@ function ForgottenHeartBossService:Init()
                 player:SetAttribute("Starshard", profile.Materials.Starshard)
                 EconomyService:GrantCoins(player, REWARD_COINS, "Победа над Хранителем забытого сердца")
                 ProgressionService:AddXP(player, REWARD_XP)
+                player:SetAttribute("ForgottenHeartBossRewardReveal", true)
                 player:SetAttribute("LastNotice", "Хранитель повержен! Получен Страж забытого сердца, +1 200 монет, +5 звёздных осколков и +800 опыта!")
                 return
             end
@@ -292,6 +293,7 @@ function ForgottenHeartBossService:Init()
 
     local function bindPlayer(player)
         player:SetAttribute("ForgottenHeartBossWindup", false)
+        player:SetAttribute("ForgottenHeartBossRewardReveal", false)
         player:SetAttribute("ForgottenHeartBossAttackType", "")
         player:SetAttribute("ForgottenHeartBossPhase", 1)
         local function sync()
