@@ -512,6 +512,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Complete `emerald_trial` after all three runes are activated and award 100 XP once.
 - [x] Expose live trial progress and completion attributes to the client.
 - [x] Add a responsive HUD objective panel while the player is in Emerald Wilds.
+- [x] Validate server-side player proximity for rune and portal interactions.
+- [x] Correct portal arrival elevations to place characters at each island surface.
 - [x] Keep the Frost Highlands progression gate dependent on both level 12 and `emerald_trial`.
 - [x] Improve portal denial messaging so missing level and missing trial are explained separately.
 - [ ] Roblox Studio: test all three runes, reconnect persistence, duplicate activation, and XP reward exactly once.
