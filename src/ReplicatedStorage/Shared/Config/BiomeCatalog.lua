@@ -86,5 +86,22 @@ local BiomeCatalog = {
             },
         },
     },
+    AncientHeights = {
+        Id = "AncientHeights",
+        Name = "Древние высоты",
+        DefaultEggId = "AncientEgg",
+        Eggs = {
+            AncientEgg = {
+                Id = "AncientEgg",
+                Name = "Яйцо древнего древа",
+                Rarity = "Мифическое",
+                SpeciesWeights = {
+                    AncientStag = 55,
+                    RootSprite = 30,
+                    SkySerpent = 15,
+                },
+            },
+        },
+    },
 }
 return BiomeCatalog
