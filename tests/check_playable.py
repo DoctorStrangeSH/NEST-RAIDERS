@@ -731,6 +731,12 @@ assert 'math.random() < fraction' in artifact_bonus
 assert 'local RunService = game:GetService("RunService")' in inventory_service
 assert 'payload.Action == "DevSeedGathererArtifacts"' in inventory_service
 assert 'if not RunService:IsStudio() then' in inventory_service
+assert 'DevOnly = true' in inventory_service
+assert '(artifact.DevOnly == true) ~= (first.DevOnly == true)' in inventory_service
+assert 'DevOnly = first.DevOnly == true or nil' in inventory_service
+assert 'if RunService:IsStudio() then' in player_data
+assert 'if artifact.DevOnly == true then' in player_data
+assert 'if not testArtifactIds[instanceId] then' in player_data
 assert 'requiredSlots' in inventory_service and '#profile.Artifacts + requiredSlots > 40' in inventory_service
 assert 'artifactsTestButton' in client and 'RunService:IsStudio() then' in client
 assert 'Action = "DevSeedGathererArtifacts"' in client
