@@ -385,3 +385,14 @@
 - [ ] Verify the three follower silhouettes, genetic ornaments, collection discoveries, and profile updates.
 - [ ] Test two players independently; one player's egg collection must not grant or remove another player's inventory item.
 - [ ] Check landing, path, trees, rune pillars, egg stands, collision, and camera readability on desktop and mobile emulation.
+
+
+## Ancient Heights Elderwood gathering — Studio acceptance
+- [ ] Confirm all six glowing root nodes appear along the Elder Canopy path with working prompts.
+- [ ] Confirm harvesting works only inside Ancient Heights for an eligible player.
+- [ ] Confirm an ineligible player or a player outside interaction distance receives no reward.
+- [ ] Confirm each harvest grants 1–3 Elderwood and updates the Ancient Heights HUD immediately.
+- [ ] Confirm the same player cannot harvest the same node again during its three-minute cooldown.
+- [ ] Confirm a different player can harvest that node independently.
+- [ ] Rejoin and confirm Elderwood balance and node cooldowns persist.
+- [ ] Confirm the panel is hidden outside Ancient Heights and readable on mobile emulation.
