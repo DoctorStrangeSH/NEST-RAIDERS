@@ -482,3 +482,11 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Insufficient ingredients reject the craft without partial spending and report the exact missing resource.
 - On success, all ingredients are deducted together, the egg is added to the normal egg inventory, and updated resource/coin attributes are replicated.
 - Egg species odds remain the existing AncientEgg BiomeCatalog weights (55/30/15).
+
+## Artifact collection — Sprint 4.42
+- Artifacts are persistent instances in `profile.Artifacts`; equipped instance IDs are stored separately in `profile.EquippedArtifacts`.
+- Maximum equipped artifacts: 2. The server validates ownership and slot capacity for every equip action.
+- The Ancient Heights workshop crafts one random artifact for 4 Moonpetals, 2 Starshards, 2 Crystal Shards, 1 Ash Crystal and 250 coins.
+- Craft odds: Root Sigil 60% (+3% passive income), Moon Pendant 30% (+6%), Star Prism 10% (+10%).
+- Bonuses stack additively and are capped at +20% to passive income from active companions.
+- The UI displays owned artifacts, rarity, effect and equipment state. All crafting, ownership and equipment changes are server-authoritative.
