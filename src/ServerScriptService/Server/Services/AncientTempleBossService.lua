@@ -288,7 +288,9 @@ function AncientTempleBossService:Init()
                         humanoid:TakeDamage(attack.Damage)
                         player:SetAttribute("LastNotice", attack.Id == "VineSlam"
                             and "Корни обрушились на тебя! В следующий раз уклонись от тяжёлого удара."
-                            or "Волна корней настигла тебя! Уходи за пределы арены во время подготовки.")
+                            or (attack.Id == "ThornBurst"
+                                and "Шипы Древа пронзили арену! Отходи дальше во время предупреждения."
+                                or "Волна корней настигла тебя! Уходи за пределы арены во время подготовки."))
                     elseif player.Parent then
                         player:SetAttribute("LastNotice", "Ты уклонился от атаки Стража!")
                     end
