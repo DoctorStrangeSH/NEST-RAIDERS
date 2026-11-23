@@ -14,6 +14,16 @@ plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_tex
 eggs = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
 companions = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
 inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
+book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua").read_text()
+profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+assert 'DiscoveredSpecies = {}' in profile_template
+assert 'profile.DiscoveredSpecies[companion.Id] = true' in eggs
+assert 'profile.DiscoveredSpecies[speciesId] = true' in book
+assert 'Discovered = isDiscovered' in book
+assert 'Discovered = count > 0' not in book
+assert 'REQUEST_COOLDOWN' not in book, "Read-only collection must not throttle the first-play flow"
+assert 'OwnedCount = count' in book, "Collection should still show current owned count"
+
 assert 'if payload.Action ~= "Get" then' in inventory, "Read-only inventory snapshots must bypass cooldown"
 assert 'REQUEST_COOLDOWN' in inventory, "Mutation cooldown must remain active"
 assert 'GetAttributeChangedSignal("CompanionCount"):Connect(function()' in client
