@@ -134,8 +134,9 @@ function WorldBuilder:Build()
         zone.Name = "EggGarden_" .. tostring(grove.x) .. "_" .. tostring(grove.z)
         zone.Parent = wayfinding
         local ring = part(zone, "GardenBase",
-            Vector3.new(12, 0.5, 12), Vector3.new(grove.x, 10.75, grove.z),
+            Vector3.new(0.5, 12, 12), Vector3.new(grove.x, 10.4, grove.z),
             Color3.fromRGB(148, 177, 133), Enum.Material.Slate, Enum.PartType.Cylinder)
+        ring.CFrame = CFrame.new(grove.x, 10.4, grove.z) * CFrame.Angles(0, 0, math.rad(90))
         ring.CanCollide = false
         -- Tall ambient glow allows players to recognize egg sites from afar.
         local beam = part(zone, "EggBeacon",
@@ -246,10 +247,11 @@ function WorldBuilder:Build()
     for _, eggPosition in ipairs({
         Vector3.new(-24, 14, 20), Vector3.new(25, 14, 24), Vector3.new(0, 14, 65),
     }) do
-        local pedestal = part(gardens, "EggPedestal", Vector3.new(6, 1.4, 6),
+        local pedestal = part(gardens, "EggPedestal", Vector3.new(1.4, 6, 6),
             Vector3.new(eggPosition.X, 11, eggPosition.Z),
             Color3.fromRGB(176, 146, 112), Enum.Material.Slate, Enum.PartType.Cylinder)
         pedestal.CFrame = CFrame.new(eggPosition.X, 11, eggPosition.Z)
+            * CFrame.Angles(0, 0, math.rad(90))
         pedestal.CanCollide = false
     end
 
