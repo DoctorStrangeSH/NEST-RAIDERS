@@ -121,7 +121,7 @@ function WorldBuilder:Build()
             Vector3.new(index % 3 == 0 and 11 or 9, 0.25, 7.5),
             Vector3.new(0, 10.8, z),
             index % 2 == 0 and Color3.fromRGB(218, 193, 149) or Color3.fromRGB(235, 215, 170),
-            Enum.Material.Sandstone)
+            Enum.Material.Slate)
         slab.CanCollide = false
     end
 
@@ -363,6 +363,7 @@ function WorldBuilder:Build()
             FrostHighlands = "Ледяные нагорья · уровень 12 + испытание",
             Emberlands = "Пепельные земли · уровень 22 + испытание",
             CrystalRealm = "Хрустальное королевство · уровень 35 + испытание",
+            AncientHeights = "Древние высоты · уровень 50 + испытание",
             StarterIsland = "Стартовый остров",
         }
         prompt.ObjectText = zoneLabels[zoneId] or "Неизвестная область"
