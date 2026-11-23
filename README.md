@@ -187,3 +187,7 @@ Successful breeding triggers a temporary altar animation: the two selected compa
 
 ### Guardian animations
 The Heartwood Guardian now has distinct Vine Slam, Root Wave and Thorn Burst attack choreography, plus a gold particle reveal for the player who defeats it. The shared model animation is cosmetic; combat progress remains isolated per player.
+
+
+### Whispering Grove secret
+A second optional secret is hidden beyond the Elder Heart altar. Activate four runes in order (Moon → Leaf → Dew → Star) to unlock a personal cache with Moonpetals, coins and XP.
