@@ -161,6 +161,27 @@ function PlayerDataService:Save(player, releaseLock)
 
     self._saving[player] = true
     local snapshot = deepCopy(profile)
+    if RunService:IsStudio() then
+        -- Studio QA artifacts are session-only, even when Studio API access
+        -- points at the published experience's DataStore.
+        local testArtifactIds = {}
+        local savedArtifacts = {}
+        for _, artifact in ipairs(snapshot.Artifacts or {}) do
+            if artifact.DevOnly == true then
+                testArtifactIds[artifact.InstanceId] = true
+            else
+                table.insert(savedArtifacts, artifact)
+            end
+        end
+        snapshot.Artifacts = savedArtifacts
+        local savedEquippedArtifacts = {}
+        for _, instanceId in ipairs(snapshot.EquippedArtifacts or {}) do
+            if not testArtifactIds[instanceId] then
+                table.insert(savedEquippedArtifacts, instanceId)
+            end
+        end
+        snapshot.EquippedArtifacts = savedEquippedArtifacts
+    end
     local key = "player_" .. player.UserId
     local success, err = pcall(function()
         self._store:UpdateAsync(key, function(current)
