@@ -127,17 +127,31 @@ function EggService:Hatch(player, station)
     local root = character and character:FindFirstChild("HumanoidRootPart")
     if not root or (root.Position - station.Position).Magnitude > 14 then return end
 
-    local egg = profile.EggInventory[1]
-    if type(egg) ~= "table" then
-        player:SetAttribute("LastNotice", "Яйцо повреждено. Обратись к поддержке.")
-        return
-    end
+    -- Select the first hatchable egg without changing the order of inventory.
+    -- An incubating breeding egg must not block a ready meadow/shop egg behind it.
     local now = os.time()
-    if egg.Origin == "Breeding" and (tonumber(egg.IncubatesUntil) or 0) > now then
-        local remaining = math.max(1, math.floor(egg.IncubatesUntil - now))
-        local minutes = math.floor(remaining / 60)
-        local seconds = remaining % 60
-        player:SetAttribute("LastNotice", string.format("Яйцо ещё инкубируется: %d мин. %d сек.", minutes, seconds))
+    local hatchIndex, egg
+    local shortestWait
+    for index, candidate in ipairs(profile.EggInventory) do
+        if type(candidate) == "table" then
+            local remaining = candidate.Origin == "Breeding"
+                and math.max(0, (tonumber(candidate.IncubatesUntil) or 0) - now) or 0
+            if remaining <= 0 then
+                hatchIndex, egg = index, candidate
+                break
+            end
+            shortestWait = shortestWait and math.min(shortestWait, remaining) or remaining
+        end
+    end
+    if not egg then
+        if shortestWait then
+            local minutes = math.floor(shortestWait / 60)
+            local seconds = math.floor(shortestWait % 60)
+            player:SetAttribute("LastNotice", string.format(
+                "Все яйца ещё инкубируются. Ближайшее: %d мин. %d сек.", minutes, seconds))
+        else
+            player:SetAttribute("LastNotice", "Не удалось прочитать яйца в сумке. Обратись к поддержке.")
+        end
         return
     end
 
@@ -154,7 +168,7 @@ function EggService:Hatch(player, station)
         definition = chooseCompanion()
         geneticTrait = chooseGeneticTrait()
     end
-    table.remove(profile.EggInventory, 1)
+    table.remove(profile.EggInventory, hatchIndex)
     local companion = {
         InstanceId = HttpService:GenerateGUID(false),
         Id = definition.Id,
