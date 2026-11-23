@@ -598,5 +598,9 @@ assert 'playForgottenBossPhaseTwo' in client and 'playForgottenBossVictory' in c
 assert 'showForgottenHeartRewardReveal' in client and 'ЗАБРАТЬ НАГРАДУ' in client
 assert 'ForgottenHeartBossRewardReveal' in forgotten_boss and 'ForgottenHeartBossRewardReveal' in client
 assert 'forgottenBossArmBaseCache' in client
+assert 'ForgottenHeartBossHitPulse' in forgotten_boss and 'ForgottenHeartBossDamagePulse' in forgotten_boss
+assert 'playForgottenBossHitReaction' in client and 'ForgottenHeartDamageFlash' in client
+assert 'ForgottenHeartBossCameraShake' in client and 'requestForgottenBossCameraShake' in client
+assert 'createForgottenBossDebris = function' in client
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
