@@ -510,5 +510,8 @@ assert 'PlotService:ApplyContestTrophies(player)' in ancient_boss
 assert 'AncientTemple = "СЕРДЦЕ ДРЕВА"' in plots and 'СЕРДЦЕ ДРЕВА' in plots
 assert 'TweenService' in client and 'playGuardianTelegraph' in client
 assert 'GuardianWindupBurst' in client and 'AncientTempleBossPhase' in client
+assert 'ШИПЫ ДРЕВА! ОТОЙДИ ОТ СТРАЖА!' in client
+assert 'Size = Vector3.new(4, 4, 2)' in client
+assert 'Шипы Древа пронзили арену!' in ancient_boss
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
