@@ -35,7 +35,7 @@ end
 -- receives a fair long-run bonus while preserving integer material counts.
 function ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)
     local safeBase = math.max(0, math.floor(tonumber(baseAmount) or 0))
-    if safeBase == 0 then return 0, 0 end
+    if safeBase == 0 then return 0, 0, 0 end
 
     local bonus = self:GetGatherBonus(profile)
     local expectedExtra = safeBase * bonus
@@ -45,7 +45,7 @@ function ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)
         extra += 1
     end
 
-    return safeBase + extra, bonus
+    return safeBase + extra, bonus, extra
 end
 
 return ArtifactBonusService
