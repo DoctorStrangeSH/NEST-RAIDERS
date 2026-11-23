@@ -3754,9 +3754,11 @@ local function updateBiomeTrialPanel()
             bossStatus.Visible = true
             local caveBossHealth = math.clamp(tonumber(player:GetAttribute("ForgottenHeartBossHealth")) or 360, 0, 360)
             local caveBossPhase = tonumber(player:GetAttribute("ForgottenHeartBossPhase")) or 1
-            bossBarFill.Size = UDim2.fromScale(caveBossHealth / 360, 1)
-            bossBarFill.BackgroundColor3 = caveBossPhase == 2
-                and Color3.fromRGB(190, 119, 255) or Color3.fromRGB(102, 213, 255)
+            TweenService:Create(bossBarFill, TweenInfo.new(0.28, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                Size = UDim2.fromScale(caveBossHealth / 360, 1),
+                BackgroundColor3 = caveBossPhase == 2
+                    and Color3.fromRGB(190, 119, 255) or Color3.fromRGB(102, 213, 255),
+            }):Play()
             if player:GetAttribute("ForgottenHeartBossWindup") == true then
                 local attackType = player:GetAttribute("ForgottenHeartBossAttackType")
                 bossStatus.Text = attackType == "EchoPulse"
@@ -4072,6 +4074,51 @@ local function requestForgottenBossCameraShake(duration, strength)
         )
     end)
 end
+
+local lastForgottenBossHealth = tonumber(player:GetAttribute("ForgottenHeartBossHealth")) or 360
+
+local function showForgottenBossDamageNumber()
+    local health = tonumber(player:GetAttribute("ForgottenHeartBossHealth")) or lastForgottenBossHealth
+    local damage = math.max(0, lastForgottenBossHealth - health)
+    lastForgottenBossHealth = health
+    if damage <= 0 then return end
+    local core = getForgottenBossVisual()
+    if not core then return end
+
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "ForgottenHeartDamageNumber"
+    billboard.Size = UDim2.fromOffset(112, 48)
+    billboard.StudsOffset = Vector3.new(math.random(-12, 12) / 10, 4.5, 0)
+    billboard.AlwaysOnTop = true
+    billboard.LightInfluence = 0
+    billboard.MaxDistance = 100
+    billboard.Adornee = core
+    billboard.Parent = playerGui
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.fromScale(1, 1)
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.GothamBlack
+    label.Text = "-" .. tostring(damage)
+    label.TextColor3 = Color3.fromRGB(255, 239, 173)
+    label.TextStrokeColor3 = Color3.fromRGB(40, 35, 57)
+    label.TextStrokeTransparency = 0.15
+    label.TextScaled = true
+    label.Parent = billboard
+
+    TweenService:Create(billboard, TweenInfo.new(0.78, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        StudsOffset = billboard.StudsOffset + Vector3.new(0, 2.2, 0),
+    }):Play()
+    TweenService:Create(label, TweenInfo.new(0.78, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        TextTransparency = 1,
+        TextStrokeTransparency = 1,
+    }):Play()
+    game:GetService("Debris"):AddItem(billboard, 0.9)
+end
+
+player:GetAttributeChangedSignal("ForgottenHeartBossHealth"):Connect(function()
+    showForgottenBossDamageNumber()
+end)
 
 local function playForgottenBossHitReaction()
     local guardian = getForgottenBossModel()
