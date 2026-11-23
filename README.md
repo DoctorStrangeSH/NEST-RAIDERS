@@ -195,3 +195,7 @@ A second optional secret is hidden beyond the Elder Heart altar. Activate four r
 
 ### Forgotten Heart Cave
 Ancient Heights now contains a connected side dungeon with a crystal-order puzzle, persistent personal progress and a one-time Starshard treasure reward.
+
+
+### Forgotten Cave companions
+The cave treasure chest grants an exclusive egg with three possible companions: Cave Glimmerbat (65%), Crystal Prowler (25%) and Heart Wisp (10%). Each has a distinct follower model and ability.
