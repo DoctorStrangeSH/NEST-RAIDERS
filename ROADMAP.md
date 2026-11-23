@@ -255,3 +255,15 @@ Successful CI packaging remains separate from real play testing.
 - [ ] Verify the appearance on desktop and mobile and replace primitive geometry with polished licensed assets only after validating the playable scene.
 
 CI verifies source and packaging, **not actual Roblox physics or visual correctness**.
+
+### Playable-first world structural health (2026-11-23)
+
+- [x] Add server-side, read-only startup checks for StarterSpawn, three collectable egg prompts and six plots with HatchStation, HatchPrompt and PlotGrass.
+- [x] Publish `WorldHealth` and `WorldHealthError` on NestRaidersRemotes for client inspection.
+- [x] Surface a Russian warning directly in the first-play HUD when critical world structure is incomplete.
+- [x] Add CI source checks for the world checker and player-visible diagnostics.
+- [ ] Run Roblox Studio Play to confirm READY with clean startup and DEGRADED with an intentionally removed egg/hatch prompt.
+- [ ] Perform the full egg → personal nest → hatch → inventory loop on desktop and mobile.
+- [ ] Validate multiplayer plot ownership and DataStore persistence in Studio.
+
+**Limitation:** The structural check verifies instances and prompts, not whether collecting/hatching works at runtime.
