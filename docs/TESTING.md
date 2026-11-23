@@ -599,3 +599,11 @@
 - [ ] Verify wrong biome, locked progression, dead character, out-of-range and missing-profile attempts award no resources.
 - [ ] Rejoin and verify artifact levels, equipment and displayed bonus persist.
 - [ ] Check artifact collection text and effect labels at 375px mobile width.
+
+## Sprint 4.44 — Studio quick-test fixture
+- In Roblox Studio only, open **АРТЕФАКТЫ** and use **ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ**.
+- The server fills each Gatherer type to three level-I copies, allowing equip, harvest, merge and confirmation testing without grinding the rare craft odds.
+- The server rejects this action outside Studio and refuses to exceed the 40-item collection cap.
+- [ ] Verify the test button is visible in Studio Play and absent from a published server.
+- [ ] Use the fixture to equip each Gatherer, harvest Elderwood and Crystal nodes, merge three copies, and verify the next tier.
+- [ ] Verify the fixture cannot be invoked in a published server and leaves the inventory unchanged when capacity is insufficient.
