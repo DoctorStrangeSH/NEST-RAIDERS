@@ -447,3 +447,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Roblox Studio: collect eggs repeatedly and verify the three active eggs move between the nine marked sites without overlapping.
 - [ ] Multiplayer: verify simultaneous players cannot duplicate or collect the same egg twice.
 - [ ] Future biome expansion: add biome-specific egg pools, rarity/species tables, and disclosed odds; this change randomizes locations only.
+
+### Genetic traits now affect companion income (2026-11-23)
+
+- [x] Apply each active companion's saved genetic-trait IncomeBonus to passive coin generation.
+- [x] Apply the same bonus to companions displayed on the personal nest.
+- [x] Sum fractional bonuses before rounding the final 10-second payout, so small bonuses are not silently discarded per pet.
+- [x] Expose the displayed companion's bonus percentage in the display-pet snapshot.
+- [x] Clamp malformed or excessive saved bonuses to a safe 0–25% range.
+- [x] Add static regression checks for both income paths.
+- [ ] Roblox Studio: hatch pets with Natural, Verdant, Luminous and Prismatic traits; compare active and displayed income over several 10-second ticks.
+- [ ] Verify legacy pets without a trait continue earning their original base income.
