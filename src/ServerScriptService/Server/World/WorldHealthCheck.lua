@@ -302,6 +302,11 @@ function WorldHealthCheck:Check()
         if not guardianPrompt or not guardianPrompt:IsA("ProximityPrompt") then
             fail("Нет Стража Сердца Древа или его точки взаимодействия")
         end
+        local guardianEffects = guardianCore and guardianCore:FindFirstChild("GuardianEffectAttachment")
+        local guardianBurst = guardianEffects and guardianEffects:FindFirstChild("GuardianWindupBurst")
+        if not guardianBurst or not guardianBurst:IsA("ParticleEmitter") then
+            fail("Нет эффектов предупреждения атак Стража")
+        end
     end
 
     return #issues == 0, issues
