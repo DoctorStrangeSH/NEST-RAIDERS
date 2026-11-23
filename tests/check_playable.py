@@ -25,6 +25,7 @@ assert 'folder:SetAttribute("ExpectedCount", #PLOT_DEFINITIONS)' in plots
 assert 'return self._initialized, created' in plots
 world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
 grove_secret = Path("src/ServerScriptService/Server/Services/AncientSecretService.lua").read_text()
+ancient_cave = Path("src/ServerScriptService/Server/Services/AncientCaveService.lua").read_text()
 profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
 assert 'FrostHighlands' in world_health and 'FrostRunePrompt' in world_health
 assert 'GlacierCauseway' in world_health and 'FrostEggOddsSign' in world_health
@@ -540,5 +541,22 @@ assert 'Whispering Grove four-rune cache' not in client
 assert 'GroveCacheRunes = {}' in profile_template and 'Moonpetal = 0' in profile_template
 assert 'Нет тайника четырёх рун в Шепчущей роще' in world_health
 assert 'Руны тайника рощи:' in world_health
+assert 'ForgottenHeartCave' in world and 'ForgottenCaveBridge' in world
+assert 'ForgottenCaveFloor' in world and 'CaveStalactite_' in world
+assert 'CaveCrystal_Root' in world and 'CaveCrystal_River' in world and 'CaveCrystal_Dawn' in world
+assert 'Корень → Река → Рассвет' in world
+assert 'ForgottenCaveChestPrompt' in world
+assert 'CRYSTAL_ORDER = { "Root", "River", "Dawn" }' in ancient_cave
+assert 'ForgottenCaveCrystals' in ancient_cave and 'forgotten_cave_cache' in ancient_cave
+assert 'Materials.Starshard' in ancient_cave
+assert 'GrantCoins(player, 600' in ancient_cave and 'AddXP(player, 300)' in ancient_cave
+assert 'ForgottenCaveCrystalProgress' in ancient_cave and 'ForgottenCaveCacheOpened' in ancient_cave
+assert 'AncientCaveService' in server
+assert 'ForgottenCaveCrystals = {}' in profile_template and 'Starshard = 0' in profile_template
+assert 'ForgottenCaveCrystalProgress' in client and 'ForgottenCaveCacheOpened' in client
+assert 'ПЕЩЕРА: КРИСТАЛЛЫ %d / 3' in client
+assert 'Нет моста или пола пещеры забытого сердца' in world_health
+assert 'Кристаллы пещеры: %d из 3' in world_health
+assert 'Нет сокровищницы забытого сердца' in world_health
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
