@@ -335,3 +335,13 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The Prismatic Radiance Egg hatches Prism Fox (60%), Crystal Fawn (30%), or Aurora Dragon (10%). The existing egg collection, respawn and hatch systems are reused.
 - The Russian HUD shows the saved Crystal Shard balance. Static CI and world-health checks cover the biome structure and service wiring.
 - Studio runtime, balance, multiplayer, mobile and performance acceptance remain outstanding.
+
+
+## Crystal Prism Trial — Sprint 4.25
+- The Crystal Realm trial contains three reflectors and a visible clue for the Azure → Rose → Crown activation sequence.
+- Each player's sequence is stored in `QuestProgress.CrystalTrialPrisms`. Activating the wrong prism clears only that player's sequence. Completing all three unlocks the Prism Guardian.
+- The Prism Guardian has 160 saved health per player. Valid interactions deal 20 damage. It telegraphs a 22-damage area pulse for 1.55 seconds; moving outside its 24-stud radius avoids the hit.
+- Defeating the guardian completes `crystal_trial` and awards +500 XP once. The existing progression configuration gates Ancient Heights behind level 50 and `crystal_trial`.
+- The first Ancient Heights landing platform and a return portal are present; this is a destination slice, not the completed biome.
+- The Russian trial HUD shows puzzle progress, guardian health, and the dodge warning. CI and world-health checks cover puzzle props, prompts, guardian, and destination portals.
+- Roblox Studio runtime, multiplayer, balance, collision, mobile, and performance acceptance remain outstanding.
