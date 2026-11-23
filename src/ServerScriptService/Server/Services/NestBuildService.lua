@@ -180,10 +180,13 @@ function NestBuildService:HandleRequest(player,payload)
     local plot=PlotService:GetPlayerPlot(player)
     if not profile or not player:GetAttribute("ProfileLoaded") then return {Ok=false,Message="Профиль ещё загружается."} end
     if not plot then return {Ok=false,Message="Личное гнездо ещё не назначено."} end
-    local root=player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-    if not root or (root.Position-plot.Center).Magnitude>65 then return {Ok=false,Message="Подойди к своему острову."} end
     local nest=ensureNest(profile)
-    if payload.Action=="Get" then self:RefreshPlayer(player); return {Ok=true,Data=getSnapshot(profile)} end
+    -- Opening the catalogue and buying items are remote-friendly menu actions.
+    -- Only world mutations require the character to be physically near their own plot.
+    if payload.Action=="Get" then
+        self:RefreshPlayer(player)
+        return {Ok=true,Data=getSnapshot(profile)}
+    end
     if payload.Action=="Buy" then
         local id=payload.BuildId
         local def=type(id)=="string" and NestBuildCatalog[id] or nil
@@ -197,6 +200,12 @@ function NestBuildService:HandleRequest(player,payload)
         nest.BuildInventory[id]=count+1
         player:SetAttribute("Coins",profile.Coins)
         return {Ok=true,Data=getSnapshot(profile),Message="Куплено: "..def.Name}
+    end
+    if payload.Action=="Place" or payload.Action=="Move" or payload.Action=="Remove" then
+        local root=player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        if not root or (root.Position-plot.Center).Magnitude>65 then
+            return {Ok=false,Message="Подойди к своему острову, чтобы строить."}
+        end
     end
     if payload.Action=="Place" then
         local id=payload.BuildId
