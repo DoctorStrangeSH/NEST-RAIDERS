@@ -111,6 +111,30 @@ local CompanionCatalog = {
         EggId = "EmeraldEgg",
     },
 
+    CinderFox = {
+        Id = "CinderFox", Name = "Угольный лис", Rarity = "Редкий", Income = 18, Weight = 0,
+        Description = "Проворный лис, умеющий находить прохладные тропы среди пепла.",
+        Personality = "Любознательный", PersonalityDescription = "Обожает исследовать вулканические туннели.",
+        FavoriteFood = "Жареные ягоды", FavoriteToy = "MeadowBall", PetMoodBonus = 8, PlayMoodBonus = 4,
+        EggId = "EmberEgg",
+        Ability = { Id = "CinderHide", Name = "Угольная шёрстка", Description = "Снижает накопление жара рядом с лавой.", UnlockLevel = 7, CooldownSeconds = 300 },
+    },
+    MagmaWhelp = {
+        Id = "MagmaWhelp", Name = "Магмовый дракончик", Rarity = "Эпический", Income = 23, Weight = 0,
+        Description = "Маленький дракон, которому не страшно вулканическое дыхание.",
+        Personality = "Смелый", PersonalityDescription = "Любит тёплые камни и новые приключения.",
+        FavoriteFood = "Огненные фрукты", FavoriteToy = "WindSpinner", PetMoodBonus = 4, PlayMoodBonus = 8,
+        EggId = "EmberEgg",
+        Ability = { Id = "MagmaWard", Name = "Магмовая защита", Description = "На короткое время полностью останавливает накопление жара.", UnlockLevel = 7, CooldownSeconds = 360 },
+    },
+    AshPhoenix = {
+        Id = "AshPhoenix", Name = "Пепельный феникс", Rarity = "Легендарный", Income = 32, Weight = 0,
+        Description = "Редкая птица, возрождающаяся в сиянии вулканического пепла.",
+        Personality = "Гордый", PersonalityDescription = "Любит высоту и огненные рассветы.",
+        FavoriteFood = "Солнечные зёрна", FavoriteToy = "CozyPlush", PetMoodBonus = 12, PlayMoodBonus = 0,
+        EggId = "EmberEgg",
+        Ability = { Id = "PhoenixRenewal", Name = "Возрождение", Description = "Один раз за поход спасает от критического перегрева.", UnlockLevel = 7, CooldownSeconds = 600 },
+    },
     FrostFox = {
         Id = "FrostFox",
         Name = "Снежный лис",
