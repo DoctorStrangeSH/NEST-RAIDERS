@@ -1712,7 +1712,7 @@ function WorldBuilder:Build()
     local groveLabel = Instance.new("TextLabel")
     groveLabel.Size = UDim2.fromScale(1, 1)
     groveLabel.BackgroundTransparency = 1
-    groveLabel.Text = "ШЁПОТ ДРЕВНЕЙ РОЩИ\\nНайди её сердце"
+    groveLabel.Text = "ШЁПОТ ДРЕВНЕЙ РОЩИ\\nНайди её сердце\\nЛУНА → ЛИСТ → РОСА → ЗВЕЗДА"
     groveLabel.TextColor3 = Color3.fromRGB(224, 241, 192)
     groveLabel.TextScaled = true
     groveLabel.TextWrapped = true
