@@ -498,3 +498,5 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Equipped artifacts cannot be consumed by a merge. Server validation rejects malformed, duplicate, unowned, mixed-type, mixed-level and max-level inputs.
 - Passive-income bonus is base catalog bonus × `(1 + 0.25 × (Level - 1))`; the sum of equipped bonuses remains capped at +20%.
 - The artifact UI offers merge actions only for groups of at least three unequipped copies.
+
+- The merge UI displays a confirmation overlay with the resulting next tier before any artifact is consumed.
