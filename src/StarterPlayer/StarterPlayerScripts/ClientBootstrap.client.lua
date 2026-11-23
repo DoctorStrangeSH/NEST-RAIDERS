@@ -3646,29 +3646,46 @@ local function updateBiomeTrialPanel()
     local isFrost = biomeId == "FrostHighlands"
     local isEmber = biomeId == "Emberlands"
     local isCrystal = biomeId == "CrystalRealm"
-    trialPanel.Visible = isEmerald or isFrost or isEmber or isCrystal
+    local isAncient = biomeId == "AncientHeights"
+    trialPanel.Visible = isEmerald or isFrost or isEmber or isCrystal or isAncient
     if not trialPanel.Visible then return end
 
-    local countAttribute = isCrystal and "CrystalTrialProgress"
-        or (isFrost and "FrostTrialProgress" or (isEmber and "EmberTrialProgress" or "EmeraldTrialProgress"))
-    local completeAttribute = isCrystal and "CrystalTrialCompleted"
-        or (isFrost and "FrostTrialCompleted" or (isEmber and "EmberTrialCompleted" or "EmeraldTrialCompleted"))
+    local countAttribute = isAncient and "AncientTempleProgress"
+        or (isCrystal and "CrystalTrialProgress"
+        or (isFrost and "FrostTrialProgress" or (isEmber and "EmberTrialProgress" or "EmeraldTrialProgress")))
+    local completeAttribute = isAncient and "AncientTempleCompleted"
+        or (isCrystal and "CrystalTrialCompleted"
+        or (isFrost and "FrostTrialCompleted" or (isEmber and "EmberTrialCompleted" or "EmeraldTrialCompleted")))
     local count = math.clamp(tonumber(player:GetAttribute(countAttribute)) or 0, 0, 3)
     local completed = player:GetAttribute(completeAttribute) == true
 
     trialPanel.Position = (isEmber or isCrystal) and UDim2.new(1, -12, 0, 286) or UDim2.new(1, -12, 0, 184)
     trialPanel.Size = UDim2.fromOffset(236, (isEmber or isCrystal) and 142 or 112)
-    trialPanel.BackgroundColor3 = isCrystal and Color3.fromRGB(48, 39, 76)
-        or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51))
+    trialPanel.BackgroundColor3 = isAncient and Color3.fromRGB(42, 61, 43)
+        or (isCrystal and Color3.fromRGB(48, 39, 76)
+        or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51)))
 
-    trialTitle.Text = isCrystal and "ИСПЫТАНИЕ ПРИЗМЫ"
+    trialTitle.Text = isAncient and "ХРАМ ДРЕВНЕГО ДРЕВА"
+        or (isCrystal and "ИСПЫТАНИЕ ПРИЗМЫ"
         or (isEmber and "ИСПЫТАНИЕ ОГНЕННОГО СЕРДЦА"
-        or (isFrost and "ИСПЫТАНИЕ СЕРДЦА ЗИМЫ" or "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ"))
-    trialTitle.TextColor3 = isCrystal and Color3.fromRGB(216, 190, 255)
+        or (isFrost and "ИСПЫТАНИЕ СЕРДЦА ЗИМЫ" or "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ")))
+    trialTitle.TextColor3 = isAncient and Color3.fromRGB(220, 239, 179)
+        or (isCrystal and Color3.fromRGB(216, 190, 255)
         or (isEmber and Color3.fromRGB(255, 183, 125)
-        or (isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202)))
+        or (isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202))))
 
-    if isCrystal then
+    if isAncient then
+        trialDescription.Text = completed
+            and "Сердце храма пробуждено! Сокровище уже твоё."
+            or (count >= 3 and "Все руны отвечают. Открой сундук в глубине храма."
+                or "Пробуди руны в порядке: Корни → Река → Рассвет. Ошибка сбросит цепочку.")
+        trialBarFill.BackgroundColor3 = Color3.fromRGB(174, 218, 133)
+        trialBarFill.Size = UDim2.fromScale(count / 3, 1)
+        trialStatus.Text = completed and "СОКРОВИЩЕ ПОЛУЧЕНО"
+            or string.format("ПРОБУЖДЕНО РУН: %d / 3", count)
+        bossBarBack.Visible = false
+        bossStatus.Visible = false
+    elseif isCrystal then
         trialDescription.Text = completed and "Хранитель повержен! Путь к Древним высотам открыт. Осталось достичь 50 уровня."
             or (count >= 3 and "Три луча соединены! Атакуй Хранителя и уклоняйся от призматической волны."
                 or "Настрой призмы по порядку: лазурная → розовая → золотая. Ошибка сбросит цепочку.")
@@ -3726,6 +3743,7 @@ for _, attribute in ipairs({
     "FrostTrialProgress", "FrostTrialCompleted", "EmberTrialProgress",
     "EmberTrialCompleted", "EmberTrialBossHealth", "EmberTrialBossWindup",
     "CrystalTrialProgress", "CrystalTrialCompleted", "CrystalTrialBossHealth", "CrystalTrialBossWindup",
+    "AncientTempleProgress", "AncientTempleCompleted",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
