@@ -47,7 +47,7 @@ local function getZoneEffects(root, world)
         end
     end
     local sanctuary = zones and zones:FindFirstChild("CoolingSanctuary")
-    local base = sanctuary and sanctuary:FindFirstChild("CoolingSanctuaryBase")
+    local base = sanctuary and sanctuary:FindFirstChild("CoolingZone")
     if base and pointInside(base, root.Position) then
         coolingRate = tonumber(base:GetAttribute("CoolingPerSecond")) or 24
         heatRate = 0
