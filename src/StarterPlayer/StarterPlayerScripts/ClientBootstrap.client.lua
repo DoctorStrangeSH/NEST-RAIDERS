@@ -3672,13 +3672,15 @@ local function updateBiomeTrialPanel()
         tonumber(player:GetAttribute("ForgottenCaveCrystalProgress")) or 0, 0, 3) or 0
     local caveCacheOpened = isAncient and player:GetAttribute("ForgottenCaveCacheOpened") == true
     local showCaveSecret = isAncient and (caveCrystalProgress > 0 or caveCacheOpened)
+    local caveBossUnlocked = isAncient and player:GetAttribute("ForgottenHeartBossUnlocked") == true
+    local caveBossCompleted = isAncient and player:GetAttribute("ForgottenHeartBossCompleted") == true
 
     trialPanel.Position = (isEmber or isCrystal) and UDim2.new(1, -12, 0, 286)
         or (isAncient and UDim2.new(1, -12, 0, 196) or UDim2.new(1, -12, 0, 184))
     local secretRows = (showGroveSecret and 1 or 0) + (showCaveSecret and 1 or 0)
     trialPanel.Size = UDim2.fromOffset(236,
         secretRows > 0 and (142 + secretRows * 20)
-            or (((isEmber or isCrystal) or ancientBossActive) and 142 or 112))
+            or (((isEmber or isCrystal) or ancientBossActive or caveBossUnlocked) and 142 or 112))
     trialPanel.BackgroundColor3 = isAncient and Color3.fromRGB(42, 61, 43)
         or (isCrystal and Color3.fromRGB(48, 39, 76)
         or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51)))
@@ -3738,6 +3740,36 @@ local function updateBiomeTrialPanel()
                     and string.format("ФАЗА II · ЯРОСТЬ ДРЕВА · %d / 240", bossHealth)
                     or string.format("ЗДОРОВЬЕ СТРАЖА: %d / 240", bossHealth))
             bossStatus.TextColor3 = Color3.fromRGB(220, 239, 179)
+        end
+        if caveBossUnlocked then
+            trialTitle.Text = "ХРАНИТЕЛЬ ЗАБЫТОГО СЕРДЦА"
+            trialTitle.TextColor3 = Color3.fromRGB(185, 232, 255)
+            trialDescription.Text = caveBossCompleted
+                and "Хранитель повержен! Страж забытого сердца уже добавлен в твою коллекцию."
+                or "Сокровищница пробудила Хранителя. Атакуй его и уклоняйся от голубых меток на земле."
+            trialBarFill.BackgroundColor3 = Color3.fromRGB(119, 211, 245)
+            trialBarFill.Size = UDim2.fromScale(1, 1)
+            trialStatus.Text = caveBossCompleted and "ХРАНИТЕЛЬ ПОВЕРЖЕН" or "СЕКРЕТНАЯ БИТВА · ФАЗА I / II"
+            bossBarBack.Visible = true
+            bossStatus.Visible = true
+            local caveBossHealth = math.clamp(tonumber(player:GetAttribute("ForgottenHeartBossHealth")) or 360, 0, 360)
+            local caveBossPhase = tonumber(player:GetAttribute("ForgottenHeartBossPhase")) or 1
+            bossBarFill.Size = UDim2.fromScale(caveBossHealth / 360, 1)
+            bossBarFill.BackgroundColor3 = caveBossPhase == 2
+                and Color3.fromRGB(190, 119, 255) or Color3.fromRGB(102, 213, 255)
+            if player:GetAttribute("ForgottenHeartBossWindup") == true then
+                local attackType = player:GetAttribute("ForgottenHeartBossAttackType")
+                bossStatus.Text = attackType == "EchoPulse"
+                    and "ЭХО СЕРДЦА! ОТОЙДИ ОТ ХРАНИТЕЛЯ!"
+                    or (attackType == "ShardRain"
+                        and "КРИСТАЛЬНЫЙ ДОЖДЬ! УХОДИ С МЕТОК!"
+                        or "КРИСТАЛЬНЫЙ УДАР! УВОРАЧИВАЙСЯ!")
+                bossStatus.TextColor3 = Color3.fromRGB(153, 224, 255)
+            else
+                bossStatus.Text = caveBossCompleted and "НАГРАДА ПОЛУЧЕНА"
+                    or string.format("ЗДОРОВЬЕ ХРАНИТЕЛЯ: %d / 360 · ФАЗА %d", caveBossHealth, caveBossPhase)
+                bossStatus.TextColor3 = Color3.fromRGB(185, 232, 255)
+            end
         end
     elseif isCrystal then
         trialDescription.Text = completed and "Хранитель повержен! Путь к Древним высотам открыт. Осталось достичь 50 уровня."
@@ -3802,6 +3834,8 @@ for _, attribute in ipairs({
     "AncientTempleBossAttackType", "AncientTempleBossPhase",
     "WhisperingGroveRuneProgress", "WhisperingGroveCacheOpened",
     "ForgottenCaveCrystalProgress", "ForgottenCaveCacheOpened",
+    "ForgottenHeartBossHealth", "ForgottenHeartBossPhase", "ForgottenHeartBossCompleted",
+    "ForgottenHeartBossUnlocked", "ForgottenHeartBossWindup", "ForgottenHeartBossAttackType",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
