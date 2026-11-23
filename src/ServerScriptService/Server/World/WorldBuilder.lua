@@ -654,7 +654,7 @@ function WorldBuilder:Build()
         prompt.Parent = egg
     end
 
-    makeBiomePortal(frost, "EmberPortal", Vector3.new(45, 24, 1480),
+    makeBiomePortal(frost, "EmberPortal", Vector3.new(45, 24, 1080),
         Color3.fromRGB(255, 125, 55), "Emberlands", Vector3.new(0, 18, 1480))
     makeBiomePortal(ember, "EmberReturnPortal", Vector3.new(-45, 24, 1480),
         Color3.fromRGB(128, 225, 255), "FrostHighlands", Vector3.new(0, 16, 1040))
