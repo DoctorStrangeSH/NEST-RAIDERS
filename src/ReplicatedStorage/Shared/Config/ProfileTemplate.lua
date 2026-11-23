@@ -12,8 +12,10 @@ local ProfileTemplate = {
     -- Permanent species discoveries survive merging or consuming the last copy.
     DiscoveredSpecies = {},
     ActiveCompanions = {},
+    CompanionIncomeRemainder = 0,
     Nest = {
         Level = 1,
+        StoredIncomeRemainder = 0,
         PlotId = nil,
         DisplayedCompanions = {},
         StoredCoins = 0,
