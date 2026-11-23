@@ -3862,6 +3862,41 @@ local function playGuardianTelegraph()
     end)
 end
 
+local function playGuardianVictoryEffect()
+    guardianVisualGeneration += 1
+    local generation = guardianVisualGeneration
+    local core, light, burst = getLocalGuardianParts()
+    if not core then return end
+    local victoryColor = Color3.fromRGB(255, 218, 128)
+    if burst and burst:IsA("ParticleEmitter") then
+        burst.Color = ColorSequence.new(
+            Color3.fromRGB(255, 247, 190),
+            Color3.fromRGB(255, 181, 91)
+        )
+        burst:Emit(84)
+    end
+    TweenService:Create(core, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = Vector3.new(6.5, 6.5, 3.4),
+        Color = victoryColor,
+    }):Play()
+    if light then
+        TweenService:Create(light, TweenInfo.new(0.45), {
+            Brightness = 8,
+            Range = 48,
+            Color = victoryColor,
+        }):Play()
+    end
+    task.delay(2.1, function()
+        if generation ~= guardianVisualGeneration or not core.Parent then return end
+        updateGuardianPhaseVisual()
+    end)
+end
+
+player:GetAttributeChangedSignal("AncientTempleBossCompleted"):Connect(function()
+    if player:GetAttribute("AncientTempleBossCompleted") == true then
+        playGuardianVictoryEffect()
+    end
+end)
 player:GetAttributeChangedSignal("AncientTempleBossPhase"):Connect(updateGuardianPhaseVisual)
 player:GetAttributeChangedSignal("AncientTempleBossWindup"):Connect(function()
     if player:GetAttribute("AncientTempleBossWindup") == true then
