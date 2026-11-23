@@ -756,6 +756,13 @@ assert 'local function renderArtifacts(data)' not in client
 assert 'local function showNotice(message)' not in client
 assert 'local function invokeInventory(payload)' not in client
 assert 'Action = "DevSeedGathererArtifacts"' in client
+assert 'payload.Action == "DevSimulateGatherBonus"' in inventory_service
+assert 'for sample = 1, 1000 do' in inventory_service
+assert 'ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)' in inventory_service
+assert 'totalExtra += extra' in inventory_service
+assert 'GathererSimulationButton' in client
+assert 'Action = "DevSimulateGatherBonus"' in client
+assert 'return response.Data, response.Message' in client
 assert 'ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ' in client
 assert 'добычу ресурсов' in client
 
