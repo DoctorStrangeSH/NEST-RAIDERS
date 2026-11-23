@@ -4066,7 +4066,13 @@ updateForgottenBossPhaseVisual()
 
 local function filterForgottenBossWarning(instance)
     if instance:IsA("BasePart") and instance.Name == "ForgottenHeartAttackWarning" then
-        instance.LocalTransparencyModifier = instance:GetAttribute("TargetUserId") == player.UserId and 0 or 1
+        local function updateVisibility()
+            if instance.Parent then
+                instance.LocalTransparencyModifier = instance:GetAttribute("TargetUserId") == player.UserId and 0 or 1
+            end
+        end
+        instance:GetAttributeChangedSignal("TargetUserId"):Connect(updateVisibility)
+        task.defer(updateVisibility)
     end
 end
 for _, descendant in ipairs(Workspace:GetDescendants()) do
