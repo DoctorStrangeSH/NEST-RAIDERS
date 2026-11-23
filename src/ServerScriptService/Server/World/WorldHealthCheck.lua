@@ -259,6 +259,9 @@ function WorldHealthCheck:Check()
         if not whisperingGrove or not whisperingGrove:FindFirstChild("WhisperingGrovePlatform") then
             fail("Нет тайной площадки Шепчущей рощи")
         end
+        if not whisperingGrove or not whisperingGrove:FindFirstChild("WhisperingGroveSign") then
+            fail("Нет подсказки к четырём рунам тайника рощи")
+        end
         local cacheModel = whisperingGrove and whisperingGrove:FindFirstChild("WhisperingGroveCache")
         local cacheBase = cacheModel and cacheModel:FindFirstChild("WhisperingGroveCacheBase")
         local cachePrompt = cacheBase and cacheBase:FindFirstChild("WhisperingGroveCachePrompt")
