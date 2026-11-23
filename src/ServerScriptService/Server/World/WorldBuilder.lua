@@ -812,6 +812,27 @@ function WorldBuilder:Build()
             Color3.fromRGB(78, 48, 43), Enum.Material.Basalt, Enum.PartType.Ball)
         arm.CanCollide = false
     end
+    for index = 1, 8 do
+        local angle = math.rad((index - 1) * 45)
+        local crystalBase = Vector3.new(174 + math.cos(angle) * 14, 20.2, 2600 + math.sin(angle) * 9)
+        local cluster = Instance.new("Model")
+        cluster.Name = "ForgottenHeartArenaCrystal_" .. index
+        cluster.Parent = forgottenCave
+        local crystal = part(cluster, "CrystalCore",
+            Vector3.new(2.1, 5.2, 2.1), crystalBase + Vector3.new(0, 2.6, 0),
+            Color3.fromRGB(101, 194, 224), Enum.Material.Neon, Enum.PartType.Wedge)
+        crystal.CanCollide = false
+        local crystalGlow = Instance.new("PointLight")
+        crystalGlow.Color = Color3.fromRGB(111, 204, 255)
+        crystalGlow.Range = 9
+        crystalGlow.Brightness = 0.65
+        crystalGlow.Parent = crystal
+        local crystalSmall = part(cluster, "CrystalShard",
+            Vector3.new(1.1, 2.8, 1.1), crystalBase + Vector3.new(1.4, 1.4, -0.6),
+            Color3.fromRGB(166, 135, 235), Enum.Material.Neon, Enum.PartType.Wedge)
+        crystalSmall.CanCollide = false
+    end
+
     local bossPrompt = Instance.new("ProximityPrompt")
     bossPrompt.Name = "EmberTrialBossPrompt"
     bossPrompt.ActionText = "Атаковать"
