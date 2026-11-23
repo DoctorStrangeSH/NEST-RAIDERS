@@ -358,7 +358,12 @@ function WorldBuilder:Build()
         local prompt = Instance.new("ProximityPrompt")
         prompt.Name = "ZoneTravelPrompt"
         prompt.ActionText = "Путешествовать"
-        prompt.ObjectText = zoneId == "EmeraldWilds" and "Изумрудный лес · уровень 5" or "Стартовый остров"
+        local zoneLabels = {
+            EmeraldWilds = "Изумрудный лес · уровень 5",
+            FrostHighlands = "Ледяные нагорья · уровень 12 + испытание",
+            StarterIsland = "Стартовый остров",
+        }
+        prompt.ObjectText = zoneLabels[zoneId] or "Неизвестная область"
         prompt.KeyboardKeyCode = Enum.KeyCode.E
         prompt.HoldDuration = 0.5
         prompt.MaxActivationDistance = 13
@@ -374,6 +379,119 @@ function WorldBuilder:Build()
         Color3.fromRGB(80, 255, 153), "EmeraldWilds", Vector3.new(0, 16, 520))
     makeBiomePortal(emerald, "ReturnPortal", Vector3.new(0, 24, 430),
         Color3.fromRGB(255, 218, 126), "StarterIsland", Vector3.new(0, 11, -112))
+
+    -- Frost Highlands is a reachable third island with its own egg table and trial.
+    local frost = Instance.new("Folder")
+    frost.Name = "FrostHighlands"
+    frost.Parent = world
+    part(frost, "FrostFloatingFoundation", Vector3.new(190, 30, 190),
+        Vector3.new(0, -3, 1040), Color3.fromRGB(91, 112, 137), Enum.Material.Slate, Enum.PartType.Ball)
+    local frostTop = part(frost, "FrostSnowTop", Vector3.new(8, 174, 174),
+        Vector3.new(0, 13, 1040), Color3.fromRGB(205, 229, 244), Enum.Material.Snow, Enum.PartType.Cylinder)
+    frostTop.CFrame = CFrame.new(0, 13, 1040) * CFrame.Angles(0, 0, math.rad(90))
+    part(frost, "GlacierClearing", Vector3.new(82, 1, 76),
+        Vector3.new(0, 17.5, 1040), Color3.fromRGB(224, 239, 248), Enum.Material.Ice)
+    for _, offset in ipairs({
+        Vector3.new(-65, 18, -58), Vector3.new(-72, 18, 0), Vector3.new(-58, 18, 62),
+        Vector3.new(65, 18, -58), Vector3.new(72, 18, 0), Vector3.new(58, 18, 62),
+        Vector3.new(-30, 18, -76), Vector3.new(34, 18, 76), Vector3.new(0, 18, -78),
+    }) do
+        local base = Vector3.new(offset.X, offset.Y, 1040 + offset.Z)
+        local trunk = part(frost, "FrostPineTrunk", Vector3.new(3, 13, 3),
+            base + Vector3.new(0, 6.5, 0), Color3.fromRGB(94, 105, 116), Enum.Material.Wood)
+        trunk.CanCollide = false
+        for layer = 1, 3 do
+            local crown = part(frost, "SnowPineLayer", Vector3.new(13 - layer * 2, 8, 13 - layer * 2),
+                base + Vector3.new(0, 10 + layer * 4, 0),
+                layer == 1 and Color3.fromRGB(113, 157, 178) or Color3.fromRGB(211, 237, 247),
+                Enum.Material.Snow, Enum.PartType.Ball)
+            crown.CanCollide = false
+        end
+    end
+    for index, position in ipairs({
+        Vector3.new(-48, 19, 1000), Vector3.new(48, 19, 1000),
+        Vector3.new(-52, 19, 1072), Vector3.new(52, 19, 1072),
+    }) do
+        local crystal = part(frost, "GlacierCrystal", Vector3.new(5, 13, 5),
+            position, Color3.fromRGB(112, 219, 255), Enum.Material.Neon, Enum.PartType.Crystal)
+        crystal.CanCollide = false
+        local light = Instance.new("PointLight")
+        light.Color = Color3.fromRGB(135, 220, 255)
+        light.Range = 18
+        light.Brightness = 0.8
+        light.Parent = crystal
+    end
+
+    local frostEggs = Instance.new("Folder")
+    frostEggs.Name = "EggSpawnPoints"
+    frostEggs.Parent = frost
+    for _, position in ipairs({
+        Vector3.new(-22, 20, 1020), Vector3.new(22, 20, 1020), Vector3.new(0, 20, 1068),
+    }) do
+        local egg = part(frostEggs, "FrostEgg", Vector3.new(3.5, 4.5, 3.5),
+            position, Color3.fromRGB(133, 226, 255), Enum.Material.Neon, Enum.PartType.Ball)
+        egg:SetAttribute("WorldEgg", true)
+        egg:SetAttribute("BiomeId", "FrostHighlands")
+        egg:SetAttribute("EggId", "FrostEgg")
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "CollectEggPrompt"
+        prompt.ActionText = "Собрать"
+        prompt.ObjectText = "Яйцо вечной зимы"
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.35
+        prompt.MaxActivationDistance = 11
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = egg
+    end
+
+    local frostRunes = Instance.new("Folder")
+    frostRunes.Name = "FrostTrialRunes"
+    frostRunes.Parent = frost
+    local frostRuneDefinitions = {
+        { Id = "Aurora", Name = "Руна сияния", Position = Vector3.new(-34, 19, 1045), Color = Color3.fromRGB(123, 239, 255) },
+        { Id = "Glacier", Name = "Руна ледника", Position = Vector3.new(34, 19, 1045), Color = Color3.fromRGB(176, 205, 255) },
+        { Id = "Winter", Name = "Руна зимы", Position = Vector3.new(0, 19, 1005), Color = Color3.fromRGB(232, 247, 255) },
+    }
+    for _, definition in ipairs(frostRuneDefinitions) do
+        part(frostRunes, definition.Id .. "RunePedestal", Vector3.new(5, 2, 5),
+            definition.Position - Vector3.new(0, 1, 0), Color3.fromRGB(93, 113, 133), Enum.Material.Slate)
+        local crystal = part(frostRunes, definition.Id .. "RuneCrystal", Vector3.new(2.2, 4.2, 2.2),
+            definition.Position + Vector3.new(0, 2, 0), definition.Color, Enum.Material.Neon, Enum.PartType.Crystal)
+        crystal.CanCollide = false
+        crystal:SetAttribute("RuneId", definition.Id)
+        local light = Instance.new("PointLight")
+        light.Color = definition.Color
+        light.Range = 12
+        light.Brightness = 0.9
+        light.Parent = crystal
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "FrostRunePrompt"
+        prompt.ActionText = "Пробудить"
+        prompt.ObjectText = definition.Name
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.65
+        prompt.MaxActivationDistance = 10
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = crystal
+    end
+
+    makeBiomePortal(emerald, "FrostPortal", Vector3.new(48, 24, 430),
+        Color3.fromRGB(132, 224, 255), "FrostHighlands", Vector3.new(0, 16, 1040))
+    makeBiomePortal(frost, "FrostReturnPortal", Vector3.new(0, 24, 950),
+        Color3.fromRGB(113, 255, 180), "EmeraldWilds", Vector3.new(0, 16, 520))
+    local frostSign = part(frost, "FrostWelcomeSign", Vector3.new(22, 9, 1),
+        Vector3.new(0, 25, 972), Color3.fromRGB(73, 101, 127), Enum.Material.WoodPlanks)
+    local frostGui = Instance.new("SurfaceGui")
+    frostGui.Face = Enum.NormalId.Front
+    frostGui.Parent = frostSign
+    local frostLabel = Instance.new("TextLabel")
+    frostLabel.Size = UDim2.fromScale(1, 1)
+    frostLabel.BackgroundTransparency = 1
+    frostLabel.Text = "ЛЕДЯНЫЕ НАГОРЬЯ\\nЯйца вечной зимы"
+    frostLabel.TextColor3 = Color3.fromRGB(230, 248, 255)
+    frostLabel.TextScaled = true
+    frostLabel.Font = Enum.Font.GothamBlack
+    frostLabel.Parent = frostGui
     local emeraldSign = part(emerald, "EmeraldWelcomeSign", Vector3.new(22, 9, 1),
         Vector3.new(0, 25, 452), Color3.fromRGB(61, 91, 66), Enum.Material.WoodPlanks)
     local emeraldGui = Instance.new("SurfaceGui")
