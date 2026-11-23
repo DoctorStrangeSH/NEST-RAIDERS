@@ -419,3 +419,15 @@
 - [ ] Verify players outside Ancient Heights, without the zone unlock, dead, or outside prompt range cannot craft.
 - [ ] Rejoin and verify the crafted egg and remaining resources persist in a private published test.
 - [ ] In a two-player session, verify each player's resources and crafted eggs remain independent.
+
+
+## Ancient Tree Temple — Studio acceptance
+- [ ] Travel from the Elder Canopy across the stone causeway; verify the bridge and temple floor are walkable and have no gaps.
+- [ ] Confirm the temple roof, pillars, signs, runes, and chest do not block the player's route or prompts.
+- [ ] Follow the clue and activate Root → River → Dawn; verify the HUD advances 0/3 to 3/3.
+- [ ] Activate River first or use another wrong rune; verify only that player's progress resets.
+- [ ] Open the chest after solving; verify exactly +500 coins, +300 XP, and +20 Elderwood.
+- [ ] Try to open the chest before solving and after claiming; verify no early or duplicate reward.
+- [ ] In a two-player session, verify one player's rune progress and chest claim do not complete or reward the other player.
+- [ ] Rejoin a private published test and verify rune progress and the one-time chest reward persist.
+- [ ] Verify HUD at 375px, 768px, and desktop widths; ensure the temple objective panel does not overlap the Elderwood balance.
