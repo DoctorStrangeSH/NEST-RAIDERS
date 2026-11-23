@@ -268,6 +268,12 @@ function WorldHealthCheck:Check()
             end
         end
         if elderwoodCount < 6 then fail(string.format("Древние корни: %d из 6", elderwoodCount)) end
+        local workshop = ancient:FindFirstChild("ElderwoodWorkshop")
+        local craftStation = workshop and workshop:FindFirstChild("AncientEggCraftingStation")
+        local craftPrompt = craftStation and craftStation:FindFirstChild("CraftAncientEggPrompt")
+        if not craftPrompt or not craftPrompt:IsA("ProximityPrompt") then
+            fail("Нет мастерской создания древних яиц")
+        end
     end
 
     return #issues == 0, issues
