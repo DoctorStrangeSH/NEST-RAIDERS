@@ -261,6 +261,98 @@ function WorldBuilder:Build()
         pedestal.CanCollide = false
     end
 
+
+    -- Emerald Wilds is a real, reachable second play area, not a distant backdrop.
+    local emerald = Instance.new("Folder")
+    emerald.Name = "EmeraldWilds"
+    emerald.Parent = world
+    part(emerald, "EmeraldFloatingFoundation", Vector3.new(190, 30, 190),
+        Vector3.new(0, -3, 520), Color3.fromRGB(75, 103, 75), Enum.Material.Slate, Enum.PartType.Ball)
+    local emeraldTop = part(emerald, "EmeraldGrassTop", Vector3.new(8, 174, 174),
+        Vector3.new(0, 13, 520), Color3.fromRGB(67, 145, 91), Enum.Material.Grass, Enum.PartType.Cylinder)
+    emeraldTop.CFrame = CFrame.new(0, 13, 520) * CFrame.Angles(0, 0, math.rad(90))
+    part(emerald, "AncientGroveClearing", Vector3.new(78, 1, 72),
+        Vector3.new(0, 17.5, 520), Color3.fromRGB(91, 166, 103), Enum.Material.Grass)
+    for index, offset in ipairs({
+        Vector3.new(-62, 18, -55), Vector3.new(-70, 18, 0), Vector3.new(-55, 18, 62),
+        Vector3.new(62, 18, -55), Vector3.new(70, 18, 0), Vector3.new(55, 18, 62),
+        Vector3.new(-30, 18, -72), Vector3.new(35, 18, 72), Vector3.new(0, 18, -76),
+    }) do
+        local base = Vector3.new(offset.X, offset.Y, 520 + offset.Z)
+        part(emerald, "AncientTreeTrunk", Vector3.new(4, 16, 4),
+            base + Vector3.new(0, 8, 0), Color3.fromRGB(83, 65, 48), Enum.Material.Wood)
+        local crown = part(emerald, "EmeraldCanopy", Vector3.new(18, 17, 18),
+            base + Vector3.new(0, 18, 0), Color3.fromRGB(47, 133, 79), Enum.Material.Grass, Enum.PartType.Ball)
+        crown.CanCollide = false
+        local glow = Instance.new("PointLight")
+        glow.Color = Color3.fromRGB(117, 255, 164)
+        glow.Range = 17
+        glow.Brightness = 0.45
+        glow.Parent = crown
+    end
+    local emeraldEggs = Instance.new("Folder")
+    emeraldEggs.Name = "EggSpawnPoints"
+    emeraldEggs.Parent = emerald
+    for index, offset in ipairs({
+        Vector3.new(-22, 20, 500), Vector3.new(22, 20, 500), Vector3.new(0, 20, 548),
+    }) do
+        local egg = part(emeraldEggs, "EmeraldEgg", Vector3.new(3.5, 4.5, 3.5),
+            Vector3.new(offset.X, offset.Y, offset.Z), Color3.fromRGB(86, 255, 155),
+            Enum.Material.Neon, Enum.PartType.Ball)
+        egg:SetAttribute("WorldEgg", true)
+        egg:SetAttribute("BiomeId", "EmeraldWilds")
+        egg:SetAttribute("EggId", "EmeraldEgg")
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "CollectEggPrompt"
+        prompt.ActionText = "Собрать"
+        prompt.ObjectText = "Яйцо Изумрудного леса"
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.35
+        prompt.MaxActivationDistance = 11
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = egg
+    end
+
+    local function makeBiomePortal(parent, name, position, color, zoneId, destination)
+        local portal = part(parent, name, Vector3.new(4, 15, 15), position,
+            color, Enum.Material.Neon, Enum.PartType.Cylinder)
+        portal.CFrame = CFrame.new(position) * CFrame.Angles(0, 0, math.rad(90))
+        portal.CanCollide = false
+        portal:SetAttribute("ZoneId", zoneId)
+        portal:SetAttribute("Destination", destination)
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "ZoneTravelPrompt"
+        prompt.ActionText = "Путешествовать"
+        prompt.ObjectText = zoneId == "EmeraldWilds" and "Изумрудный лес · уровень 5" or "Стартовый остров"
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.5
+        prompt.MaxActivationDistance = 13
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = portal
+        local light = Instance.new("PointLight")
+        light.Color = color
+        light.Range = 24
+        light.Brightness = 1.1
+        light.Parent = portal
+    end
+    makeBiomePortal(island, "EmeraldPortal", Vector3.new(0, 20, 132),
+        Color3.fromRGB(80, 255, 153), "EmeraldWilds", Vector3.new(0, 24, 520))
+    makeBiomePortal(emerald, "ReturnPortal", Vector3.new(0, 24, 430),
+        Color3.fromRGB(255, 218, 126), "StarterIsland", Vector3.new(0, 15, -112))
+    local emeraldSign = part(emerald, "EmeraldWelcomeSign", Vector3.new(22, 9, 1),
+        Vector3.new(0, 25, 452), Color3.fromRGB(61, 91, 66), Enum.Material.WoodPlanks)
+    local emeraldGui = Instance.new("SurfaceGui")
+    emeraldGui.Face = Enum.NormalId.Front
+    emeraldGui.Parent = emeraldSign
+    local emeraldLabel = Instance.new("TextLabel")
+    emeraldLabel.Size = UDim2.fromScale(1, 1)
+    emeraldLabel.BackgroundTransparency = 1
+    emeraldLabel.Text = "ИЗУМРУДНЫЙ ЛЕС\\nЯйца древней рощи"
+    emeraldLabel.TextColor3 = Color3.fromRGB(214, 255, 220)
+    emeraldLabel.TextScaled = true
+    emeraldLabel.Font = Enum.Font.GothamBlack
+    emeraldLabel.Parent = emeraldGui
+
     return world
 end
 
