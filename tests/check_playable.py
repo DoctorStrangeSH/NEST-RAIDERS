@@ -319,6 +319,7 @@ assert 'Emberlands' in world and 'HeatZones' in world and 'CoolingSanctuary' in 
 assert 'HeatPerSecond' in world and 'CoolingPerSecond' in world and 'CoolingZone' in world
 assert 'EmberPortal' in world and 'EmberReturnPortal' in world
 assert 'EmberCauseway' in world and 'EmberBridgeSegment_' in world
+assert 'EmberEggOddsSign' in world and 'Угольный лис · 60%' in world
 assert 'EmberCauseway' in world_health and 'EmberBridgeSegment_' in world_health
 assert '"HeatService"' in server and 'function HeatService:Start()' in heat_service
 assert 'TakeDamage' in heat_service and 'HeatPhoenixReady' in heat_service
