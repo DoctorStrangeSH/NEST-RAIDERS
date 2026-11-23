@@ -1813,6 +1813,23 @@ function WorldBuilder:Build()
     caveClueText.Font = Enum.Font.GothamBlack
     caveClueText.Parent = caveClueGui
 
+    local caveOddsSign = part(forgottenCave, "ForgottenCaveEggOddsSign",
+        Vector3.new(16, 7, 1), Vector3.new(145, 25, 2635),
+        Color3.fromRGB(57, 69, 78), Enum.Material.WoodPlanks)
+    caveOddsSign.CanCollide = false
+    local caveOddsGui = Instance.new("SurfaceGui")
+    caveOddsGui.Face = Enum.NormalId.Front
+    caveOddsGui.Parent = caveOddsSign
+    local caveOddsText = Instance.new("TextLabel")
+    caveOddsText.Size = UDim2.fromScale(1, 1)
+    caveOddsText.BackgroundTransparency = 1
+    caveOddsText.Text = "ЯЙЦО ЗАБЫТОГО СЕРДЦА\\nНетопырь 65% · Рысь 25%\\nСвет Сердца 10%"
+    caveOddsText.TextColor3 = Color3.fromRGB(208, 235, 249)
+    caveOddsText.TextScaled = true
+    caveOddsText.TextWrapped = true
+    caveOddsText.Font = Enum.Font.GothamBold
+    caveOddsText.Parent = caveOddsGui
+
     local caveCache = Instance.new("Model")
     caveCache.Name = "ForgottenCaveCache"
     caveCache.Parent = forgottenCave
