@@ -627,6 +627,7 @@ addCorner(hallButton, 12)
 addStroke(hallButton, Color3.fromRGB(171, 184, 230), 1.5)
 
 local materialsPanel
+local artifactsPanel
 local materialsButton = Instance.new("TextButton")
 materialsButton.Name = "MaterialsInventoryButton"
 materialsButton.Position = UDim2.fromOffset(18, 644)
@@ -639,6 +640,18 @@ materialsButton.Font = Enum.Font.GothamBlack
 materialsButton.Parent = gui
 addCorner(materialsButton, 12)
 addStroke(materialsButton, Color3.fromRGB(176, 202, 239), 1.5)
+
+local artifactsButton = Instance.new("TextButton")
+artifactsButton.Name = "ArtifactsButton"
+artifactsButton.Size = UDim2.fromOffset(250, 42)
+artifactsButton.BackgroundColor3 = Color3.fromRGB(113, 87, 145)
+artifactsButton.Text = "АРТЕФАКТЫ"
+artifactsButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+artifactsButton.TextSize = 13
+artifactsButton.Font = Enum.Font.GothamBlack
+artifactsButton.Parent = gui
+addCorner(artifactsButton, 12)
+addStroke(artifactsButton, Color3.fromRGB(210, 180, 255), 1.5)
 
 local profileButton = Instance.new("TextButton")
 profileButton.Name = "MyPublicProfileButton"
@@ -657,7 +670,7 @@ addStroke(profileButton, Color3.fromRGB(160, 220, 192), 1.5)
 -- Previously the last buttons were fixed at Y=692 and disappeared off small screens.
 local menuButtons = {
     inventoryButton, shopButton, collectionButton, nestButton, displayButton,
-    decorButton, buildButton, visitButton, contestButton, hallButton, materialsButton, profileButton,
+    decorButton, buildButton, visitButton, contestButton, hallButton, materialsButton, artifactsButton, profileButton,
 }
 local navToggle = Instance.new("TextButton")
 navToggle.Name = "MenuToggle"
@@ -1376,11 +1389,190 @@ player:GetAttributeChangedSignal("ProfileLoaded"):Connect(updateMaterialsInvento
 materialsClose.Activated:Connect(function() materialsPanel.Visible = false end)
 updateMaterialsInventory()
 
+-- Artifact collection and two-slot equipment. Crafting is server-validated at the Ancient Heights workshop.
+artifactsPanel = Instance.new("Frame")
+artifactsPanel.Name = "ArtifactsPanel"
+artifactsPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+artifactsPanel.Position = UDim2.fromScale(0.5, 0.5)
+artifactsPanel.Size = UDim2.new(0.9, 0, 0.72, 0)
+artifactsPanel.BackgroundColor3 = Color3.fromRGB(31, 35, 58)
+artifactsPanel.BorderSizePixel = 0
+artifactsPanel.Visible = false
+artifactsPanel.Parent = gui
+addCorner(artifactsPanel, 18)
+addStroke(artifactsPanel, Color3.fromRGB(204, 174, 255), 2)
+local artifactsSize = Instance.new("UISizeConstraint")
+artifactsSize.MinSize = Vector2.new(290, 340)
+artifactsSize.MaxSize = Vector2.new(520, 520)
+artifactsSize.Parent = artifactsPanel
+
+local artifactsTitle = Instance.new("TextLabel")
+artifactsTitle.BackgroundTransparency = 1
+artifactsTitle.Position = UDim2.fromOffset(18, 12)
+artifactsTitle.Size = UDim2.new(1, -76, 0, 30)
+artifactsTitle.Font = Enum.Font.GothamBlack
+artifactsTitle.Text = "КОЛЛЕКЦИЯ АРТЕФАКТОВ"
+artifactsTitle.TextColor3 = Color3.fromRGB(238, 225, 255)
+artifactsTitle.TextSize = 17
+artifactsTitle.TextXAlignment = Enum.TextXAlignment.Left
+artifactsTitle.Parent = artifactsPanel
+
+local artifactsClose = Instance.new("TextButton")
+artifactsClose.Position = UDim2.new(1, -48, 0, 10)
+artifactsClose.Size = UDim2.fromOffset(36, 36)
+artifactsClose.BackgroundColor3 = Color3.fromRGB(143, 68, 88)
+artifactsClose.Text = "×"
+artifactsClose.TextColor3 = Color3.fromRGB(255, 255, 255)
+artifactsClose.TextSize = 24
+artifactsClose.Font = Enum.Font.GothamBold
+artifactsClose.Parent = artifactsPanel
+addCorner(artifactsClose, 10)
+
+local artifactsHint = Instance.new("TextLabel")
+artifactsHint.BackgroundTransparency = 1
+artifactsHint.Position = UDim2.fromOffset(18, 48)
+artifactsHint.Size = UDim2.new(1, -36, 0, 48)
+artifactsHint.Font = Enum.Font.Gotham
+artifactsHint.Text = "Экипируй до 2 артефактов: они усиливают пассивный доход питомцев. Создание доступно у мастерской Древних высот."
+artifactsHint.TextColor3 = Color3.fromRGB(190, 190, 220)
+artifactsHint.TextSize = 11
+artifactsHint.TextWrapped = true
+artifactsHint.TextXAlignment = Enum.TextXAlignment.Left
+artifactsHint.Parent = artifactsPanel
+
+local artifactsCraft = Instance.new("TextButton")
+artifactsCraft.Position = UDim2.fromOffset(16, 100)
+artifactsCraft.Size = UDim2.new(1, -32, 0, 40)
+artifactsCraft.BackgroundColor3 = Color3.fromRGB(112, 78, 157)
+artifactsCraft.Text = "СОЗДАТЬ АРТЕФАКТ · 4 ЛЕПЕСТКА · 2 ЗВЁЗДНЫХ · 2 КРИСТАЛЬНЫХ · 1 ПЕПЕЛЬНЫЙ · 250 МОНЕТ"
+artifactsCraft.TextColor3 = Color3.fromRGB(255, 248, 255)
+artifactsCraft.TextSize = 10
+artifactsCraft.TextWrapped = true
+artifactsCraft.Font = Enum.Font.GothamBlack
+artifactsCraft.Parent = artifactsPanel
+addCorner(artifactsCraft, 10)
+
+local artifactsSlots = Instance.new("TextLabel")
+artifactsSlots.BackgroundTransparency = 1
+artifactsSlots.Position = UDim2.fromOffset(18, 146)
+artifactsSlots.Size = UDim2.new(1, -36, 0, 24)
+artifactsSlots.Font = Enum.Font.GothamBold
+artifactsSlots.Text = "СЛОТЫ: 0 / 2"
+artifactsSlots.TextColor3 = Color3.fromRGB(255, 221, 164)
+artifactsSlots.TextSize = 12
+artifactsSlots.TextXAlignment = Enum.TextXAlignment.Left
+artifactsSlots.Parent = artifactsPanel
+
+local artifactsList = Instance.new("ScrollingFrame")
+artifactsList.Name = "ArtifactList"
+artifactsList.Position = UDim2.fromOffset(14, 174)
+artifactsList.Size = UDim2.new(1, -28, 1, -188)
+artifactsList.BackgroundTransparency = 1
+artifactsList.BorderSizePixel = 0
+artifactsList.ScrollBarThickness = 5
+artifactsList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+artifactsList.CanvasSize = UDim2.new()
+artifactsList.Parent = artifactsPanel
+local artifactsLayout = Instance.new("UIListLayout")
+artifactsLayout.Padding = UDim.new(0, 8)
+artifactsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+artifactsLayout.Parent = artifactsList
+
+local function renderArtifacts(data)
+    for _, child in ipairs(artifactsList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+    local artifacts = data and data.Artifacts or {}
+    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d", data and data.EquippedArtifactCount or 0, data and data.MaxEquippedArtifacts or 2)
+    if #artifacts == 0 then
+        local empty = Instance.new("TextLabel")
+        empty.Size = UDim2.new(1, -8, 0, 70)
+        empty.BackgroundTransparency = 1
+        empty.Text = "Артефактов пока нет. Создай первый у мастерской Древних высот!"
+        empty.TextColor3 = Color3.fromRGB(195, 195, 218)
+        empty.TextSize = 13
+        empty.TextWrapped = true
+        empty.Font = Enum.Font.GothamMedium
+        empty.Parent = artifactsList
+        return
+    end
+    for index, artifact in ipairs(artifacts) do
+        local card = Instance.new("Frame")
+        card.Name = "Artifact_" .. tostring(artifact.InstanceId)
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 92)
+        card.BackgroundColor3 = Color3.fromRGB(48, 48, 76)
+        card.BorderSizePixel = 0
+        card.Parent = artifactsList
+        addCorner(card, 12)
+        local name = Instance.new("TextLabel")
+        name.BackgroundTransparency = 1
+        name.Position = UDim2.fromOffset(12, 8)
+        name.Size = UDim2.new(1, -132, 0, 22)
+        name.Font = Enum.Font.GothamBlack
+        name.Text = (artifact.Name or artifact.Id) .. " · " .. (artifact.Rarity or "")
+        name.TextColor3 = artifact.Rarity == "Эпический" and Color3.fromRGB(220, 169, 255)
+            or (artifact.Rarity == "Редкий" and Color3.fromRGB(130, 194, 255) or Color3.fromRGB(222, 222, 232))
+        name.TextSize = 12
+        name.TextXAlignment = Enum.TextXAlignment.Left
+        name.Parent = card
+        local detail = Instance.new("TextLabel")
+        detail.BackgroundTransparency = 1
+        detail.Position = UDim2.fromOffset(12, 34)
+        detail.Size = UDim2.new(1, -132, 0, 42)
+        detail.Font = Enum.Font.Gotham
+        detail.Text = string.format("%s\nБонус дохода: +%d%%", artifact.Description or "", math.floor((artifact.IncomeBonus or 0) * 100 + 0.5))
+        detail.TextColor3 = Color3.fromRGB(190, 194, 214)
+        detail.TextSize = 10
+        detail.TextWrapped = true
+        detail.TextXAlignment = Enum.TextXAlignment.Left
+        detail.Parent = card
+        local toggle = Instance.new("TextButton")
+        toggle.AnchorPoint = Vector2.new(1, 0.5)
+        toggle.Position = UDim2.new(1, -10, 0.5, 0)
+        toggle.Size = UDim2.fromOffset(106, 36)
+        toggle.BackgroundColor3 = artifact.Equipped and Color3.fromRGB(137, 77, 88) or Color3.fromRGB(89, 125, 103)
+        toggle.Text = artifact.Equipped and "СНЯТЬ" or "ЭКИПИРОВАТЬ"
+        toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        toggle.TextSize = 10
+        toggle.Font = Enum.Font.GothamBlack
+        toggle.Parent = card
+        addCorner(toggle, 9)
+        toggle.Activated:Connect(function()
+            local updated = invokeInventory({
+                Action = artifact.Equipped and "UnequipArtifact" or "EquipArtifact",
+                ArtifactInstanceId = artifact.InstanceId,
+            })
+            if updated then renderArtifacts(updated) end
+        end)
+    end
+end
+
+local function refreshArtifacts()
+    local data = invokeInventory({ Action = "Get" })
+    if data then renderArtifacts(data) end
+end
+artifactsButton.Activated:Connect(function()
+    refreshArtifacts()
+    artifactsPanel.Visible = true
+end)
+artifactsClose.Activated:Connect(function() artifactsPanel.Visible = false end)
+artifactsCraft.Activated:Connect(function()
+    local data = invokeInventory({ Action = "CraftArtifact" })
+    if data then
+        renderArtifacts(data)
+        showNotice("Артефакт добавлен в коллекцию!")
+    end
+end)
+player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
+    if artifactsPanel.Visible then refreshArtifacts() end
+end)
+
 -- Keep panels mutually exclusive regardless of which gameplay action opens them.
 -- Picker is the sole nested dialog and retains its companion display underneath.
 local modalPanels = {
     shopPanel, nestPanel, displayPanel, buildPanel, visitPanel,
-    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel,
+    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel, artifactsPanel,
 }
 local closingOtherPanels = false
 local closeAllButton = Instance.new("TextButton")
