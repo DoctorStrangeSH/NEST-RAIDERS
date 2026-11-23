@@ -465,6 +465,7 @@ assert 'AncientTempleRunes = {}' in profile_template and 'AncientTempleRunes' in
 assert 'SEQUENCE = { "Root", "River", "Dawn" }' in ancient_temple
 assert 'table.clear(sequence)' in ancient_temple and 'sequenceCount(sequence)' in ancient_temple
 assert 'ProgressionService:CanEnterZone(player, "AncientHeights")' in ancient_temple
+assert 'descendant.MaxActivationDistance' in ancient_temple and 'chestPrompt.MaxActivationDistance' in ancient_temple
 assert 'CurrentBiome") ~= "AncientHeights"' in ancient_temple
 assert 'MaxActivationDistance + 2' in ancient_temple
 assert 'profile.CompletedQuests.ancient_temple_trial = true' in ancient_temple
