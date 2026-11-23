@@ -26,6 +26,12 @@ assert 'for _, player in ipairs(Players:GetPlayers()) do' in eggs
 assert 'player:GetAttributeChangedSignal("ProfileLoaded"):Connect(syncWhenReady)' in eggs
 assert 'if profile then syncAttributes(player, profile) end' in eggs
 assert 'Players.PlayerRemoving:Connect(function(player)' in eggs
+assert 'for index, candidate in ipairs(profile.EggInventory) do' in eggs, "Hatch should scan inventory"
+assert 'hatchIndex, egg = index, candidate' in eggs
+assert 'table.remove(profile.EggInventory, hatchIndex)' in eggs, "Hatch should consume selected egg"
+assert 'table.remove(profile.EggInventory, 1)' not in eggs, "Incubating first egg blocks other eggs"
+assert 'Все яйца ещё инкубируются.' in eggs
+
 
 health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
 assert 'function WorldHealthCheck:Check()' in health
