@@ -467,7 +467,7 @@ assert 'table.clear(sequence)' in ancient_temple and 'sequenceCount(sequence)' i
 assert 'ProgressionService:CanEnterZone(player, "AncientHeights")' in ancient_temple
 assert 'descendant.MaxActivationDistance' in ancient_temple and 'chestPrompt.MaxActivationDistance' in ancient_temple
 assert 'CurrentBiome") ~= "AncientHeights"' in ancient_temple
-assert 'MaxActivationDistance + 2' in ancient_temple
+assert 'distance + 2' in ancient_temple
 assert 'profile.CompletedQuests.ancient_temple_trial = true' in ancient_temple
 assert 'REWARD_COINS = 500' in ancient_temple and 'REWARD_XP = 300' in ancient_temple
 assert 'REWARD_ELDERWOOD = 20' in ancient_temple and 'ancient_temple_trial' in ancient_temple
