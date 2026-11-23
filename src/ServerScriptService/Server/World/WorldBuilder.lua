@@ -1832,6 +1832,15 @@ function WorldBuilder:Build()
     chestGlow.Range = 15
     chestGlow.Brightness = 1.2
     chestGlow.Parent = caveChestGem
+    local rewardEgg = part(caveCache, "ForgottenCaveRewardEgg",
+        Vector3.new(2.8, 3.5, 2.8), Vector3.new(178, 24.8, 2615),
+        Color3.fromRGB(135, 194, 222), Enum.Material.Neon, Enum.PartType.Ball)
+    rewardEgg.CanCollide = false
+    local rewardEggLight = Instance.new("PointLight")
+    rewardEggLight.Color = Color3.fromRGB(164, 226, 255)
+    rewardEggLight.Range = 10
+    rewardEggLight.Brightness = 1.1
+    rewardEggLight.Parent = rewardEgg
     local caveChestPrompt = Instance.new("ProximityPrompt")
     caveChestPrompt.Name = "ForgottenCaveChestPrompt"
     caveChestPrompt.ActionText = "Открыть"
