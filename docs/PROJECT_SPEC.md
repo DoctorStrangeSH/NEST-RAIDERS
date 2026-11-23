@@ -369,3 +369,12 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The altar can be claimed once per player, guarded by server-side biome, progression, character, distance, profile, and duplicate-claim validation.
 - First discovery grants 250 coins, 150 XP, and 8 Elderwood; completion is saved in CompletedQuests.ancient_grove_secret.
 - The secret is a one-time exploration reward, not a repeatable currency farm.
+
+
+## Elderwood workshop — Sprint 4.28
+- The Ancient Heights Elderwood Workshop is a physical workbench in the Elder Canopy, with an in-world recipe sign.
+- Craft one Ancient Egg for 10 Elderwood and 300 coins.
+- The server validates Ancient Heights presence, zone unlock, living character, prompt distance, loaded profile, egg bag capacity (20), available resources, and the shared BiomeCatalog recipe.
+- The recipe is charged only after all checks pass.
+- Crafted eggs enter the normal saved egg inventory as AncientEgg / AncientHeights / Crafting and hatch through the player's own nest station.
+- The existing BiomeCatalog remains the single source of truth for Ancient Egg species weights (55/30/15); crafting does not reroll or modify odds.
