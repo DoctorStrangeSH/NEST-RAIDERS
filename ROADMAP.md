@@ -837,3 +837,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify unequipping immediately removes the gathering bonus and rejoining preserves the correct equipped effect.
 - [ ] Verify existing cooldown, biome, progression, distance and companion bonuses remain unchanged.
 - [ ] Verify UI readability at 375px mobile width.
+
+- [x] Add a Studio-only Gatherer QA fixture to test equipping, resource yields and three-to-one merges without rare-drop grinding.
+- [x] Independently guard the fixture on the server and enforce the collection capacity.
+- [ ] Verify the fixture and all Gatherer gameplay in Roblox Studio before closing Sprint 4.44.
