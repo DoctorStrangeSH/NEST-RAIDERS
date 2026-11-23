@@ -311,6 +311,15 @@ local CompanionCatalog = {
         FavoriteFood = "Звёздный нектар", FavoriteToy = "WindSpinner",
         PetMoodBonus = 4, PlayMoodBonus = 12, EggId = "AncientEgg",
     },
+    HeartwoodGuardian = {
+        Id = "HeartwoodGuardian", Name = "Страж Сердцевины", Rarity = "Легендарный",
+        Income = 165, Weight = 0, BossExclusive = true,
+        AcquisitionLabel = "Только за победу над Стражем Храма",
+        Description = "Маленький хранитель, рождённый из сердца древнего дерева после победы над храмовым стражем.",
+        Personality = "Преданный", PersonalityDescription = "Охраняет гнездо и никогда не забывает того, кто пробудил храм.",
+        FavoriteFood = "Светящийся желудь", FavoriteToy = "CozyPlush",
+        PetMoodBonus = 12, PlayMoodBonus = 10,
+    },
 }
 
 return CompanionCatalog
