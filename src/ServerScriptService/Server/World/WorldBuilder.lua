@@ -547,6 +547,123 @@ function WorldBuilder:Build()
     emeraldLabel.Font = Enum.Font.GothamBlack
     emeraldLabel.Parent = emeraldGui
 
+
+    -- Emberlands: volcanic island with server-readable heat and cooling volumes.
+    local ember = Instance.new("Folder")
+    ember.Name = "Emberlands"
+    ember.Parent = world
+    part(ember, "EmberFloatingFoundation", Vector3.new(205, 34, 205),
+        Vector3.new(0, -5, 1560), Color3.fromRGB(54, 48, 49), Enum.Material.Basalt, Enum.PartType.Ball)
+    part(ember, "AshenPlateau", Vector3.new(172, 5, 172),
+        Vector3.new(0, 12, 1560), Color3.fromRGB(89, 75, 70), Enum.Material.Slate)
+    part(ember, "VolcanoRim", Vector3.new(72, 25, 72),
+        Vector3.new(0, 25, 1560), Color3.fromRGB(47, 42, 43), Enum.Material.Rock, Enum.PartType.Ball)
+    part(ember, "MagmaCore", Vector3.new(32, 4, 32),
+        Vector3.new(0, 36, 1560), Color3.fromRGB(255, 104, 35), Enum.Material.Neon, Enum.PartType.Ball)
+    for index = 1, 5 do
+        local x = -64 + index * 26
+        local lava = part(ember, "LavaRiver_" .. index, Vector3.new(10, 1.2, 112),
+            Vector3.new(x, 15.5, 1560), Color3.fromRGB(255, 104, 30), Enum.Material.Neon)
+        lava.CanCollide = false
+        local glow = Instance.new("PointLight")
+        glow.Color = Color3.fromRGB(255, 102, 28)
+        glow.Range = 22
+        glow.Brightness = 1.4
+        glow.Parent = lava
+    end
+    for index = 1, 12 do
+        local angle = (math.pi * 2 * index) / 12
+        local x, z = math.cos(angle) * 72, 1560 + math.sin(angle) * 72
+        local rock = part(ember, "BasaltPillar_" .. index, Vector3.new(9, 13 + (index % 3) * 4, 9),
+            Vector3.new(x, 18, z), Color3.fromRGB(65, 57, 57), Enum.Material.Basalt, Enum.PartType.Block)
+        rock.CFrame *= CFrame.Angles(0, angle, math.rad((index % 2 == 0) and 8 or -8))
+    end
+
+    local heatZones = Instance.new("Folder")
+    heatZones.Name = "HeatZones"
+    heatZones.Parent = ember
+    local function makeHeatZone(name, size, position, rate)
+        local zone = part(heatZones, name, size, position, Color3.fromRGB(255, 90, 35), Enum.Material.ForceField)
+        zone.Transparency = 1
+        zone.CanCollide = false
+        zone.CanTouch = false
+        zone.CanQuery = false
+        zone:SetAttribute("HeatPerSecond", rate)
+        return zone
+    end
+    makeHeatZone("OuterAshHeat", Vector3.new(150, 28, 150), Vector3.new(0, 24, 1560), 4)
+    makeHeatZone("MagmaRimHeat", Vector3.new(82, 34, 82), Vector3.new(0, 30, 1560), 9)
+    makeHeatZone("LavaChannelHeat", Vector3.new(140, 18, 28), Vector3.new(0, 22, 1560), 13)
+
+    local sanctuary = Instance.new("Folder")
+    sanctuary.Name = "CoolingSanctuary"
+    sanctuary.Parent = ember
+    local sanctuaryBase = part(sanctuary, "CoolingSanctuaryBase", Vector3.new(34, 2, 30),
+        Vector3.new(0, 15.5, 1480), Color3.fromRGB(91, 167, 174), Enum.Material.Glass)
+    sanctuaryBase:SetAttribute("CoolingPerSecond", 24)
+    local sanctuaryCrystal = part(sanctuary, "CoolingCrystal", Vector3.new(5, 13, 5),
+        Vector3.new(0, 24, 1480), Color3.fromRGB(119, 235, 229), Enum.Material.Neon, Enum.PartType.Ball)
+    sanctuaryCrystal.CanCollide = false
+    local sanctuaryLight = Instance.new("PointLight")
+    sanctuaryLight.Color = Color3.fromRGB(119, 235, 229)
+    sanctuaryLight.Range = 34
+    sanctuaryLight.Brightness = 2
+    sanctuaryLight.Parent = sanctuaryCrystal
+    local sanctuaryLabel = part(sanctuary, "CoolingSanctuarySign", Vector3.new(24, 7, 1),
+        Vector3.new(0, 23, 1462), Color3.fromRGB(43, 87, 89), Enum.Material.WoodPlanks)
+    local sanctuaryGui = Instance.new("SurfaceGui")
+    sanctuaryGui.Face = Enum.NormalId.Front
+    sanctuaryGui.Parent = sanctuaryLabel
+    local sanctuaryText = Instance.new("TextLabel")
+    sanctuaryText.Size = UDim2.fromScale(1, 1)
+    sanctuaryText.BackgroundTransparency = 1
+    sanctuaryText.Text = "УБЕЖИЩЕ\\nЗдесь можно остыть"
+    sanctuaryText.TextColor3 = Color3.fromRGB(220, 255, 250)
+    sanctuaryText.TextScaled = true
+    sanctuaryText.Font = Enum.Font.GothamBlack
+    sanctuaryText.Parent = sanctuaryGui
+
+    local emberEggs = Instance.new("Folder")
+    emberEggs.Name = "EggSpawnPoints"
+    emberEggs.Parent = ember
+    for _, position in ipairs({
+        Vector3.new(-48, 16, 1520), Vector3.new(48, 16, 1520), Vector3.new(-48, 16, 1600),
+        Vector3.new(48, 16, 1600), Vector3.new(0, 16, 1630),
+    }) do
+        local egg = part(emberEggs, "EmberEgg", Vector3.new(3.8, 4.8, 3.8),
+            position, Color3.fromRGB(255, 126, 54), Enum.Material.Neon, Enum.PartType.Ball)
+        egg:SetAttribute("WorldEgg", true)
+        egg:SetAttribute("BiomeId", "Emberlands")
+        egg:SetAttribute("EggId", "EmberEgg")
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "CollectEggPrompt"
+        prompt.ActionText = "Собрать"
+        prompt.ObjectText = "Яйцо пепельного пламени"
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.4
+        prompt.MaxActivationDistance = 11
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = egg
+    end
+
+    makeBiomePortal(frost, "EmberPortal", Vector3.new(45, 24, 1480),
+        Color3.fromRGB(255, 125, 55), "Emberlands", Vector3.new(0, 18, 1480))
+    makeBiomePortal(ember, "EmberReturnPortal", Vector3.new(-45, 24, 1480),
+        Color3.fromRGB(128, 225, 255), "FrostHighlands", Vector3.new(0, 16, 1040))
+    local emberSign = part(ember, "EmberWelcomeSign", Vector3.new(25, 9, 1),
+        Vector3.new(0, 25, 1438), Color3.fromRGB(88, 49, 42), Enum.Material.WoodPlanks)
+    local emberGui = Instance.new("SurfaceGui")
+    emberGui.Face = Enum.NormalId.Front
+    emberGui.Parent = emberSign
+    local emberText = Instance.new("TextLabel")
+    emberText.Size = UDim2.fromScale(1, 1)
+    emberText.BackgroundTransparency = 1
+    emberText.Text = "ПЕПЕЛЬНЫЕ ЗЕМЛИ\\nБерегись жара!"
+    emberText.TextColor3 = Color3.fromRGB(255, 224, 192)
+    emberText.TextScaled = true
+    emberText.Font = Enum.Font.GothamBlack
+    emberText.Parent = emberGui
+
     return world
 end
 
