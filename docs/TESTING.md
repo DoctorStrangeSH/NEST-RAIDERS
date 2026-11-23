@@ -545,4 +545,11 @@
 - [ ] Hit the boss and verify a floating damage number matches the actual health reduction.
 - [ ] Verify no damage number appears when the player dodges or the health value does not change.
 - [ ] Confirm the health bar animates smoothly and changes to the phase-II accent at 180 HP.
-- [ ] Check damage number placement on desktop and 375px-wide mobile screens; ensure it does not cover the interaction prompt.
+- [ ] Check damage number placement on desktop and 375px-wide mobile screens; ensure it does not cover the interaction prompt.\n\n## Unified material inventory — Sprint 4.40
+- [ ] Open «Мои материалы» from the main menu on desktop and mobile.
+- [ ] Verify Elderwood, Moonpetal, Starshard, Crystal Shards, and Ash Crystals display the saved profile values.
+- [ ] Verify profile load publishes Elderwood, Moonpetal, and Starshard even when the player has never visited their source biome this session.
+- [ ] Gather Elderwood, open the Whispering Grove cache, claim the Forgotten Cave treasure/boss reward, mine Crystal Shards, and claim Ash Crystals; verify the panel refreshes immediately.
+- [ ] Verify the panel is mutually exclusive with other modal windows and closes with its own close control and «ЗАКРЫТЬ ВСЁ».
+- [ ] Verify layout at 375px mobile width and desktop.
+- [ ] In a private published test place, rejoin and confirm all five balances persist.\n
