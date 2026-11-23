@@ -1287,6 +1287,40 @@ function WorldBuilder:Build()
     ancientOddsText.Font = Enum.Font.GothamBlack
     ancientOddsText.Parent = ancientOddsGui
 
+    -- Resource sink: a visible Elderwood workbench crafts one Ancient Egg.
+    local elderwoodWorkshop = Instance.new("Folder")
+    elderwoodWorkshop.Name = "ElderwoodWorkshop"
+    elderwoodWorkshop.Parent = ancient
+    local workbench = part(elderwoodWorkshop, "AncientEggCraftingStation",
+        Vector3.new(9, 2.2, 5), Vector3.new(-20, 20.8, 2630),
+        Color3.fromRGB(111, 83, 57), Enum.Material.WoodPlanks)
+    local benchLegs = {
+        Vector3.new(-3.4, -1.5, -1.6), Vector3.new(3.4, -1.5, -1.6),
+        Vector3.new(-3.4, -1.5, 1.6), Vector3.new(3.4, -1.5, 1.6),
+    }
+    for index, offset in ipairs(benchLegs) do
+        part(elderwoodWorkshop, "WorkshopLeg_" .. index, Vector3.new(0.8, 2.2, 0.8),
+            workbench.Position + offset, Color3.fromRGB(82, 61, 44), Enum.Material.Wood)
+    end
+    local workbenchCrystal = part(elderwoodWorkshop, "AncientEggCraftingCrystal",
+        Vector3.new(2.2, 3.2, 2.2), workbench.Position + Vector3.new(0, 2.6, 0),
+        Color3.fromRGB(190, 237, 140), Enum.Material.Neon, Enum.PartType.Ball)
+    workbenchCrystal.CanCollide = false
+    local workbenchLight = Instance.new("PointLight")
+    workbenchLight.Color = workbenchCrystal.Color
+    workbenchLight.Range = 12
+    workbenchLight.Brightness = 1
+    workbenchLight.Parent = workbenchCrystal
+    local craftPrompt = Instance.new("ProximityPrompt")
+    craftPrompt.Name = "CraftAncientEggPrompt"
+    craftPrompt.ActionText = "Создать яйцо"
+    craftPrompt.ObjectText = "Мастерская древнего древа"
+    craftPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    craftPrompt.HoldDuration = 1
+    craftPrompt.MaxActivationDistance = 11
+    craftPrompt.RequiresLineOfSight = false
+    craftPrompt.Parent = workbench
+
     -- A tucked-away ledge beyond the welcome sign rewards players who explore.
     local whisperingGrove = Instance.new("Folder")
     whisperingGrove.Name = "WhisperingGrove"
