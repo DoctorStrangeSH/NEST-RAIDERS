@@ -13,6 +13,7 @@ local EconomyService = require(ServerScriptService.Server.Services.EconomyServic
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local ArtifactCatalog = require(ReplicatedStorage.Shared.Config.ArtifactCatalog)
+local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)
 local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local InventoryService = {}
@@ -198,6 +199,7 @@ local function makeSnapshot(profile)
                 Description = definition.Description, IncomeBonus = incomeBonus,
                 GatherBonus = math.min(0.50, (tonumber(definition.GatherBonus) or 0) * (1 + (level - 1) * 0.25)),
                 ResearchBonus = math.min(0.50, (tonumber(definition.ResearchBonus) or 0) * (1 + (level - 1) * 0.25)),
+                HatchBonus = math.min(0.30, (tonumber(definition.HatchBonus) or 0) * (1 + (level - 1) * 0.25)),
                 DevOnly = artifact.DevOnly == true,
                 Equipped = equippedArtifacts[artifact.InstanceId] == true,
             })
@@ -221,6 +223,13 @@ local function makeSnapshot(profile)
                 if artifact.Equipped then total += artifact.ResearchBonus or 0 end
             end
             return math.clamp(total, 0, 0.50)
+        end)(),
+        EquippedHatchBonus = (function()
+            local total = 0
+            for _, artifact in ipairs(artifacts) do
+                if artifact.Equipped then total += artifact.HatchBonus or 0 end
+            end
+            return math.clamp(total, 0, 0.30)
         end)(),
         MaxEquippedArtifacts = 2,
         EggCount = #eggs,
@@ -354,6 +363,89 @@ function InventoryService:HandleRequest(player, payload)
         local actualPercent = totalBase > 0 and 100 * totalExtra / totalBase or 0
         local message = string.format("1000 наград XP: +%d дополнительно (%.1f%%). Средний бонус: %.1f%%.",
             totalExtra, actualPercent, expected * 100)
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
+    end
+
+    if payload.Action == "DevSeedHunterArtifacts" then
+        if not RunService:IsStudio() then
+            return { Ok = false, Message = "Тестовые предметы доступны только в Roblox Studio." }
+        end
+        local hunterIds = { "HunterTrophy", "MoonTracker", "HunterCrown" }
+        local missingById, requiredSlots = {}, 0
+        for _, artifactId in ipairs(hunterIds) do
+            local count = 0
+            for _, artifact in ipairs(profile.Artifacts) do
+                if artifact.Id == artifactId and artifact.Level == 1 and artifact.DevOnly == true then count += 1 end
+            end
+            missingById[artifactId] = math.max(0, 3 - count)
+            requiredSlots += missingById[artifactId]
+        end
+        if #profile.Artifacts + requiredSlots > 40 then
+            return { Ok = false, Message = "Освободи место в коллекции: для теста нужно до 9 свободных слотов." }
+        end
+        for artifactId, count in pairs(missingById) do
+            for _ = 1, count do
+                table.insert(profile.Artifacts, {
+                    Id = artifactId,
+                    Level = 1,
+                    DevOnly = true,
+                    InstanceId = HttpService:GenerateGUID(false),
+                    CraftedAt = os.time(),
+                })
+            end
+        end
+        local message = "Тестовые Охотники готовы: по 3 экземпляра каждого вида."
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
+    end
+
+    if payload.Action == "DevSimulateHatchBonus" then
+        if not RunService:IsStudio() then
+            return { Ok = false, Message = "Проверка шанса вылупления доступна только в Roblox Studio." }
+        end
+        local eggDefinitions = {}
+        for _, biome in pairs(BiomeCatalog) do
+            for _, eggDefinition in pairs(biome.Eggs or {}) do
+                if type(eggDefinition.SpeciesWeights) == "table" then
+                    table.insert(eggDefinitions, eggDefinition)
+                end
+            end
+        end
+        table.sort(eggDefinitions, function(a, b) return a.Id < b.Id end)
+
+        local baselineProfile = { Artifacts = {}, EquippedArtifacts = {} }
+        local simulationRandom = Random.new(446)
+        local samplesPerEgg = 1000
+        local totalSamples, baseTopCount, boostedTopCount = 0, 0, 0
+        local expectedBaseTotal, expectedBoostedTotal = 0, 0
+        for _, eggDefinition in ipairs(eggDefinitions) do
+            local _, _, baseChance = ArtifactBonusService:ChooseHatchSpecies(
+                baselineProfile, eggDefinition.SpeciesWeights, 0.5)
+            local _, _, _, boostedChance = ArtifactBonusService:ChooseHatchSpecies(
+                profile, eggDefinition.SpeciesWeights, 0.5)
+            expectedBaseTotal += baseChance
+            expectedBoostedTotal += boostedChance
+
+            for _ = 1, samplesPerEgg do
+                local roll = simulationRandom:NextNumber()
+                local _, _, _, _, baseIsTop = ArtifactBonusService:ChooseHatchSpecies(
+                    baselineProfile, eggDefinition.SpeciesWeights, roll)
+                local _, _, _, _, boostedIsTop = ArtifactBonusService:ChooseHatchSpecies(
+                    profile, eggDefinition.SpeciesWeights, roll)
+                if baseIsTop then baseTopCount += 1 end
+                if boostedIsTop then boostedTopCount += 1 end
+                totalSamples += 1
+            end
+        end
+        local actualBase = totalSamples > 0 and baseTopCount / totalSamples * 100 or 0
+        local actualBoosted = totalSamples > 0 and boostedTopCount / totalSamples * 100 or 0
+        local eggCount = #eggDefinitions
+        local expectedBase = eggCount > 0 and expectedBaseTotal / eggCount * 100 or 0
+        local expectedBoosted = eggCount > 0 and expectedBoostedTotal / eggCount * 100 or 0
+        local message = string.format(
+            "%d вылуплений (%d видов яиц): высшая редкость %.1f%% → %.1f%%; расчёт %.1f%% → %.1f%%.",
+            totalSamples, eggCount, actualBase, actualBoosted, expectedBase, expectedBoosted)
         player:SetAttribute("LastNotice", message)
         return { Ok = true, Data = makeSnapshot(profile), Message = message }
     end
