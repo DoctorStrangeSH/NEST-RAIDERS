@@ -1102,3 +1102,31 @@ assert 'if payload.Action ~= "Get" then' in raid_service
 assert 'self._studioRaidLevelOverride[player] = true' in raid_service
 assert 'RaidStudioAccessTest' in client and 'Visible = RunService:IsStudio()' in client
 assert 'Action = action' in client and 'StudioAccessOverride' in client
+
+# Sprint 4.48 — bounded opt-in raid arena, objective, recovery and rewards.
+assert 'function RaidService:StartArena(match)' in raid_service
+assert 'function RaidService:AttackCore(player)' in raid_service
+assert 'function RaidService:ReinforceCore(player)' in raid_service
+assert 'RAID_DURATION_SECONDS = 150' in raid_service
+assert 'RAID_CORE_MAX_HEALTH = 100' in raid_service
+assert 'RAID_CORE_HIT_DAMAGE = 20' in raid_service
+assert 'RAID_REPAIR_AMOUNT = 10' in raid_service
+assert 'RAID_REPAIR_COOLDOWN_SECONDS = 8' in raid_service
+assert 'NestRaidersRaidArenas' in raid_service and 'RaidArena_' in raid_service
+assert 'match.Attacker.Character' in raid_service and 'match.Defender.Character' in raid_service
+assert 'ReturnCFrames' in raid_service and 'restoreParticipant' in raid_service
+assert 'participant:SetAttribute("RaidArenaActive", true)' in raid_service
+assert 'participant:SetAttribute("RaidArenaActive", false)' in raid_service
+assert 'payload.Action == "AttackCore"' in raid_service
+assert 'payload.Action == "ReinforceCore"' in raid_service
+assert 'self:AttackCore(player)' in raid_service and 'self:ReinforceCore(player)' in raid_service
+assert 'finishMatch(self, match, "ATTACKER"' in raid_service
+assert 'finishMatch(self, match, "DEFENDER"' in raid_service
+assert 'RaidRewardCooldownUntil' in raid_service
+assert 'EconomyService:GrantCoins(player, coins' in raid_service
+assert 'ProgressionService:AddXP(player, RAID_WIN_XP)' in raid_service
+assert 'raidArenaHud.Name = "RaidArenaHUD"' in client
+assert 'raidArenaAttack.Activated' in client and 'raidArenaRepair.Activated' in client
+assert 'raidArenaExit.Activated' in client
+assert 'Action = "AttackCore"' in client and 'Action = "ReinforceCore"' in client
+assert 'RaidArenaCoreHealth' in client and 'RaidArenaTimeRemaining' in client
