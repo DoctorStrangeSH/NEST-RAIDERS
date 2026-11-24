@@ -517,7 +517,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     local bob
                     local yawOffset = 0
 
-                    if sleeping then
+                    local isSleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
+                    moodLabel.Text = isSleeping and "Zzz" or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
+                    model:SetAttribute("IsSleeping", isSleeping)
+                    if isSleeping then
                         behavior = "Sleeping"
                         bob = math.sin(now * 1.2 + phase) * 0.025
                         yawOffset = math.sin(now * 0.35 + phase) * 0.025
