@@ -947,3 +947,28 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify rewards, ten-minute cooldown, HUD readability and touch controls at 320×480, 375×667, tablet and desktop sizes.
 
 **Scope boundary:** Sprint 4.49 adds a contained duel layer inside the existing consent-based arena. It does not yet add raid loot, island structure damage, cross-server matchmaking, ranged weapons or companion combat abilities.
+
+ 
+### Sprint 4.50 — Persistent nest defenses and raid siege (2026-11-24)
+- [x] Extend the existing island build catalogue with three real defensive structures: Stone Bastion, Watchtower and Thorn Trap.
+- [x] Render the new structures on the player's persistent island using the existing build/place/move/remove workflow.
+- [x] Enforce per-type limits (6 bastions, 3 watchtowers, 6 traps) and a combined 12-defense cap across inventory plus placed structures.
+- [x] Display the defense category and current defense capacity in the construction panel.
+- [x] Materialize the defender's placed defenses into the accepted raid arena without changing the saved island layout.
+- [x] Make bastions physical barriers that can be attacked and destroyed to open a route to the Nest Core.
+- [x] Make watchtowers automatically fire visible projectiles at the attacker within 38 studs, dealing 8 raid-health damage every 2.5 seconds.
+- [x] Make thorn traps trigger only for the attacker and deal 12 raid-health damage with a six-second per-trap cooldown.
+- [x] Add server-validated attacker actions to damage nearby structures (35 damage, 1.15-second cooldown) and defender actions to repair nearby damaged structures (+30 health, 8-second cooldown).
+- [x] Keep defense damage temporary to the arena: destroyed/repair states do not mutate the owner's saved build inventory or placed-building profile.
+- [x] Publish live defense count in the raid HUD and expose role-specific attack/repair controls.
+- [x] Add static regression checks for catalog entries, build caps, arena materialization, turret/trap behavior, damage/repair validation and HUD wiring.
+- [ ] Roblox Studio: purchase, place, rotate, move and remove all three defense structures; verify limits and saved placement.
+- [ ] Two-client Studio: verify the defender's structures appear in the arena at their transformed positions.
+- [ ] Verify bastion collision, attacker destruction and route access to the core.
+- [ ] Verify turret range, projectile readability, damage interval, target filtering and destruction shutdown.
+- [ ] Verify trap only damages attacker, respects per-trap cooldown and can be destroyed.
+- [ ] Verify attacker cannot repair defenses and defender cannot damage them; verify range/cooldowns and no remote spam bypass.
+- [ ] Verify repair/destroy state is reset for the next raid and saved island structures are unchanged.
+- [ ] Verify mobile/desktop build panel and raid HUD at 320×480, 375×667, tablet and desktop sizes.
+
+**Scope boundary:** Sprint 4.50 adds a first defensive layer to the existing arena. Companion guard abilities, ranged attacker weapons, resource costs for repairs, cross-server matchmaking, and island-wide destruction remain separate milestones.
