@@ -927,3 +927,23 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify arena HUD and controls at 320×480, 375×667, tablet and desktop sizes.
 
 **Scope boundary:** Sprint 4.48 is an objective race, not unrestricted PvP. Players cannot damage each other or steal inventory. Weapon combat, defensive structures, raid loot and matchmaking across servers remain separate future milestones.
+
+ 
+### Sprint 4.49 — Raid duel combat and parry (2026-11-24)
+- [x] Equip both raid participants with temporary role-colored sword and shield visuals; never add them to saved inventory.
+- [x] Add a server-authoritative melee strike usable by either participant, with a 12-stud range, 24 combat damage and a 1.15-second per-player cooldown.
+- [x] Add a timed parry window (0.9 seconds) with a 3.2-second cooldown; a successful parry negates the incoming hit and counters for 18 combat damage.
+- [x] Keep duel health separate from Roblox Humanoid health so raid combat cannot kill players or affect normal island gameplay outside the match.
+- [x] Publish both combat health values and guard/cooldown state to the role HUD.
+- [x] End the match and award the normal bounded raid rewards when either participant's duel health reaches zero.
+- [x] Add temporary hit/parry flashes and remove all temporary combat gear and attributes when the match ends.
+- [x] Preserve the Nest Core objective race, defender reinforcement, round timer, forfeit and disconnect/death cleanup.
+- [x] Add static regression coverage for range, cooldown, virtual health, parry counter-damage, temporary gear, UI and action routing.
+- [ ] Roblox Studio multiplayer: verify R15 and R6 sword/shield positioning for both roles.
+- [ ] Verify strike range, damage, cooldown, and rejection of out-of-range requests.
+- [ ] Verify the 0.9-second parry window, 3.2-second cooldown, reflected damage and both duel victory outcomes.
+- [ ] Verify duel health never changes Humanoid health or persists after the match.
+- [ ] Verify normal core victory, timer victory, forfeit, death and disconnect still clean up the arena and temporary gear.
+- [ ] Verify rewards, ten-minute cooldown, HUD readability and touch controls at 320×480, 375×667, tablet and desktop sizes.
+
+**Scope boundary:** Sprint 4.49 adds a contained duel layer inside the existing consent-based arena. It does not yet add raid loot, island structure damage, cross-server matchmaking, ranged weapons or companion combat abilities.
