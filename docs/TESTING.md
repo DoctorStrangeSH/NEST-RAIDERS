@@ -876,3 +876,20 @@
 - [ ] Activate all 14 feature actions; confirm the existing feature handler still runs and the menu closes afterward.
 - [ ] Scroll through the complete menu on phone portrait and landscape; verify the last three actions remain reachable.
 - [ ] Capture a Studio screenshot and tune any visual issues before starting the companion inventory panel.
+
+ 
+## Sprint 4.58 — Companion inventory acceptance
+- [ ] Check inventory panel at 320×480, 375×667, tablet, 1366×768 and 1920×1080.
+- [ ] Confirm the title, accent divider, team summary, genetics line and incubator card do not overlap.
+- [ ] Confirm active count and total owned companion count match the server response.
+- [ ] Confirm every rarity receives a distinct accent and star count is displayed correctly.
+- [ ] Check turtle, winged/dragon, bird, deer and default/fox portrait silhouettes for clipping and visual consistency.
+- [ ] Confirm XP progress fill matches GrowthXP / GrowthXPToNext and handles max-level pets.
+- [ ] Confirm team action text clearly communicates equip/unequip state and updates after server response.
+- [ ] Confirm merge remains a two-step confirmation and still consumes the correct companions.
+- [ ] Confirm training disables at max level and refreshes cost/state after the server response.
+- [ ] Confirm ability availability/cooldown and breeding selection/confirmation remain functional.
+- [ ] Confirm cards expand for optional ability/breeding rows and no buttons overlap at narrow widths.
+- [ ] Confirm empty state is visible only when no companions are owned.
+- [ ] Test all inventory actions with mouse and touch, including scroll gestures.
+- [ ] Inspect long companion names, genetic trait names and parent names for truncation or wrapping issues.
