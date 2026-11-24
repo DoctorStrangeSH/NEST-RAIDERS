@@ -268,9 +268,10 @@ function ForgottenHeartBossService:Init()
                 profile.Materials.Starshard += REWARD_STARSHARDS
                 player:SetAttribute("Starshard", profile.Materials.Starshard)
                 EconomyService:GrantCoins(player, REWARD_COINS, "Победа над Хранителем забытого сердца")
-                ProgressionService:AddXP(player, REWARD_XP)
+                local _, awardedXP, _, extraXP = ProgressionService:AddXP(player, REWARD_XP)
                 player:SetAttribute("ForgottenHeartBossRewardReveal", true)
-                player:SetAttribute("LastNotice", "Хранитель повержен! Получен Страж забытого сердца, +1 200 монет, +5 звёздных осколков и +800 опыта!")
+                player:SetAttribute("LastNotice", "Хранитель повержен! Получен Страж забытого сердца, +1 200 монет, "
+                    .. "+5 звёздных осколков и " .. ProgressionService:FormatXPReward(awardedXP, extraXP) .. "!")
                 return
             end
 
