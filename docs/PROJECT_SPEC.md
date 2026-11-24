@@ -682,3 +682,15 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Team placement/removal is a full-width primary action with explicit Russian wording. Merge and training actions share a responsive two-column row. Ability and breeding actions are stacked below only when the companion supports them; card height is calculated from those optional rows.
 - Empty inventory is a dedicated styled empty-state card. Existing server-authoritative actions remain unchanged: Equip, Unequip, Merge, Train, UseAbility and Breed.
 - The native card portraits are UI silhouettes, not replacements for the actual procedural 3D models used in the world. Actual Studio/device review remains required before moving to the egg shop panel.
+
+ 
+## Biome egg shop and hatch reveal — Sprint 4.59
+- The shop sells six natural biome eggs in progression order: Meadow (50), Emerald (250), Frost (700), Ember (1,800), Crystal (4,500) and Ancient (10,000) coins.
+- Shop availability follows the existing progression zone rules, including both level and required trial completion. Meadow maps to StarterIsland; every other shop egg maps to its own biome. The server validates unlock state, balance and the 20-egg capacity on every purchase.
+- ForgottenCaveEgg is intentionally excluded from the regular shop. It remains an exploration/cache reward.
+- Shop snapshots include biome, rarity, level requirement, lock reason, buy-block reason, egg capacity, species odds and artifact-adjusted base odds. Chance percentages retain decimal precision instead of rounding small odds to zero.
+- A purchased egg record stores both EggId and BiomeId. Hatching therefore records the correct origin biome in the companion collection.
+- World eggs keep their existing collectible BasePart/prompt contract, but now carry welded biome-colored decorative bands, runes, crown gems, a PointLight and Highlight. The collection and respawn tweens animate the shell and its decorations together.
+- EggService sends HatchReveal only after the server has selected the species, consumed the egg, created/saved the companion, registered collection discovery, updated attributes and attempted the XP/visual refresh. The payload is display-only.
+- The client reveal uses a short shake/crack sequence and then a rarity-colored companion portrait with name, rarity, genetic trait and income. "Пропустить анимацию" jumps directly to the saved result; "Забрать питомца" closes the reveal. The animation cannot grant, reroll or remove companions.
+- Existing server hatch selection and ArtifactBonusService weighting remain authoritative. Studio tests are required for odds, purchase gates, hatch concurrency and persistence.
