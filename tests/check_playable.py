@@ -61,7 +61,9 @@ for weather_id in ('Clear', 'Rain', 'Fog', 'Storm'):
 assert 'local weatherConfig = GameConfig.Weather or {}' in world
 assert 'Instance.new("Atmosphere")' in world
 assert 'Instance.new("Clouds")' in world
-assert 'rbxasset://textures/particles/rain_main.dds' in world
+assert 'rbxasset://textures/particles/sparkles_main.dds' in world
+assert 'emitter.Squash = NumberSequence.new(3)' in world
+assert 'emitter.Parent = rainAnchor' in world
 assert 'emitter.ShapeSize = Vector3.new(100, 1, 100)' in world
 assert 'world:SetAttribute("WorldWeather", weatherId)' in world
 assert 'world:SetAttribute("WorldWeatherLabel"' in world
