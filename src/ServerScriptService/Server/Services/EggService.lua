@@ -11,6 +11,7 @@ local ProgressionService = require(ServerScriptService.Server.Services.Progressi
 local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
 local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)
+local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local EggService = {}
 local EGG_RESPAWN_SECONDS = 20
@@ -96,7 +97,7 @@ local function syncAttributes(player, profile)
     player:SetAttribute("Coins", profile.Coins)
 end
 
-local function chooseCompanion(eggId)
+local function chooseCompanion(eggId, profile)
     local eggDefinition
     for _, biome in pairs(BiomeCatalog) do
         for _, egg in pairs(biome.Eggs or {}) do
@@ -104,24 +105,11 @@ local function chooseCompanion(eggId)
         end
         if eggDefinition then break end
     end
-    if not eggDefinition then return COMPANIONS[1] end
+    if not eggDefinition then return COMPANIONS[1], 0, 0, 0 end
 
-    local totalWeight = 0
-    for speciesId, weight in pairs(eggDefinition.SpeciesWeights or {}) do
-        if CompanionCatalog[speciesId] and weight > 0 then totalWeight += weight end
-    end
-    if totalWeight <= 0 then return COMPANIONS[1] end
-
-    local roll = math.random() * totalWeight
-    local cursor = 0
-    for speciesId, weight in pairs(eggDefinition.SpeciesWeights) do
-        local definition = CompanionCatalog[speciesId]
-        if definition and weight > 0 then
-            cursor += weight
-            if roll <= cursor then return definition end
-        end
-    end
-    return COMPANIONS[1]
+    local speciesId, hatchBonus, baseTopChance, boostedTopChance =
+        ArtifactBonusService:ChooseHatchSpecies(profile, eggDefinition.SpeciesWeights, math.random())
+    return CompanionCatalog[speciesId] or COMPANIONS[1], hatchBonus, baseTopChance, boostedTopChance
 end
 
 function EggService:Collect(player, egg)
@@ -263,6 +251,7 @@ function EggService:_HatchUnlocked(player, station)
 
     local definition
     local geneticTrait
+    local hatchBonus, baseTopChance, boostedTopChance = 0, 0, 0
     if egg.Origin == "Breeding" then
         definition = CompanionCatalog[egg.OffspringSpeciesId]
         if not definition or type(egg.GeneticTrait) ~= "table" then
@@ -271,7 +260,7 @@ function EggService:_HatchUnlocked(player, station)
         end
         geneticTrait = egg.GeneticTrait
     else
-        definition = chooseCompanion(egg.Id or "MeadowEgg")
+        definition, hatchBonus, baseTopChance, boostedTopChance = chooseCompanion(egg.Id or "MeadowEgg", profile)
         geneticTrait = chooseGeneticTrait()
     end
 
@@ -337,7 +326,10 @@ function EggService:_HatchUnlocked(player, station)
     end
     local originMessage = egg.Origin == "Breeding" and " · наследие родителей" or ""
     local xpMessage = xpAwarded and " +15 опыта" or ""
-    player:SetAttribute("LastNotice", "Вылупился питомец: " .. definition.Name .. " (" .. definition.Rarity .. ") · " .. geneticTrait.Name .. originMessage .. "!" .. xpMessage)
+    local hunterMessage = hatchBonus > 0 and string.format(
+        " · Охота: высшая редкость %.1f%% → %.1f%%", baseTopChance * 100, boostedTopChance * 100) or ""
+    player:SetAttribute("LastNotice", "Вылупился питомец: " .. definition.Name .. " (" .. definition.Rarity .. ") · "
+        .. geneticTrait.Name .. originMessage .. hunterMessage .. "!" .. xpMessage)
 end
 
 
