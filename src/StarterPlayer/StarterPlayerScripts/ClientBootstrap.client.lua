@@ -394,8 +394,8 @@ nestDescription.Parent = nestPanel
 
 local nestStats = Instance.new("Frame")
 nestStats.Name = "NestOverviewStats"
-nestStats.Position = UDim2.fromOffset(14, 136)
-nestStats.Size = UDim2.new(1, -28, 0, 72)
+nestStats.Position = UDim2.fromOffset(14, 128)
+nestStats.Size = UDim2.new(1, -28, 0, 64)
 nestStats.BackgroundColor3 = Color3.fromRGB(31, 54, 58)
 nestStats.BorderSizePixel = 0
 nestStats.Parent = nestPanel
@@ -439,10 +439,16 @@ end
 local nestCoinsValue = makeNestStat("МОНЕТЫ", "0", Color3.fromRGB(255, 218, 130))
 local nestPetsValue = makeNestStat("ПИТОМЦЫ", "0", Color3.fromRGB(175, 221, 255))
 local nestIncomeValue = makeNestStat("ДОХОД / 10 СЕК.", "—", Color3.fromRGB(155, 238, 185))
+player:GetAttributeChangedSignal("Coins"):Connect(function()
+    nestCoinsValue.Text = tostring(player:GetAttribute("Coins") or 0)
+end)
+player:GetAttributeChangedSignal("CompanionCount"):Connect(function()
+    nestPetsValue.Text = tostring(player:GetAttribute("CompanionCount") or 0)
+end)
 
 local nestShortcutsTitle = Instance.new("TextLabel")
 nestShortcutsTitle.BackgroundTransparency = 1
-nestShortcutsTitle.Position = UDim2.fromOffset(18, 218)
+nestShortcutsTitle.Position = UDim2.fromOffset(18, 198)
 nestShortcutsTitle.Size = UDim2.new(1, -36, 0, 22)
 nestShortcutsTitle.Font = Enum.Font.GothamBlack
 nestShortcutsTitle.Text = "УПРАВЛЕНИЕ ГНЕЗДОМ"
@@ -453,12 +459,12 @@ nestShortcutsTitle.Parent = nestPanel
 
 local nestShortcutGrid = Instance.new("Frame")
 nestShortcutGrid.BackgroundTransparency = 1
-nestShortcutGrid.Position = UDim2.fromOffset(14, 244)
-nestShortcutGrid.Size = UDim2.new(1, -28, 0, 92)
+nestShortcutGrid.Position = UDim2.fromOffset(14, 224)
+nestShortcutGrid.Size = UDim2.new(1, -28, 0, 76)
 nestShortcutGrid.Parent = nestPanel
 local nestShortcutLayout = Instance.new("UIGridLayout")
-nestShortcutLayout.CellSize = UDim2.new(0.5, -5, 0, 40)
-nestShortcutLayout.CellPadding = UDim2.fromOffset(8, 8)
+nestShortcutLayout.CellSize = UDim2.new(0.5, -5, 0, 34)
+nestShortcutLayout.CellPadding = UDim2.fromOffset(8, 6)
 nestShortcutLayout.SortOrder = Enum.SortOrder.LayoutOrder
 nestShortcutLayout.Parent = nestShortcutGrid
 
@@ -481,8 +487,8 @@ local nestBuildShortcut = makeNestShortcut("NestBuildShortcut", "СТРОИТЕ�
 local nestUpgradeShortcut = makeNestShortcut("NestUpgradeShortcut", "УЛУЧШИТЬ ГНЕЗДО", Color3.fromRGB(70, 135, 92))
 
 local nestUpgrade = Instance.new("TextButton")
-nestUpgrade.Position = UDim2.new(0, 18, 1, -56)
-nestUpgrade.Size = UDim2.new(1, -36, 0, 42)
+nestUpgrade.Position = UDim2.new(0, 18, 1, -52)
+nestUpgrade.Size = UDim2.new(1, -36, 0, 40)
 nestUpgrade.BackgroundColor3 = Color3.fromRGB(83, 151, 103)
 nestUpgrade.Text = "УЛУЧШИТЬ"
 nestUpgrade.TextColor3 = Color3.fromRGB(255, 255, 245)
