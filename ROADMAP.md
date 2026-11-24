@@ -873,6 +873,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Display per-artifact and combined Hunter bonuses in the Russian artifact collection UI.
 - [x] Show the actual highest-tier probability before and after the modifier in natural hatch notices.
 - [x] Update Egg Shop and Collection Book to show live normalized species chances and the unmodified base chance when Hunter artifacts are equipped.
+- [x] Label shared world egg signs as base odds without Hunter artifacts so fixed world text cannot be mistaken for player-specific odds.
 - [x] Rebalance craft weights to income 36/18/6 (60%), Gatherer 12/6/2 (20%), Researcher 6/3/1 (10%), Hunter 6/3/1 (10%).
 - [x] Add a Studio-only Hunter fixture and deterministic 7,000-hatch simulation across all seven natural egg tables.
 - [x] Add static regression coverage for rarity weighting, natural-vs-breeding routing, odds, UI, QA guards and simulation side effects.
