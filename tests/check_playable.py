@@ -77,7 +77,7 @@ assert 'ArtifactBonusService:GetHatchSpeciesChance(' in book and 'profile, egg.S
 assert 'BaseHatchChance = baseBiomeChance' in book
 shop_service = Path("src/ServerScriptService/Server/Services/EggShopService.lua").read_text()
 assert 'local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)' in shop_service
-assert 'ArtifactBonusService:GetHatchSpeciesChance(' in shop_service and 'profile, eggDefinition.SpeciesWeights, speciesId)' in shop_service
+assert 'ArtifactBonusService:GetHatchSpeciesChance(' in shop_service and 'profile, weights, speciesId)' in shop_service
 assert 'Odds = buildOdds(profile, item.EggDefinition)' in shop_service and 'BaseChance = math.max(0, baseChance * 100)' in shop_service
 assert 'entry.DiscoveredBiome' in client and 'entry.EggName' in client
 assert 'база %d%%' in client
