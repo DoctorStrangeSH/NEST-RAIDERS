@@ -982,12 +982,6 @@ function RaidService:StartArena(match)
         participant:SetAttribute("RaidArenaOpponentName",
             participant == match.Attacker and match.Defender.DisplayName or match.Attacker.DisplayName)
         participant:SetAttribute("RaidArenaRole", participant == match.Attacker and "ATTACKER" or "DEFENDER")
-        local synergy = match.RaidPetSynergy[participant]
-        participant:SetAttribute("RaidArenaSynergyPulse",
-            synergy and (tostring(match.Id) .. ":" .. synergy.Id) or "")
-        if synergy then
-            pulseRaidCompanions(match, participant, "ACTIVATION", true)
-        end
     end
 
     table.insert(match.DeathConnections, attackerHumanoid.Died:Connect(function()
@@ -1003,6 +997,14 @@ function RaidService:StartArena(match)
 
     activateArenaDefenses(self, match)
     publishArenaState(match)
+    for _, participant in ipairs({ match.Attacker, match.Defender }) do
+        local synergy = match.RaidPetSynergy[participant]
+        participant:SetAttribute("RaidArenaSynergyPulse",
+            synergy and (tostring(match.Id) .. ":" .. synergy.Id) or "")
+        if synergy then
+            pulseRaidCompanions(match, participant, "ACTIVATION", true)
+        end
+    end
     match.Attacker:SetAttribute("LastNotice", #match.Defenses > 0
         and ("Рейд начался! На острове защитника подготовлено сооружений: " .. tostring(#match.Defenses) .. ".")
         or "Рейд начался! У защитника пока нет оборонительных сооружений.")
