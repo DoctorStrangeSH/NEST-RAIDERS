@@ -254,3 +254,7 @@ Accepted challenges now move both players into a temporary floating arena. The a
  
 ## Raid Duel Combat — Sprint 4.49
 The opt-in raid arena now includes a contained melee duel. Both players receive temporary sword and shield visuals, can strike at close range, and can time a short parry to counter an incoming attack. Duel health is separate from normal character health. The original Nest Core objective, defender repairs, timer, rewards and safe return flow remain available.
+
+ 
+## Nest Defenses — Sprint 4.50
+The island build catalogue now includes three defensive structures: Stone Bastion (a destructible physical wall), Watchtower (an automated turret) and Thorn Trap (an attacker-only proximity trap). Place them on your own island through the existing build panel. Accepted raids copy the defender's placed defenses into the temporary arena: towers fire at the attacker, traps damage only the attacker, and bastions block the route to the core. The attacker can destroy nearby structures; the defender can repair damaged structures. Damage and repairs are temporary to the raid and never alter the saved island layout.
