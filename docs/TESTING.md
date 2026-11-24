@@ -979,3 +979,14 @@ Static regression checks validate bounded movement, state-driven behavior and ex
 7. Test up to four displayed pets and multiple players. Check movement boundaries, server performance, character movement, building placement and decoration placement.
 
 Static checks validate the toy state machine and cleanup ownership. Roblox Studio runtime, multiplayer and visual checks remain required.
+
+## Sprint 4.66 — Personalities & Social Life
+1. Display two companions in slots 1 and 2. Wait for one to seek its partner; confirm the second joins and both face each other during a short social interaction.
+2. Repeat with slots 3 and 4. Confirm pairs remain inside their plot and do not interfere with other displays.
+3. Complete a social session and confirm both companions gain a small amount of mood. Remove one companion or put it to sleep mid-session and confirm no reward is granted for the interrupted session.
+4. Compare playful/energetic personalities with calm/cautious personalities. Confirm activity frequency, pauses and movement speed differ without any personality becoming stuck.
+5. Equip each pet's favorite toy and a non-favorite toy in separate tests. Confirm favorite toys are chosen more frequently, while all equipped toys remain usable.
+6. Stand near an idle pet. Confirm it faces the owner, shows a greeting emotion and returns to normal idle behavior after the owner walks away.
+7. Test all four slots, multiple players, re-equipping toys, removing pets and rejoining. Check for stuck SeekingFriend states, orphaned toys, duplicate mood rewards and server performance issues.
+
+Static regression checks cover personality profiles, social pairing, mood rewards and greeting triggers. Roblox Studio runtime, multiplayer and persistence checks remain required.
