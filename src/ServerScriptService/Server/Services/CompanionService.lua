@@ -618,7 +618,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     local isWetWeather = weatherState == "Rain" or weatherState == "Storm"
                     local seeksShelter = weatherState == "Storm" and weatherPreference == "Shelter"
                     local enjoysRain = isWetWeather and weatherPreference == "Rain"
-                    model:SetAttribute("WeatherState", weatherState)
+                    if model:GetAttribute("WeatherState") ~= weatherState then
+                        model:SetAttribute("WeatherState", weatherState)
+                    end
                     local isPreferredTime = activityPeriod == "Any"
                         or (activityPeriod == "Night" and isNight)
                         or (activityPeriod == "Day" and not isNight)
@@ -841,7 +843,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local step = math.min(direction.Magnitude, speed * delta)
                             currentPosition += direction.Unit * step
                             facing = math.atan2(direction.X, direction.Z)
-                            behavior = targetIsTreasure and "Searching" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering"))
+                            behavior = targetIsTreasure and "Searching" or (targetIsShelter and "SeekingShelter" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering")))
                             bob = math.abs(math.sin(now * 9 + phase)) * 0.1
                         else
                             local nearToy = toyPart and (currentPosition - toyApproach).Magnitude < 0.55
@@ -910,6 +912,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     moodLabel.Text = isSleeping and "Zzz"
                         or (behavior == "Searching" and "Ищет сокровище")
                         or (behavior == "FoundGift" and "Нашёл подарок!")
+                        or (behavior == "SeekingShelter" and "Ищет укрытие")
                         or (behavior == "Sheltering" and "Прячется от грозы")
                         or (weatherPreference == "Rain" and isWetWeather and behavior == "Idle" and "Радуется дождю")
                         or (activityPeriod ~= "Any" and not isPreferredTime
