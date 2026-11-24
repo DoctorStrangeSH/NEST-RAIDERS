@@ -1025,7 +1025,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 ### Sprint 4.53 — Raid companion team synergies (2026-11-24)
 - [x] Derive team composition from the three already-summoned active raid companions; only distinct combat roles count.
 - [x] Add Guardian + Healer: **Живой бастион** — +15% Guardian/Healer ability power and 12% less incoming raid combat damage.
-- [x] Add Hunter + Guardian: **Штурмовой строй** — +15% Hunter ability power and +10% normal melee strike damage.
+- [x] Add Hunter + Guardian: **Штурмовой строй** — +15% Hunter/Guardian ability power and +10% normal melee strike damage.
 - [x] Add Hunter + Healer: **Согласованный натиск** — +15% Hunter/Healer ability power.
 - [x] Add all three distinct roles: **Триада** — +10% ability power, 8% less incoming damage and +5% normal melee strike damage.
 - [x] Make the three-role Triad mutually exclusive with pair bonuses; duplicate roles do not create or stack extra synergy.
