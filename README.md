@@ -303,3 +303,6 @@ The personal nest screen is now a unified overview with live coins and companion
 
 ## Nest Environment — Sprint 4.62 foundation
 Player plots now receive permanent non-collidable garden dressing: corner trees, flower beds and a stepping-stone approach outside the player construction grid. Nest level 2 adds warm lanterns and shrubs; level 3 adds softly lit crystals and flower accents. Existing level 4 banner and level 5 crown progression remains intact. Studio verification is still required for movement, building placement, multiplayer ownership and reconnect behavior.
+
+## Island Identity Styles — Sprint 4.63
+Players can choose a persistent island theme: Meadow (level 1), Arcane (level 2), Ancient Temple (level 3) or Royal Garden (level 5). Theme selection is validated on the server and stored in the nest profile. The existing nest decoration panel exposes the selector; each theme changes environmental colors and adds non-collidable signature details. Roblox Studio testing is still required for visuals, exploit resistance, placement compatibility and reconnect persistence.
