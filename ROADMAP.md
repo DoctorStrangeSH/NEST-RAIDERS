@@ -1096,3 +1096,23 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Run a two-client Studio test at desktop and mobile resolutions; check frame rate and server Output.
 
 **Implementation note:** Current raid companions are procedural models, not Humanoid animation rigs. Sprint 4.55 uses replicated model-pivot motion and role-specific poses rather than fabricated AnimationId assets. Rig-specific animation tracks can be layered later if the companion asset pipeline adopts authored rigs.
+
+ 
+### Sprint 4.56 — UI/UX foundation and responsive navigation (2026-11-24)
+- [x] Audit the active client UI: all interface construction is centralized in ClientBootstrap; no ImageLabel/ImageButton assets are currently used, so blank icon slots are not caused by broken image IDs.
+- [x] Add a consistent native navigation badge system using guaranteed-rendering Cyrillic initials and feature color accents; no external icon/font asset dependency.
+- [x] Keep menu labels left-aligned, padded around badges and truncated safely instead of overlapping at narrow widths.
+- [x] Make the boot diagnostic card viewport-relative with a bounded width so it remains visible on 320px phones.
+- [x] Rebind the global UIScale to the active camera and its ViewportSize; handle CurrentCamera replacement without stale camera listeners.
+- [x] Rebind responsive navigation sizing whenever the active camera changes; handle subsequent viewport resize events.
+- [x] Preserve a bounded global scale and existing narrow-screen navigation layout so small-screen text remains readable.
+- [x] Remove a duplicate raid panel entry from the modal exclusivity registry.
+- [x] Add regression checks for responsive boot sizing, camera rebinding, icon fallback badges, safe menu text and modal registry uniqueness.
+- [ ] Roblox Studio: inspect the full UI at 320×480, 375×667, tablet, 1366×768 and 1920×1080.
+- [ ] Verify no navigation labels collide with icon badges or truncate critical words on mobile.
+- [ ] Verify all fourteen navigation badges render on Windows, Android and iOS without blank glyphs.
+- [ ] Verify the HUD scale updates when Studio/device viewport changes and after camera replacement.
+- [ ] Audit every modal's minimum size and close control at phone portrait/landscape sizes.
+- [ ] Continue with panel-by-panel responsive layout, content card icons, empty states and typography in follow-up UI sprints.
+
+**Scope boundary:** Sprint 4.56 is the responsive/navigation foundation. It does not claim that every existing modal or gameplay HUD has been fully redesigned; remaining panels are tracked for the next UI passes.
