@@ -1297,6 +1297,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Expose friendship score and relationship title on both pet models; show the score in the social interaction bubble.
 - [x] Add five relationship stages: Знакомство, Приятели, Друзья, Лучшие друзья, Неразлучные.
 - [x] Add static regression checks for migration-safe storage, pair key ordering, thresholds, single-award ownership and interrupted-session guards.
+- [x] GitHub Actions: Rojo place build, package validation and `tests/check_playable.py` passed (workflow run 45413604301).
+- [x] Publish the refreshed `NEST-RAIDERS.rbxlx` Studio artifact for Sprint 4.67 (available through 2026-12-08).
 - [ ] Roblox Studio: complete multiple social sessions and confirm the same pair progresses through relationship stages.
 - [ ] Remove or sleep a partner before the session ends; confirm neither mood nor friendship is rewarded for the interrupted session.
 - [ ] Rejoin a published private test server and confirm friendship score and title persist.
