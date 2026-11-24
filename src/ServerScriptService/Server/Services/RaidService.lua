@@ -71,7 +71,64 @@ local function isWindowOpen(player, attribute)
     return expiresAt > now(), math.max(0, expiresAt - now())
 end
 
-local function getRaidPetProgression(pet)
+local function getRaidPetSynergy(followers)
+    local roles = {}
+    for _, follower in ipairs(followers or {}) do
+        if follower.Role == "HUNTER" or follower.Role == "HEALER" or follower.Role == "GUARDIAN" then
+            roles[follower.Role] = true
+        end
+    end
+
+    local roleCount = (roles.HUNTER and 1 or 0) + (roles.HEALER and 1 or 0) + (roles.GUARDIAN and 1 or 0)
+    if roleCount < 2 then return nil end
+
+    if roleCount == 3 then
+        return {
+            Id = "TRIAD",
+            Name = "Триада",
+            Description = "+10% силы навыка · −8% входящего урона · +5% ударов",
+            AbilityPowerMultiplier = 1.10,
+            DamageReduction = 0.08,
+            DuelDamageMultiplier = 1.05,
+        }
+    end
+
+    if roles.GUARDIAN and roles.HEALER then
+        return {
+            Id = "LIVING_BASTION",
+            Name = "Живой бастион",
+            Description = "−12% входящего урона · +15% силы навыка",
+            AbilityPowerMultiplier = 1.15,
+            BoostRoles = { GUARDIAN = true, HEALER = true },
+            DamageReduction = 0.12,
+        }
+    end
+
+    if roles.HUNTER and roles.GUARDIAN then
+        return {
+            Id = "ASSAULT_FORMATION",
+            Name = "Штурмовой строй",
+            Description = "+15% навыка охотника · +10% ударов",
+            AbilityPowerMultiplier = 1.15,
+            BoostRoles = { HUNTER = true },
+            DuelDamageMultiplier = 1.10,
+        }
+    end
+
+    if roles.HUNTER and roles.HEALER then
+        return {
+            Id = "COORDINATED_ASSAULT",
+            Name = "Согласованный натиск",
+            Description = "+15% урона охотника и лечения",
+            AbilityPowerMultiplier = 1.15,
+            BoostRoles = { HUNTER = true, HEALER = true },
+        }
+    end
+
+    return nil
+end
+
+local function getRaidPetProgression(pet, synergy)
     local companion = pet and pet.Companion
     local level = math.clamp(math.floor(tonumber(companion and companion.Level) or 1), 1, 10)
     local steps = math.floor((level - 1) / 2)
@@ -80,16 +137,33 @@ local function getRaidPetProgression(pet)
 
     local role = ability.Role
     local power = 0
+    local maximum = 0
     local label = ""
     if role == "HUNTER" then
-        power = math.clamp(math.floor(tonumber(ability.Damage) or 14) + steps, 8, 30)
-        label = "УРОН " .. tostring(power)
+        power = math.floor(tonumber(ability.Damage) or 14) + steps
+        maximum = 30
     elseif role == "HEALER" then
-        power = math.clamp(math.floor(tonumber(ability.HealAmount) or 20) + steps, 5, 35)
-        label = "ЛЕЧЕНИЕ +" .. tostring(power)
+        power = math.floor(tonumber(ability.HealAmount) or 20) + steps
+        maximum = 35
     elseif role == "GUARDIAN" then
         local shieldBonus = math.floor((level - 1) * 2 / 3)
-        power = math.clamp(math.floor(tonumber(ability.ShieldAmount) or 20) + shieldBonus, 10, 40)
+        power = math.floor(tonumber(ability.ShieldAmount) or 20) + shieldBonus
+        maximum = 40
+    end
+
+    if synergy and synergy.AbilityPowerMultiplier
+        and (not synergy.BoostRoles or synergy.BoostRoles[role]) then
+        power = math.floor(power * synergy.AbilityPowerMultiplier + 0.5)
+    end
+
+    if role == "HUNTER" then
+        power = math.clamp(power, 8, maximum)
+        label = "УРОН " .. tostring(power)
+    elseif role == "HEALER" then
+        power = math.clamp(power, 5, maximum)
+        label = "ЛЕЧЕНИЕ +" .. tostring(power)
+    elseif role == "GUARDIAN" then
+        power = math.clamp(power, 10, maximum)
         label = "ЩИТ " .. tostring(power)
     end
     return level, power, label
@@ -354,13 +428,16 @@ local function publishArenaState(match)
             participant:SetAttribute("RaidArenaDefenseCount", defenseCount)
             local pet = match.RaidPets and match.RaidPets[participant] or nil
             local ability = pet and pet.Ability or nil
-            local petLevel, petPower, petPowerLabel = getRaidPetProgression(pet)
+            local synergy = match.RaidPetSynergy and match.RaidPetSynergy[participant] or nil
+            local petLevel, petPower, petPowerLabel = getRaidPetProgression(pet, synergy)
             participant:SetAttribute("RaidArenaPetName", pet and pet.Name or "")
             participant:SetAttribute("RaidArenaPetAbilityName", ability and ability.Name or "")
             participant:SetAttribute("RaidArenaPetRole", ability and ability.Role or "")
             participant:SetAttribute("RaidArenaPetLevel", ability and petLevel or 0)
             participant:SetAttribute("RaidArenaPetPower", petPower)
             participant:SetAttribute("RaidArenaPetPowerLabel", petPowerLabel)
+            participant:SetAttribute("RaidArenaSynergyName", synergy and synergy.Name or "")
+            participant:SetAttribute("RaidArenaSynergyDescription", synergy and synergy.Description or "")
             participant:SetAttribute("RaidArenaPetCooldown", match.PetAbilityReadyAt
                 and math.max(0, math.ceil((match.PetAbilityReadyAt[participant] or 0) - timestamp)) or 0)
             local shield = match.PetShields and match.PetShields[participant] or nil
@@ -546,6 +623,8 @@ local function clearMatch(self, match, message)
             participant:SetAttribute("RaidArenaPetLevel", nil)
             participant:SetAttribute("RaidArenaPetPower", nil)
             participant:SetAttribute("RaidArenaPetPowerLabel", nil)
+            participant:SetAttribute("RaidArenaSynergyName", nil)
+            participant:SetAttribute("RaidArenaSynergyDescription", nil)
             participant:SetAttribute("RaidArenaPetCooldown", nil)
             participant:SetAttribute("RaidArenaPetShield", nil)
             participant:SetAttribute("RaidArenaPetShieldSeconds", nil)
@@ -593,7 +672,11 @@ end
 local function applyRaidCombatDamage(self, match, target, amount, sourceName)
     if not match or match.State ~= "ACTIVE" or self._matches[target] ~= match then return true, 0, 0 end
     local timestamp = os.clock()
-    local remainingDamage = math.max(0, tonumber(amount) or 0)
+    local incomingDamage = math.max(0, tonumber(amount) or 0)
+    local synergy = match.RaidPetSynergy and match.RaidPetSynergy[target] or nil
+    local damageReduction = math.clamp(tonumber(synergy and synergy.DamageReduction) or 0, 0, 0.2)
+    local reducedDamage = math.max(0, math.floor(incomingDamage * (1 - damageReduction) + 0.5))
+    local remainingDamage = reducedDamage
     local absorbed = 0
     local shield = match.PetShields and match.PetShields[target] or nil
     if shield and shield.ExpiresAt > timestamp and shield.Amount > 0 then
@@ -608,8 +691,10 @@ local function applyRaidCombatDamage(self, match, target, amount, sourceName)
     match.CombatHealth[target] = math.max(0, (match.CombatHealth[target] or 100) - remainingDamage)
     showRaidCombatHit(target.Character, absorbed > 0)
     local shieldText = absorbed > 0 and (" Щит питомца поглотил " .. tostring(absorbed) .. ".") or ""
+    local synergyText = reducedDamage < incomingDamage
+        and (" Синергия «" .. tostring(synergy.Name) .. "» смягчила удар.") or ""
     target:SetAttribute("LastNotice", sourceName .. ": получено " .. tostring(remainingDamage)
-        .. " урона." .. shieldText .. " Здоровье: " .. tostring(match.CombatHealth[target]) .. " / 100.")
+        .. " урона." .. shieldText .. synergyText .. " Здоровье: " .. tostring(match.CombatHealth[target]) .. " / 100.")
     publishArenaState(match)
     if match.CombatHealth[target] <= 0 then
         finishMatch(self, match, target == match.Attacker and "DEFENDER" or "ATTACKER",
@@ -755,6 +840,7 @@ function RaidService:StartArena(match)
     match.PetShields = {}
     match.RaidPets = {}
     match.RaidPetModels = {}
+    match.RaidPetSynergy = {}
     match.CombatHealth = {
         [match.Attacker] = 100,
         [match.Defender] = 100,
@@ -775,6 +861,7 @@ function RaidService:StartArena(match)
         match.RaidFollowers[participant] = followers
         match.RaidPets[participant] = primary
         match.RaidPetModels[participant] = primary and primary.Model or nil
+        match.RaidPetSynergy[participant] = getRaidPetSynergy(followers)
         if #followers > 0 then followRaidCompanions(self, match, participant, followers) end
     end
 
@@ -961,7 +1048,8 @@ function RaidService:UsePetAbility(player)
     end
 
     local role = ability.Role
-    local petLevel, power = getRaidPetProgression(primary)
+    local synergy = match.RaidPetSynergy and match.RaidPetSynergy[player] or nil
+    local petLevel, power = getRaidPetProgression(primary, synergy)
     local opponent = match.Attacker == player and match.Defender or match.Attacker
     local opponentCharacter = opponent and opponent.Character
     local opponentRoot = opponentCharacter and opponentCharacter:FindFirstChild("HumanoidRootPart")
@@ -1086,9 +1174,13 @@ function RaidService:StrikeOpponent(player)
         end
         opponent:SetAttribute("LastNotice", "Идеальное парирование! Контрудар нанесён.")
     else
-        local ended = applyRaidCombatDamage(self, match, opponent, RAID_DUEL_STRIKE_DAMAGE, "Удар соперника")
+        local synergy = match.RaidPetSynergy and match.RaidPetSynergy[player] or nil
+        local strikeMultiplier = math.clamp(tonumber(synergy and synergy.DuelDamageMultiplier) or 1, 1, 1.15)
+        local strikeDamage = math.floor(RAID_DUEL_STRIKE_DAMAGE * strikeMultiplier + 0.5)
+        local ended = applyRaidCombatDamage(self, match, opponent, strikeDamage, "Удар соперника")
         if ended then return { Ok = true, Message = "Соперник выбыл! Победа в рейде." } end
-        player:SetAttribute("LastNotice", "Попадание! Здоровье соперника: " .. tostring(match.CombatHealth[opponent]) .. " / 100.")
+        player:SetAttribute("LastNotice", "Попадание! Урон: " .. tostring(strikeDamage)
+            .. " · здоровье соперника: " .. tostring(match.CombatHealth[opponent]) .. " / 100.")
     end
 
     publishArenaState(match)
