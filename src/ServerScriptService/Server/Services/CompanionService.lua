@@ -464,6 +464,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local energy = math.clamp(math.floor(tonumber(needs.Energy) or 100), 0, 100)
             local sleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
             local home = basePivot.Position
+            model:SetAttribute("DisplaySlot", slot)
+            model:SetAttribute("NestHomePosition", home)
             local toyId = profile.Nest and profile.Nest.CompanionToys and profile.Nest.CompanionToys[instanceId]
             local toyDefinition = NestToyCatalog[toyId or ""]
             local toyPart = nil
@@ -498,16 +500,36 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             bubbleCorner.CornerRadius = UDim.new(0, 8)
             bubbleCorner.Parent = moodLabel
 
+            local petDefinition = CompanionCatalog[companion.Id] or {}
+            local personality = petDefinition.Personality or "Обычный"
+            local personalityProfiles = {
+                ["Игривый"] = { SocialChance = 0.28, IdleMin = 0.7, IdleMax = 1.5, ToyChance = 0.58 },
+                ["Энергичный"] = { SocialChance = 0.25, IdleMin = 0.6, IdleMax = 1.4, ToyChance = 0.62 },
+                ["Любопытный"] = { SocialChance = 0.24, IdleMin = 0.8, IdleMax = 1.7, ToyChance = 0.55 },
+                ["Любознательный"] = { SocialChance = 0.22, IdleMin = 0.8, IdleMax = 1.8, ToyChance = 0.52 },
+                ["Дружелюбный"] = { SocialChance = 0.34, IdleMin = 0.8, IdleMax = 1.8, ToyChance = 0.42 },
+                ["Спокойный"] = { SocialChance = 0.08, IdleMin = 1.8, IdleMax = 3.2, ToyChance = 0.24 },
+                ["Мудрый"] = { SocialChance = 0.12, IdleMin = 1.6, IdleMax = 2.8, ToyChance = 0.28 },
+                ["Осторожный"] = { SocialChance = 0.07, IdleMin = 1.7, IdleMax = 3.0, ToyChance = 0.2 },
+                ["Мечтательный"] = { SocialChance = 0.14, IdleMin = 1.5, IdleMax = 2.8, ToyChance = 0.32 },
+                ["Добродушный"] = { SocialChance = 0.3, IdleMin = 1.0, IdleMax = 2.0, ToyChance = 0.4 },
+            }
+            local personalityProfile = personalityProfiles[personality] or {
+                SocialChance = 0.16, IdleMin = 1.0, IdleMax = 2.4, ToyChance = 0.38,
+            }
             local phase = (slot * 1.7) % (math.pi * 2)
             local random = Random.new(player.UserId + slot * 97 + math.floor(os.clock() * 1000) % 100000)
             local currentPosition = home
             local targetPosition = home
             local facing = 0
-            local idleUntil = os.clock() + random:NextNumber(0.5, 1.5)
+            local idleUntil = os.clock() + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
             local wanderRadius = 3.6
             local isAtTarget = true
             local targetIsToy = false
+            local targetIsSocial = false
             local toyPlayUntil = 0
+            local socialPlayUntil = 0
+            local partnerSlot = slot % 2 == 1 and slot + 1 or slot - 1
             local behavior = sleeping and "Sleeping"
                 or (hunger <= 20 and "Hungry")
                 or (mood >= 80 and "Playful")
@@ -516,7 +538,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             model:SetAttribute("Mood", mood)
             model:SetAttribute("Hunger", hunger)
             model:SetAttribute("Energy", energy)
-            model:SetAttribute("Personality", (CompanionCatalog[companion.Id] or {}).Personality or "Обычный")
+            model:SetAttribute("Personality", personality)
+            model:SetAttribute("FavoriteToy", petDefinition.FavoriteToy or "")
             task.spawn(function()
                 local previousTime = os.clock()
                 while model.Parent == folder and folder.Parent do
@@ -525,20 +548,54 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     previousTime = now
                     local bob = 0
                     local yawOffset = 0
-
+                    local partnerModel = nil
+                    for _, candidate in ipairs(folder:GetChildren()) do
+                        if candidate:IsA("Model") and candidate ~= model
+                            and candidate:GetAttribute("DisplaySlot") == partnerSlot then
+                            partnerModel = candidate
+                            break
+                        end
+                    end
+                    local partnerHome = partnerModel and partnerModel:GetAttribute("NestHomePosition")
+                    local socialApproach = nil
+                    if typeof(partnerHome) == "Vector3" then
+                        local towardPartner = partnerHome - home
+                        if towardPartner.Magnitude > 0.1 then
+                            socialApproach = home + towardPartner.Unit * 7.5
+                        end
+                    end
+                    local partnerBehavior = partnerModel and partnerModel:GetAttribute("Behavior")
+                    local partnerSleeping = partnerModel and partnerModel:GetAttribute("IsSleeping") == true
                     local isSleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
-                    moodLabel.Text = isSleeping and "Zzz" or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
                     model:SetAttribute("IsSleeping", isSleeping)
+
                     if isSleeping then
                         behavior = "Sleeping"
                         targetPosition = currentPosition
                         isAtTarget = true
                         targetIsToy = false
+                        targetIsSocial = false
                         toyPlayUntil = 0
+                        socialPlayUntil = 0
                         idleUntil = math.max(idleUntil, now + 0.2)
                         bob = math.sin(now * 1.2 + phase) * 0.025
                         yawOffset = math.sin(now * 0.35 + phase) * 0.025
                     else
+                        if socialPlayUntil > 0 and (now >= socialPlayUntil or not partnerModel or partnerSleeping) then
+                            socialPlayUntil = 0
+                            targetIsSocial = false
+                            idleUntil = now + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
+                        end
+
+                        if partnerBehavior == "SeekingFriend" and socialApproach and not targetIsSocial
+                            and socialPlayUntil <= now and not partnerSleeping then
+                            targetPosition = socialApproach
+                            targetIsSocial = true
+                            targetIsToy = false
+                            isAtTarget = false
+                            idleUntil = now
+                        end
+
                         if not isAtTarget and (targetPosition - currentPosition).Magnitude < 0.2 then
                             currentPosition = targetPosition
                             isAtTarget = true
@@ -546,23 +603,41 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 targetIsToy = false
                                 toyPlayUntil = now + random:NextNumber(2.8, 4.2)
                                 idleUntil = toyPlayUntil
+                            elseif targetIsSocial then
+                                local partnerPosition = partnerModel and partnerModel:GetPivot().Position
+                                if partnerPosition and (partnerPosition - currentPosition).Magnitude <= 10 then
+                                    socialPlayUntil = now + random:NextNumber(3.2, 4.6)
+                                    idleUntil = socialPlayUntil
+                                else
+                                    idleUntil = now + 0.25
+                                end
                             else
-                                idleUntil = now + random:NextNumber(1.0, 2.8)
+                                idleUntil = now + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
                             end
                         end
 
-                        if isAtTarget and now >= idleUntil then
-                            local canPlay = toyPart
-                                and mood >= 35
+                        if isAtTarget and now >= idleUntil and socialPlayUntil <= now then
+                            local canSocialize = partnerModel and socialApproach and not partnerSleeping
+                                and mood >= 45 and energy >= 20
+                                and random:NextNumber() < personalityProfile.SocialChance
+                            local canPlay = toyPart and mood >= 35
                                 and energy >= math.max(0, math.floor(tonumber(toyDefinition.EnergyCost) or 0))
-                            if canPlay and random:NextNumber() < 0.42 then
+                            local favoriteToy = toyId ~= nil and toyId == petDefinition.FavoriteToy
+                            local toyChance = personalityProfile.ToyChance + (favoriteToy and 0.2 or 0)
+                            if canSocialize and (partnerBehavior == "SeekingFriend" or random:NextNumber() < personalityProfile.SocialChance) then
+                                targetPosition = socialApproach
+                                targetIsSocial = true
+                                targetIsToy = false
+                            elseif canPlay and random:NextNumber() < math.min(toyChance, 0.85) then
                                 targetPosition = toyApproach
                                 targetIsToy = true
+                                targetIsSocial = false
                             else
                                 local angle = random:NextNumber(0, math.pi * 2)
                                 local radius = math.sqrt(random:NextNumber()) * wanderRadius
                                 targetPosition = home + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)
                                 targetIsToy = false
+                                targetIsSocial = false
                             end
                             isAtTarget = false
                         end
@@ -571,14 +646,33 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         if moving then
                             local direction = targetPosition - currentPosition
                             local speed = energy <= 15 and 1.25 or (mood >= 80 and 3.4 or 2.5)
+                            if personality == "Энергичный" or personality == "Игривый" then speed *= 1.12 end
+                            if personality == "Спокойный" or personality == "Осторожный" then speed *= 0.88 end
                             local step = math.min(direction.Magnitude, speed * delta)
                             currentPosition += direction.Unit * step
                             facing = math.atan2(direction.X, direction.Z)
-                            behavior = mood >= 80 and "Playful" or "Wandering"
+                            behavior = targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering")
                             bob = math.abs(math.sin(now * 9 + phase)) * 0.1
                         else
                             local nearToy = toyPart and (currentPosition - toyApproach).Magnitude < 0.55
-                            if nearToy and toyPlayUntil > now and energy > 10 then
+                            local partnerPosition = partnerModel and partnerModel:GetPivot().Position
+                            local nearPartner = partnerPosition and (partnerPosition - currentPosition).Magnitude <= 10
+                            if socialPlayUntil > now and nearPartner then
+                                behavior = "Socializing"
+                                local towardFriend = partnerPosition - currentPosition
+                                facing = math.atan2(towardFriend.X, towardFriend.Z)
+                                bob = math.abs(math.sin(now * 6 + phase)) * 0.12
+                                yawOffset = math.sin(now * 4 + phase) * 0.22
+                            elseif targetIsSocial then
+                                behavior = "SeekingFriend"
+                                if nearPartner then
+                                    socialPlayUntil = now + random:NextNumber(3.2, 4.6)
+                                    idleUntil = socialPlayUntil
+                                    local towardFriend = partnerPosition - currentPosition
+                                    facing = math.atan2(towardFriend.X, towardFriend.Z)
+                                end
+                                bob = math.sin(now * 2 + phase) * 0.045
+                            elseif nearToy and toyPlayUntil > now and energy > 10 then
                                 behavior = "PlayingWithToy"
                                 bob = math.abs(math.sin(now * 7 + phase)) * 0.13
                                 yawOffset = math.sin(now * 5 + phase) * 0.18
@@ -588,6 +682,17 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 bob = math.sin(now * 2 + phase) * 0.055
                                 yawOffset = math.sin(now * 1.1 + phase) * 0.09
                                 if toyPart then toyPart:SetAttribute("ToyState", "Waiting") end
+                            end
+                        end
+
+                        if isAtTarget and behavior == "Idle" then
+                            local character = player.Character
+                            local root = character and character:FindFirstChild("HumanoidRootPart")
+                            if root and (root.Position - currentPosition).Magnitude <= 7 then
+                                behavior = "Greeting"
+                                local towardPlayer = root.Position - currentPosition
+                                facing = math.atan2(towardPlayer.X, towardPlayer.Z)
+                                bob = math.abs(math.sin(now * 6 + phase)) * 0.1
                             end
                         end
                     end
