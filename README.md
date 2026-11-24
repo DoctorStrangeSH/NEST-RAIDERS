@@ -266,3 +266,7 @@ Your active companions now enter accepted raids with you. Up to three followers 
  
 ## Battle Companion Mastery — Sprint 4.52
 Companion growth now matters in raid combat. The selected battle companion's saved growth level (1–10) increases Hunter damage and Healer restoration by one point per two levels, and Guardian shield capacity by one point per 1.5 levels. Power remains server-clamped; healing cannot exceed missing raid health, while shield duration and species cooldown remain unchanged. The raid HUD and summoned companion nameplates display growth level and effective ability power. The species-role mapping is also corrected: Ash Phoenix is Hunter, Snow Owl is Healer, and Glacier Bear is Guardian.
+
+ 
+## Raid Companion Team Synergies — Sprint 4.53
+The three active raid companions now form one server-calculated team synergy based on distinct combat roles. Guardian + Healer creates **Живой бастион** (15% stronger Guardian/Healer abilities and 12% incoming damage reduction); Hunter + Guardian creates **Штурмовой строй** (15% stronger Hunter ability and 10% stronger normal melee strikes); Hunter + Healer creates **Согласованный натиск** (15% stronger Hunter/Healer abilities). A complete Hunter + Healer + Guardian team activates **Триада** instead of stacking pair bonuses (+10% ability power, 8% incoming damage reduction and 5% melee strike damage). Duplicate roles do not stack. Synergy is temporary match state, server-authoritative, bounded by existing combat caps, and shown in the raid HUD.
