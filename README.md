@@ -312,3 +312,6 @@ Displayed companions now roam autonomously within a small bounded area around th
 
 ## Autonomous Toy Play — Sprint 4.65
 Displayed companions can now autonomously seek their equipped toy when their mood and energy allow. Toys sit separately beside the pet, animate during play, and expose a `ToyState`; pets expose `Behavior = PlayingWithToy`. Each play session is brief before the pet returns to its normal roaming cycle. Roblox Studio testing is still required for visual quality and multiplayer behavior.
+
+## Personalities & Social Life — Sprint 4.66
+Companions now use personality profiles to vary their idle rhythm, toy preferences and likelihood of social play. Paired display slots can meet for a short social interaction, and completed sessions grant a small mood bonus. Idle companions also greet their owner when approached. Roblox Studio testing is still required for visual quality, multiplayer behavior and persistence.
