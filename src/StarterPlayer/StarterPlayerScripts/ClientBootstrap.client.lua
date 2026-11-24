@@ -1457,7 +1457,7 @@ addCorner(artifactsCraft, 10)
 if RunService:IsStudio() then
     local artifactsTestButton = Instance.new("TextButton")
     artifactsTestButton.Name = "GathererArtifactTestButton"
-    artifactsTestButton.Position = UDim2.fromOffset(16, 174)
+    artifactsTestButton.Position = UDim2.fromOffset(16, 182)
     artifactsTestButton.Size = UDim2.new(1, -32, 0, 32)
     artifactsTestButton.BackgroundColor3 = Color3.fromRGB(55, 105, 91)
     artifactsTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ"
@@ -1473,23 +1473,44 @@ if RunService:IsStudio() then
             showNotice("Тестовые Собиратели добавлены: по 3 каждого вида.")
         end
     end)
+
+    local researcherTestButton = Instance.new("TextButton")
+    researcherTestButton.Name = "ResearcherArtifactTestButton"
+    researcherTestButton.Position = UDim2.fromOffset(16, 218)
+    researcherTestButton.Size = UDim2.new(1, -32, 0, 32)
+    researcherTestButton.BackgroundColor3 = Color3.fromRGB(81, 88, 135)
+    researcherTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 ИССЛЕДОВАТЕЛЕЙ"
+    researcherTestButton.TextColor3 = Color3.fromRGB(241, 239, 255)
+    researcherTestButton.TextSize = 10
+    researcherTestButton.Font = Enum.Font.GothamBlack
+    researcherTestButton.Parent = artifactsPanel
+    addCorner(researcherTestButton, 9)
+    researcherTestButton.Activated:Connect(function()
+        local data = invokeInventory({ Action = "DevSeedResearcherArtifacts" })
+        if data then
+            renderArtifacts(data)
+            showNotice("Тестовые Исследователи добавлены: по 3 каждого вида.")
+        end
+    end)
 end
 
 local artifactsSlots = Instance.new("TextLabel")
 artifactsSlots.BackgroundTransparency = 1
 artifactsSlots.Position = UDim2.fromOffset(18, 146)
-artifactsSlots.Size = UDim2.new(1, -36, 0, 24)
+artifactsSlots.Size = UDim2.new(1, -36, 0, 32)
 artifactsSlots.Font = Enum.Font.GothamBold
 artifactsSlots.Text = "СЛОТЫ: 0 / 2"
 artifactsSlots.TextColor3 = Color3.fromRGB(255, 221, 164)
-artifactsSlots.TextSize = 10
+artifactsSlots.TextSize = 9
+artifactsSlots.TextWrapped = true
+artifactsSlots.TextYAlignment = Enum.TextYAlignment.Center
 artifactsSlots.TextXAlignment = Enum.TextXAlignment.Left
 artifactsSlots.Parent = artifactsPanel
 
 local artifactsList = Instance.new("ScrollingFrame")
 artifactsList.Name = "ArtifactList"
-artifactsList.Position = UDim2.fromOffset(14, RunService:IsStudio() and 212 or 174)
-artifactsList.Size = UDim2.new(1, -28, 1, (RunService:IsStudio() and -226 or -188))
+artifactsList.Position = UDim2.fromOffset(14, RunService:IsStudio() and 256 or 174)
+artifactsList.Size = UDim2.new(1, -28, 1, (RunService:IsStudio() and -270 or -188))
 artifactsList.BackgroundTransparency = 1
 artifactsList.BorderSizePixel = 0
 artifactsList.ScrollBarThickness = 5
@@ -1520,6 +1541,25 @@ if RunService:IsStudio() then
             showNotice(message or "Проверка бонуса завершена.")
         end
     end)
+
+    local researcherSimulationButton = Instance.new("TextButton")
+    researcherSimulationButton.Name = "ResearcherSimulationButton"
+    researcherSimulationButton.LayoutOrder = -2
+    researcherSimulationButton.Size = UDim2.new(1, -8, 0, 36)
+    researcherSimulationButton.BackgroundColor3 = Color3.fromRGB(94, 78, 139)
+    researcherSimulationButton.Text = "ТЕСТ: 1000 НАГРАД XP БЕЗ НАЧИСЛЕНИЯ"
+    researcherSimulationButton.TextColor3 = Color3.fromRGB(245, 239, 255)
+    researcherSimulationButton.TextSize = 10
+    researcherSimulationButton.Font = Enum.Font.GothamBlack
+    researcherSimulationButton.Parent = artifactsList
+    addCorner(researcherSimulationButton, 9)
+    researcherSimulationButton.Activated:Connect(function()
+        local data, message = invokeInventory({ Action = "DevSimulateResearchBonus" })
+        if data then
+            renderArtifacts(data)
+            showNotice(message or "Проверка бонуса опыта завершена.")
+        end
+    end)
 end
 
 renderArtifacts = function(data)
@@ -1527,9 +1567,10 @@ renderArtifacts = function(data)
         if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
     end
     local artifacts = data and data.Artifacts or {}
-    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d  ·  КОЛЛЕКЦИЯ: %d / 40  ·  ДОБЫЧА +%d%%",
+    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d  ·  КОЛЛЕКЦИЯ: %d / 40\nДОБЫЧА +%d%%  ·  ОПЫТ +%d%%",
         data and data.EquippedArtifactCount or 0, data and data.MaxEquippedArtifacts or 2, #artifacts,
-        math.floor(((data and data.EquippedGatherBonus) or 0) * 100 + 0.5))
+        math.floor(((data and data.EquippedGatherBonus) or 0) * 100 + 0.5),
+        math.floor(((data and data.EquippedResearchBonus) or 0) * 100 + 0.5))
     if #artifacts == 0 then
         local empty = Instance.new("TextLabel")
         empty.Size = UDim2.new(1, -8, 0, 70)
@@ -1593,6 +1634,9 @@ renderArtifacts = function(data)
         end
         if (artifact.GatherBonus or 0) > 0 then
             table.insert(effects, string.format("Добыча +%d%%", math.floor(artifact.GatherBonus * 100 + 0.5)))
+        end
+        if (artifact.ResearchBonus or 0) > 0 then
+            table.insert(effects, string.format("Опыт +%d%%", math.floor(artifact.ResearchBonus * 100 + 0.5)))
         end
         detail.Text = string.format("%s\n%s\n%s",
             artifact.Rarity or "", artifact.Description or "", table.concat(effects, " · "))
