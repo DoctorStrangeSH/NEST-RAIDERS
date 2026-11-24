@@ -1086,12 +1086,20 @@ navScroll.Size = UDim2.fromOffset(250, 350)
 navScroll.BackgroundColor3 = Color3.fromRGB(28, 45, 55)
 navScroll.BackgroundTransparency = 0.12
 navScroll.BorderSizePixel = 0
-navScroll.ScrollBarThickness = 5
+navScroll.ScrollBarThickness = 4
 navScroll.ScrollingDirection = Enum.ScrollingDirection.Y
 navScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
 navScroll.Visible = false
 navScroll.Parent = gui
-addCorner(navScroll, 12)
+addCorner(navScroll, 16)
+addStroke(navScroll, Color3.fromRGB(112, 169, 151), 1.5)
+local navGradient = Instance.new("UIGradient")
+navGradient.Color = ColorSequence.new(
+    Color3.fromRGB(39, 59, 67),
+    Color3.fromRGB(25, 39, 50)
+)
+navGradient.Rotation = 90
+navGradient.Parent = navScroll
 local navPadding = Instance.new("UIPadding")
 navPadding.PaddingTop = UDim.new(0, 8)
 navPadding.PaddingBottom = UDim.new(0, 8)
@@ -1100,41 +1108,197 @@ navPadding.PaddingRight = UDim.new(0, 8)
 navPadding.Parent = navScroll
 local navLayout = Instance.new("UIListLayout")
 navLayout.SortOrder = Enum.SortOrder.LayoutOrder
-navLayout.Padding = UDim.new(0, 7)
+navLayout.Padding = UDim.new(0, 6)
 navLayout.Parent = navScroll
 
+local navHeader = Instance.new("Frame")
+navHeader.Name = "NavigationHeader"
+navHeader.LayoutOrder = 0
+navHeader.Size = UDim2.new(1, -2, 0, 52)
+navHeader.BackgroundColor3 = Color3.fromRGB(52, 78, 78)
+navHeader.BorderSizePixel = 0
+navHeader.Parent = navScroll
+addCorner(navHeader, 11)
+local navHeaderGradient = Instance.new("UIGradient")
+navHeaderGradient.Color = ColorSequence.new(
+    Color3.fromRGB(67, 105, 93),
+    Color3.fromRGB(43, 70, 76)
+)
+navHeaderGradient.Rotation = 0
+navHeaderGradient.Parent = navHeader
+
+local navHeaderTitle = Instance.new("TextLabel")
+navHeaderTitle.BackgroundTransparency = 1
+navHeaderTitle.Position = UDim2.fromOffset(12, 7)
+navHeaderTitle.Size = UDim2.new(1, -24, 0, 19)
+navHeaderTitle.Font = Enum.Font.GothamBlack
+navHeaderTitle.Text = "ЦЕНТР ОСТРОВА"
+navHeaderTitle.TextColor3 = Color3.fromRGB(255, 235, 184)
+navHeaderTitle.TextSize = 13
+navHeaderTitle.TextXAlignment = Enum.TextXAlignment.Left
+navHeaderTitle.Parent = navHeader
+
+local navHeaderSubtitle = Instance.new("TextLabel")
+navHeaderSubtitle.BackgroundTransparency = 1
+navHeaderSubtitle.Position = UDim2.fromOffset(12, 28)
+navHeaderSubtitle.Size = UDim2.new(1, -24, 0, 15)
+navHeaderSubtitle.Font = Enum.Font.GothamMedium
+navHeaderSubtitle.Text = "УПРАВЛЕНИЕ · ПРИКЛЮЧЕНИЯ · КОЛЛЕКЦИЯ"
+navHeaderSubtitle.TextColor3 = Color3.fromRGB(205, 224, 211)
+navHeaderSubtitle.TextSize = 8
+navHeaderSubtitle.TextXAlignment = Enum.TextXAlignment.Left
+navHeaderSubtitle.TextTruncate = Enum.TextTruncate.AtEnd
+navHeaderSubtitle.Parent = navHeader
+
 local menuIconStyles = {
-    { Code = "ПТ", Color = Color3.fromRGB(90, 166, 132) },
-    { Code = "ЯЙ", Color = Color3.fromRGB(205, 151, 74) },
-    { Code = "КБ", Color = Color3.fromRGB(115, 137, 196) },
-    { Code = "ГН", Color = Color3.fromRGB(116, 164, 113) },
-    { Code = "ВЫ", Color = Color3.fromRGB(173, 133, 92) },
-    { Code = "ДК", Color = Color3.fromRGB(153, 119, 173) },
-    { Code = "СТ", Color = Color3.fromRGB(115, 142, 164) },
-    { Code = "ГО", Color = Color3.fromRGB(95, 154, 168) },
-    { Code = "РЙ", Color = Color3.fromRGB(187, 104, 88) },
-    { Code = "КС", Color = Color3.fromRGB(166, 127, 76) },
-    { Code = "ЗС", Color = Color3.fromRGB(112, 129, 180) },
-    { Code = "МТ", Color = Color3.fromRGB(91, 139, 173) },
-    { Code = "АР", Color = Color3.fromRGB(145, 111, 185) },
-    { Code = "ПР", Color = Color3.fromRGB(90, 151, 130) },
+    { Color = Color3.fromRGB(90, 166, 132), Kind = "paw" },
+    { Color = Color3.fromRGB(205, 151, 74), Kind = "egg" },
+    { Color = Color3.fromRGB(115, 137, 196), Kind = "book" },
+    { Color = Color3.fromRGB(116, 164, 113), Kind = "nest" },
+    { Color = Color3.fromRGB(173, 133, 92), Kind = "star" },
+    { Color = Color3.fromRGB(153, 119, 173), Kind = "flower" },
+    { Color = Color3.fromRGB(115, 142, 164), Kind = "hammer" },
+    { Color = Color3.fromRGB(95, 154, 168), Kind = "arrow" },
+    { Color = Color3.fromRGB(187, 104, 88), Kind = "swords" },
+    { Color = Color3.fromRGB(166, 127, 76), Kind = "trophy" },
+    { Color = Color3.fromRGB(112, 129, 180), Kind = "podium" },
+    { Color = Color3.fromRGB(91, 139, 173), Kind = "gem" },
+    { Color = Color3.fromRGB(145, 111, 185), Kind = "crystal" },
+    { Color = Color3.fromRGB(90, 151, 130), Kind = "profile" },
 }
+
+local function addIconShape(parent, name, x, y, width, height, rotation, color, roundness)
+    local shape = Instance.new("Frame")
+    shape.Name = name
+    shape.AnchorPoint = Vector2.new(0.5, 0.5)
+    shape.Position = UDim2.fromOffset(x, y)
+    shape.Size = UDim2.fromOffset(width, height)
+    shape.Rotation = rotation or 0
+    shape.BackgroundColor3 = color or Color3.fromRGB(255, 255, 255)
+    shape.BorderSizePixel = 0
+    shape.ZIndex = parent.ZIndex + 1
+    shape.Parent = parent
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(1, 0)
+    corner.Parent = shape
+    return shape
+end
+
+local function drawMenuIcon(parent, kind)
+    local white = Color3.fromRGB(255, 255, 246)
+    if kind == "paw" then
+        addIconShape(parent, "PawPad", 14, 17, 13, 10, -8, white)
+        for _, point in ipairs({ {7, 10}, {12, 6}, {18, 6}, {22, 10} }) do
+            addIconShape(parent, "PawToe", point[1], point[2], 5, 5, 0, white)
+        end
+    elseif kind == "egg" then
+        addIconShape(parent, "EggBody", 14, 14, 12, 18, -12, white)
+        addIconShape(parent, "EggHighlight", 11, 11, 3, 5, -12, Color3.fromRGB(205, 151, 74))
+    elseif kind == "book" then
+        addIconShape(parent, "BookLeft", 9, 14, 9, 16, -5, white, 3)
+        addIconShape(parent, "BookRight", 19, 14, 9, 16, 5, white, 3)
+        addIconShape(parent, "BookSpine", 14, 14, 2, 17, 0, Color3.fromRGB(115, 137, 196))
+    elseif kind == "nest" then
+        addIconShape(parent, "NestRimTop", 14, 13, 19, 3, -12, white)
+        addIconShape(parent, "NestRimMid", 14, 17, 21, 3, 0, white)
+        addIconShape(parent, "NestRimBottom", 14, 21, 17, 3, 12, white)
+        addIconShape(parent, "NestEgg", 14, 8, 7, 8, 0, Color3.fromRGB(255, 226, 156))
+    elseif kind == "star" then
+        addIconShape(parent, "DisplayStar", 14, 14, 13, 13, 45, white)
+        addIconShape(parent, "DisplayStarCore", 14, 14, 5, 5, 45, Color3.fromRGB(173, 133, 92))
+    elseif kind == "flower" then
+        for _, point in ipairs({ {14, 7}, {21, 14}, {14, 21}, {7, 14} }) do
+            addIconShape(parent, "FlowerPetal", point[1], point[2], 7, 7, 0, white)
+        end
+        addIconShape(parent, "FlowerCenter", 14, 14, 6, 6, 0, Color3.fromRGB(255, 214, 130))
+    elseif kind == "hammer" then
+        addIconShape(parent, "HammerHead", 11, 9, 14, 5, -35, white)
+        addIconShape(parent, "HammerHandle", 16, 18, 4, 16, -35, white)
+    elseif kind == "arrow" then
+        addIconShape(parent, "VisitArrowShaft", 12, 16, 17, 3, -45, white)
+        addIconShape(parent, "VisitArrowHeadA", 20, 8, 8, 3, 0, white)
+        addIconShape(parent, "VisitArrowHeadB", 20, 8, 8, 3, 90, white)
+    elseif kind == "swords" then
+        addIconShape(parent, "RaidSwordA", 11, 14, 3, 19, -42, white)
+        addIconShape(parent, "RaidSwordB", 17, 14, 3, 19, 42, white)
+        addIconShape(parent, "RaidGuardA", 7, 20, 9, 3, -42, Color3.fromRGB(255, 211, 145))
+        addIconShape(parent, "RaidGuardB", 21, 20, 9, 3, 42, Color3.fromRGB(255, 211, 145))
+    elseif kind == "trophy" then
+        addIconShape(parent, "TrophyCup", 14, 11, 12, 10, 0, white, 3)
+        addIconShape(parent, "TrophyHandleA", 6, 10, 5, 8, 0, white)
+        addIconShape(parent, "TrophyHandleB", 22, 10, 5, 8, 0, white)
+        addIconShape(parent, "TrophyStem", 14, 20, 3, 6, 0, white)
+        addIconShape(parent, "TrophyBase", 14, 25, 12, 3, 0, white)
+    elseif kind == "podium" then
+        addIconShape(parent, "PodiumFirst", 7, 18, 6, 10, 0, white, 2)
+        addIconShape(parent, "PodiumSecond", 14, 14, 6, 18, 0, white, 2)
+        addIconShape(parent, "PodiumThird", 21, 20, 6, 6, 0, white, 2)
+    elseif kind == "gem" then
+        addIconShape(parent, "MaterialGemA", 8, 14, 8, 8, 45, white)
+        addIconShape(parent, "MaterialGemB", 15, 10, 8, 8, 45, white)
+        addIconShape(parent, "MaterialGemC", 20, 18, 7, 7, 45, white)
+    elseif kind == "crystal" then
+        addIconShape(parent, "ArtifactCrystal", 14, 14, 11, 17, 45, white)
+        addIconShape(parent, "ArtifactCrystalCore", 14, 14, 3, 13, 0, Color3.fromRGB(145, 111, 185))
+    elseif kind == "profile" then
+        addIconShape(parent, "ProfileHead", 14, 9, 8, 8, 0, white)
+        addIconShape(parent, "ProfileBody", 14, 21, 17, 10, 0, white)
+    end
+end
+
+local sectionLabels = {
+    { Text = "МОЙ ОСТРОВ", Order = 1 },
+    { Text = "ПРИКЛЮЧЕНИЯ", Order = 55 },
+    { Text = "КОЛЛЕКЦИЯ И ПРОФИЛЬ", Order = 115 },
+}
+for _, section in ipairs(sectionLabels) do
+    local label = Instance.new("TextLabel")
+    label.Name = "MenuSection_" .. tostring(section.Order)
+    label.LayoutOrder = section.Order
+    label.Size = UDim2.new(1, -2, 0, 17)
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.GothamBlack
+    label.Text = section.Text
+    label.TextColor3 = Color3.fromRGB(169, 194, 185)
+    label.TextSize = 9
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = navScroll
+end
 
 for index, button in ipairs(menuButtons) do
     button.Parent = navScroll
-    button.LayoutOrder = index
+    button.LayoutOrder = index <= 5 and (index * 10) or (index <= 11 and (index * 10 + 5) or (index * 10 + 5))
     button.Position = UDim2.new()
     button.Size = UDim2.new(1, -2, 0, 42)
     button.TextXAlignment = Enum.TextXAlignment.Left
     button.TextTruncate = Enum.TextTruncate.AtEnd
     button.TextSize = 12
+    button.Font = Enum.Font.GothamBold
+    button.BackgroundColor3 = Color3.fromRGB(42, 59, 67)
+    button.BackgroundTransparency = 0.04
+    button.AutoButtonColor = false
+
+    local buttonGradient = Instance.new("UIGradient")
+    buttonGradient.Color = ColorSequence.new(
+        Color3.fromRGB(55, 75, 82),
+        Color3.fromRGB(36, 52, 61)
+    )
+    buttonGradient.Rotation = 90
+    buttonGradient.Parent = button
+
+    local buttonStroke = button:FindFirstChildOfClass("UIStroke")
+    local iconStyle = menuIconStyles[index]
+    if buttonStroke and iconStyle then
+        buttonStroke.Color = iconStyle.Color
+        buttonStroke.Thickness = 1
+        buttonStroke.Transparency = 0.48
+    end
 
     local padding = Instance.new("UIPadding")
     padding.PaddingLeft = UDim.new(0, 44)
     padding.PaddingRight = UDim.new(0, 8)
     padding.Parent = button
 
-    local iconStyle = menuIconStyles[index]
     if iconStyle then
         local iconBadge = Instance.new("Frame")
         iconBadge.Name = "MenuIconBadge"
@@ -1146,29 +1310,80 @@ for index, button in ipairs(menuButtons) do
         iconBadge.ZIndex = button.ZIndex + 1
         iconBadge.Parent = button
         addCorner(iconBadge, 9)
-
-        local iconText = Instance.new("TextLabel")
-        iconText.Name = "MenuIconFallback"
-        iconText.BackgroundTransparency = 1
-        iconText.Size = UDim2.fromScale(1, 1)
-        iconText.Font = Enum.Font.GothamBlack
-        iconText.Text = iconStyle.Code
-        iconText.TextColor3 = Color3.fromRGB(255, 255, 255)
-        iconText.TextSize = 10
-        iconText.ZIndex = iconBadge.ZIndex + 1
-        iconText.Parent = iconBadge
+        drawMenuIcon(iconBadge, iconStyle.Kind)
     end
+
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundColor3 = Color3.fromRGB(67, 91, 91),
+        }):Play()
+    end)
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.16, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundColor3 = Color3.fromRGB(42, 59, 67),
+        }):Play()
+    end)
 
     -- Close the menu after choosing any feature; existing Activated handlers still run.
     button.Activated:Connect(function()
-        navScroll.Visible = false
-        navToggle.Text = "МЕНЮ"
+        setNavigationOpen(false)
     end)
 end
 
+local navTogglePadding = Instance.new("UIPadding")
+navTogglePadding.PaddingLeft = UDim.new(0, 48)
+navTogglePadding.Parent = navToggle
+navToggle.TextXAlignment = Enum.TextXAlignment.Left
+navToggle.BackgroundColor3 = Color3.fromRGB(38, 68, 69)
+navToggle.AutoButtonColor = false
+addStroke(navToggle, Color3.fromRGB(127, 194, 159), 1.5)
+
+local menuGlyph = Instance.new("Frame")
+menuGlyph.Name = "MenuGlyph"
+menuGlyph.BackgroundTransparency = 1
+menuGlyph.Position = UDim2.fromOffset(13, 10)
+menuGlyph.Size = UDim2.fromOffset(24, 22)
+menuGlyph.ZIndex = navToggle.ZIndex + 1
+menuGlyph.Parent = navToggle
+for i = 1, 3 do
+    local bar = Instance.new("Frame")
+    bar.Name = "MenuGlyphBar" .. i
+    bar.Position = UDim2.fromOffset(2, 3 + (i - 1) * 7)
+    bar.Size = UDim2.fromOffset(i == 2 and 15 or 20, 3)
+    bar.BackgroundColor3 = Color3.fromRGB(255, 235, 184)
+    bar.BorderSizePixel = 0
+    bar.ZIndex = menuGlyph.ZIndex + 1
+    bar.Parent = menuGlyph
+    addCorner(bar, 2)
+end
+
+local function setNavigationOpen(open)
+    navScroll.Visible = open
+    navToggle.Text = open and "ЗАКРЫТЬ" or "МЕНЮ"
+    local bars = {
+        menuGlyph:FindFirstChild("MenuGlyphBar1"),
+        menuGlyph:FindFirstChild("MenuGlyphBar2"),
+        menuGlyph:FindFirstChild("MenuGlyphBar3"),
+    }
+    if open then
+        if bars[1] then bars[1].Rotation = 45; bars[1].Position = UDim2.fromOffset(4, 9); bars[1].Size = UDim2.fromOffset(18, 3) end
+        if bars[2] then bars[2].Visible = false end
+        if bars[3] then bars[3].Rotation = -45; bars[3].Position = UDim2.fromOffset(4, 9); bars[3].Size = UDim2.fromOffset(18, 3) end
+        TweenService:Create(navToggle, TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundColor3 = Color3.fromRGB(66, 91, 78),
+        }):Play()
+    else
+        if bars[1] then bars[1].Rotation = 0; bars[1].Position = UDim2.fromOffset(2, 3); bars[1].Size = UDim2.fromOffset(20, 3) end
+        if bars[2] then bars[2].Visible = true end
+        if bars[3] then bars[3].Rotation = 0; bars[3].Position = UDim2.fromOffset(2, 17); bars[3].Size = UDim2.fromOffset(20, 3) end
+        TweenService:Create(navToggle, TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundColor3 = Color3.fromRGB(38, 68, 69),
+        }):Play()
+    end
+end
+
 navToggle.Activated:Connect(function()
-    navScroll.Visible = not navScroll.Visible
-    navToggle.Text = navScroll.Visible and "ЗАКРЫТЬ" or "МЕНЮ"
+    setNavigationOpen(not navScroll.Visible)
 end)
 
 local function resizeNavigation()
@@ -1183,6 +1398,7 @@ local function resizeNavigation()
     navToggle.Size = UDim2.fromOffset(narrow and 206 or 250, 42)
     navScroll.Position = UDim2.fromOffset(narrow and 12 or 18, narrow and 172 or 210)
     navScroll.Size = UDim2.fromOffset(narrow and 206 or 250, math.max(110, math.min(460, viewport.Y - (narrow and 190 or 228))))
+    navHeaderSubtitle.TextSize = narrow and 7 or 8
 end
 local navigationViewportConnection
 local function bindNavigationCamera()
@@ -2317,8 +2533,7 @@ for _, modal in ipairs(modalPanels) do
         if closingOtherPanels then return end
         closingOtherPanels = true
         if modal.Visible then
-            navScroll.Visible = false
-            navToggle.Text = "МЕНЮ"
+            setNavigationOpen(false)
             for _, other in ipairs(modalPanels) do
                 if other ~= modal and not (modal == pickerPanel and other == displayPanel) then
                     other.Visible = false
