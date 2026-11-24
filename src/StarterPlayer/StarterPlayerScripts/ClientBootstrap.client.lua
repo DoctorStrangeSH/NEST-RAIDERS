@@ -3423,7 +3423,10 @@ hatchCardGradient.Color = ColorSequence.new(
 )
 hatchCardGradient.Rotation = 90
 hatchCardGradient.Parent = hatchCard
-local hatchCardStroke = addStroke(hatchCard, Color3.fromRGB(229, 190, 111), 2)
+local hatchCardStroke = Instance.new("UIStroke")
+hatchCardStroke.Color = Color3.fromRGB(229, 190, 111)
+hatchCardStroke.Thickness = 2
+hatchCardStroke.Parent = hatchCard
 
 local hatchTitle = Instance.new("TextLabel")
 hatchTitle.Name = "HatchTitle"
@@ -3484,7 +3487,10 @@ hatchPetPortrait.Visible = false
 hatchPetPortrait.ZIndex = 153
 hatchPetPortrait.Parent = hatchCard
 addCorner(hatchPetPortrait, 24)
-addStroke(hatchPetPortrait, Color3.fromRGB(246, 224, 170), 2)
+local hatchPetPortraitStroke = Instance.new("UIStroke")
+hatchPetPortraitStroke.Color = Color3.fromRGB(246, 224, 170)
+hatchPetPortraitStroke.Thickness = 2
+hatchPetPortraitStroke.Parent = hatchPetPortrait
 
 local hatchPetName = Instance.new("TextLabel")
 hatchPetName.Name = "HatchPetName"
@@ -3553,6 +3559,7 @@ local function finishHatchReveal()
     hatchEggVisual.Visible = false
     hatchPetPortrait.Visible = true
     hatchPetPortrait.BackgroundColor3 = rarityColor
+    hatchPetPortraitStroke.Color = rarityColor
     for _, child in ipairs(hatchPetPortrait:GetChildren()) do
         if child ~= hatchPetPortrait:FindFirstChildOfClass("UICorner")
             and child ~= hatchPetPortrait:FindFirstChildOfClass("UIStroke") then
