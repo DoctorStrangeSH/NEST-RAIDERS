@@ -1029,3 +1029,19 @@ Static checks cover migration, personality search chances, owner-only prompt val
 10. Run a full 24-minute cycle with multiple players and monitor server Output for errors and unnecessary per-frame work.
 
 Static checks verify cycle settings, phase replication, activity traits and behavior modifiers. Roblox Studio runtime, lighting, multiplayer and performance tests remain required.
+
+
+## Sprint 4.70 — Dynamic Weather and Pet Reactions
+1. Start a Studio server and wait for the initial weather state. Confirm the HUD shows time, day/night and a Russian weather label.
+2. Observe at least two full weather changes. Confirm transitions blend over several seconds and all clients receive the same weather.
+3. During Rain and Storm, inspect the nine rain emitter areas around the island. Confirm precipitation covers the playable island, falls downward and does not hide prompts or building placement.
+4. During Fog, inspect the island from close and distant camera zoom. Confirm important paths, eggs, prompts and UI remain readable.
+5. During Storm, observe at least one lightning flash. Confirm it is brief and the normal weather brightness returns immediately afterward.
+6. Display MossTurtle during rain and confirm its rain-positive behavior feedback; display GlowMoth, SnowOwl, CaveGlimmerbat and HeartWisp during a storm and confirm they seek and remain near shelter.
+7. Confirm non-nocturnal pets slow down and reduce roaming in poor weather; confirm treasure searches become less likely during storms.
+8. Test sleep, hunger, toys, friendship, treasure cache claiming and nest building during all four weather states. Weather must not cancel or duplicate these actions.
+9. Test a narrow mobile viewport and a low graphics setting. Confirm the weather strip remains readable and particles do not cause severe frame drops.
+10. Rebuild the world during a weather state in a controlled test. Confirm old weather loops and effects are removed with the previous world.
+11. Run multiple weather rotations with two or more clients and inspect server Output for errors or accumulated effects.
+
+Static checks verify weather configuration, environmental objects, state attributes, species reactions and HUD subscriptions. Roblox Studio visual, multiplayer, low-end performance and gameplay tests remain required.
