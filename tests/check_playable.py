@@ -729,7 +729,8 @@ assert min(0.50, 0.3375 + 0.225) == 0.50
 assert min(0.50, 0.3375 + 0.3375) == 0.50
 assert 'local expectedExtra = safeBase * bonus' in artifact_bonus
 assert 'local fraction = expectedExtra - extra' in artifact_bonus
-assert 'math.random() < fraction' in artifact_bonus
+assert 'if fraction > 0 and roll < fraction then' in artifact_bonus
+assert 'or math.random()' in artifact_bonus
 assert 'return safeBase + extra, bonus, extra' in artifact_bonus
 assert 'if safeBase == 0 then return 0, 0, 0 end' in artifact_bonus
 assert 'local RunService = game:GetService("RunService")' in inventory_service
