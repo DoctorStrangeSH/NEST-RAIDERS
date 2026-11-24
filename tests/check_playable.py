@@ -1588,7 +1588,7 @@ assert 'local partnerSlot = slot % 2 == 1 and slot + 1 or slot - 1' in companion
 assert 'candidate:GetAttribute("DisplaySlot") == partnerSlot' in companion_service
 assert 'partnerModel:GetAttribute("NestHomePosition")' in companion_service
 assert 'targetPosition = socialApproach' in companion_service
-assert 'behavior = targetIsSocial and "SeekingFriend"' in companion_service
+assert 'targetIsSocial and "SeekingFriend"' in companion_service
 assert 'behavior = "Socializing"' in companion_service
 assert 'socialRewarded = false' in companion_service
 assert 'profile.Nest.CompanionMood[instanceId] = mood' in companion_service
