@@ -830,3 +830,20 @@
 - [ ] Verify both clients see the same world companion effects while each client only sees its own synergy activation toast.
 - [ ] Verify HUD toast, companion aura and cues at 320×480, 375×667, tablet and desktop.
 - [ ] Run a two-client Studio match with three companions per side and check frame rate, readability and Output for runtime errors.
+
+ 
+## Sprint 4.55 — Companion combat motion acceptance
+- [ ] Enter a raid with one Hunter and verify a short wind-up, forward lunge toward the opponent and return to the follower slot after a validated strike.
+- [ ] Enter a raid with one Guardian and verify a shorter advance on attack and a lowered protective brace on a defensive cue.
+- [ ] Enter a raid with one Healer and verify a supportive hover on ability use and a rising pose on defense.
+- [ ] Verify Hunter pet ability uses a target-directed dive, Guardian shield uses a defensive brace, and Healer restoration uses a rising hover.
+- [ ] Verify three active companions begin activation motion with a subtle stagger rather than an identical simultaneous bounce.
+- [ ] Verify all companions animate even when the participant has no synergy; no-synergy teams must not receive synergy-only aura/highlight effects.
+- [ ] Verify attacker and defender Hunter motions point toward the actual opponent, not a fixed world direction.
+- [ ] Verify the normal follower formation resumes after every motion and when the cue expires.
+- [ ] Turn and move the player during a cue; verify no persistent offset, snapping or jitter after the action.
+- [ ] Verify motion remains readable with three companions and does not overlap the player character or obscure the raid controls.
+- [ ] Verify repeated combat requests respect existing server cooldowns and do not create additional motion loops.
+- [ ] Verify companion motion stops cleanly on match end, forfeit, death, timeout and disconnect.
+- [ ] Run a two-client Studio test and confirm both clients see the same model motion.
+- [ ] Check server Output and frame rate during a full match with three companions per participant.
