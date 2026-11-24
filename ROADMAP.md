@@ -880,7 +880,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Rebalance craft weights to income 36/18/6 (60%), Gatherer 12/6/2 (20%), Researcher 6/3/1 (10%), Hunter 6/3/1 (10%).
 - [x] Add a Studio-only Hunter fixture and deterministic 7,000-hatch simulation across all seven natural egg tables.
 - [x] Add static regression coverage for rarity weighting, natural-vs-breeding routing, odds, UI, QA guards and simulation side effects.
-- [ ] GitHub Actions: build the latest Rojo place file and pass the full static regression suite.
+- [x] GitHub Actions: build the latest Rojo place file and pass the full static regression suite (run #506, commit `d4b2c41c`).
 - [ ] Verify Hunter odds in Roblox Studio Play for every biome egg.
 - [ ] Verify level scaling, two-slot stacking, +30% cap, persistence, and UI at 320×480, 375×667, and desktop sizes.
 - [ ] Verify Studio fixture buttons and simulation controls scroll with the artifact cards and never overlap the summary or craft button.
