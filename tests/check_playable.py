@@ -1579,3 +1579,23 @@ assert 'CompanionService:RefreshDisplayedPets(player, plot' in display_pet_servi
 assert 'elseif interaction == "ToyPlay" then' in display_pet_service
 assert 'elseif interaction == "Sleep" then' in display_pet_service
 
+# Sprint 4.66 — personality, social play and owner reactions.
+assert 'local personalityProfiles = {' in companion_service
+assert '["Игривый"] = { SocialChance = 0.28' in companion_service
+assert '["Спокойный"] = { SocialChance = 0.08' in companion_service
+assert 'local personalityProfile = personalityProfiles[personality]' in companion_service
+assert 'local partnerSlot = slot % 2 == 1 and slot + 1 or slot - 1' in companion_service
+assert 'candidate:GetAttribute("DisplaySlot") == partnerSlot' in companion_service
+assert 'candidate:GetAttribute("NestHomePosition")' in companion_service
+assert 'targetPosition = socialApproach' in companion_service
+assert 'behavior = targetIsSocial and "SeekingFriend"' in companion_service
+assert 'behavior = "Socializing"' in companion_service
+assert 'socialRewarded = false' in companion_service
+assert 'profile.Nest.CompanionMood[instanceId] = mood' in companion_service
+assert 'behavior = "Greeting"' in companion_service
+assert 'root.Position - currentPosition).Magnitude <= 7' in companion_service
+assert 'petDefinition.FavoriteToy' in companion_service
+assert 'model:SetAttribute("FavoriteToy"' in companion_service
+assert 'model:SetAttribute("DisplaySlot", slot)' in companion_service
+assert 'model:SetAttribute("NestHomePosition", home)' in companion_service
+assert 'moodLabel.Text = isSleeping and "Zzz"' in companion_service
