@@ -11,6 +11,7 @@ NestBuildService._lastRequest = {}
 local REQUEST_COOLDOWN = 0.3
 local MAX_BUILDINGS = 100
 local MAX_PER_TYPE = 50
+local MAX_DEFENSE_TOTAL = 12
 local GRID = 2
 local LIMIT = 14
 
@@ -23,6 +24,19 @@ end
 
 local function snap(value)
     return math.clamp(math.floor(value / GRID + 0.5) * GRID, -LIMIT, LIMIT)
+end
+
+local function countDefenseOwned(nest)
+    local total = 0
+    for id, count in pairs(nest.BuildInventory) do
+        local def = NestBuildCatalog[id]
+        if def and def.DefenseType then total += math.max(0, math.floor(tonumber(count) or 0)) end
+    end
+    for _, entry in pairs(nest.PlacedBuildings) do
+        local def = type(entry) == "table" and NestBuildCatalog[entry.Id] or nil
+        if def and def.DefenseType then total += 1 end
+    end
+    return total
 end
 
 local function getSnapshot(profile)
@@ -48,7 +62,7 @@ local function getSnapshot(profile)
     table.sort(placed, function(a,b) return a.Key < b.Key end)
     local catalog = {}
     for id, def in pairs(NestBuildCatalog) do
-        table.insert(catalog, { Id=id, Name=def.Name, Description=def.Description, Cost=def.Cost, Footprint=def.Footprint })
+        table.insert(catalog, { Id=id, Name=def.Name, Description=def.Description, Cost=def.Cost, Footprint=def.Footprint, Category=def.Category, DefenseType=def.DefenseType })
     end
     table.sort(catalog, function(a,b) return a.Cost < b.Cost end)
     return { Coins=math.max(0, math.floor(tonumber(profile.Coins) or 0)), Inventory=inventory, Placed=placed, Catalog=catalog, Limit=LIMIT }
@@ -151,6 +165,31 @@ local function renderBuilding(parent, center, item, key)
         p("Door",Vector3.new(1.1,2.2,0.12),Vector3.new(0,1.1,-2.56),Color3.fromRGB(103,72,57),Enum.Material.Wood)
         p("WindowL",Vector3.new(0.9,0.85,0.12),Vector3.new(-1.65,2.1,-2.56),Color3.fromRGB(137,211,229),Enum.Material.Glass)
         p("WindowR",Vector3.new(0.9,0.85,0.12),Vector3.new(1.65,2.1,-2.56),Color3.fromRGB(137,211,229),Enum.Material.Glass)
+    elseif def.Kind == "DefenseWall" then
+        p("BastionBase",Vector3.new(4.5,0.55,1.3),Vector3.new(0,0.28,0),def.Accent,Enum.Material.Slate)
+        p("BastionBody",Vector3.new(4.1,3.25,0.72),Vector3.new(0,1.9,0),def.Color,Enum.Material.Cobblestone)
+        p("BastionCap",Vector3.new(4.6,0.35,1.2),Vector3.new(0,3.7,0),def.Accent,Enum.Material.Slate)
+        for _,x in ipairs({-1.55,0,1.55}) do
+            p("Merlon",Vector3.new(0.72,0.65,0.9),Vector3.new(x,4.18,0),def.Color,Enum.Material.Cobblestone)
+        end
+    elseif def.Kind == "DefenseTower" then
+        p("TowerBase",Vector3.new(4.5,0.55,4.5),Vector3.new(0,0.28,0),def.Accent,Enum.Material.Slate)
+        p("TowerStem",Vector3.new(2.2,4.2,2.2),Vector3.new(0,2.55,0),def.Color,Enum.Material.WoodPlanks)
+        p("TowerDeck",Vector3.new(5.2,0.55,5.2),Vector3.new(0,4.9,0),def.Accent,Enum.Material.Wood)
+        p("TowerHead",Vector3.new(3.3,2.2,3.3),Vector3.new(0,6.2,0),def.Color,Enum.Material.WoodPlanks)
+        local crystal = p("TowerCrystal",Vector3.new(1.1,1.1,1.1),Vector3.new(0,7.7,0),def.Accent,Enum.Material.Neon,Enum.PartType.Ball)
+        local light = Instance.new("PointLight")
+        light.Color = def.Accent
+        light.Range = 12
+        light.Brightness = 1
+        light.Parent = crystal
+    elseif def.Kind == "DefenseTrap" then
+        p("TrapPlate",Vector3.new(3.8,0.3,3.8),Vector3.new(0,0.15,0),def.Color,Enum.Material.Slate)
+        for x=-1,1 do
+            for z=-1,1 do
+                p("Thorn",Vector3.new(0.38,1.0,0.38),Vector3.new(x*1.05,0.78,z*1.05),def.Accent,Enum.Material.Metal,Enum.PartType.Ball)
+            end
+        end
     end
 end
 
@@ -194,7 +233,11 @@ function NestBuildService:HandleRequest(player,payload)
         local count=math.max(0,math.floor(tonumber(nest.BuildInventory[id]) or 0))
         local placed=0
         for _,entry in pairs(nest.PlacedBuildings) do if type(entry)=="table" and entry.Id==id then placed+=1 end end
-        if count+placed>=MAX_PER_TYPE then return {Ok=false,Message="Достигнут лимит этого объекта."} end
+        local typeLimit = def.MaxOwned or MAX_PER_TYPE
+        if count+placed>=typeLimit then return {Ok=false,Message="Достигнут лимит этого объекта."} end
+        if def.DefenseType and countDefenseOwned(nest)>=MAX_DEFENSE_TOTAL then
+            return {Ok=false,Message="Лимит обороны — 12 сооружений. Сначала размести или убери часть построек."}
+        end
         if (tonumber(profile.Coins) or 0)<def.Cost then return {Ok=false,Message="Не хватает монет. Нужно "..def.Cost.."."} end
         profile.Coins-=def.Cost
         nest.BuildInventory[id]=count+1
