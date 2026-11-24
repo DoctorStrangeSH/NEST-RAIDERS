@@ -108,9 +108,9 @@ local function getRaidPetSynergy(followers)
         return {
             Id = "ASSAULT_FORMATION",
             Name = "Штурмовой строй",
-            Description = "+15% навыка охотника · +10% ударов",
+            Description = "+15% силы навыка · +10% ударов",
             AbilityPowerMultiplier = 1.15,
-            BoostRoles = { HUNTER = true },
+            BoostRoles = { HUNTER = true, GUARDIAN = true },
             DuelDamageMultiplier = 1.10,
         }
     end
