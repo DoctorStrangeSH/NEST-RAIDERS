@@ -151,9 +151,11 @@ function CrystalTrialService:Init()
                     profile.CompletedQuests.crystal_trial = true
                     player:SetAttribute("CrystalTrialCompleted", true)
                     player:SetAttribute("CrystalTrialBossUnlocked", false)
-                    ProgressionService:AddXP(player, REWARD_XP)
+                    local _, awardedXP, _, extraXP = ProgressionService:AddXP(player, REWARD_XP)
                     ProgressionService:RefreshZoneUnlocks(player)
-                    player:SetAttribute("LastNotice", "Хранитель призмы повержен! +500 опыта. Путь к Древним высотам открыт — осталось достичь 50 уровня!")
+                    player:SetAttribute("LastNotice", "Хранитель призмы повержен! "
+                        .. ProgressionService:FormatXPReward(awardedXP, extraXP)
+                        .. ". Путь к Древним высотам открыт — осталось достичь 50 уровня!")
                     return
                 end
 
