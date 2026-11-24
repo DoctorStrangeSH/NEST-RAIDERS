@@ -688,10 +688,11 @@ function InventoryService:HandleRequest(player, payload)
             message = target.Name .. " напитал корни: +" .. reward .. " монет в гнездо!"
         elseif ability.Id == "VerdantSpark" then
             local reward = 35 + level * 5 + stars * 10
-            if not ProgressionService:AddXP(player, reward) then
+            local ok, awardedXP, _, extraXP = ProgressionService:AddXP(player, reward)
+            if not ok then
                 return { Ok = false, Message = "Не удалось начислить опыт." }
             end
-            message = target.Name .. " поделился искрой роста: +" .. reward .. " XP!"
+            message = target.Name .. " поделился искрой роста: " .. ProgressionService:FormatXPReward(awardedXP, extraXP) .. "!"
         elseif ability.Id == "FrostCache" then
             local reward = 80 + level * 12 + stars * 18
             if not EconomyService:GrantCoins(player, reward, "Морозный тайник") then
@@ -700,10 +701,11 @@ function InventoryService:HandleRequest(player, payload)
             message = target.Name .. " нашёл под снегом тайник: +" .. reward .. " монет!"
         elseif ability.Id == "AuroraGaze" then
             local reward = 45 + level * 6 + stars * 12
-            if not ProgressionService:AddXP(player, reward) then
+            local ok, awardedXP, _, extraXP = ProgressionService:AddXP(player, reward)
+            if not ok then
                 return { Ok = false, Message = "Не удалось начислить опыт." }
             end
-            message = target.Name .. " увидел древнее сияние: +" .. reward .. " XP!"
+            message = target.Name .. " увидел древнее сияние: " .. ProgressionService:FormatXPReward(awardedXP, extraXP) .. "!"
         elseif ability.Id == "GlacierGuard" then
             profile.Nest = type(profile.Nest) == "table" and profile.Nest or {}
             local reward = 160 + level * 20 + stars * 30
