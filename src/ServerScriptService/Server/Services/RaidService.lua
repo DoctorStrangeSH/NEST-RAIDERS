@@ -1046,14 +1046,14 @@ function RaidService:StrikeOpponent(player)
     if targetGuardUntil > timestamp then
         match.GuardUntil[opponent] = 0
         local ended = applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE, "Контрудар парирования")
-        opponent:SetAttribute("LastNotice", "Идеальное парирование! Контрудар нанесён.")
         if ended then
             return { Ok = true, Message = "Парирование! Ты отразил удар и победил." }
         end
+        opponent:SetAttribute("LastNotice", "Идеальное парирование! Контрудар нанесён.")
     else
         local ended = applyRaidCombatDamage(self, match, opponent, RAID_DUEL_STRIKE_DAMAGE, "Удар соперника")
-        player:SetAttribute("LastNotice", "Попадание! Здоровье соперника: " .. tostring(match.CombatHealth[opponent]) .. " / 100.")
         if ended then return { Ok = true, Message = "Соперник выбыл! Победа в рейде." } end
+        player:SetAttribute("LastNotice", "Попадание! Здоровье соперника: " .. tostring(match.CombatHealth[opponent]) .. " / 100.")
     end
 
     publishArenaState(match)
