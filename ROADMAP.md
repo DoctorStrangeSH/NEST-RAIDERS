@@ -1177,3 +1177,16 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Review world egg decorations from multiple camera angles and make sure welded details follow every collect/respawn cycle.
 
 **Scope boundary:** this sprint implements the six natural biome shop eggs. The Forgotten Cave egg remains a secret reward. Hatch animation is cosmetic only: the server chooses and saves the pet before sending the reveal event.
+
+### Sprint 4.60 — Collection Book UX
+- [x] Add an in-panel search for companion name, rarity, biome and acquisition source.
+- [x] Add quick filters for all species, discovered species and undiscovered species.
+- [x] Improve collection cards with rarity-colored accents, readable rarity labels and wrapped detail text.
+- [x] Keep the server-owned discovery state, species odds, biome provenance and hatch data unchanged.
+- [x] Add static regression checks for search, filters and card presentation.
+- [ ] Roblox Studio: verify search and all three filters with empty, partial and full results.
+- [ ] Verify long species names, localized rarity labels, boss-exclusive and breeding-only entries.
+- [ ] Verify 320×480, 375px, tablet and desktop layouts; confirm scrolling and close controls.
+- [ ] Verify the open book refreshes after hatching and does not issue overlapping server requests.
+
+**Acceptance:** source and CI coverage are integrated; device-specific visual and interaction acceptance remains open until tested in Roblox Studio.
