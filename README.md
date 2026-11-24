@@ -274,3 +274,7 @@ The three active raid companions now form one server-calculated team synergy bas
  
 ## Companion Synergy Visuals — Sprint 4.54
 Active raid teams now receive subtle role-colored companion auras and a one-time activation pulse. Living Bastion uses cyan/blue and mint; Assault Formation uses orange and blue; Coordinated Assault uses orange and green; Triad uses orange, violet and cyan. Validated strikes, core/defense hits and successful pet abilities trigger brief coordinated companion flashes; successful parries and actual Bastion/Triad damage mitigation trigger defensive cues. A compact animated HUD toast announces the server-issued synergy once per match. All cues are cosmetic, throttled, short-lived and automatically cleaned up; no combat values or progression are changed.
+
+ 
+## Companion Combat Motion — Sprint 4.55
+Raid companions now react to validated combat events with lightweight server-replicated procedural movement. Hunters pounce toward the opponent, Guardians advance and brace, and Healers rise into supportive hover poses. Attacks have a brief wind-up, lunge/impact pose and return to formation; defensive and ability cues use role-specific motion. A staggered activation bounce and subtle idle hover make teams feel alive even without an active synergy. Motion is integrated into the existing follower loop and uses no additional per-pet Heartbeat loops, fabricated AnimationIds or client-authoritative combat state.
