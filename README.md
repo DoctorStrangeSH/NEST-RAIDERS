@@ -278,3 +278,7 @@ Active raid teams now receive subtle role-colored companion auras and a one-time
  
 ## Companion Combat Motion — Sprint 4.55
 Raid companions now react to validated combat events with lightweight server-replicated procedural movement. Hunters pounce toward the opponent, Guardians advance and brace, and Healers rise into supportive hover poses. Attacks have a brief wind-up, lunge/impact pose and return to formation; defensive and ability cues use role-specific motion. A staggered activation bounce and subtle idle hover make teams feel alive even without an active synergy. Motion is integrated into the existing follower loop and uses no additional per-pet Heartbeat loops, fabricated AnimationIds or client-authoritative combat state.
+
+ 
+## UI/UX Foundation — Sprint 4.56
+The client UI now has a viewport-aware boot card, a camera-rebound global HUD scale and camera-rebound responsive navigation sizing. Feature navigation buttons use native two-letter Cyrillic badges with color accents instead of external image or emoji assets, with padded/truncated labels to prevent collisions. The modal registry duplicate for the raid panel was removed. This is the first responsive foundation pass; individual panels and gameplay HUD still require device-by-device visual acceptance.
