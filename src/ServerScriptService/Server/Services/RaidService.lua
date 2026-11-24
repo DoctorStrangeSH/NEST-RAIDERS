@@ -5,12 +5,14 @@ local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local Debris = game:GetService("Debris")
+local TweenService = game:GetService("TweenService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local IslandVisitService = require(ServerScriptService.Server.Services.IslandVisitService)
 local EconomyService = require(ServerScriptService.Server.Services.EconomyService)
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
+local NestBuildCatalog = require(ReplicatedStorage.Shared.Config.NestBuildCatalog)
 
 local RaidService = {}
 RaidService._joinedAt = {}
@@ -38,6 +40,11 @@ local RAID_DUEL_STRIKE_RANGE = 12
 local RAID_PARRY_WINDOW_SECONDS = 0.9
 local RAID_PARRY_COOLDOWN_SECONDS = 3.2
 local RAID_PARRY_COUNTER_DAMAGE = 18
+local RAID_DEFENSE_STRIKE_DAMAGE = 35
+local RAID_DEFENSE_STRIKE_COOLDOWN_SECONDS = 1.15
+local RAID_DEFENSE_REPAIR_AMOUNT = 30
+local RAID_DEFENSE_REPAIR_COOLDOWN_SECONDS = 8
+local MAX_ARENA_DEFENSES = 12
 local RAID_REWARD_COOLDOWN_SECONDS = 10 * 60
 local RAID_WIN_COINS = 150
 local RAID_WIN_XP = 100
@@ -143,12 +150,150 @@ local function buildArena(self, match)
     corner.CornerRadius = UDim.new(0, 10)
     corner.Parent = label
 
+    local defenseFolder = Instance.new("Folder")
+    defenseFolder.Name = "NestDefenses"
+    defenseFolder.Parent = model
+
     match.ArenaModel = model
+    match.DefenseFolder = defenseFolder
     match.CorePart = core
     match.CoreLabel = label
     match.CorePosition = core.Position
     match.ArenaCenter = center
     return model
+end
+
+local function makeDefensePart(parent, name, size, cframe, color, material, canCollide, canTouch)
+    local part = Instance.new("Part")
+    part.Name = name
+    part.Size = size
+    part.CFrame = cframe
+    part.Anchored = true
+    part.CanCollide = canCollide == true
+    part.CanTouch = canTouch == true
+    part.CanQuery = false
+    part.Color = color
+    part.Material = material or Enum.Material.Slate
+    part.TopSurface = Enum.SurfaceType.Smooth
+    part.BottomSurface = Enum.SurfaceType.Smooth
+    part.Parent = parent
+    return part
+end
+
+local function updateDefenseLabel(defense)
+    if defense.HealthLabel and defense.HealthLabel.Parent then
+        defense.HealthLabel.Text = string.format("%s · %d / %d",
+            defense.Name, math.max(0, defense.Health), defense.MaxHealth)
+    end
+end
+
+local function buildArenaDefenses(match, profile)
+    match.Defenses = {}
+    match.DefenseConnections = {}
+    local nest = type(profile) == "table" and type(profile.Nest) == "table" and profile.Nest or nil
+    local placed = nest and type(nest.PlacedBuildings) == "table" and nest.PlacedBuildings or {}
+    local entries = {}
+    for key, item in pairs(placed) do
+        local def = type(item) == "table" and NestBuildCatalog[item.Id] or nil
+        if def and def.DefenseType then
+            table.insert(entries, { Key = tostring(key), Item = item, Definition = def })
+        end
+    end
+    table.sort(entries, function(a, b) return a.Key < b.Key end)
+
+    for index, entry in ipairs(entries) do
+        if index > MAX_ARENA_DEFENSES then break end
+        local item, def = entry.Item, entry.Definition
+        local x = 12 + math.clamp(tonumber(item.X) or 0, -14, 14) * 0.65
+        local z = math.clamp(tonumber(item.Z) or 0, -14, 14) * 1.1
+        local rotation = math.rad(math.floor((tonumber(item.Rotation) or 0) / 15 + 0.5) * 15)
+        local base = CFrame.new(match.ArenaCenter + Vector3.new(x, 1, z)) * CFrame.Angles(0, rotation, 0)
+        local model = Instance.new("Model")
+        model.Name = "NestDefense_" .. def.DefenseType .. "_" .. entry.Key
+        model:SetAttribute("DefenseKey", entry.Key)
+        model:SetAttribute("DefenseType", def.DefenseType)
+        model.Parent = match.DefenseFolder
+
+        local record = {
+            Key = entry.Key,
+            Type = def.DefenseType,
+            Name = def.Name,
+            Model = model,
+            Health = def.DefenseHealth or 80,
+            MaxHealth = def.DefenseHealth or 80,
+            Damage = def.DefenseDamage or 0,
+            Range = def.DefenseRange or 0,
+            Interval = def.DefenseInterval or 0,
+            Cooldown = def.DefenseCooldown or 0,
+            Position = base.Position,
+            LastTriggeredAt = 0,
+        }
+
+        if def.DefenseType == "Wall" then
+            makeDefensePart(model, "BastionFoot", Vector3.new(2.2, 0.6, 8), base * CFrame.new(0, 0.3, 0),
+                def.Accent, Enum.Material.Slate, false, false)
+            local barrier = makeDefensePart(model, "BastionBarrier", Vector3.new(1.45, 5.2, 7.2),
+                base * CFrame.new(0, 2.9, 0), def.Color, Enum.Material.Cobblestone, true, false)
+            record.Barrier = barrier
+            makeDefensePart(model, "BastionCrown", Vector3.new(2, 0.45, 8.2),
+                base * CFrame.new(0, 5.55, 0), def.Accent, Enum.Material.Slate, false, false)
+            for _, offset in ipairs({-2.7, 0, 2.7}) do
+                makeDefensePart(model, "BastionMerlon", Vector3.new(1.8, 0.75, 1.1),
+                    base * CFrame.new(0, 6.1, offset), def.Color, Enum.Material.Cobblestone, false, false)
+            end
+        elseif def.DefenseType == "Turret" then
+            makeDefensePart(model, "TowerBase", Vector3.new(5, 0.7, 5), base * CFrame.new(0, 0.35, 0),
+                def.Accent, Enum.Material.Slate, false, false)
+            makeDefensePart(model, "TowerStem", Vector3.new(2.4, 5.2, 2.4), base * CFrame.new(0, 3, 0),
+                def.Color, Enum.Material.WoodPlanks, false, false)
+            makeDefensePart(model, "TowerDeck", Vector3.new(5.8, 0.6, 5.8), base * CFrame.new(0, 5.8, 0),
+                def.Accent, Enum.Material.Wood, false, false)
+            makeDefensePart(model, "TurretHead", Vector3.new(3.2, 2.1, 3.2), base * CFrame.new(0, 7.1, 0),
+                def.Color, Enum.Material.WoodPlanks, false, false)
+            record.Muzzle = makeDefensePart(model, "TurretMuzzle", Vector3.new(0.7, 0.7, 2.2),
+                base * CFrame.new(-1.7, 7.1, 0), def.Accent, Enum.Material.Neon, false, false)
+            local light = Instance.new("PointLight")
+            light.Color = def.Accent
+            light.Brightness = 1.2
+            light.Range = 15
+            light.Parent = record.Muzzle
+        elseif def.DefenseType == "Trap" then
+            makeDefensePart(model, "TrapPlate", Vector3.new(4.2, 0.25, 4.2), base * CFrame.new(0, 0.15, 0),
+                def.Color, Enum.Material.Slate, false, false)
+            for tx = -1, 1 do
+                for tz = -1, 1 do
+                    makeDefensePart(model, "Thorn", Vector3.new(0.45, 1.05, 0.45),
+                        base * CFrame.new(tx * 1.05, 0.75, tz * 1.05), def.Accent, Enum.Material.Metal, false, false)
+                end
+            end
+            local trigger = makeDefensePart(model, "TrapTrigger", Vector3.new(4, 2, 4),
+                base * CFrame.new(0, 1, 0), Color3.new(1, 1, 1), Enum.Material.SmoothPlastic, false, true)
+            trigger.Transparency = 1
+            record.Trigger = trigger
+        end
+
+        local billboard = Instance.new("BillboardGui")
+        billboard.Name = "DefenseHealthBillboard"
+        billboard.Size = UDim2.fromOffset(190, 38)
+        billboard.StudsOffset = Vector3.new(0, def.Height + 1.5, 0)
+        billboard.AlwaysOnTop = true
+        billboard.Parent = model.PrimaryPart or record.Muzzle or model:FindFirstChildWhichIsA("BasePart")
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.fromScale(1, 1)
+        label.BackgroundColor3 = Color3.fromRGB(28, 38, 42)
+        label.BackgroundTransparency = 0.12
+        label.BorderSizePixel = 0
+        label.Font = Enum.Font.GothamBold
+        label.TextColor3 = Color3.fromRGB(242, 239, 221)
+        label.TextScaled = true
+        label.Parent = billboard
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 8)
+        corner.Parent = label
+        record.HealthLabel = label
+        updateDefenseLabel(record)
+        table.insert(match.Defenses, record)
+    end
 end
 
 local function restoreParticipant(self, player, match)
