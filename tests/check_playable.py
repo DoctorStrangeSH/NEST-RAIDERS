@@ -1395,3 +1395,20 @@ assert 'pulseRaidCompanions(match, participant, "ACTIVATION", true)' in raid_ser
 assert 'if synergy then\n            pulseRaidCompanions(match, participant' not in raid_service, "Raid start should animate teams without a synergy"
 assert 'entry.CombatCue = nil' in raid_service, "Completed motion cues must be cleared"
 
+# Sprint 4.56 — responsive UI foundation and guaranteed native navigation badges.
+assert 'bootCard.Size = UDim2.new(0.9, 0, 0, 132)' in client
+assert 'bootCardSize.MinSize = Vector2.new(260, 132)' in client
+assert 'local cameraViewportConnection' in client
+assert 'local function bindHudCamera()' in client
+assert 'Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindHudCamera)' in client
+assert 'hudScale.Scale = math.clamp(scale, 0.72, 1)' in client
+assert 'local menuIconStyles = {' in client
+assert 'Code = "ПТ"' in client and 'Code = "ЯЙ"' in client and 'Code = "РЙ"' in client
+assert 'iconBadge.Name = "MenuIconBadge"' in client
+assert 'iconText.Name = "MenuIconFallback"' in client
+assert 'button.TextTruncate = Enum.TextTruncate.AtEnd' in client
+assert 'padding.PaddingLeft = UDim.new(0, 44)' in client
+assert 'local function bindNavigationCamera()' in client
+assert 'Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindNavigationCamera)' in client
+assert 'materialsPanel, artifactsPanel, raidPanel, raidPanel' not in client, "Modal list must not register raid panel twice"
+
