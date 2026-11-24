@@ -281,9 +281,10 @@ function InventoryService:HandleRequest(player, payload)
         end
         -- Uses the real server reward formula but never changes balances or cooldowns.
         local totalBase, totalExtra = 0, 0
+        local simulationRandom = Random.new(444)
         for sample = 1, 1000 do
             local baseAmount = (sample % 3) + 1
-            local _, _, extra = ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)
+            local _, _, extra = ArtifactBonusService:ApplyGatherBonus(profile, baseAmount, simulationRandom:NextNumber())
             totalBase += baseAmount
             totalExtra += extra
         end
