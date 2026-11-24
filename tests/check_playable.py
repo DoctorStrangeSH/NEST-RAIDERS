@@ -18,6 +18,7 @@ watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua"
 world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
 plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
 build_service = Path("src/ServerScriptService/Server/Services/NestBuildService.lua").read_text()
+nest_build_catalog = Path("src/ReplicatedStorage/Shared/Config/NestBuildCatalog.lua").read_text()
 assert 'local folder = island:FindFirstChild("PlayerPlots")' in plots
 assert 'local ok, model, station, ownerLabel = pcall(buildPlot, folder, definition)' in plots
 assert 'folder:SetAttribute("CreatedCount", created)' in plots
@@ -1168,4 +1169,63 @@ assert 'Action = "StrikeOpponent"' in client and 'Action = "RaiseGuard"' in clie
 assert 'raidArenaStrike.Activated' in client and 'raidArenaGuard.Activated' in client
 assert 'RaidArenaCombatHealth' in client and 'RaidArenaOpponentCombatHealth' in client
 assert 'RaidArenaGuardActive' in client and 'RaidArenaGuardCooldown' in client
+
+# Sprint 4.50 — persistent nest defenses materialized as temporary raid defenses.
+assert 'Id = "StoneBastion"' in nest_build_catalog and 'DefenseType = "Wall"' in nest_build_catalog
+assert 'DefenseHealth = 140' in nest_build_catalog and 'MaxOwned = 6' in nest_build_catalog
+assert 'Id = "Watchtower"' in nest_build_catalog and 'DefenseType = "Turret"' in nest_build_catalog
+assert 'DefenseDamage = 8' in nest_build_catalog and 'DefenseRange = 38' in nest_build_catalog
+assert 'DefenseInterval = 2.5' in nest_build_catalog and 'MaxOwned = 3' in nest_build_catalog
+assert 'Id = "ThornTrap"' in nest_build_catalog and 'DefenseType = "Trap"' in nest_build_catalog
+assert 'DefenseDamage = 12' in nest_build_catalog and 'DefenseCooldown = 6' in nest_build_catalog
+assert 'MAX_DEFENSE_TOTAL = 12' in build_service
+assert 'local function countDefenseOwned(nest)' in build_service
+assert 'countDefenseOwned(nest)>=MAX_DEFENSE_TOTAL' in build_service
+assert 'local typeLimit = def.MaxOwned or MAX_PER_TYPE' in build_service
+assert 'DefenseCount=countDefenseOwned(nest)' in build_service
+assert 'def.Kind == "DefenseWall"' in build_service
+assert 'def.Kind == "DefenseTower"' in build_service
+assert 'def.Kind == "DefenseTrap"' in build_service
+assert 'Category = def.Category, DefenseType = def.DefenseType' in build_service
+assert 'item.Category and ("[" .. item.Category .. "] ")' in client
+assert 'Оборона: %d / %d' in client
+
+assert 'local NestBuildCatalog = require(ReplicatedStorage.Shared.Config.NestBuildCatalog)' in raid_service
+assert 'local function buildArenaDefenses(match, profile)' in raid_service
+assert 'profile.Nest' in raid_service and 'nest.PlacedBuildings' in raid_service
+assert 'MAX_ARENA_DEFENSES = 12' in raid_service
+assert 'DefenseWall' not in raid_service  # raid behavior is keyed by catalog DefenseType
+assert 'if def.DefenseType == "Wall" then' in raid_service
+assert 'if def.DefenseType == "Turret" then' in raid_service
+assert 'if def.DefenseType == "Trap" then' in raid_service
+assert 'function RaidService:AttackDefense(player)' in raid_service
+assert 'function RaidService:RepairDefense(player)' in raid_service
+assert 'RAID_DEFENSE_STRIKE_DAMAGE = 35' in raid_service
+assert 'RAID_DEFENSE_REPAIR_AMOUNT = 30' in raid_service
+assert 'RAID_DEFENSE_STRIKE_COOLDOWN_SECONDS = 1.15' in raid_service
+assert 'RAID_DEFENSE_REPAIR_COOLDOWN_SECONDS = 8' in raid_service
+assert 'local function startDefenseTurret(self, match, defense)' in raid_service
+assert 'NestDefenseBolt' in raid_service and 'TweenService:Create' in raid_service
+assert 'defense.Trigger.Touched:Connect' in raid_service
+assert 'applyDefenseDamage(self, match, match.Attacker, defense.Damage' in raid_service
+assert 'local function findNearestDefense(match, root, maxDistance, damagedOnly)' in raid_service
+assert 'defense.Health = math.max(0, defense.Health - RAID_DEFENSE_STRIKE_DAMAGE)' in raid_service
+assert 'defense.Health = math.min(defense.MaxHealth, defense.Health + RAID_DEFENSE_REPAIR_AMOUNT)' in raid_service
+assert 'if defense.Model and defense.Model.Parent then defense.Model:Destroy() end' in raid_service
+assert 'participant:SetAttribute("RaidArenaDefenseCount", defenseCount)' in raid_service
+assert 'participant:SetAttribute("RaidArenaDefenseCount", nil)' in raid_service
+assert 'payload.Action == "AttackDefense"' in raid_service
+assert 'payload.Action == "RepairDefense"' in raid_service
+assert 'self:AttackDefense(player)' in raid_service and 'self:RepairDefense(player)' in raid_service
+assert 'buildArenaDefenses(match, PlayerDataService:GetProfile(match.Defender))' in raid_service
+assert 'activateArenaDefenses(self, match)' in raid_service
+assert 'if self._matches[match.Attacker] == match and match.State == "ACTIVE"' in raid_service
+assert 'RaidArenaDefenseCount' in client
+assert 'raidArenaDefenseStatus.Name = "DefenseStatus"' in client
+assert 'raidArenaDefenseAttack.Name = "AttackDefense"' in client
+assert 'raidArenaDefenseRepair.Name = "RepairDefense"' in client
+assert 'raidArenaDefenseAttack.Activated' in client and 'raidArenaDefenseRepair.Activated' in client
+assert 'Action = "AttackDefense"' in client and 'Action = "RepairDefense"' in client
+assert 'raidArenaDefenseStatus.Text' in client
+
 
