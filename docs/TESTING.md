@@ -946,3 +946,14 @@ Static CI checks do not replace Roblox Studio runtime and economy tests.
 7. Inspect at low and high graphics quality and from ground/elevated camera angles. Check for floating pieces, clipping, excessive bloom or unwanted visual noise.
 
 Static source assertions cover the decoration definitions and non-collidable settings; they do not replace Studio movement, placement, multiplayer or persistence testing.
+
+## Sprint 4.63 — Island Identity Styles
+1. Open Nest Decorations. Confirm the style section lists Meadow, Arcane, Ancient Temple and Royal Garden with clear selected/locked states.
+2. At nest level 1, confirm only Meadow can be selected. Upgrade to level 2 and confirm Arcane unlocks; level 3 unlocks Ancient; level 5 unlocks Royal.
+3. Select each available style. Confirm grass, trees, flowers and path colors change, and each theme adds its own signature world details.
+4. Attempt SetStyle requests with an unknown ID and with a locked style from a test client. Confirm the server rejects both and the active theme remains unchanged.
+5. Leave and rejoin after selecting a non-default style. Confirm the same style is restored on the assigned plot.
+6. Verify theme details do not block character movement, pet displays, contest trophies, construction placement or custom decoration placement.
+7. Test the selector and scrolling at 320×480, 375×667, tablet, 1366×768 and 1920×1080.
+
+Static source checks validate the catalogue, persistence field, server-side unlock gate and UI wiring. Runtime and exploit validation must be completed in Roblox Studio.
