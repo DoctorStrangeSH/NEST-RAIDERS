@@ -847,3 +847,4 @@ Source and automated packaging checks do not substitute for actual gameplay test
 
 - [x] Add a Studio-only, server-authoritative 1000-harvest gathering simulation, using the real bonus formula without awarding materials or changing cooldowns.
 - [ ] Confirm simulation output in Roblox Studio Play for unequipped and equipped Gatherer artifacts.
+- [x] Add regression coverage that the Studio-only 1000-harvest simulation cannot write resource balances or node cooldowns.
