@@ -1154,3 +1154,26 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] After inventory acceptance, continue to the egg shop and hatch flow.
 
 **Scope boundary:** this pass redesigns the companion inventory and its card presentation. It does not replace the existing procedural 3D companion models in the world; the small card portraits are native UI silhouettes. The egg shop remains the next panel.
+
+ 
+### Sprint 4.59 — biome egg shop and hatch reveal (2026-11-24)
+- [x] Replace the single-item shop catalogue with six natural biome eggs: Meadow, Emerald, Frost, Ember, Crystal and Ancient.
+- [x] Keep the Forgotten Cave egg as an exploration/cache reward instead of making every secret reward purchasable.
+- [x] Set explicit escalating prices and derive level/quest gates from the progression zone catalogue.
+- [x] Validate biome unlock, coins and 20-egg capacity on the server for every purchase; a client cannot bypass locked biomes.
+- [x] Store the egg's BiomeId in the purchased inventory record so the eventual companion is credited to the correct biome.
+- [x] Return exact purchase-block reasons and each egg's species odds, including precise decimal percentages and artifact-adjusted base chance.
+- [x] Redesign the shop with responsive dark-teal cards, biome-colored egg portraits, rarity badges, three outcome rows, prices, lock states and a scrollable layout.
+- [x] Add collectible-world egg decoration: biome-colored bands, runes, crown gems, glow and highlight; update prompts to show the real egg name.
+- [x] Animate the full welded egg decoration assembly during collection and respawn instead of leaving ornaments behind.
+- [x] Add a server-confirmed HatchReveal RemoteEvent only after the egg is consumed, the companion is saved and profile counters are updated.
+- [x] Add a skippable client reveal sequence with egg shaking, crack lines, rarity-colored pet portrait, sparkles, trait and income details.
+- [x] Preserve the existing hatch selection, server-side odds, genetic trait roll, companion creation, XP reward and collection discovery.
+- [x] Add regression checks for shop catalogue, unlock validation, purchase data, egg decorations, collection/respawn, reveal event and UI.
+- [ ] Test all six egg purchases with sufficient/insufficient coins, locked zones, quest locks and full inventory in Roblox Studio.
+- [ ] Verify each egg species probability in live play against the displayed odds and artifact bonuses.
+- [ ] Test hatch success, repeat activation, malformed egg protection, skip/reveal, respawn and reconnect persistence in Studio.
+- [ ] Check shop/reveal layouts at 320×480, 375×667, tablet, 1366×768 and 1920×1080.
+- [ ] Review world egg decorations from multiple camera angles and make sure welded details follow every collect/respawn cycle.
+
+**Scope boundary:** this sprint implements the six natural biome shop eggs. The Forgotten Cave egg remains a secret reward. Hatch animation is cosmetic only: the server chooses and saves the pet before sending the reveal event.
