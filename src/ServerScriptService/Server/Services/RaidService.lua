@@ -175,8 +175,10 @@ local function applyRaidSynergyVisuals(match, player, synergy)
 end
 
 local function pulseRaidCompanions(match, player, cueKind, force)
-    local synergy = match and match.RaidPetSynergy and match.RaidPetSynergy[player] or nil
-    if not synergy then return false end
+    if not match or not player then return false end
+    local synergy = match.RaidPetSynergy and match.RaidPetSynergy[player] or nil
+    local followers = match.RaidFollowers and match.RaidFollowers[player] or {}
+    if #followers == 0 then return false end
 
     local timestamp = os.clock()
     match.LastCompanionCueAt = match.LastCompanionCueAt or {}
@@ -184,12 +186,25 @@ local function pulseRaidCompanions(match, player, cueKind, force)
     if not force and timestamp - lastCue < 0.32 then return false end
     match.LastCompanionCueAt[player] = timestamp
 
+    local motionDuration = cueKind == "ACTIVATION" and 0.9
+        or (cueKind == "ABILITY" and 0.86 or (cueKind == "DEFEND" and 0.76 or 0.72))
+    for index, follower in ipairs(followers) do
+        follower.CombatCue = {
+            Kind = cueKind,
+            StartedAt = timestamp + (index - 1) * 0.055,
+            Duration = motionDuration,
+        }
+    end
+
+    -- Teams without a synergy still perform the same server-driven combat motions.
+    if not synergy then return true end
+
     local duration = cueKind == "ACTIVATION" and 0.78
         or (cueKind == "ABILITY" and 0.58 or (cueKind == "DEFEND" and 0.48 or 0.38))
     local fillTransparency = cueKind == "ACTIVATION" and 0.48
         or (cueKind == "ABILITY" and 0.58 or 0.68)
 
-    for _, follower in ipairs(match.RaidFollowers and match.RaidFollowers[player] or {}) do
+    for _, follower in ipairs(followers) do
         local model = follower.Model
         if model and model.Parent then
             local color = getRaidSynergyColor(synergy, follower.Role)
@@ -888,19 +903,97 @@ local function findNearestDefense(match, root, maxDistance, damagedOnly)
     return nearest, nearestDistance
 end
 
+local function getRaidCompanionCombatMotion(match, player, entry, root, index, now)
+    local idleBob = math.sin(now * 2.15 + index * 1.65) * 0.075
+    local offset = Vector3.new(0, idleBob, 0)
+    local rotation = CFrame.new()
+    local cue = entry.CombatCue
+    if not cue then return offset, rotation end
+
+    local elapsed = now - cue.StartedAt
+    if elapsed < 0 then return offset, rotation end
+    local progress = math.clamp(elapsed / math.max(0.1, cue.Duration), 0, 1)
+    if progress >= 1 then
+        entry.CombatCue = nil
+        return offset, rotation
+    end
+
+    local pulse = math.sin(progress * math.pi)
+    local windup = math.max(0, 1 - math.abs(progress - 0.2) / 0.2)
+    local strike = math.max(0, 1 - math.abs(progress - 0.57) / 0.25)
+    local role = entry.Role or ""
+    local opponent = match.Attacker == player and match.Defender or match.Attacker
+    local opponentCharacter = opponent and opponent.Character
+    local opponentRoot = opponentCharacter and opponentCharacter:FindFirstChild("HumanoidRootPart")
+    local towardOpponent = opponentRoot and (opponentRoot.Position - root.Position) or -root.CFrame.LookVector
+    towardOpponent = Vector3.new(towardOpponent.X, 0, towardOpponent.Z)
+    if towardOpponent.Magnitude > 0.01 then
+        towardOpponent = towardOpponent.Unit
+    else
+        towardOpponent = -root.CFrame.LookVector
+    end
+
+    local towardOwner = root.Position - (root.CFrame * CFrame.new(0, -2.15, 4.4)).Position
+    towardOwner = Vector3.new(towardOwner.X, 0, towardOwner.Z)
+    if towardOwner.Magnitude > 0.01 then towardOwner = towardOwner.Unit end
+
+    if cue.Kind == "ACTIVATION" then
+        offset += Vector3.new(0, 1.05 * pulse, 0)
+        rotation = CFrame.Angles(0, 0.42 * pulse, 0)
+    elseif cue.Kind == "ATTACK" then
+        local reach = role == "HUNTER" and 3.25 or (role == "GUARDIAN" and 1.8 or 0.85)
+        offset += towardOpponent * (reach * strike - 0.38 * windup)
+        offset += Vector3.new(0, 0.34 * strike, 0)
+        rotation = CFrame.Angles(-0.16 * strike + 0.07 * windup, 0, 0)
+    elseif cue.Kind == "ABILITY" then
+        if role == "HUNTER" then
+            offset += towardOpponent * (3.9 * strike - 0.32 * windup)
+            offset += Vector3.new(0, 1.05 * strike, 0)
+            rotation = CFrame.Angles(-0.28 * strike + 0.08 * windup, 0, 0)
+        elseif role == "GUARDIAN" then
+            offset += towardOwner * (0.72 * pulse)
+            offset += Vector3.new(0, -0.42 * pulse, 0)
+            rotation = CFrame.Angles(0.2 * pulse, 0, 0)
+        else
+            offset += Vector3.new(0, 1.3 * pulse, 0)
+            rotation = CFrame.Angles(0, 0.18 * pulse, 0.12 * pulse)
+        end
+    elseif cue.Kind == "DEFEND" then
+        if role == "GUARDIAN" then
+            offset += towardOwner * (1.05 * pulse)
+            offset += Vector3.new(0, -0.48 * pulse, 0)
+            rotation = CFrame.Angles(0.22 * pulse, 0, 0)
+        elseif role == "HEALER" then
+            offset += Vector3.new(0, 0.78 * pulse, 0)
+            rotation = CFrame.Angles(0, 0.12 * pulse, 0)
+        else
+            local sideStep = root.CFrame.RightVector * ((index % 2 == 0 and 1 or -1) * 0.88 * pulse)
+            offset += Vector3.new(sideStep.X, 0.18 * pulse, sideStep.Z)
+            rotation = CFrame.Angles(0, 0, (index % 2 == 0 and 1 or -1) * 0.16 * pulse)
+        end
+    end
+
+    return offset, rotation
+end
+
 local function followRaidCompanions(self, match, player, followers)
     task.spawn(function()
         while self._matches[player] == match and match.State == "ACTIVE" do
             local character = player.Character
             local root = character and character:FindFirstChild("HumanoidRootPart")
             if root then
+                local now = os.clock()
                 for index, entry in ipairs(followers or {}) do
                     local model = entry.Model
                     if model and model.Parent then
                         local side = (index - (#followers + 1) / 2) * 3.2
-                        local target = root.CFrame * CFrame.new(side, -2.15, 4.4)
+                        local base = root.CFrame * CFrame.new(side, -2.15, 4.4)
                             * CFrame.Angles(0, math.pi, 0)
-                        model:PivotTo(model:GetPivot():Lerp(target, 0.38))
+                        local motionOffset, motionRotation = getRaidCompanionCombatMotion(
+                            match, player, entry, root, index, now
+                        )
+                        local target = CFrame.new(base.Position + motionOffset) * base.Rotation * motionRotation
+                        model:PivotTo(model:GetPivot():Lerp(target, 0.42))
                     end
                 end
             end
@@ -1001,9 +1094,7 @@ function RaidService:StartArena(match)
         local synergy = match.RaidPetSynergy[participant]
         participant:SetAttribute("RaidArenaSynergyPulse",
             synergy and (tostring(match.Id) .. ":" .. synergy.Id) or "")
-        if synergy then
-            pulseRaidCompanions(match, participant, "ACTIVATION", true)
-        end
+        pulseRaidCompanions(match, participant, "ACTIVATION", true)
     end
     match.Attacker:SetAttribute("LastNotice", #match.Defenses > 0
         and ("Рейд начался! На острове защитника подготовлено сооружений: " .. tostring(#match.Defenses) .. ".")
