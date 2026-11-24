@@ -250,3 +250,7 @@ The Raid Board introduces voluntary participation before any combat is enabled:
  
 ## Raid Arena — Sprint 4.48
 Accepted challenges now move both players into a temporary floating arena. The attacker tries to destroy the Nest Core; the defender reinforces it and survives the 150-second round. The match has server-validated range and cooldown checks, a role-specific HUD, bounded rewards and a persistent reward cooldown. Early exit, death and disconnect cancel the round without rewards. This first arena does not include player damage or item theft.
+
+ 
+## Raid Duel Combat — Sprint 4.49
+The opt-in raid arena now includes a contained melee duel. Both players receive temporary sword and shield visuals, can strike at close range, and can time a short parry to counter an incoming attack. Duel health is separate from normal character health. The original Nest Core objective, defender repairs, timer, rewards and safe return flow remain available.
