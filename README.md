@@ -258,3 +258,7 @@ The opt-in raid arena now includes a contained melee duel. Both players receive 
  
 ## Nest Defenses — Sprint 4.50
 The island build catalogue now includes three defensive structures: Stone Bastion (a destructible physical wall), Watchtower (an automated turret) and Thorn Trap (an attacker-only proximity trap). Place them on your own island through the existing build panel. Accepted raids copy the defender's placed defenses into the temporary arena: towers fire at the attacker, traps damage only the attacker, and bastions block the route to the core. The attacker can destroy nearby structures; the defender can repair damaged structures. Damage and repairs are temporary to the raid and never alter the saved island layout.
+
+ 
+## Battle Companions — Sprint 4.51
+Your active companions now enter accepted raids with you. Up to three followers appear in the temporary arena; the first active companion with a raid specialization becomes your primary battle companion. Hunters strike the opposing player, Healers restore temporary raid combat health, and Guardians absorb incoming raid damage. Abilities unlock at level 5 and use server-enforced cooldowns. Companion effects are temporary and never alter saved ownership, active slots or normal character health.
