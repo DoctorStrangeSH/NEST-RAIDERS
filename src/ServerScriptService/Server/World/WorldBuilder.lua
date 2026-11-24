@@ -25,12 +25,69 @@ local function makeTree(parent, position, scale)
 end
 
 local function makeEgg(parent, position, color)
-    local egg = part(parent, "MeadowEgg", Vector3.new(3.2, 4.2, 3.2), position, color, Enum.Material.Neon, Enum.PartType.Ball)
+    local egg = part(parent, "BiomeEgg", Vector3.new(3.2, 4.2, 3.2), position, color, Enum.Material.Neon, Enum.PartType.Ball)
     egg:SetAttribute("WorldEgg", true)
+    egg.CanCollide = false
+    egg.CastShadow = true
+
+    local accent = color:Lerp(Color3.fromRGB(255, 236, 171), 0.38)
+    local function attachDetail(name, size, offset, detailColor, shape, material)
+        local detail = Instance.new("Part")
+        detail.Name = name
+        detail.Size = size
+        detail.Shape = shape or Enum.PartType.Ball
+        detail.CFrame = egg.CFrame * CFrame.new(offset)
+        detail.Color = detailColor
+        detail.Material = material or Enum.Material.Neon
+        detail.Anchored = false
+        detail.CanCollide = false
+        detail.CanTouch = false
+        detail.CanQuery = false
+        detail.Massless = true
+        detail.CastShadow = false
+        detail.Parent = parent
+        local weld = Instance.new("WeldConstraint")
+        weld.Part0 = egg
+        weld.Part1 = detail
+        weld.Parent = detail
+        return detail
+    end
+
+    -- A raised biome-colored band, three glowing runes and a small crown make
+    -- each collectible read as a designed egg instead of a plain neon sphere.
+    attachDetail("EggDecorBand", Vector3.new(3.18, 0.18, 3.18),
+        Vector3.new(0, 0.12, 0), accent, Enum.PartType.Cylinder, Enum.Material.SmoothPlastic)
+    attachDetail("EggRune_Left", Vector3.new(0.38, 0.42, 0.22),
+        Vector3.new(-0.58, 0.28, -1.34), Color3.fromRGB(255, 250, 224), Enum.PartType.Ball)
+    attachDetail("EggRune_Right", Vector3.new(0.38, 0.42, 0.22),
+        Vector3.new(0.58, 0.28, -1.34), Color3.fromRGB(255, 250, 224), Enum.PartType.Ball)
+    attachDetail("EggRune_Center", Vector3.new(0.48, 0.48, 0.22),
+        Vector3.new(0, -0.42, -1.48), accent, Enum.PartType.Ball)
+    attachDetail("EggCrownGem", Vector3.new(0.55, 0.65, 0.55),
+        Vector3.new(0, 1.72, 0), accent, Enum.PartType.Ball)
+
+    local light = Instance.new("PointLight")
+    light.Name = "EggGlow"
+    light.Color = color
+    light.Brightness = 0.65
+    light.Range = 9
+    light.Shadows = false
+    light.Parent = egg
+
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "EggHighlight"
+    highlight.Adornee = egg
+    highlight.FillColor = color
+    highlight.FillTransparency = 0.82
+    highlight.OutlineColor = accent
+    highlight.OutlineTransparency = 0.12
+    highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+    highlight.Parent = egg
+
     local prompt = Instance.new("ProximityPrompt")
     prompt.Name = "CollectEggPrompt"
     prompt.ActionText = "Собрать"
-    prompt.ObjectText = "Яйцо луга"
+    prompt.ObjectText = "Яйцо биома"
     prompt.KeyboardKeyCode = Enum.KeyCode.E
     prompt.HoldDuration = 0.35
     prompt.MaxActivationDistance = 11
