@@ -1323,3 +1323,20 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Test two players with active pets in the same server; each player must only see and collect their own cache.
 
 **Acceptance:** autonomous treasure-search behavior and owner-bound gift caches are integrated and covered by static checks; Roblox Studio visual, timing, multiplayer and DataStore acceptance remain open.
+
+
+### Sprint 4.69 — Living island: day/night and companion routines
+- [x] Add a configurable server-owned world clock: one in-game day lasts 24 real minutes, starting at 14:00.
+- [x] Replicate the clock through Roblox Lighting and publish Day/Night phase attributes on the world folder for future HUD and event systems.
+- [x] Stop the clock loop automatically when its world instance is replaced or destroyed.
+- [x] Assign day activity to selected starter species and nocturnal activity to GlowMoth, SnowOwl, CaveGlimmerbat and HeartWisp.
+- [x] Add species-specific night glow to nocturnal companions; glow fades out during daytime.
+- [x] Let each species' activity window affect movement speed, roaming radius and autonomous treasure-search odds without overriding manual sleep/needs.
+- [x] Add static regression checks for clock configuration, replicated phase, species schedules and behavior modifiers.
+- [ ] Roblox Studio: verify day-to-night transition and that all clients see the same lighting and phase.
+- [ ] Verify GlowMoth, SnowOwl, CaveGlimmerbat and HeartWisp glow only at night and are visibly more active during their preferred hours.
+- [ ] Verify day-active pets are more lively during daylight and naturally calmer at night.
+- [ ] Confirm existing sleep, toy play, friendship, treasure cache and rewards remain functional during both phases.
+- [ ] Run a full 24-minute cycle with multiple players and check server performance and cleanup after world rebuild.
+
+**Acceptance:** synchronized day/night cycle and species-specific routines are integrated and statically checked; in-Studio visual, multiplayer, performance and full-cycle acceptance remain open.
