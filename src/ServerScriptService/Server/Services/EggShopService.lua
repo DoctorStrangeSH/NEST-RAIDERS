@@ -4,6 +4,8 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
+local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)
+local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local EggShopService = {}
 local MAX_EGGS = 20
@@ -16,24 +18,41 @@ local CATALOG = {
         Description = "Первое яйцо для начинающих искателей приключений.",
         Price = 50,
         RequiredLevel = 1,
-        Odds = (function()
-            local odds = {}
-            for _, companion in pairs(CompanionCatalog) do
-                if companion.EggId == "MeadowEgg" then
-                    table.insert(odds, {
-                        Name = companion.Name,
-                        Rarity = companion.Rarity,
-                        Chance = companion.Weight,
-                    })
-                end
-            end
-            table.sort(odds, function(a, b) return a.Chance > b.Chance end)
-            return odds
-        end)(),
     },
 }
 
 EggShopService._lastRequest = {}
+
+local function buildOdds(profile, eggId)
+    local eggDefinition
+    for _, biome in pairs(BiomeCatalog) do
+        for _, egg in pairs(biome.Eggs or {}) do
+            if egg.Id == eggId then eggDefinition = egg break end
+        end
+        if eggDefinition then break end
+    end
+    if not eggDefinition then return {} end
+
+    local odds = {}
+    for speciesId, weight in pairs(eggDefinition.SpeciesWeights or {}) do
+        local companion = CompanionCatalog[speciesId]
+        if companion and tonumber(weight) and weight > 0 then
+            local actualChance, baseChance = ArtifactBonusService:GetHatchSpeciesChance(
+                profile, eggDefinition.SpeciesWeights, speciesId)
+            table.insert(odds, {
+                Name = companion.Name,
+                Rarity = companion.Rarity,
+                Chance = math.floor(actualChance * 100 + 0.5),
+                BaseChance = math.floor(baseChance * 100 + 0.5),
+            })
+        end
+    end
+    table.sort(odds, function(a, b)
+        if a.Chance == b.Chance then return a.Name < b.Name end
+        return a.Chance > b.Chance
+    end)
+    return odds
+end
 
 local function snapshot(profile)
     local items = {}
@@ -44,7 +63,7 @@ local function snapshot(profile)
             Description = item.Description,
             Price = item.Price,
             RequiredLevel = item.RequiredLevel,
-            Odds = item.Odds,
+            Odds = buildOdds(profile, item.Id),
         })
     end
     table.sort(items, function(a, b) return a.Price < b.Price end)
