@@ -624,3 +624,17 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The Hunter + Guardian melee bonus and Triad melee bonus affect normal opponent strikes only. The strike multiplier is clamped to 1.0–1.15. Parry counter-damage is not multiplied.
 - The raid HUD shows the participant's active synergy name and short effect description. A roster without two distinct roles shows that a second role is required.
 - Synergy is calculated once from the active roster at match start. It cannot be changed by client attributes or remote payloads. No profile schema, save migration, matchmaking eligibility, reward, active-slot, pet cooldown, or ordinary companion behavior changes are introduced.
+
+ 
+## Raid companion synergy presentation — Sprint 4.54
+- Active raid synergies have a subtle, persistent role-colored Highlight aura on each summoned companion. The palette is selected on the server from the participant's already-calculated synergy and the companion's server-derived role:
+  - Living Bastion: Guardian cyan/blue; Healer mint green.
+  - Assault Formation: Hunter warm orange; Guardian blue.
+  - Coordinated Assault: Hunter warm orange; Healer green.
+  - Triad: Hunter orange; Healer violet; Guardian cyan.
+- At raid start, after the server has published the synergy ID/name/description, it emits one unique activation pulse per participant. The client displays one compact, animated toast per server-issued match/synergy pulse. Repeated HUD updates cannot replay the toast.
+- Validated combat actions produce brief coordinated cues on the participant's active companion team: normal opponent strikes, core hits, defense hits, and successful Hunter/Healer/Guardian abilities. A successful parry cues the defending participant's team.
+- When a Bastion or Triad actually reduces incoming combat damage in the shared server damage pipeline, the defending team receives a short defensive cue. No defensive cue is emitted when no mitigation was applied.
+- Companion cues use short-lived Highlight and PointLight instances, fade via TweenService and are removed by Debris. A per-participant 0.32-second visual throttle prevents repeated effects from accumulating. There are no persistent ParticleEmitters.
+- The server controls aura assignment and all cue triggers. Client attributes only display the server-issued synergy state and one-time activation pulse; they never affect combat or grant a bonus.
+- Visual effects are cosmetic and do not modify combat damage, healing, shield amount/duration, cooldowns, rewards, companion levels, match state, or profile data. Teams without an active synergy retain the existing companion appearance and do not receive synergy cues.
