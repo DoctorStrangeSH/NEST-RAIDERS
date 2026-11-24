@@ -57,7 +57,8 @@ assert 'local BiomeCatalog = {' in biomes
 assert 'DefaultEggId = "MeadowEgg"' in biomes
 assert 'SpeciesWeights' in biomes and 'MeadowFox = 55' in biomes
 assert 'local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)' in eggs
-assert 'chooseCompanion(egg.Id or "MeadowEgg")' in eggs
+assert 'chooseCompanion(egg.Id or "MeadowEgg", profile)' in eggs
+assert 'ArtifactBonusService:ChooseHatchSpecies(profile, eggDefinition.SpeciesWeights, math.random())' in eggs
 assert 'BiomeId = egg:GetAttribute("BiomeId") or "Meadow"' in eggs
 assert 'OriginBiome = egg.BiomeId or "Meadow"' in eggs
 
@@ -69,8 +70,14 @@ book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua")
 assert 'profile.DiscoveredBiomes[companion.Id] = companion.OriginBiome or "Meadow"' in eggs
 assert 'local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)' in book
 assert 'BiomeName = biomeName' in book and 'DiscoveredBiome = profile.DiscoveredBiomes[definition.Id]' in book
-assert 'speciesWeight / totalWeight * 100' in book
+assert 'ArtifactBonusService:GetHatchSpeciesChance(profile, egg.SpeciesWeights, definition.Id)' in book
+assert 'BaseHatchChance = baseBiomeChance' in book
+shop_service = Path("src/ServerScriptService/Server/Services/EggShopService.lua").read_text()
+assert 'local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)' in shop_service
+assert 'ArtifactBonusService:GetHatchSpeciesChance(profile, eggDefinition.SpeciesWeights, speciesId)' in shop_service
+assert 'Odds = buildOdds(profile, item.Id)' in shop_service and 'BaseChance = math.floor(baseChance * 100 + 0.5)' in shop_service
 assert 'entry.DiscoveredBiome' in client and 'entry.EggName' in client
+assert 'база %d%%' in client
 
 profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
 assert 'CompanionIncomeRemainder = 0' in profile_template
@@ -781,6 +788,7 @@ assert sum(weight for _, weight in hunter_definitions.values()) + sum(weight for
 assert 'local MAX_HATCH_BONUS = 0.30' in artifact_bonus
 assert 'function ArtifactBonusService:GetHatchBonus(profile)' in artifact_bonus
 assert 'function ArtifactBonusService:ChooseHatchSpecies(profile, speciesWeights, rollValue)' in artifact_bonus
+assert 'function ArtifactBonusService:GetHatchSpeciesChance(profile, speciesWeights, speciesId)' in artifact_bonus
 assert 'HATCH_RARITY_RANK' in artifact_bonus
 assert 'entry.Rank == highestRank' in artifact_bonus
 assert 'adjustedWeight *= (1 + bonus)' in artifact_bonus
