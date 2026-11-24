@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local PlayerDataService = require(game:GetService("ServerScriptService").Server.Services.PlayerDataService)
+local IslandStyleCatalog = require(game:GetService("ReplicatedStorage").Shared.Config.IslandStyleCatalog)
 
 local PlotService = {}
 PlotService._plots = {}
@@ -525,6 +526,96 @@ function PlotService:ApplyNestLevel(player, level)
     return true
 end
 
+function PlotService:ApplyIslandStyle(player, styleId)
+    local plot = self._playerPlots[player]
+    if not plot or not plot.Model or not plot.Model.Parent then return false end
+    local style = IslandStyleCatalog[styleId]
+    if not style then return false end
+
+    local grass = plot.Model:FindFirstChild("PlotGrass")
+    if grass then
+        grass.Color = style.Grass
+        grass.Material = style.Material
+    end
+
+    local environment = plot.Model:FindFirstChild("EnvironmentDecorations")
+    if environment then
+        for _, part in ipairs(environment:GetDescendants()) do
+            if part:IsA("BasePart") then
+                if string.find(part.Name, "Canopy", 1, true) then
+                    part.Color = style.Foliage
+                elseif string.find(part.Name, "_Bloom_", 1, true) then
+                    part.Color = style.Accent
+                elseif string.find(part.Name, "GardenPathStone_", 1, true) then
+                    part.Color = style.Stone
+                    part.Material = style.Feature == "Ancient" and Enum.Material.Cobblestone or Enum.Material.Slate
+                end
+            end
+        end
+    end
+
+    local previous = plot.Model:FindFirstChild("StyleDecorations")
+    if previous then previous:Destroy() end
+    local decorations = Instance.new("Folder")
+    decorations.Name = "StyleDecorations"
+    decorations:SetAttribute("StyleId", styleId)
+    decorations.Parent = plot.Model
+    local center = plot.Center
+    local function stylePart(name, size, offset, color, material, shape)
+        local part = makePart(decorations, name, size, CFrame.new(center + offset), color, material)
+        if shape then part.Shape = shape end
+        part.CanCollide = false
+        part.CanTouch = false
+        part.CanQuery = false
+        return part
+    end
+
+    if style.Feature == "Arcane" then
+        for index, offset in ipairs({
+            Vector3.new(-14, 3.1, -7), Vector3.new(14, 3.1, -7),
+            Vector3.new(-14, 3.1, 7), Vector3.new(14, 3.1, 7),
+        }) do
+            local crystal = stylePart("ArcanePrism_" .. index, Vector3.new(1.2, 3.4, 1.2),
+                offset, style.Accent, Enum.Material.Neon, Enum.PartType.Wedge)
+            local light = Instance.new("PointLight")
+            light.Color = style.Accent
+            light.Brightness = 0.7
+            light.Range = 9
+            light.Shadows = false
+            light.Parent = crystal
+        end
+    elseif style.Feature == "Ancient" then
+        for index, x in ipairs({-14, 14}) do
+            for _, z in ipairs({-8, 8}) do
+                stylePart("AncientColumn_" .. index .. "_" .. tostring(z),
+                    Vector3.new(1.15, 4.8, 1.15), Vector3.new(x, 4.0, z),
+                    Color3.fromRGB(174, 159, 126), Enum.Material.Cobblestone, Enum.PartType.Cylinder)
+                stylePart("AncientCapital_" .. index .. "_" .. tostring(z),
+                    Vector3.new(1.8, 0.5, 1.8), Vector3.new(x, 6.55, z),
+                    style.Accent, Enum.Material.Slate, Enum.PartType.Cylinder)
+            end
+        end
+    elseif style.Feature == "Royal" then
+        for index, x in ipairs({-11, 11}) do
+            local post = stylePart("RoyalPost_" .. index, Vector3.new(0.55, 4.4, 0.55),
+                Vector3.new(x, 3.8, -13), Color3.fromRGB(211, 169, 75), Enum.Material.Metal)
+            local gem = stylePart("RoyalGem_" .. index, Vector3.new(1.1, 1.1, 1.1),
+                Vector3.new(x, 6.2, -13), style.Accent, Enum.Material.Neon, Enum.PartType.Ball)
+            local light = Instance.new("PointLight")
+            light.Color = style.Accent
+            light.Brightness = 0.8
+            light.Range = 10
+            light.Shadows = false
+            light.Parent = gem
+        end
+        stylePart("RoyalGardenPlinth", Vector3.new(8, 0.35, 1.2),
+            Vector3.new(0, 2.0, -15), Color3.fromRGB(211, 169, 75), Enum.Material.Metal)
+    end
+
+    plot.Model:SetAttribute("IslandStyle", styleId)
+    return true
+end
+
 function PlotService:ApplyContestTrophies(player)
     local plot = self._playerPlots[player]
     local profile = PlayerDataService:GetProfile(player)
@@ -679,6 +770,7 @@ function PlotService:AssignPlot(player)
     player:SetAttribute("PlotId", selected.Id)
     player:SetAttribute("PlotAssigned", true)
     self:ApplyNestLevel(player, profile.Nest.Level or 1)
+    self:ApplyIslandStyle(player, profile.Nest.IslandStyle or "Meadow")
     self:ApplyContestTrophies(player)
     player:SetAttribute("LastNotice", "Твоё личное гнездо готово!")
 end
