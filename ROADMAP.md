@@ -1252,3 +1252,19 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify pets do not block character movement, decoration placement, building placement or toy interactions.
 
 **Acceptance:** autonomous movement and state-aware behavior are integrated in source; visual smoothness, multiplayer performance and physical interaction acceptance remain open in Roblox Studio.
+
+### Sprint 4.65 — Autonomous Toy Play
+- [x] Move equipped toys from the pet's body to a visible, separate spot beside its display area.
+- [x] Let companions periodically choose their equipped toy as a destination while mood and energy allow.
+- [x] Add a clear movement state machine: wander, approach toy, play briefly, pause and choose another activity.
+- [x] Animate toys while in use: bounce/rock the toy and keep the wind spinner rotating.
+- [x] Expose toy usage through the pet's `Behavior` attribute (`PlayingWithToy`) and the toy's `ToyState` attribute.
+- [x] Keep toy and pet movement non-collidable and scoped to the player's displayed-companion folder.
+- [x] Add static regression checks for toy placement, approach, play duration and state transitions.
+- [ ] Roblox Studio: verify each of the three toys is visible on the ground and the pet walks to it rather than carrying it.
+- [ ] Confirm the pet pauses to play, toy animation is visible, and it resumes wandering afterward.
+- [ ] Verify low mood/energy prevents toy play and sleeping pets do not use toys.
+- [ ] Test 1–4 pets, re-equip toys, remove pets and rejoin; check there are no orphaned toy parts or movement loops.
+- [ ] Check toys do not obstruct walking, construction, decorations or other pets.
+
+**Acceptance:** autonomous toy-seeking and visual play behavior are integrated in source; animation readability, multiplayer performance and runtime behavior remain open in Roblox Studio.
