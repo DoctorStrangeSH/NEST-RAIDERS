@@ -3137,88 +3137,246 @@ local function invokeShop(payload)
     return response.Data
 end
 
+local eggBiomeColors = {
+    Meadow = Color3.fromRGB(229, 193, 93),
+    EmeraldWilds = Color3.fromRGB(99, 190, 127),
+    FrostHighlands = Color3.fromRGB(130, 201, 232),
+    Emberlands = Color3.fromRGB(225, 119, 69),
+    CrystalRealm = Color3.fromRGB(170, 133, 231),
+    AncientHeights = Color3.fromRGB(198, 174, 107),
+}
+local eggRarityColors = {
+    ["Обычное"] = Color3.fromRGB(121, 159, 132),
+    ["Необычное"] = Color3.fromRGB(83, 168, 145),
+    ["Редкое"] = Color3.fromRGB(100, 151, 218),
+    ["Эпическое"] = Color3.fromRGB(166, 117, 209),
+    ["Легендарное"] = Color3.fromRGB(218, 169, 91),
+    ["Мифическое"] = Color3.fromRGB(219, 116, 143),
+}
+
+local function drawEggShopPortrait(parent, item, accent)
+    local body = addPetPortraitShape(parent, "EggShell", 36, 39, 29, 41,
+        Color3.fromRGB(255, 241, 205), -7, 15)
+    addStroke(body, accent, 1.5)
+    local shellGradient = Instance.new("UIGradient")
+    shellGradient.Color = ColorSequence.new(Color3.fromRGB(255, 250, 229), accent)
+    shellGradient.Rotation = 90
+    shellGradient.Parent = body
+    addPetPortraitShape(parent, "EggBand", 36, 40, 31, 7, accent, -7, 4)
+    addPetPortraitShape(parent, "EggBandHighlight", 36, 38, 28, 2, Color3.fromRGB(255, 255, 242), -7, 2)
+    addPetPortraitShape(parent, "EggRuneA", 27, 25, 5, 5, Color3.fromRGB(255, 255, 237), 45)
+    addPetPortraitShape(parent, "EggRuneB", 47, 49, 4, 4, Color3.fromRGB(255, 255, 237), 45)
+    addPetPortraitShape(parent, "EggSparkleA", 55, 13, 7, 7, Color3.fromRGB(255, 245, 197), 45)
+    addPetPortraitShape(parent, "EggSparkleB", 15, 58, 4, 4, Color3.fromRGB(255, 245, 197), 45)
+end
+
+local function formatEggChance(value)
+    local chance = math.max(0, tonumber(value) or 0)
+    return chance < 10 and string.format("%.1f%%", chance) or string.format("%.0f%%", chance)
+end
+
 local function renderShop(data)
     if not data then return end
-    shopBalance.Text = string.format("Монеты: %d   ·   Яйца: %d / %d",
-        data.Coins or 0, data.EggCount or 0, data.EggCapacity or 20)
+    shopBalance.Text = string.format("МОНЕТЫ  ·  %s       ЯЙЦА В СУМКЕ  ·  %d / %d",
+        tostring(data.Coins or 0), data.EggCount or 0, data.EggCapacity or 20)
     for _, child in ipairs(shopList:GetChildren()) do
         if child:IsA("Frame") then child:Destroy() end
     end
 
     for index, item in ipairs(data.Items or {}) do
+        local rarityColor = eggRarityColors[item.Rarity or "Обычное"] or eggRarityColors["Обычное"]
+        local biomeColor = eggBiomeColors[item.BiomeId] or rarityColor
         local card = Instance.new("Frame")
+        card.Name = "EggShopCard_" .. tostring(item.Id)
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 178)
-        card.BackgroundColor3 = Color3.fromRGB(54, 67, 77)
+        card.Size = UDim2.new(1, -8, 0, 238)
+        card.BackgroundColor3 = Color3.fromRGB(40, 58, 67)
+        card.BackgroundTransparency = item.Unlocked and 0.02 or 0.16
         card.BorderSizePixel = 0
         card.Parent = shopList
-        addCorner(card, 13)
+        addCorner(card, 15)
+        addStroke(card, rarityColor, item.Unlocked and 1.4 or 1)
+        local cardGradient = Instance.new("UIGradient")
+        cardGradient.Color = ColorSequence.new(
+            item.Unlocked and Color3.fromRGB(54, 76, 78) or Color3.fromRGB(55, 60, 69),
+            Color3.fromRGB(29, 43, 55)
+        )
+        cardGradient.Rotation = 90
+        cardGradient.Parent = card
+
+        local portrait = Instance.new("Frame")
+        portrait.Name = "EggPortrait"
+        portrait.Position = UDim2.fromOffset(12, 13)
+        portrait.Size = UDim2.fromOffset(72, 78)
+        portrait.BackgroundColor3 = biomeColor
+        portrait.BackgroundTransparency = item.Unlocked and 0.05 or 0.45
+        portrait.BorderSizePixel = 0
+        portrait.Parent = card
+        addCorner(portrait, 15)
+        addStroke(portrait, rarityColor, 1)
+        local portraitGradient = Instance.new("UIGradient")
+        portraitGradient.Color = ColorSequence.new(biomeColor, Color3.fromRGB(35, 47, 62))
+        portraitGradient.Rotation = 90
+        portraitGradient.Parent = portrait
+        drawEggShopPortrait(portrait, item, biomeColor)
 
         local name = Instance.new("TextLabel")
+        name.Name = "EggName"
         name.BackgroundTransparency = 1
-        name.Position = UDim2.fromOffset(14, 10)
-        name.Size = UDim2.new(1, -28, 0, 24)
+        name.Position = UDim2.fromOffset(94, 11)
+        name.Size = UDim2.new(1, -106, 0, 23)
         name.Font = Enum.Font.GothamBlack
-        name.Text = item.Name
-        name.TextColor3 = Color3.fromRGB(255, 229, 170)
-        name.TextSize = 17
+        name.Text = item.Name or "Яйцо"
+        name.TextColor3 = Color3.fromRGB(255, 237, 197)
+        name.TextSize = 13
         name.TextXAlignment = Enum.TextXAlignment.Left
+        name.TextTruncate = Enum.TextTruncate.AtEnd
         name.Parent = card
+
+        local rarityPill = Instance.new("Frame")
+        rarityPill.Name = "EggRarityPill"
+        rarityPill.Position = UDim2.fromOffset(94, 38)
+        rarityPill.Size = UDim2.fromOffset(118, 18)
+        rarityPill.BackgroundColor3 = rarityColor
+        rarityPill.BackgroundTransparency = 0.12
+        rarityPill.BorderSizePixel = 0
+        rarityPill.Parent = card
+        addCorner(rarityPill, 7)
+        local rarityText = Instance.new("TextLabel")
+        rarityText.BackgroundTransparency = 1
+        rarityText.Position = UDim2.fromOffset(6, 0)
+        rarityText.Size = UDim2.new(1, -12, 1, 0)
+        rarityText.Font = Enum.Font.GothamBlack
+        rarityText.Text = string.upper(item.Rarity or "ОБЫЧНОЕ")
+        rarityText.TextColor3 = Color3.fromRGB(255, 255, 249)
+        rarityText.TextSize = 8
+        rarityText.TextXAlignment = Enum.TextXAlignment.Left
+        rarityText.Parent = rarityPill
+
+        local biome = Instance.new("TextLabel")
+        biome.BackgroundTransparency = 1
+        biome.Position = UDim2.fromOffset(94, 60)
+        biome.Size = UDim2.new(1, -106, 0, 16)
+        biome.Font = Enum.Font.GothamBold
+        biome.Text = string.upper(item.BiomeName or "БИОМ")
+        biome.TextColor3 = biomeColor
+        biome.TextSize = 8
+        biome.TextXAlignment = Enum.TextXAlignment.Left
+        biome.TextTruncate = Enum.TextTruncate.AtEnd
+        biome.Parent = card
 
         local description = Instance.new("TextLabel")
         description.BackgroundTransparency = 1
-        description.Position = UDim2.fromOffset(14, 38)
-        description.Size = UDim2.new(1, -28, 0, 30)
-        description.Font = Enum.Font.Gotham
+        description.Position = UDim2.fromOffset(94, 78)
+        description.Size = UDim2.new(1, -106, 0, 28)
+        description.Font = Enum.Font.GothamMedium
         description.Text = item.Description or ""
-        description.TextColor3 = Color3.fromRGB(207, 218, 210)
-        description.TextSize = 12
+        description.TextColor3 = Color3.fromRGB(198, 216, 205)
+        description.TextSize = 8
         description.TextWrapped = true
         description.TextXAlignment = Enum.TextXAlignment.Left
+        description.TextYAlignment = Enum.TextYAlignment.Top
         description.Parent = card
 
-        local odds = Instance.new("TextLabel")
-        odds.BackgroundTransparency = 1
-        odds.Position = UDim2.fromOffset(14, 72)
-        odds.Size = UDim2.new(1, -28, 0, 60)
-        odds.Font = Enum.Font.GothamMedium
-        odds.TextColor3 = Color3.fromRGB(226, 231, 218)
-        odds.TextSize = 12
-        odds.TextXAlignment = Enum.TextXAlignment.Left
-        odds.TextYAlignment = Enum.TextYAlignment.Top
-        odds.TextWrapped = true
-        local oddsLines = {}
-        for _, outcome in ipairs(item.Odds or {}) do
-            local baseChance = tonumber(outcome.BaseChance)
-            if baseChance and baseChance ~= outcome.Chance then
-                table.insert(oddsLines, string.format("%s — %d%% (база %d%%)",
-                    outcome.Name, outcome.Chance, baseChance))
-            else
-                table.insert(oddsLines, string.format("%s — %d%%", outcome.Name, outcome.Chance))
+        local oddsHeader = Instance.new("TextLabel")
+        oddsHeader.Name = "OddsHeader"
+        oddsHeader.BackgroundTransparency = 1
+        oddsHeader.Position = UDim2.fromOffset(14, 108)
+        oddsHeader.Size = UDim2.new(1, -28, 0, 15)
+        oddsHeader.Font = Enum.Font.GothamBlack
+        oddsHeader.Text = "ВОЗМОЖНЫЕ ПИТОМЦЫ"
+        oddsHeader.TextColor3 = Color3.fromRGB(192, 209, 196)
+        oddsHeader.TextSize = 8
+        oddsHeader.TextXAlignment = Enum.TextXAlignment.Left
+        oddsHeader.Parent = card
+
+        for oddsIndex, outcome in ipairs(item.Odds or {}) do
+            if oddsIndex <= 3 then
+                local rowY = 126 + (oddsIndex - 1) * 17
+                local outcomeColor = eggRarityColors[outcome.Rarity or "Обычное"] or rarityColor
+                local dot = Instance.new("Frame")
+                dot.Name = "OddsRarityDot"
+                dot.Position = UDim2.fromOffset(16, rowY + 5)
+                dot.Size = UDim2.fromOffset(6, 6)
+                dot.BackgroundColor3 = outcomeColor
+                dot.BorderSizePixel = 0
+                dot.Parent = card
+                addCorner(dot, 3)
+
+                local outcomeText = Instance.new("TextLabel")
+                outcomeText.Name = "Odds_" .. tostring(oddsIndex)
+                outcomeText.BackgroundTransparency = 1
+                outcomeText.Position = UDim2.fromOffset(29, rowY)
+                outcomeText.Size = UDim2.new(1, -43, 0, 16)
+                outcomeText.Font = Enum.Font.GothamMedium
+                local chanceText = formatEggChance(outcome.Chance)
+                local baseChance = tonumber(outcome.BaseChance)
+                if baseChance and math.abs(baseChance - (tonumber(outcome.Chance) or 0)) > 0.05 then
+                    chanceText ..= " · база " .. formatEggChance(baseChance)
+                end
+                outcomeText.Text = tostring(outcome.Name or "Неизвестный вид") .. "  ·  " .. chanceText
+                outcomeText.TextColor3 = Color3.fromRGB(223, 231, 216)
+                outcomeText.TextSize = 9
+                outcomeText.TextXAlignment = Enum.TextXAlignment.Left
+                outcomeText.TextTruncate = Enum.TextTruncate.AtEnd
+                outcomeText.Parent = card
             end
         end
-        odds.Text = "Шансы вылупления:\n" .. table.concat(oddsLines, "\n")
-        odds.Parent = card
+
+        local status = Instance.new("TextLabel")
+        status.Name = "BuyStatus"
+        status.BackgroundTransparency = 1
+        status.Position = UDim2.fromOffset(13, 195)
+        status.Size = UDim2.new(1, -164, 0, 32)
+        status.Font = Enum.Font.GothamBold
+        status.Text = item.BuyBlockReason or "ДОСТУПНО К ПОКУПКЕ"
+        status.TextColor3 = item.Unlocked and Color3.fromRGB(206, 220, 197) or Color3.fromRGB(220, 177, 142)
+        status.TextSize = 8
+        status.TextWrapped = true
+        status.TextXAlignment = Enum.TextXAlignment.Left
+        status.TextYAlignment = Enum.TextYAlignment.Center
+        status.Parent = card
 
         local buy = Instance.new("TextButton")
+        buy.Name = "BuyEggButton"
         buy.AnchorPoint = Vector2.new(1, 1)
         buy.Position = UDim2.new(1, -12, 1, -10)
-        buy.Size = UDim2.fromOffset(150, 34)
-        buy.BackgroundColor3 = Color3.fromRGB(190, 135, 57)
-        buy.Text = "КУПИТЬ · " .. tostring(item.Price) .. " мон."
+        buy.Size = UDim2.new(0.52, -8, 0, 34)
+        buy.BackgroundColor3 = item.CanBuy and Color3.fromRGB(185, 137, 67) or Color3.fromRGB(76, 88, 91)
+        buy.Text = item.CanBuy and ("КУПИТЬ · " .. tostring(item.Price) .. " мон.")
+            or (not item.Unlocked and "ЗАКРЫТО" or ((data.EggCount or 0) >= (data.EggCapacity or 20)
+                and "НЕТ МЕСТА" or "НЕ ХВАТАЕТ МОНЕТ"))
         buy.TextColor3 = Color3.fromRGB(255, 255, 245)
-        buy.TextSize = 13
+        buy.TextSize = 9
         buy.Font = Enum.Font.GothamBlack
+        buy.TextTruncate = Enum.TextTruncate.AtEnd
+        buy.AutoButtonColor = item.CanBuy == true
+        buy.Active = item.CanBuy == true
         buy.Parent = card
         addCorner(buy, 9)
+        addStroke(buy, item.CanBuy and Color3.fromRGB(255, 218, 143) or Color3.fromRGB(123, 135, 132), 1)
 
-        buy.Activated:Connect(function()
-            buy.Active = false
-            local updated = invokeShop({ Action = "Buy", EggId = item.Id })
-            if updated then
-                renderShop(updated)
-            end
-        end)
+        if item.CanBuy then
+            buy.Activated:Connect(function()
+                if not item.CanBuy then return end
+                buy.Active = false
+                buy.Text = "ПОКУПАЕМ..."
+                buy.BackgroundColor3 = Color3.fromRGB(111, 128, 84)
+                local updated = invokeShop({ Action = "Buy", EggId = item.Id })
+                if updated then
+                    TweenService:Create(card, TweenInfo.new(0.14, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                        BackgroundColor3 = Color3.fromRGB(69, 105, 79),
+                    }):Play()
+                    task.delay(0.14, function()
+                        if shopPanel.Visible then renderShop(updated) end
+                    end)
+                else
+                    buy.Active = true
+                    buy.Text = "КУПИТЬ · " .. tostring(item.Price) .. " мон."
+                    buy.BackgroundColor3 = Color3.fromRGB(185, 137, 67)
+                end
+            end)
+        end
     end
 end
 
