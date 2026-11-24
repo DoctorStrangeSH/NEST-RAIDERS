@@ -5840,10 +5840,11 @@ local function renderCollectionBook(data)
 
     for index, entry in ipairs(data.Entries or {}) do
         local query = string.lower(bookSearch.Text or "")
+        -- Never let search reveal the identity of an undiscovered species.
         local searchable = string.lower(table.concat({
-            tostring(entry.Name or ""),
+            tostring(entry.Discovered and entry.Name or ""),
             tostring(entry.Rarity or ""),
-            tostring(entry.BiomeName or ""),
+            tostring(entry.Discovered and entry.BiomeName or ""),
             tostring(entry.EggName or ""),
             tostring(entry.AcquisitionLabel or ""),
         }, " "))
