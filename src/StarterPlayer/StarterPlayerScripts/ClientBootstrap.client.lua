@@ -170,6 +170,57 @@ stats.TextYAlignment = Enum.TextYAlignment.Top
 stats.Text = "Загрузка гнезда..."
 stats.Parent = panel
 
+-- Compact live island strip: synced in-game time, day/night phase and weather.
+local worldInfo = Instance.new("Frame")
+worldInfo.Name = "WorldInfo"
+worldInfo.AnchorPoint = Vector2.new(0.5, 0)
+worldInfo.Position = UDim2.new(0.5, 0, 0, 14)
+worldInfo.Size = UDim2.fromOffset(252, 34)
+worldInfo.BackgroundColor3 = Color3.fromRGB(28, 45, 55)
+worldInfo.BackgroundTransparency = 0.08
+worldInfo.BorderSizePixel = 0
+worldInfo.Parent = gui
+addCorner(worldInfo, 12)
+addStroke(worldInfo, Color3.fromRGB(123, 211, 163), 1.4)
+
+local worldInfoText = Instance.new("TextLabel")
+worldInfoText.Name = "WorldInfoText"
+worldInfoText.BackgroundTransparency = 1
+worldInfoText.Position = UDim2.fromOffset(8, 0)
+worldInfoText.Size = UDim2.new(1, -16, 1, 0)
+worldInfoText.Font = Enum.Font.GothamBold
+worldInfoText.Text = "14:00  ·  ДЕНЬ  ·  ЯСНО"
+worldInfoText.TextColor3 = Color3.fromRGB(241, 247, 236)
+worldInfoText.TextSize = 11
+worldInfoText.TextXAlignment = Enum.TextXAlignment.Center
+worldInfoText.Parent = worldInfo
+
+local function updateWorldInfo()
+    local clockTime = Lighting.ClockTime
+    local hour = math.floor(clockTime) % 24
+    local minute = math.floor((clockTime % 1) * 60)
+    local worldFolder = Workspace:FindFirstChild("NestRaidersWorld")
+    local phase = worldFolder and worldFolder:GetAttribute("WorldTimeLabel") or (hour >= 19 or hour < 6 and "Ночь" or "День")
+    local weather = worldFolder and worldFolder:GetAttribute("WorldWeatherLabel") or "Ясно"
+    worldInfoText.Text = string.format("%02d:%02d  ·  %s  ·  %s", hour, minute, string.upper(tostring(phase)), tostring(weather))
+end
+
+local function bindWorldInfo()
+    local worldFolder = Workspace:FindFirstChild("NestRaidersWorld")
+    if worldFolder then
+        worldFolder:GetAttributeChangedSignal("WorldTimeLabel"):Connect(updateWorldInfo)
+        worldFolder:GetAttributeChangedSignal("WorldWeatherLabel"):Connect(updateWorldInfo)
+    end
+    updateWorldInfo()
+end
+Workspace.ChildAdded:Connect(function(child)
+    if child.Name == "NestRaidersWorld" then
+        task.defer(bindWorldInfo)
+    end
+end)
+Lighting:GetPropertyChangedSignal("ClockTime"):Connect(updateWorldInfo)
+bindWorldInfo()
+
 local inventoryButton = Instance.new("TextButton")
 inventoryButton.Name = "InventoryButton"
 inventoryButton.Position = UDim2.fromOffset(18, 162)
@@ -1536,6 +1587,9 @@ local function resizeNavigation()
     local narrow = viewport.X < 600
     panel.Position = narrow and UDim2.fromOffset(12, 8) or UDim2.fromOffset(18, 18)
     panel.Size = narrow and UDim2.fromOffset(206, 112) or UDim2.fromOffset(250, 132)
+    worldInfo.Size = UDim2.fromOffset(narrow and 188 or 252, 32)
+    worldInfo.Position = UDim2.new(0.5, 0, 0, narrow and 8 or 14)
+    worldInfoText.TextSize = narrow and 9 or 11
     title.TextSize = narrow and 15 or 18
     stats.TextSize = narrow and 12 or 15
     stats.Position = narrow and UDim2.fromOffset(12, 32) or UDim2.fromOffset(14, 36)
