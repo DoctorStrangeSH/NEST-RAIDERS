@@ -5860,6 +5860,12 @@ local function renderCollectionBook(data)
         card.Parent = bookList
         addCorner(card, 11)
         local rarityColors = {
+            ["Обычный"] = Color3.fromRGB(142, 157, 176),
+            ["Необычный"] = Color3.fromRGB(104, 190, 132),
+            ["Редкий"] = Color3.fromRGB(91, 157, 230),
+            ["Эпический"] = Color3.fromRGB(170, 117, 224),
+            ["Легендарный"] = Color3.fromRGB(239, 178, 78),
+            ["Мифический"] = Color3.fromRGB(239, 112, 139),
             Common = Color3.fromRGB(142, 157, 176),
             Uncommon = Color3.fromRGB(104, 190, 132),
             Rare = Color3.fromRGB(91, 157, 230),
