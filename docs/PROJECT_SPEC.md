@@ -662,3 +662,13 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Existing bounded scale floor is retained to avoid making text and touch targets excessively small on phones.
 - The modal exclusivity registry contains each modal exactly once; picker remains the only supported nested dialog over the display panel.
 - This foundation does not yet certify every panel at all aspect ratios. Follow-up UI work must audit modal min/max constraints, text wrapping, card density, close affordances, gameplay HUD, building controls, and empty states individually.
+
+ 
+## Main navigation visual system — Sprint 4.57
+- The feature menu uses a dark teal surface with a subtle vertical gradient, rounded corners, a muted mint outline and a dedicated title/subtitle header.
+- Navigation is grouped into three readable sections: "МОЙ ОСТРОВ", "ПРИКЛЮЧЕНИЯ" and "КОЛЛЕКЦИЯ И ПРОФИЛЬ". Every section and action has a unique UIListLayout order.
+- Fourteen feature icons are drawn locally from basic Roblox GUI primitives (Frames, UICorners and rotations). Icon kinds: paw, egg, book, nest, star, flower, hammer, arrow, swords, trophy, podium, gem, crystal and profile. The design does not depend on image asset IDs, external fonts or emoji coverage.
+- Each feature action keeps its existing Activated handler. The navigation closes after selection, while the shared menu state helper updates the hamburger/close glyph and toggle color.
+- Feature buttons use a consistent dark gradient, accent-colored stroke, left-aligned Gotham typography, icon-safe padding and end truncation. Mouse hover provides a subtle background transition; touch users retain the same large button targets without relying on hover.
+- The navigation remains a ScrollingFrame and inherits the responsive geometry introduced in Sprint 4.56. The menu must be tested at 320x480, 375x667, tablet, 1366x768 and 1920x1080.
+- Visual Studio/device acceptance remains open. The vector geometry is implemented but must be checked in Roblox Studio for legibility, shape quality, touch behavior and clipped labels before moving to the pet inventory panel.
