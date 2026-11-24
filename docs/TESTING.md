@@ -957,3 +957,14 @@ Static source assertions cover the decoration definitions and non-collidable set
 7. Test the selector and scrolling at 320×480, 375×667, tablet, 1366×768 and 1920×1080.
 
 Static source checks validate the catalogue, persistence field, server-side unlock gate and UI wiring. Runtime and exploit validation must be completed in Roblox Studio.
+
+## Sprint 4.64 — Living Island Companions
+1. Display one pet in a nest slot. Confirm it walks around a small area near its own display point, turns toward its destination, pauses, and idles naturally.
+2. Display four pets. Confirm each remains in its own area and does not wander across the plot or into another pet's area.
+3. Raise a pet's mood above 80 and confirm its behavior becomes more playful and its movement becomes quicker. Lower its energy below 15 and confirm movement slows.
+4. Put a pet to sleep. Confirm it stops wandering and remains in a resting pose until the sleep timer expires.
+5. Remove or replace a displayed pet while it is moving. Confirm the old model and its movement loop stop cleanly.
+6. Use the existing Feed, Pet, Play, EquipToy and ToyPlay actions while pets are moving. Confirm server responses and displayed needs stay consistent.
+7. Test with multiple players and monitor server performance, movement replication, plot boundaries, building placement and decoration placement.
+
+Static regression checks validate bounded movement, state-driven behavior and existing interaction wiring. Roblox Studio runtime and multiplayer performance checks are still required.
