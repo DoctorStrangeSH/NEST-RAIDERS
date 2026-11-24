@@ -935,3 +935,14 @@ Static CI checks are not a substitute for these Roblox Studio runtime checks.
 7. Test mouse and touch activation; confirm no duplicate upgrade request can be submitted while the action is in progress.
 
 Static CI checks do not replace Roblox Studio runtime and economy tests.
+
+## Sprint 4.62 — Living Nest Environment
+1. Start a fresh server and inspect all six plots. Confirm each has four corner trees, flower beds and the stepping-stone approach.
+2. Walk around each plot and across the decorative pieces. Confirm props do not block characters, prompts or camera selection.
+3. Open construction and place items at the outermost valid grid cells. Confirm landscaping stays outside the build grid and does not cause false placement collisions.
+4. Upgrade a nest through levels 1–5. Confirm level 2 lantern posts emit warm light, level 3 crystals glow, level 4 banner appears and level 5 crown appears.
+5. Leave and rejoin. Confirm the environment is rebuilt and the correct upgrade tier is restored from the saved nest level.
+6. Run two or more players together. Confirm each plot's landscaping and upgrade tier remain independent and no props appear on another player's plot.
+7. Inspect at low and high graphics quality and from ground/elevated camera angles. Check for floating pieces, clipping, excessive bloom or unwanted visual noise.
+
+Static source assertions cover the decoration definitions and non-collidable settings; they do not replace Studio movement, placement, multiplayer or persistence testing.
