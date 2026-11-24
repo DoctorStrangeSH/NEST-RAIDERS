@@ -1186,7 +1186,7 @@ assert 'DefenseCount=countDefenseOwned(nest)' in build_service
 assert 'def.Kind == "DefenseWall"' in build_service
 assert 'def.Kind == "DefenseTower"' in build_service
 assert 'def.Kind == "DefenseTrap"' in build_service
-assert 'Category = def.Category, DefenseType = def.DefenseType' in build_service
+assert 'Category=def.Category, DefenseType=def.DefenseType' in build_service
 assert 'item.Category and ("[" .. item.Category .. "] ")' in client
 assert 'Оборона: %d / %d' in client
 
