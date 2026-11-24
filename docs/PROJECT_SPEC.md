@@ -571,3 +571,17 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The HUD shows both combat health values, strike and parry controls, the core objective, timer, role-specific core action and voluntary forfeit.
 - Duel combat does not replace the Nest Core objective: the attacker can still win by destroying the core, and the defender can still win by surviving the round timer.
 - Combat requests are server-authoritative. Client controls only request actions; the server owns range, cooldown, guard timing, damage, match completion and rewards.
+
+ 
+## Persistent nest defenses and raid siege — Sprint 4.50
+- The existing island construction system adds three defensive build types. Stone Bastion: 140 structure health, maximum six owned. Watchtower: 100 structure health, maximum three owned, fires every 2.5 seconds within 38 studs for 8 raid combat damage. Thorn Trap: 60 structure health, maximum six owned, deals 12 raid combat damage to the attacker on contact with a six-second per-trap cooldown.
+- Defensive ownership is capped at 12 total structures across placed buildings and build inventory. The server enforces per-type and combined caps during purchase; normal placement bounds, grid snapping, overlap checks, owner plot checks and inventory accounting remain authoritative.
+- The build panel labels defensive catalogue items and displays current defense capacity.
+- When a raid is accepted, the server reads the defender's saved placed-building data and materializes up to 12 defensive structures on the defender side of the temporary arena. The stored island positions are mapped to the arena defense zone; the original saved coordinates and inventory are not modified.
+- Bastions create physical barriers. The attacker can damage the nearest defense structure within 12 studs for 35 structure damage, with a 1.15-second cooldown. Destroyed structures are removed from the arena.
+- Watchtowers fire visible server-created projectiles at the attacker when within 38 studs. A hit deals 8 points of raid combat health damage. Destroying a tower stops its firing loop.
+- Thorn traps have a server-side touch trigger that only recognizes the attacker. Each trap deals 12 raid combat damage at most once every six seconds. Defender characters never trigger their own traps.
+- The defender can repair the nearest damaged, non-destroyed defense structure within 12 studs for 30 structure health, with an eight-second cooldown. Destroyed structures cannot be repaired during the same round.
+- The HUD reports how many defense structures remain and shows role-specific actions: attackers can attack structures; defenders can repair them. The existing duel strike/parry and Nest Core actions remain available.
+- All structure health and damage in a raid are temporary match state. Damage, repair and destruction never change saved placed-building records or build inventory. A new raid recreates the structures at full health.
+- All actions are validated on the server against active match, role, character life, range, cooldown and structure state.
