@@ -863,3 +863,18 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify +5% / +10% / +15% XP outcomes in Roblox Studio Play.
 - [ ] Verify level scaling, two-slot stacking, +50% cap, save persistence and 375px UI.
 - [ ] Verify all XP reward sources remain server-authoritative and the simulation does not mutate player progression.
+
+### Sprint 4.46 — Hunter artifact family (2026-11-24)
+- [x] Add Hunter Trophy (+5%), Moon Tracker (+10%), and Hunter Crown (+15%).
+- [x] Increase only the relative weights of each egg's highest available rarity tier; normalize the complete table.
+- [x] Keep biome egg species tables, lower-tier weights, genetic traits, and breeding inheritance unchanged.
+- [x] Apply Hunter modifiers only to natural egg hatches; breeding eggs bypass the Hunter selection path.
+- [x] Scale Hunter bonuses by 25% per upgrade level and cap combined equipped modifier at +30%.
+- [x] Display per-artifact and combined Hunter bonuses in the Russian artifact collection UI.
+- [x] Show the actual highest-tier probability before and after the modifier in natural hatch notices.
+- [x] Rebalance craft weights to income 36/18/6 (60%), Gatherer 12/6/2 (20%), Researcher 6/3/1 (10%), Hunter 6/3/1 (10%).
+- [x] Add a Studio-only Hunter fixture and deterministic 7,000-hatch simulation across all seven natural egg tables.
+- [x] Add static regression coverage for rarity weighting, natural-vs-breeding routing, odds, UI, QA guards and simulation side effects.
+- [ ] Verify Hunter odds in Roblox Studio Play for every biome egg.
+- [ ] Verify level scaling, two-slot stacking, +30% cap, persistence, and 375px UI.
+- [ ] Verify breeding eggs, genetic traits, egg inventory and companion collection are unaffected by the simulation.
