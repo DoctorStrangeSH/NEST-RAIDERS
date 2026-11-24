@@ -512,7 +512,7 @@ artifact_bonus = Path("src/ServerScriptService/Server/Services/ArtifactBonusServ
 assert 'ArtifactBonusService' in Path("src/ServerScriptService/Server/Services/AncientHarvestService.lua").read_text()
 assert 'ArtifactBonusService' in Path("src/ServerScriptService/Server/Services/CrystalMiningService.lua").read_text()
 assert 'function ArtifactBonusService:GetGatherBonus(profile)' in artifact_bonus
-assert 'function ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)' in artifact_bonus
+assert 'function ArtifactBonusService:ApplyGatherBonus(profile, baseAmount, rollValue)' in artifact_bonus
 assert 'MAX_GATHER_BONUS = 0.50' in artifact_bonus
 assert 'definition.GatherBonus' in artifact_bonus and 'profile.EquippedArtifacts' in artifact_bonus
 assert 'RootHarvester' in artifact_catalog and 'MoonForager' in artifact_catalog and 'StarProspector' in artifact_catalog
