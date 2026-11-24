@@ -197,6 +197,7 @@ local function makeSnapshot(profile)
                 Rarity = definition.Rarity, Level = level, TierName = tierNames[level],
                 Description = definition.Description, IncomeBonus = incomeBonus,
                 GatherBonus = math.min(0.50, (tonumber(definition.GatherBonus) or 0) * (1 + (level - 1) * 0.25)),
+                ResearchBonus = math.min(0.50, (tonumber(definition.ResearchBonus) or 0) * (1 + (level - 1) * 0.25)),
                 DevOnly = artifact.DevOnly == true,
                 Equipped = equippedArtifacts[artifact.InstanceId] == true,
             })
@@ -211,6 +212,13 @@ local function makeSnapshot(profile)
             local total = 0
             for _, artifact in ipairs(artifacts) do
                 if artifact.Equipped then total += artifact.GatherBonus or 0 end
+            end
+            return math.clamp(total, 0, 0.50)
+        end)(),
+        EquippedResearchBonus = (function()
+            local total = 0
+            for _, artifact in ipairs(artifacts) do
+                if artifact.Equipped then total += artifact.ResearchBonus or 0 end
             end
             return math.clamp(total, 0, 0.50)
         end)(),
@@ -291,6 +299,60 @@ function InventoryService:HandleRequest(player, payload)
         local expected = ArtifactBonusService:GetGatherBonus(profile)
         local actualPercent = totalBase > 0 and 100 * totalExtra / totalBase or 0
         local message = string.format("1000 сборов: +%d дополнительно (%.1f%%). Средний бонус: %.1f%%.",
+            totalExtra, actualPercent, expected * 100)
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
+    end
+
+    if payload.Action == "DevSeedResearcherArtifacts" then
+        if not RunService:IsStudio() then
+            return { Ok = false, Message = "Тестовые предметы доступны только в Roblox Studio." }
+        end
+        local researcherIds = { "FieldJournal", "MoonAtlas", "StarCompass" }
+        local missingById, requiredSlots = {}, 0
+        for _, artifactId in ipairs(researcherIds) do
+            local count = 0
+            for _, artifact in ipairs(profile.Artifacts) do
+                if artifact.Id == artifactId and artifact.Level == 1 and artifact.DevOnly == true then count += 1 end
+            end
+            missingById[artifactId] = math.max(0, 3 - count)
+            requiredSlots += missingById[artifactId]
+        end
+        if #profile.Artifacts + requiredSlots > 40 then
+            return { Ok = false, Message = "Освободи место в коллекции: для теста нужно до 9 свободных слотов." }
+        end
+        for artifactId, count in pairs(missingById) do
+            for _ = 1, count do
+                table.insert(profile.Artifacts, {
+                    Id = artifactId,
+                    Level = 1,
+                    DevOnly = true,
+                    InstanceId = HttpService:GenerateGUID(false),
+                    CraftedAt = os.time(),
+                })
+            end
+        end
+        local message = "Тестовые Исследователи готовы: по 3 экземпляра каждого вида."
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
+    end
+
+    if payload.Action == "DevSimulateResearchBonus" then
+        if not RunService:IsStudio() then
+            return { Ok = false, Message = "Проверка опыта доступна только в Roblox Studio." }
+        end
+        -- Use the production XP bonus formula with an isolated deterministic random stream.
+        local totalBase, totalExtra = 0, 0
+        local simulationRandom = Random.new(445)
+        for sample = 1, 1000 do
+            local baseAmount = ((sample - 1) % 3 + 1) * 45
+            local _, _, extra = ArtifactBonusService:ApplyResearchBonus(profile, baseAmount, simulationRandom:NextNumber())
+            totalBase += baseAmount
+            totalExtra += extra
+        end
+        local expected = ArtifactBonusService:GetResearchBonus(profile)
+        local actualPercent = totalBase > 0 and 100 * totalExtra / totalBase or 0
+        local message = string.format("1000 наград XP: +%d дополнительно (%.1f%%). Средний бонус: %.1f%%.",
             totalExtra, actualPercent, expected * 100)
         player:SetAttribute("LastNotice", message)
         return { Ok = true, Data = makeSnapshot(profile), Message = message }
