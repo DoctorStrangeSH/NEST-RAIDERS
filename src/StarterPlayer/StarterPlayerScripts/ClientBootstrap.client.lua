@@ -2271,7 +2271,13 @@ local function renderShop(data)
         odds.TextYAlignment = Enum.TextYAlignment.Top
         local oddsLines = {}
         for _, outcome in ipairs(item.Odds or {}) do
-            table.insert(oddsLines, string.format("%s — %d%%", outcome.Name, outcome.Chance))
+            local baseChance = tonumber(outcome.BaseChance)
+            if baseChance and baseChance ~= outcome.Chance then
+                table.insert(oddsLines, string.format("%s — %d%% (база %d%%)",
+                    outcome.Name, outcome.Chance, baseChance))
+            else
+                table.insert(oddsLines, string.format("%s — %d%%", outcome.Name, outcome.Chance))
+            end
         end
         odds.Text = "Шансы вылупления:\n" .. table.concat(oddsLines, "\n")
         odds.Parent = card
@@ -4039,8 +4045,14 @@ local function renderCollectionBook(data)
         elseif entry.HybridOnly then
             details.Text = string.format("%s  ·  Только через разведение", entry.Rarity)
         else
-            details.Text = string.format("%s  ·  %s: %d%%",
-                entry.Rarity, entry.EggName or "Яйцо", entry.HatchChance or 0)
+            local baseChance = tonumber(entry.BaseHatchChance)
+            if baseChance and baseChance ~= entry.HatchChance then
+                details.Text = string.format("%s  ·  %s: %d%% (база %d%%)",
+                    entry.Rarity, entry.EggName or "Яйцо", entry.HatchChance or 0, baseChance)
+            else
+                details.Text = string.format("%s  ·  %s: %d%%",
+                    entry.Rarity, entry.EggName or "Яйцо", entry.HatchChance or 0)
+            end
         end
         details.TextColor3 = Color3.fromRGB(190, 204, 223)
         details.TextSize = 12
