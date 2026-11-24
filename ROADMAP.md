@@ -1133,3 +1133,24 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Continue with the pet inventory redesign only after navigation visual acceptance.
 
 **Scope boundary:** this pass redesigns the main navigation only. It does not yet claim that the inventory, egg shop, collection book, nest, build, raid or other modal panels have been visually redesigned.
+
+ 
+### Sprint 4.58 — companion inventory visual redesign (2026-11-24)
+- [x] Rebuild the inventory panel with a larger responsive canvas, dark teal gradient, accent divider and clearer header.
+- [x] Separate team capacity into a readable summary pill and show both active team count and total owned companions.
+- [x] Present genetics odds as a compact line and incubator/offspring status in a dedicated card.
+- [x] Add rarity-colored native pet portrait badges with species-family silhouettes; no unsupported emoji or external image IDs.
+- [x] Add rarity and star badges, clearer level/growth/income/trait details, and a growth XP progress bar to every companion card.
+- [x] Replace ambiguous "ВЗЯТЬ / СНЯТЬ" actions with full-width team placement/removal buttons.
+- [x] Reflow merge and training controls into a responsive two-column row; move optional ability and breeding controls into their own stacked rows.
+- [x] Calculate card height from the available optional actions so controls no longer overlap or fall outside the card.
+- [x] Redesign the empty inventory state and retain existing server actions for equip, unequip, merge, train, ability use and breeding.
+- [x] Improve the global UIScale minimum for normal phone sizes while retaining a compact-fit path for very small screens.
+- [x] Add regression checks for card sizing, rarity portraits, XP progress, action layout, empty state and compact-screen scaling.
+- [ ] Verify portrait silhouettes against all species families in Roblox Studio; refine any inaccurate species shapes.
+- [ ] Test inventory at 320×480, 375×667, tablet, 1366×768 and 1920×1080.
+- [ ] Verify every action (equip, unequip, merge confirmation, training, ability, breeding) still behaves correctly on mouse and touch.
+- [ ] Confirm long names, offspring parent names and ability names do not clip.
+- [ ] After inventory acceptance, continue to the egg shop and hatch flow.
+
+**Scope boundary:** this pass redesigns the companion inventory and its card presentation. It does not replace the existing procedural 3D companion models in the world; the small card portraits are native UI silhouettes. The egg shop remains the next panel.
