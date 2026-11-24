@@ -1261,6 +1261,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Expose toy usage through the pet's `Behavior` attribute (`PlayingWithToy`) and the toy's `ToyState` attribute.
 - [x] Keep toy and pet movement non-collidable and scoped to the player's displayed-companion folder.
 - [x] Add static regression checks for toy placement, approach, play duration and state transitions.
+- [x] GitHub Actions: Rojo place build, package validation and `tests/check_playable.py` passed (workflow run 45410830831).
+- [x] Publish the refreshed `NEST-RAIDERS.rbxlx` Studio artifact for Sprint 4.65 (available through 2026-12-08).
 - [ ] Roblox Studio: verify each of the three toys is visible on the ground and the pet walks to it rather than carrying it.
 - [ ] Confirm the pet pauses to play, toy animation is visible, and it resumes wandering afterward.
 - [ ] Verify low mood/energy prevents toy play and sleeping pets do not use toys.
