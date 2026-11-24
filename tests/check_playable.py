@@ -78,6 +78,7 @@ assert 'ArtifactBonusService:GetHatchSpeciesChance(' in shop_service and 'profil
 assert 'Odds = buildOdds(profile, item.Id)' in shop_service and 'BaseChance = math.floor(baseChance * 100 + 0.5)' in shop_service
 assert 'entry.DiscoveredBiome' in client and 'entry.EggName' in client
 assert 'база %d%%' in client
+assert 'local oddsText = ""' in client and 'entry.HatchChance' in client
 
 profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
 assert 'CompanionIncomeRemainder = 0' in profile_template
