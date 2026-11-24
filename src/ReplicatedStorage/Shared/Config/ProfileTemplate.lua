@@ -48,6 +48,7 @@ local ProfileTemplate = {
         StoredCoins = 0,
         CompanionMood = {},
         CompanionBonds = {},
+        CompanionGiftReadyAt = 0,
         CompanionNeeds = {},
         CompanionToys = {},
         DecorInventory = {},
