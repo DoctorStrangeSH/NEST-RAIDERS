@@ -624,3 +624,4 @@
 - [ ] Equip a +5% / +10% / +15% Gatherer and confirm the simulated observed rate is near the expected rate.
 - [ ] Unequip the Gatherer and rerun to confirm the bonus disappears.
 - [ ] Ensure simulated samples never award real materials or bypass node cooldowns.
+- The 1000-sample Studio simulation uses its own seeded `Random` generator and passes rolls into the production bonus function. It does not consume the game's shared `math.random()` sequence, so QA sampling cannot perturb unrelated drops or gameplay randomness.
