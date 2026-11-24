@@ -648,3 +648,26 @@
 - [ ] Confirm the simulation output is near the expected equipped bonus for no artifact and each Researcher tier.
 - [ ] Verify simulation does not change profile XP, player level, saved resources, or shared gameplay RNG.
 - [ ] Verify both QA actions are rejected by the server outside Roblox Studio.
+
+
+## Sprint 4.46 — Hunter artifacts acceptance
+- [ ] Verify Hunter Trophy (+5%), Moon Tracker (+10%), and Hunter Crown (+15%) appear in crafting with family odds 6/3/1 (10% total).
+- [ ] Verify all artifact weights total 100: income 60%, Gatherer 20%, Researcher 10%, Hunter 10%.
+- [ ] Equip each Hunter separately and verify the highest-rarity tier chance increases for all seven natural biome egg tables.
+- [ ] Verify the displayed base and adjusted probabilities match the server's normalized weighted table.
+- [ ] Verify lower rarity species weights are unchanged and all species remain in their original biome egg.
+- [ ] Verify two equipped Hunter artifacts stack additively and the combined relative-weight modifier never exceeds +30%.
+- [ ] Upgrade Hunter artifacts through levels I–VI and verify the 25% per-level scaling and cap.
+- [ ] Verify unequipping removes the Hunter modifier immediately and rejoining preserves equipment and levels.
+- [ ] Hatch a breeding egg with Hunters equipped and verify offspring species and inherited genetic trait are unchanged.
+- [ ] Verify Hunter artifacts never alter genetic-trait odds.
+- [ ] Verify hatch notices show the highest-tier probability before and after the Hunter modifier only for natural eggs.
+- [ ] Verify 375px mobile and desktop collection UI shows Hunter descriptions, individual effects and combined Hunter bonus without overlap.
+
+## Sprint 4.46 — Studio Hunter QA
+- In Roblox Studio only, open **АРТЕФАКТЫ** and use **ТЕСТ: ВЫДАТЬ ×3 ОХОТНИКОВ**.
+- Equip Hunter artifacts and run **ТЕСТ: 7000 ВЫЛУПЛЕНИЙ БЕЗ НАГРАД**.
+- [ ] Confirm the simulation samples 1,000 outcomes from each of the seven natural egg tables and reports both observed and formula probabilities.
+- [ ] Confirm simulation leaves egg inventory, companion collection, XP, genetic traits, and saved profile data unchanged.
+- [ ] Verify test artifacts remain tagged temporary, are not persisted, and cannot merge with normal crafted copies.
+- [ ] Verify both Hunter QA actions are rejected by the server outside Roblox Studio.
