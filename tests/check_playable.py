@@ -1324,6 +1324,7 @@ assert 'if roles.GUARDIAN and roles.HEALER then' in raid_service
 assert 'Id = "LIVING_BASTION"' in raid_service and 'DamageReduction = 0.12' in raid_service
 assert 'if roles.HUNTER and roles.GUARDIAN then' in raid_service
 assert 'Id = "ASSAULT_FORMATION"' in raid_service and 'DuelDamageMultiplier = 1.10' in raid_service
+assert 'BoostRoles = { HUNTER = true, GUARDIAN = true }' in raid_service
 assert 'if roles.HUNTER and roles.HEALER then' in raid_service
 assert 'Id = "COORDINATED_ASSAULT"' in raid_service
 assert raid_service.index('if roleCount == 3 then') < raid_service.index('if roles.GUARDIAN and roles.HEALER then'), "The full trio must replace, not stack with, pair bonuses"
