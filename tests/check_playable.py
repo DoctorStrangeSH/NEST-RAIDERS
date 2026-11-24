@@ -9,7 +9,9 @@ import xml.etree.ElementTree as ET
 client = Path("src/StarterPlayer/StarterPlayerScripts/ClientBootstrap.client.lua").read_text()
 assert 'player.CameraMinZoomDistance = 7' in client
 assert 'player.CameraMaxZoomDistance = 24' in client
-assert 'ResponsiveHudScale' in client and 'camera:GetPropertyChangedSignal("ViewportSize")' in client
+assert 'ResponsiveHudScale' in client and 'bindHudCamera()' in client
+assert 'currentCamera:GetPropertyChangedSignal("ViewportSize")' in client
+assert 'Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindHudCamera)' in client
 assert 'МЕНЮ' in client and '☰  МЕНЮ' not in client
 assert '🪙' not in client, "Avoid unsupported currency emoji glyphs in UI"
 
