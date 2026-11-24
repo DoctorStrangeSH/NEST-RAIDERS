@@ -3932,6 +3932,98 @@ raidButton.Activated:Connect(function()
 end)
 raidClose.Activated:Connect(function() raidPanel.Visible = false end)
 
+local raidSynergyToast = Instance.new("Frame")
+raidSynergyToast.Name = "RaidSynergyActivationToast"
+raidSynergyToast.AnchorPoint = Vector2.new(0.5, 0)
+raidSynergyToast.Position = UDim2.new(0.5, 0, 0, 14)
+raidSynergyToast.Size = UDim2.new(0.85, 0, 0, 62)
+raidSynergyToast.BackgroundColor3 = Color3.fromRGB(25, 34, 45)
+raidSynergyToast.BackgroundTransparency = 1
+raidSynergyToast.BorderSizePixel = 0
+raidSynergyToast.Visible = false
+raidSynergyToast.ZIndex = 100
+raidSynergyToast.Parent = gui
+addCorner(raidSynergyToast, 13)
+local raidSynergyToastSize = Instance.new("UISizeConstraint")
+raidSynergyToastSize.MinSize = Vector2.new(240, 62)
+raidSynergyToastSize.MaxSize = Vector2.new(390, 62)
+raidSynergyToastSize.Parent = raidSynergyToast
+local raidSynergyToastStroke = Instance.new("UIStroke")
+raidSynergyToastStroke.Color = Color3.fromRGB(255, 213, 151)
+raidSynergyToastStroke.Thickness = 1.5
+raidSynergyToastStroke.Transparency = 1
+raidSynergyToastStroke.Parent = raidSynergyToast
+
+local raidSynergyToastTitle = Instance.new("TextLabel")
+raidSynergyToastTitle.BackgroundTransparency = 1
+raidSynergyToastTitle.Position = UDim2.fromOffset(12, 7)
+raidSynergyToastTitle.Size = UDim2.new(1, -24, 0, 17)
+raidSynergyToastTitle.Font = Enum.Font.GothamBlack
+raidSynergyToastTitle.Text = "СИНЕРГИЯ АКТИВИРОВАНА"
+raidSynergyToastTitle.TextColor3 = Color3.fromRGB(255, 225, 177)
+raidSynergyToastTitle.TextSize = 10
+raidSynergyToastTitle.TextTransparency = 1
+raidSynergyToastTitle.TextXAlignment = Enum.TextXAlignment.Center
+raidSynergyToastTitle.ZIndex = 101
+raidSynergyToastTitle.Parent = raidSynergyToast
+
+local raidSynergyToastBody = Instance.new("TextLabel")
+raidSynergyToastBody.BackgroundTransparency = 1
+raidSynergyToastBody.Position = UDim2.fromOffset(12, 26)
+raidSynergyToastBody.Size = UDim2.new(1, -24, 0, 27)
+raidSynergyToastBody.Font = Enum.Font.GothamBold
+raidSynergyToastBody.Text = "Триада"
+raidSynergyToastBody.TextColor3 = Color3.fromRGB(245, 242, 226)
+raidSynergyToastBody.TextSize = 11
+raidSynergyToastBody.TextWrapped = true
+raidSynergyToastBody.TextTransparency = 1
+raidSynergyToastBody.TextXAlignment = Enum.TextXAlignment.Center
+raidSynergyToastBody.ZIndex = 101
+raidSynergyToastBody.Parent = raidSynergyToast
+
+local raidSynergyToastToken = 0
+local lastRaidSynergyPulse = ""
+local raidSynergyToastColors = {
+    LIVING_BASTION = Color3.fromRGB(126, 221, 198),
+    ASSAULT_FORMATION = Color3.fromRGB(255, 164, 104),
+    COORDINATED_ASSAULT = Color3.fromRGB(184, 160, 255),
+    TRIAD = Color3.fromRGB(255, 213, 151),
+}
+
+local function showRaidSynergyToast(synergyId, synergyName, description)
+    raidSynergyToastToken += 1
+    local token = raidSynergyToastToken
+    local accent = raidSynergyToastColors[synergyId] or Color3.fromRGB(255, 213, 151)
+    raidSynergyToastStroke.Color = accent
+    raidSynergyToastTitle.TextColor3 = accent
+    raidSynergyToastBody.Text = synergyName .. " · " .. description
+    raidSynergyToast.Visible = true
+    raidSynergyToast.BackgroundTransparency = 1
+    raidSynergyToastStroke.Transparency = 1
+    raidSynergyToastTitle.TextTransparency = 1
+    raidSynergyToastBody.TextTransparency = 1
+
+    TweenService:Create(raidSynergyToast, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        BackgroundTransparency = 0.1,
+    }):Play()
+    TweenService:Create(raidSynergyToastStroke, TweenInfo.new(0.2), { Transparency = 0.12 }):Play()
+    TweenService:Create(raidSynergyToastTitle, TweenInfo.new(0.2), { TextTransparency = 0 }):Play()
+    TweenService:Create(raidSynergyToastBody, TweenInfo.new(0.2), { TextTransparency = 0 }):Play()
+
+    task.delay(2.25, function()
+        if token ~= raidSynergyToastToken or not raidSynergyToast.Parent then return end
+        TweenService:Create(raidSynergyToast, TweenInfo.new(0.24), { BackgroundTransparency = 1 }):Play()
+        TweenService:Create(raidSynergyToastStroke, TweenInfo.new(0.24), { Transparency = 1 }):Play()
+        TweenService:Create(raidSynergyToastTitle, TweenInfo.new(0.24), { TextTransparency = 1 }):Play()
+        TweenService:Create(raidSynergyToastBody, TweenInfo.new(0.24), { TextTransparency = 1 }):Play()
+        task.delay(0.26, function()
+            if token == raidSynergyToastToken and raidSynergyToast.Parent then
+                raidSynergyToast.Visible = false
+            end
+        end)
+    end)
+end
+
 local function updateRaidArenaHud()
     local active = player:GetAttribute("RaidArenaActive") == true
     raidArenaHud.Visible = active
@@ -3957,8 +4049,10 @@ local function updateRaidArenaHud()
     local petRole = player:GetAttribute("RaidArenaPetRole") or ""
     local petLevel = math.clamp(math.floor(tonumber(player:GetAttribute("RaidArenaPetLevel")) or 0), 0, 10)
     local petPowerLabel = player:GetAttribute("RaidArenaPetPowerLabel") or ""
+    local synergyId = player:GetAttribute("RaidArenaSynergyId") or ""
     local synergyName = player:GetAttribute("RaidArenaSynergyName") or ""
     local synergyDescription = player:GetAttribute("RaidArenaSynergyDescription") or ""
+    local synergyPulse = player:GetAttribute("RaidArenaSynergyPulse") or ""
     local petCooldown = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaPetCooldown")) or 0))
     local petShield = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaPetShield")) or 0))
     local petShieldSeconds = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaPetShieldSeconds")) or 0))
@@ -3971,7 +4065,12 @@ local function updateRaidArenaHud()
         and ("СИНЕРГИЯ · " .. synergyName .. " · " .. synergyDescription)
         or "СИНЕРГИЯ · НЕТ · нужны 2 разные роли"
     raidArenaSynergyStatus.TextColor3 = synergyName ~= ""
-        and Color3.fromRGB(255, 213, 151) or Color3.fromRGB(185, 190, 198)
+        and (raidSynergyToastColors[synergyId] or Color3.fromRGB(255, 213, 151))
+        or Color3.fromRGB(185, 190, 198)
+    if synergyPulse ~= "" and synergyName ~= "" and synergyPulse ~= lastRaidSynergyPulse then
+        lastRaidSynergyPulse = synergyPulse
+        showRaidSynergyToast(synergyId, synergyName, synergyDescription)
+    end
     raidArenaPetAbility.Visible = petAbilityName ~= ""
     raidArenaPetAbility.Text = petCooldown > 0
         and ("НАВЫК · " .. tostring(petCooldown) .. " С")
@@ -4033,8 +4132,8 @@ for _, attribute in ipairs({
     "RaidArenaGuardActive", "RaidArenaGuardCooldown", "RaidArenaDefenseCount",
     "RaidArenaPetName", "RaidArenaPetAbilityName", "RaidArenaPetRole",
     "RaidArenaPetLevel", "RaidArenaPetPower", "RaidArenaPetPowerLabel",
-    "RaidArenaSynergyName", "RaidArenaSynergyDescription",
-    "RaidArenaPetCooldown", "RaidArenaPetShield", "RaidArenaPetShieldSeconds",
+    "RaidArenaSynergyId", "RaidArenaSynergyName", "RaidArenaSynergyDescription",
+    "RaidArenaSynergyPulse", "RaidArenaPetCooldown", "RaidArenaPetShield", "RaidArenaPetShieldSeconds",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateRaidArenaHud)
 end
