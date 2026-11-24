@@ -297,3 +297,6 @@ The egg shop now offers six progression-gated biome eggs with server-validated p
 
 ## Collection Book — Sprint 4.60
 The Collection Book now supports in-panel search across companion name, rarity, biome and acquisition source, plus quick filters for all, discovered and undiscovered species. Cards use rarity-colored accents and wrapped detail text. Discovery state and all hatch data remain server-authoritative. Roblox Studio device and interaction acceptance is still required.
+
+## Nest Management — Sprint 4.61
+The personal nest screen is now a unified overview with live coins and companion count, server-snapshot displayed-pet income, and shortcuts to display pets, decorations, construction and nest upgrades. Upgrade pricing and all state changes remain server-authoritative. Roblox Studio runtime and device acceptance is still required.
