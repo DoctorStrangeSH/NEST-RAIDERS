@@ -5,6 +5,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)
+local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local CollectionBookService = {}
 local function buildSnapshot(profile)
@@ -38,6 +39,7 @@ local function buildSnapshot(profile)
         local biomeName = definition.BossExclusive and (definition.AcquisitionBiome or "Храм Древнего древа") or "Зелёный луг"
         local eggName = definition.BossExclusive and "Награда за босса" or "Яйцо луга"
         local biomeChance = 0
+        local baseBiomeChance = 0
         if not definition.BossExclusive then
             eggId = eggId or "MeadowEgg"
             for _, biome in pairs(BiomeCatalog) do
@@ -45,12 +47,10 @@ local function buildSnapshot(profile)
                     if egg.Id == eggId then
                         biomeName = biome.Name or biomeName
                         eggName = egg.Name or eggName
-                        local totalWeight = 0
-                        for _, weight in pairs(egg.SpeciesWeights or {}) do
-                            if type(weight) == "number" and weight > 0 then totalWeight += weight end
-                        end
-                        local speciesWeight = tonumber(egg.SpeciesWeights and egg.SpeciesWeights[definition.Id]) or 0
-                        biomeChance = totalWeight > 0 and math.floor(speciesWeight / totalWeight * 100 + 0.5) or 0
+                        local actualChance, baseChance = ArtifactBonusService:GetHatchSpeciesChance(
+                            profile, egg.SpeciesWeights, definition.Id)
+                        biomeChance = math.floor(actualChance * 100 + 0.5)
+                        baseBiomeChance = math.floor(baseChance * 100 + 0.5)
                         break
                     end
                 end
@@ -63,6 +63,7 @@ local function buildSnapshot(profile)
             Description = definition.Description,
             Income = definition.Income,
             HatchChance = biomeChance,
+            BaseHatchChance = baseBiomeChance,
             EggName = eggName,
             BiomeName = biomeName,
             DiscoveredBiome = profile.DiscoveredBiomes[definition.Id],
