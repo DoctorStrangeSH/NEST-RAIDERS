@@ -216,11 +216,13 @@ function RaidService:GetSnapshot(player)
     end
 
     local targets = {}
-    if not protected and attackReady and not match and not self:IsVisiting(player) then
+    if not protected and attackReady and not match and not self:IsVisiting(player)
+        and not self._pendingByAttacker[player] and not self._pendingByTarget[player] then
         for _, target in ipairs(Players:GetPlayers()) do
             if target ~= player and target:GetAttribute("ProfileLoaded")
                 and PlotService:GetPlayerPlot(target) and not self._matches[target]
-                and not self._pendingByTarget[target] and not self:IsVisiting(target) then
+                and not self._pendingByTarget[target] and not self._pendingByAttacker[target]
+                and not self:IsVisiting(target) then
                 local targetProtected = self:GetProtection(target)
                 local targetDefenseOpen, targetDefenseSeconds = isWindowOpen(target, "RaidDefenseUntil")
                 if not targetProtected and targetDefenseOpen then
@@ -268,8 +270,8 @@ function RaidService:Challenge(player, targetUserId)
     if not allowed then return { Ok = false, Message = reason } end
     local attackReady = isWindowOpen(player, "RaidAttackUntil")
     if not attackReady then return { Ok = false, Message = "Сначала включи готовность к рейдам." } end
-    if self._pendingByAttacker[player] then
-        return { Ok = false, Message = "У тебя уже есть ожидающий вызов." }
+    if self._pendingByAttacker[player] or self._pendingByTarget[player] then
+        return { Ok = false, Message = "Сначала ответь на текущий вызов или отмени его." }
     end
     if now() - (self._lastChallengeAt[player] or 0) < CHALLENGE_COOLDOWN_SECONDS then
         return { Ok = false, Message = "Подожди перед следующим вызовом." }
@@ -284,7 +286,7 @@ function RaidService:Challenge(player, targetUserId)
     if not targetAllowed then return { Ok = false, Message = targetReason } end
     local defenseOpen = isWindowOpen(target, "RaidDefenseUntil")
     if not defenseOpen then return { Ok = false, Message = "Это гнездо больше не открыто для рейдов." } end
-    if self._pendingByTarget[target] or self._matches[target] then
+    if self._pendingByTarget[target] or self._pendingByAttacker[target] or self._matches[target] then
         return { Ok = false, Message = "Этот игрок уже рассматривает другой вызов." }
     end
 
