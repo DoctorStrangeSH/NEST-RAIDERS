@@ -859,7 +859,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Expose individual and combined XP bonuses in the artifact snapshot and Russian collection UI.
 - [x] Add Studio-only Researcher test inventory and a deterministic 1000-award simulation that does not award XP or change level.
 - [x] Add static regression checks for catalog odds, progression integration, UI, fixture guards and simulation side effects.
-- [x] Update trial, secret, boss and companion-ability notices to show actual awarded XP and the Researcher extra separately.
+- [x] Update trial, secret, boss and companion-ability notices to show actual awarded XP, actual extra XP, and expected Researcher percentage even on zero-extra rolls.
 - [ ] Verify +5% / +10% / +15% XP outcomes in Roblox Studio Play.
 - [ ] Verify level scaling, two-slot stacking, +50% cap, save persistence and 375px UI.
 - [ ] Verify all XP reward sources remain server-authoritative and the simulation does not mutate player progression.
