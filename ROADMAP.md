@@ -1071,3 +1071,28 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Run a full two-client match and check performance with three companions on each side.
 
 **Scope boundary:** Sprint 4.54 is presentation-only. It does not add new attacks, autonomous pet AI, additional combat events, client-side damage, permanent particle emitters or new progression data.
+
+ 
+### Sprint 4.55 — Companion combat motion and role animation (2026-11-24)
+- [x] Replace static raid follower positioning with lightweight role-aware procedural motion inside the existing server follower loop.
+- [x] Add subtle idle hovering so companions no longer remain visually rigid between actions.
+- [x] Add a short attack sequence with wind-up, forward lunge/impact pose and return to formation.
+- [x] Give Hunters the strongest target-directed pounce; Guardians make a shorter coordinated advance; Healers use a supportive lift.
+- [x] Give Hunter abilities a distinct dive, Guardian abilities a defensive brace and Healer abilities a rising restoration pose.
+- [x] Give Guardians a protective step toward their owner, Healers a supportive hover and Hunters a lateral dodge on defensive cues.
+- [x] Add a staggered activation bounce so a multi-pet team reacts as a small coordinated group rather than moving in a perfectly synchronized block.
+- [x] Drive motion from the existing server-validated raid events and replicate model PivotTo movement to both participants.
+- [x] Allow combat motion even when a team has no active synergy; synergy remains only a bonus aura/highlight layer.
+- [x] Keep the existing 0.12-second follower loop; do not add a second per-pet Heartbeat loop or client-authoritative movement.
+- [x] Clear completed cue state automatically and retain existing visual cue throttling.
+- [x] Add static regression checks for attack phases, role-specific movement, defensive poses, activation, no-synergy behavior and cleanup.
+- [ ] Roblox Studio: verify wind-up, lunge, impact pose and return to formation for Hunter, Guardian and Healer companions.
+- [ ] Verify Hunter pounce tracks the actual opponent direction for both attacker and defender roles.
+- [ ] Verify ability animations are distinct for Hunter dive, Guardian brace and Healer rise.
+- [ ] Verify defensive motion triggers only on server-validated defense/parry/mitigation events.
+- [ ] Verify all companions animate in teams with no synergy, while synergy-only highlights remain absent.
+- [ ] Verify three companions move with staggered timing without clipping through the owner or each other.
+- [ ] Verify no visual jitter when the player turns, runs, jumps, respawns, or the raid ends.
+- [ ] Run a two-client Studio test at desktop and mobile resolutions; check frame rate and server Output.
+
+**Implementation note:** Current raid companions are procedural models, not Humanoid animation rigs. Sprint 4.55 uses replicated model-pivot motion and role-specific poses rather than fabricated AnimationId assets. Rig-specific animation tracks can be layered later if the companion asset pipeline adopts authored rigs.
