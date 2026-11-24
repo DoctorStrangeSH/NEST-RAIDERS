@@ -71,6 +71,30 @@ local function isWindowOpen(player, attribute)
     return expiresAt > now(), math.max(0, expiresAt - now())
 end
 
+local function getRaidPetProgression(pet)
+    local companion = pet and pet.Companion
+    local level = math.clamp(math.floor(tonumber(companion and companion.Level) or 1), 1, 10)
+    local steps = math.floor((level - 1) / 2)
+    local ability = pet and pet.Ability
+    if not ability then return level, 0, "" end
+
+    local role = ability.Role
+    local power = 0
+    local label = ""
+    if role == "HUNTER" then
+        power = math.clamp(math.floor(tonumber(ability.Damage) or 14) + steps, 8, 30)
+        label = "УРОН " .. tostring(power)
+    elseif role == "HEALER" then
+        power = math.clamp(math.floor(tonumber(ability.HealAmount) or 20) + steps, 5, 35)
+        label = "ЛЕЧЕНИЕ +" .. tostring(power)
+    elseif role == "GUARDIAN" then
+        local shieldBonus = math.floor((level - 1) * 2 / 3)
+        power = math.clamp(math.floor(tonumber(ability.ShieldAmount) or 20) + shieldBonus, 10, 40)
+        label = "ЩИТ " .. tostring(power)
+    end
+    return level, power, label
+end
+
 local function makeArenaPart(parent, name, size, position, color, material, shape)
     local part = Instance.new("Part")
     part.Name = name
@@ -330,9 +354,13 @@ local function publishArenaState(match)
             participant:SetAttribute("RaidArenaDefenseCount", defenseCount)
             local pet = match.RaidPets and match.RaidPets[participant] or nil
             local ability = pet and pet.Ability or nil
+            local petLevel, petPower, petPowerLabel = getRaidPetProgression(pet)
             participant:SetAttribute("RaidArenaPetName", pet and pet.Name or "")
             participant:SetAttribute("RaidArenaPetAbilityName", ability and ability.Name or "")
             participant:SetAttribute("RaidArenaPetRole", ability and ability.Role or "")
+            participant:SetAttribute("RaidArenaPetLevel", ability and petLevel or 0)
+            participant:SetAttribute("RaidArenaPetPower", petPower)
+            participant:SetAttribute("RaidArenaPetPowerLabel", petPowerLabel)
             participant:SetAttribute("RaidArenaPetCooldown", match.PetAbilityReadyAt
                 and math.max(0, math.ceil((match.PetAbilityReadyAt[participant] or 0) - timestamp)) or 0)
             local shield = match.PetShields and match.PetShields[participant] or nil
@@ -515,6 +543,9 @@ local function clearMatch(self, match, message)
             participant:SetAttribute("RaidArenaPetName", nil)
             participant:SetAttribute("RaidArenaPetAbilityName", nil)
             participant:SetAttribute("RaidArenaPetRole", nil)
+            participant:SetAttribute("RaidArenaPetLevel", nil)
+            participant:SetAttribute("RaidArenaPetPower", nil)
+            participant:SetAttribute("RaidArenaPetPowerLabel", nil)
             participant:SetAttribute("RaidArenaPetCooldown", nil)
             participant:SetAttribute("RaidArenaPetShield", nil)
             participant:SetAttribute("RaidArenaPetShieldSeconds", nil)
@@ -930,6 +961,7 @@ function RaidService:UsePetAbility(player)
     end
 
     local role = ability.Role
+    local petLevel, power = getRaidPetProgression(primary)
     local opponent = match.Attacker == player and match.Defender or match.Attacker
     local opponentCharacter = opponent and opponent.Character
     local opponentRoot = opponentCharacter and opponentCharacter:FindFirstChild("HumanoidRootPart")
@@ -945,7 +977,7 @@ function RaidService:UsePetAbility(player)
             or math.abs(opponentRoot.Position.Y - root.Position.Y) > 10 then
             return { Ok = false, Message = "Охотник должен видеть соперника в пределах дальности способности." }
         end
-        local damage = math.clamp(math.floor(tonumber(ability.Damage) or 14), 8, 30)
+        local damage = power
         match.PetAbilityReadyAt[player] = timestamp + cooldown
         local petModel = match.RaidPetModels and match.RaidPetModels[player]
         local petRoot = petModel and petModel.PrimaryPart
@@ -967,10 +999,11 @@ function RaidService:UsePetAbility(player)
         Debris:AddItem(projectile, 0.4)
         local ended = applyRaidCombatDamage(self, match, opponent, damage, ability.Name)
         if ended then return { Ok = true, Message = ability.Name .. "! Соперник выбыл." } end
-        player:SetAttribute("LastNotice", primary.Name .. " применяет " .. ability.Name .. " · " .. tostring(damage) .. " урона.")
+        player:SetAttribute("LastNotice", primary.Name .. " · ур. " .. tostring(petLevel)
+            .. " применяет " .. ability.Name .. " · " .. tostring(damage) .. " урона.")
     elseif role == "HEALER" then
         local currentHealth = match.CombatHealth[player] or 100
-        local heal = math.clamp(math.floor(tonumber(ability.HealAmount) or 20), 5, 35)
+        local heal = power
         local restored = math.min(heal, 100 - currentHealth)
         if restored <= 0 then
             return { Ok = false, Message = "Боёвая выносливость уже полностью восстановлена." }
@@ -986,13 +1019,14 @@ function RaidService:UsePetAbility(player)
         highlight.OutlineTransparency = 0.08
         highlight.Parent = character
         Debris:AddItem(highlight, 1.1)
-        player:SetAttribute("LastNotice", primary.Name .. " применяет " .. ability.Name .. ": +" .. tostring(restored) .. " здоровья.")
+        player:SetAttribute("LastNotice", primary.Name .. " · ур. " .. tostring(petLevel)
+            .. " применяет " .. ability.Name .. ": +" .. tostring(restored) .. " здоровья.")
     elseif role == "GUARDIAN" then
         local currentShield = match.PetShields[player]
         if currentShield and currentShield.ExpiresAt > timestamp and currentShield.Amount > 0 then
             return { Ok = false, Message = "Защитный барьер питомца ещё действует." }
         end
-        local shieldAmount = math.clamp(math.floor(tonumber(ability.ShieldAmount) or 20), 10, 40)
+        local shieldAmount = power
         local duration = math.clamp(tonumber(ability.ShieldDuration) or 7, 4, 10)
         match.PetAbilityReadyAt[player] = timestamp + cooldown
         match.PetShields[player] = { Amount = shieldAmount, ExpiresAt = timestamp + duration }
@@ -1005,7 +1039,8 @@ function RaidService:UsePetAbility(player)
         highlight.OutlineTransparency = 0.06
         highlight.Parent = character
         Debris:AddItem(highlight, duration)
-        player:SetAttribute("LastNotice", primary.Name .. " активирует " .. ability.Name .. ": щит " .. tostring(shieldAmount) .. " на " .. tostring(duration) .. " сек.")
+        player:SetAttribute("LastNotice", primary.Name .. " · ур. " .. tostring(petLevel)
+            .. " активирует " .. ability.Name .. ": щит " .. tostring(shieldAmount) .. " на " .. tostring(duration) .. " сек.")
     else
         return { Ok = false, Message = "У этого питомца пока нет боевой специализации." }
     end
