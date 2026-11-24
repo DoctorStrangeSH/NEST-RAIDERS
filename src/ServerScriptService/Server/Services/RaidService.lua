@@ -12,6 +12,7 @@ local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local IslandVisitService = require(ServerScriptService.Server.Services.IslandVisitService)
 local EconomyService = require(ServerScriptService.Server.Services.EconomyService)
 local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
+local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
 local NestBuildCatalog = require(ReplicatedStorage.Shared.Config.NestBuildCatalog)
 
 local RaidService = {}
@@ -327,6 +328,18 @@ local function publishArenaState(match)
                 if defense.Health > 0 and defense.Model and defense.Model.Parent then defenseCount += 1 end
             end
             participant:SetAttribute("RaidArenaDefenseCount", defenseCount)
+            local pet = match.RaidPets and match.RaidPets[participant] or nil
+            local ability = pet and pet.Ability or nil
+            participant:SetAttribute("RaidArenaPetName", pet and pet.Name or "")
+            participant:SetAttribute("RaidArenaPetAbilityName", ability and ability.Name or "")
+            participant:SetAttribute("RaidArenaPetRole", ability and ability.Role or "")
+            participant:SetAttribute("RaidArenaPetCooldown", match.PetAbilityReadyAt
+                and math.max(0, math.ceil((match.PetAbilityReadyAt[participant] or 0) - timestamp)) or 0)
+            local shield = match.PetShields and match.PetShields[participant] or nil
+            local shieldActive = shield and shield.ExpiresAt > timestamp and shield.Amount > 0
+            participant:SetAttribute("RaidArenaPetShield", shieldActive and math.max(0, shield.Amount) or 0)
+            participant:SetAttribute("RaidArenaPetShieldSeconds", shieldActive
+                and math.max(0, math.ceil(shield.ExpiresAt - timestamp)) or 0)
         end
     end
     if match.CoreLabel and match.CoreLabel.Parent then
@@ -499,6 +512,12 @@ local function clearMatch(self, match, message)
             participant:SetAttribute("RaidArenaGuardActive", nil)
             participant:SetAttribute("RaidArenaGuardCooldown", nil)
             participant:SetAttribute("RaidArenaDefenseCount", nil)
+            participant:SetAttribute("RaidArenaPetName", nil)
+            participant:SetAttribute("RaidArenaPetAbilityName", nil)
+            participant:SetAttribute("RaidArenaPetRole", nil)
+            participant:SetAttribute("RaidArenaPetCooldown", nil)
+            participant:SetAttribute("RaidArenaPetShield", nil)
+            participant:SetAttribute("RaidArenaPetShieldSeconds", nil)
             participant:SetAttribute("RaidArenaMatchId", nil)
             if message then participant:SetAttribute("LastNotice", message) end
         end
@@ -540,19 +559,37 @@ local function finishMatch(self, match, winnerRole, message, awardRewards)
     if loser and loser.Parent == Players then grantRaidReward(loser, false) end
 end
 
-local function applyDefenseDamage(self, match, target, amount, sourceName)
-    if not match or match.State ~= "ACTIVE" or self._matches[target] ~= match then return false end
-    match.CombatHealth[target] = math.max(0, (match.CombatHealth[target] or 100) - amount)
-    showRaidCombatHit(target.Character, false)
-    target:SetAttribute("LastNotice", sourceName .. " нанесла " .. tostring(amount)
-        .. " урона. Здоровье: " .. tostring(match.CombatHealth[target]) .. " / 100.")
+local function applyRaidCombatDamage(self, match, target, amount, sourceName)
+    if not match or match.State ~= "ACTIVE" or self._matches[target] ~= match then return true, 0, 0 end
+    local timestamp = os.clock()
+    local remainingDamage = math.max(0, tonumber(amount) or 0)
+    local absorbed = 0
+    local shield = match.PetShields and match.PetShields[target] or nil
+    if shield and shield.ExpiresAt > timestamp and shield.Amount > 0 then
+        absorbed = math.min(remainingDamage, shield.Amount)
+        shield.Amount -= absorbed
+        remainingDamage -= absorbed
+        if shield.Amount <= 0 then match.PetShields[target] = nil end
+    elseif shield then
+        match.PetShields[target] = nil
+    end
+
+    match.CombatHealth[target] = math.max(0, (match.CombatHealth[target] or 100) - remainingDamage)
+    showRaidCombatHit(target.Character, absorbed > 0)
+    local shieldText = absorbed > 0 and (" Щит питомца поглотил " .. tostring(absorbed) .. ".") or ""
+    target:SetAttribute("LastNotice", sourceName .. ": получено " .. tostring(remainingDamage)
+        .. " урона." .. shieldText .. " Здоровье: " .. tostring(match.CombatHealth[target]) .. " / 100.")
     publishArenaState(match)
     if match.CombatHealth[target] <= 0 then
         finishMatch(self, match, target == match.Attacker and "DEFENDER" or "ATTACKER",
-            "Оборона гнезда остановила налётчика!", true)
-        return true
+            "Соперник выбыл из рейда!", true)
+        return true, remainingDamage, absorbed
     end
-    return false
+    return false, remainingDamage, absorbed
+end
+
+local function applyDefenseDamage(self, match, target, amount, sourceName)
+    return applyRaidCombatDamage(self, match, target, amount, sourceName)
 end
 
 local function startDefenseTurret(self, match, defense)
@@ -629,6 +666,27 @@ local function findNearestDefense(match, root, maxDistance, damagedOnly)
     return nearest, nearestDistance
 end
 
+local function followRaidCompanions(self, match, player, followers)
+    task.spawn(function()
+        while self._matches[player] == match and match.State == "ACTIVE" do
+            local character = player.Character
+            local root = character and character:FindFirstChild("HumanoidRootPart")
+            if root then
+                for index, entry in ipairs(followers or {}) do
+                    local model = entry.Model
+                    if model and model.Parent then
+                        local side = (index - (#followers + 1) / 2) * 3.2
+                        local target = root.CFrame * CFrame.new(side, -2.15, 4.4)
+                            * CFrame.Angles(0, math.pi, 0)
+                        model:PivotTo(model:GetPivot():Lerp(target, 0.38))
+                    end
+                end
+            end
+            task.wait(0.12)
+        end
+    end)
+end
+
 function RaidService:StartArena(match)
     if not match or match.State ~= "READY" then
         return false, "Подтверждённый вызов больше недоступен."
@@ -662,6 +720,10 @@ function RaidService:StartArena(match)
     match.LastStrikeAt = {}
     match.GuardUntil = {}
     match.GuardCooldownUntil = {}
+    match.PetAbilityReadyAt = {}
+    match.PetShields = {}
+    match.RaidPets = {}
+    match.RaidPetModels = {}
     match.CombatHealth = {
         [match.Attacker] = 100,
         [match.Defender] = 100,
@@ -672,6 +734,18 @@ function RaidService:StartArena(match)
     defenderCharacter:PivotTo(CFrame.lookAt(match.ArenaCenter + Vector3.new(34, 5, 0), match.ArenaCenter + Vector3.new(0, 5, 0)))
     match.Gear[match.Attacker] = equipRaidGear(match.Attacker, "ATTACKER")
     match.Gear[match.Defender] = equipRaidGear(match.Defender, "DEFENDER")
+
+    for _, participant in ipairs({ match.Attacker, match.Defender }) do
+        local folder = Instance.new("Folder")
+        folder.Name = "RaidCompanions_" .. tostring(participant.UserId)
+        folder.Parent = match.ArenaModel
+        local followers, primary = CompanionService:CreateRaidFollowers(participant, folder)
+        match.RaidFollowers = match.RaidFollowers or {}
+        match.RaidFollowers[participant] = followers
+        match.RaidPets[participant] = primary
+        match.RaidPetModels[participant] = primary and primary.Model or nil
+        if #followers > 0 then followRaidCompanions(self, match, participant, followers) end
+    end
 
     for _, participant in ipairs({ match.Attacker, match.Defender }) do
         participant:SetAttribute("RaidMatchState", "ACTIVE")
@@ -828,6 +902,118 @@ function RaidService:RepairDefense(player)
         .. " / " .. tostring(defense.MaxHealth) .. "." }
 end
 
+function RaidService:UsePetAbility(player)
+    local match = self._matches[player]
+    if not match or match.State ~= "ACTIVE" or (match.Attacker ~= player and match.Defender ~= player) then
+        return { Ok = false, Message = "Боевые способности питомца доступны только в активном рейде." }
+    end
+    local primary = match.RaidPets and match.RaidPets[player] or nil
+    local ability = primary and primary.Ability or nil
+    if not ability then
+        return { Ok = false, Message = "Среди активных питомцев нет боевого спутника. Выбери питомца-стража, целителя или охотника." }
+    end
+    if getLevel(player) < (ability.UnlockLevel or 5) then
+        return { Ok = false, Message = "Боевой навык питомца откроется на " .. tostring(ability.UnlockLevel or 5) .. " уровне." }
+    end
+
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+    if not root or not humanoid or humanoid.Health <= 0 then
+        return { Ok = false, Message = "Питомец не может помочь: персонаж сейчас недоступен." }
+    end
+
+    local timestamp = os.clock()
+    local readyAt = match.PetAbilityReadyAt[player] or 0
+    if readyAt > timestamp then
+        return { Ok = false, Message = "Способность питомца восстановится через " .. tostring(math.ceil(readyAt - timestamp)) .. " сек." }
+    end
+
+    local role = ability.Role
+    local opponent = match.Attacker == player and match.Defender or match.Attacker
+    local opponentCharacter = opponent and opponent.Character
+    local opponentRoot = opponentCharacter and opponentCharacter:FindFirstChild("HumanoidRootPart")
+    local opponentHumanoid = opponentCharacter and opponentCharacter:FindFirstChildOfClass("Humanoid")
+    local cooldown = math.clamp(math.floor(tonumber(ability.CooldownSeconds) or 20), 10, 60)
+
+    if role == "HUNTER" then
+        if not opponentRoot or not opponentHumanoid or opponentHumanoid.Health <= 0 then
+            return { Ok = false, Message = "Цель для атаки питомца недоступна." }
+        end
+        local distance = (opponentRoot.Position - root.Position).Magnitude
+        if distance > math.clamp(tonumber(ability.Range) or 22, 12, 30)
+            or math.abs(opponentRoot.Position.Y - root.Position.Y) > 10 then
+            return { Ok = false, Message = "Охотник должен видеть соперника в пределах дальности способности." }
+        end
+        local damage = math.clamp(math.floor(tonumber(ability.Damage) or 14), 8, 30)
+        match.PetAbilityReadyAt[player] = timestamp + cooldown
+        local petModel = match.RaidPetModels and match.RaidPetModels[player]
+        local petRoot = petModel and petModel.PrimaryPart
+        local projectile = Instance.new("Part")
+        projectile.Name = "RaidPetAbilityProjectile"
+        projectile.Shape = Enum.PartType.Ball
+        projectile.Size = Vector3.new(0.8, 0.8, 0.8)
+        projectile.Material = Enum.Material.Neon
+        projectile.Color = Color3.fromRGB(255, 178, 102)
+        projectile.Anchored = true
+        projectile.CanCollide = false
+        projectile.CanTouch = false
+        projectile.CanQuery = false
+        projectile.CFrame = CFrame.new(petRoot and petRoot.Position or root.Position)
+        projectile.Parent = match.ArenaModel
+        local tween = TweenService:Create(projectile, TweenInfo.new(0.28, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            { Position = opponentRoot.Position })
+        tween:Play()
+        Debris:AddItem(projectile, 0.4)
+        local ended = applyRaidCombatDamage(self, match, opponent, damage, ability.Name)
+        if ended then return { Ok = true, Message = ability.Name .. "! Соперник выбыл." } end
+        player:SetAttribute("LastNotice", primary.Name .. " применяет " .. ability.Name .. " · " .. tostring(damage) .. " урона.")
+    elseif role == "HEALER" then
+        local currentHealth = match.CombatHealth[player] or 100
+        local heal = math.clamp(math.floor(tonumber(ability.HealAmount) or 20), 5, 35)
+        local restored = math.min(heal, 100 - currentHealth)
+        if restored <= 0 then
+            return { Ok = false, Message = "Боёвая выносливость уже полностью восстановлена." }
+        end
+        match.PetAbilityReadyAt[player] = timestamp + cooldown
+        match.CombatHealth[player] = currentHealth + restored
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "RaidPetHealFlash"
+        highlight.Adornee = character
+        highlight.FillColor = Color3.fromRGB(112, 226, 155)
+        highlight.OutlineColor = Color3.fromRGB(206, 255, 216)
+        highlight.FillTransparency = 0.72
+        highlight.OutlineTransparency = 0.08
+        highlight.Parent = character
+        Debris:AddItem(highlight, 1.1)
+        player:SetAttribute("LastNotice", primary.Name .. " применяет " .. ability.Name .. ": +" .. tostring(restored) .. " здоровья.")
+    elseif role == "GUARDIAN" then
+        local currentShield = match.PetShields[player]
+        if currentShield and currentShield.ExpiresAt > timestamp and currentShield.Amount > 0 then
+            return { Ok = false, Message = "Защитный барьер питомца ещё действует." }
+        end
+        local shieldAmount = math.clamp(math.floor(tonumber(ability.ShieldAmount) or 20), 10, 40)
+        local duration = math.clamp(tonumber(ability.ShieldDuration) or 7, 4, 10)
+        match.PetAbilityReadyAt[player] = timestamp + cooldown
+        match.PetShields[player] = { Amount = shieldAmount, ExpiresAt = timestamp + duration }
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "RaidPetGuardianShield"
+        highlight.Adornee = character
+        highlight.FillColor = Color3.fromRGB(116, 190, 239)
+        highlight.OutlineColor = Color3.fromRGB(211, 241, 255)
+        highlight.FillTransparency = 0.78
+        highlight.OutlineTransparency = 0.06
+        highlight.Parent = character
+        Debris:AddItem(highlight, duration)
+        player:SetAttribute("LastNotice", primary.Name .. " активирует " .. ability.Name .. ": щит " .. tostring(shieldAmount) .. " на " .. tostring(duration) .. " сек.")
+    else
+        return { Ok = false, Message = "У этого питомца пока нет боевой специализации." }
+    end
+
+    publishArenaState(match)
+    return { Ok = true, Message = "Способность питомца: " .. ability.Name .. "." }
+end
+
 function RaidService:StrikeOpponent(player)
     local match = self._matches[player]
     if not match or match.State ~= "ACTIVE" or (match.Attacker ~= player and match.Defender ~= player) then
@@ -859,25 +1045,15 @@ function RaidService:StrikeOpponent(player)
     local targetGuardUntil = match.GuardUntil[opponent] or 0
     if targetGuardUntil > timestamp then
         match.GuardUntil[opponent] = 0
-        match.CombatHealth[player] = math.max(0, (match.CombatHealth[player] or 100) - RAID_PARRY_COUNTER_DAMAGE)
-        showRaidCombatHit(character, true)
-        player:SetAttribute("LastNotice", "Соперник парировал удар! Получено " .. tostring(RAID_PARRY_COUNTER_DAMAGE) .. " урона.")
-        opponent:SetAttribute("LastNotice", "Идеальное парирование! Соперник потерял " .. tostring(RAID_PARRY_COUNTER_DAMAGE) .. " здоровья.")
-        if match.CombatHealth[player] <= 0 then
-            local winnerRole = opponent == match.Attacker and "ATTACKER" or "DEFENDER"
-            finishMatch(self, match, winnerRole, "Парирование! Соперник выбыл — победа защитника.", true)
+        local ended = applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE, "Контрудар парирования")
+        opponent:SetAttribute("LastNotice", "Идеальное парирование! Контрудар нанесён.")
+        if ended then
             return { Ok = true, Message = "Парирование! Ты отразил удар и победил." }
         end
     else
-        match.CombatHealth[opponent] = math.max(0, (match.CombatHealth[opponent] or 100) - RAID_DUEL_STRIKE_DAMAGE)
-        showRaidCombatHit(targetCharacter, false)
+        local ended = applyRaidCombatDamage(self, match, opponent, RAID_DUEL_STRIKE_DAMAGE, "Удар соперника")
         player:SetAttribute("LastNotice", "Попадание! Здоровье соперника: " .. tostring(match.CombatHealth[opponent]) .. " / 100.")
-        opponent:SetAttribute("LastNotice", "Тебя ударили! Осталось здоровья: " .. tostring(match.CombatHealth[opponent]) .. " / 100.")
-        if match.CombatHealth[opponent] <= 0 then
-            local winnerRole = player == match.Attacker and "ATTACKER" or "DEFENDER"
-            finishMatch(self, match, winnerRole, "Соперник выбыл! Победа в дуэли.", true)
-            return { Ok = true, Message = "Соперник выбыл! Победа в рейде." }
-        end
+        if ended then return { Ok = true, Message = "Соперник выбыл! Победа в рейде." } end
     end
 
     publishArenaState(match)
@@ -1248,6 +1424,7 @@ function RaidService:HandleRequest(player, payload)
     if payload.Action == "RaiseGuard" then return self:RaiseGuard(player) end
     if payload.Action == "AttackDefense" then return self:AttackDefense(player) end
     if payload.Action == "RepairDefense" then return self:RepairDefense(player) end
+    if payload.Action == "UsePetAbility" then return self:UsePetAbility(player) end
     return { Ok = false, Message = "Неизвестное действие рейда." }
 end
 
