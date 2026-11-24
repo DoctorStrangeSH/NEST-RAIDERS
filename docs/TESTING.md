@@ -924,3 +924,14 @@
 7. Confirm no client-side action changes collection data or hatch odds; server response remains authoritative.
 
 Static CI checks are not a substitute for these Roblox Studio runtime checks.
+
+## Sprint 4.61 — Unified Nest Management Overview
+1. Open My Nest from navigation. Confirm the overview shows current nest level, coins, owned companion count and displayed-pet income per 10 seconds.
+2. Compare the income value with Display Pets and the next two actual 10-second payout ticks; an empty display must show zero.
+3. Use each shortcut: Display Pets, Decorations, Construction and Upgrade Nest. Confirm the overview closes before the destination panel opens and all destination actions still work.
+4. Attempt an upgrade with insufficient coins, then with enough coins. Confirm server rejection/success messaging, coin balance and level refresh. Verify max-level state disables both upgrade controls.
+5. Hatch a companion while the overview is open. Confirm owned count updates. Change coin balance and confirm the summary updates without reopening.
+6. Test 320×480, 375×667, tablet, 1366×768 and 1920×1080. Confirm stat cards, two-column shortcut grid, upgrade button and close button do not overlap or clip.
+7. Test mouse and touch activation; confirm no duplicate upgrade request can be submitted while the action is in progress.
+
+Static CI checks do not replace Roblox Studio runtime and economy tests.
