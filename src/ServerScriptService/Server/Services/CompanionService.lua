@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
+local Lighting = game:GetService("Lighting")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -526,6 +527,18 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
 
             profile.Nest.CompanionBonds = profile.Nest.CompanionBonds or {}
             local petDefinition = CompanionCatalog[companion.Id] or {}
+            local activityPeriod = petDefinition.ActivityPeriod or "Any"
+            local nightGlow = nil
+            if activityPeriod == "Night" and model.PrimaryPart then
+                nightGlow = Instance.new("PointLight")
+                nightGlow.Name = "NocturnalGlow"
+                nightGlow.Color = petDefinition.NightGlowColor or Color3.fromRGB(150, 220, 255)
+                nightGlow.Range = 8
+                nightGlow.Brightness = 0
+                nightGlow.Shadows = false
+                nightGlow.Parent = model.PrimaryPart
+            end
+            model:SetAttribute("ActivityPeriod", activityPeriod)
             local personality = petDefinition.Personality or "Обычный"
             local personalityProfiles = {
                 ["Игривый"] = { SocialChance = 0.28, IdleMin = 0.7, IdleMax = 1.5, ToyChance = 0.58, TreasureChance = 0.09 },
@@ -595,6 +608,19 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     local partnerBehavior = partnerModel and partnerModel:GetAttribute("Behavior")
                     local partnerSleeping = partnerModel and partnerModel:GetAttribute("IsSleeping") == true
                     local isSleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
+                    local clockTime = Lighting.ClockTime
+                    local isNight = clockTime >= 19 or clockTime < 6
+                    local isPreferredTime = activityPeriod == "Any"
+                        or (activityPeriod == "Night" and isNight)
+                        or (activityPeriod == "Day" and not isNight)
+                    local activityState = activityPeriod == "Any" and "Anytime"
+                        or (isPreferredTime and "Active" or "Resting")
+                    if model:GetAttribute("ActivityState") ~= activityState then
+                        model:SetAttribute("ActivityState", activityState)
+                    end
+                    if nightGlow and nightGlow.Parent then
+                        nightGlow.Brightness = isNight and 0.8 or 0
+                    end
                     model:SetAttribute("IsSleeping", isSleeping)
 
                     if isSleeping then
@@ -740,6 +766,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local favoriteToy = toyId ~= nil and toyId == petDefinition.FavoriteToy
                             local toyChance = personalityProfile.ToyChance + (favoriteToy and 0.2 or 0)
                             local treasureChance = personalityProfile.TreasureChance or 0.08
+                            if activityPeriod ~= "Any" then
+                                treasureChance *= isPreferredTime and 1.25 or 0.55
+                            end
                             local canSearch = not giftCache and not treasureSearchOwner
                                 and os.time() >= nextTreasureAt and energy >= 35 and hunger >= 25
                             if canSearch and random:NextNumber() < treasureChance then
@@ -758,7 +787,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 targetIsSocial = false
                             else
                                 local angle = random:NextNumber(0, math.pi * 2)
-                                local radius = math.sqrt(random:NextNumber()) * wanderRadius
+                                local preferredRadius = activityPeriod ~= "Any" and not isPreferredTime
+                                    and wanderRadius * 0.72 or wanderRadius
+                                local radius = math.sqrt(random:NextNumber()) * preferredRadius
                                 targetPosition = home + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)
                                 targetIsToy = false
                                 targetIsSocial = false
@@ -770,6 +801,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         if moving then
                             local direction = targetPosition - currentPosition
                             local speed = energy <= 15 and 1.25 or (mood >= 80 and 3.4 or 2.5)
+                            if activityPeriod ~= "Any" then
+                                speed *= isPreferredTime and 1.18 or 0.72
+                            end
                             if personality == "Энергичный" or personality == "Игривый" then speed *= 1.12 end
                             if personality == "Спокойный" or personality == "Осторожный" then speed *= 0.88 end
                             local step = math.min(direction.Magnitude, speed * delta)
@@ -840,6 +874,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     moodLabel.Text = isSleeping and "Zzz"
                         or (behavior == "Searching" and "Ищет сокровище")
                         or (behavior == "FoundGift" and "Нашёл подарок!")
+                        or (activityPeriod ~= "Any" and not isPreferredTime
+                            and (behavior == "Idle" or behavior == "Resting") and "Отдыхает до своего времени")
                         or (behavior == "Socializing" and string.format("♥♥  Дружба %d%%", bondScore))
                         or (behavior == "Greeting" and string.format("♥%d ✨", mood))
                         or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
