@@ -1270,3 +1270,19 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Check toys do not obstruct walking, construction, decorations or other pets.
 
 **Acceptance:** autonomous toy-seeking and visual play behavior are integrated in source; animation readability, multiplayer performance and runtime behavior remain open in Roblox Studio.
+
+### Sprint 4.66 — Personalities & Social Life
+- [x] Give personalities distinct roaming pauses, toy-play preferences and social-play tendencies.
+- [x] Pair display slots (1–2 and 3–4) and let companions seek a nearby shared meeting point when their partner is available.
+- [x] Add a short two-pet social interaction with facing, playful idle motion and a visible `Socializing` behavior state.
+- [x] Reward each completed social session with a small persistent mood increase; interrupted sessions do not award mood.
+- [x] Make pets greet their owner with a heart/emote when the owner approaches an idle companion.
+- [x] Expose personality, favorite toy, display slot, home position, greeting and social states through model attributes.
+- [x] Add regression checks for personality profiles, paired slots, social rewards and owner proximity reactions.
+- [ ] Roblox Studio: display two pets in slots 1–2 and 3–4; confirm they approach one another and play without crossing plot boundaries.
+- [ ] Verify all personality groups feel distinct and favorite toys are selected more often than non-favorites.
+- [ ] Walk up to idle pets and confirm they face the player and show a friendly greeting; move away and confirm normal behavior resumes.
+- [ ] Verify social mood reward is granted once per completed session and not granted if a partner is removed or falls asleep.
+- [ ] Test four pets and multiple players; monitor server performance, animation readability and save/rejoin persistence.
+
+**Acceptance:** personality-driven activity, paired social play, mood reward and owner greeting are integrated in source; Roblox Studio visual, multiplayer and persistence checks remain open.
