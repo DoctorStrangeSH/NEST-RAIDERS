@@ -230,4 +230,5 @@ Boss attacks now have distinct warning colors, a smoothly animated health bar an
 - Hunter Trophy (+5%), Moon Tracker (+10%), and Hunter Crown (+15%) increase the relative weight of the highest-rarity companion in natural eggs.
 - The bonus is normalized against the egg's original species table, capped at +30% combined, and does not affect breeding eggs or genetic traits.
 - Natural hatch notices show the actual highest-rarity chance before and after the modifier.
+- Egg Shop and Collection Book display live normalized species odds and the original base chance when Hunter artifacts change the result; fixed world signs are labeled as base odds.
 - Roblox Studio includes a temporary Hunter fixture and a 7,000-hatch simulation across all seven biome egg tables; the simulation does not award or consume gameplay items.
