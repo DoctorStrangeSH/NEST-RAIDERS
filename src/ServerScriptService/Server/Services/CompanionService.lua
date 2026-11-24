@@ -603,6 +603,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         isAtTarget = true
                         targetIsToy = false
                         targetIsSocial = false
+                        if targetIsTreasure and treasureSearchOwner == instanceId then treasureSearchOwner = nil end
+                        targetIsTreasure = false
                         toyPlayUntil = 0
                         socialPlayUntil = 0
                         if toyPart then toyPart:SetAttribute("ToyState", "Waiting") end
@@ -800,6 +802,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 bob = math.abs(math.sin(now * 7 + phase)) * 0.13
                                 yawOffset = math.sin(now * 5 + phase) * 0.18
                                 toyPart:SetAttribute("ToyState", "InUse")
+                            elseif giftCache and treasureSearchOwner == instanceId then
+                                behavior = "FoundGift"
+                                bob = math.abs(math.sin(now * 5 + phase)) * 0.07
+                                yawOffset = math.sin(now * 3 + phase) * 0.12
                             else
                                 behavior = energy <= 15 and "Resting" or (hunger <= 20 and "Hungry" or "Idle")
                                 bob = math.sin(now * 2 + phase) * 0.055
@@ -832,7 +838,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     model:SetAttribute("FriendshipScore", bondScore)
                     model:SetAttribute("FriendshipLevel", getBondLevel(bondScore))
                     moodLabel.Text = isSleeping and "Zzz"
-                        or (behavior == "Searching" and "🔎 Ищет находку")
+                        or (behavior == "Searching" and "Ищет сокровище")
+                        or (behavior == "FoundGift" and "Нашёл подарок!")
                         or (behavior == "Socializing" and string.format("♥♥  Дружба %d%%", bondScore))
                         or (behavior == "Greeting" and string.format("♥%d ✨", mood))
                         or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
