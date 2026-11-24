@@ -173,11 +173,10 @@ function WorldBuilder:Build()
                 rainAnchor.CanQuery = false
                 rainAnchor.Parent = weatherFolder
 
-                local attachment = Instance.new("Attachment")
-                attachment.Parent = rainAnchor
                 local emitter = Instance.new("ParticleEmitter")
                 emitter.Name = "Rainfall"
-                emitter.Texture = "rbxasset://textures/particles/rain_main.dds"
+                -- Stretch the project's built-in sparkle texture into readable rain streaks.
+                emitter.Texture = "rbxasset://textures/particles/sparkles_main.dds"
                 emitter.Enabled = false
                 emitter.Rate = 42
                 emitter.Lifetime = NumberRange.new(0.9, 1.2)
@@ -187,13 +186,16 @@ function WorldBuilder:Build()
                 emitter.EmissionDirection = Enum.NormalId.Bottom
                 emitter.Shape = Enum.ParticleEmitterShape.Box
                 emitter.ShapeSize = Vector3.new(100, 1, 100)
-                emitter.Size = NumberSequence.new(0.08)
+                emitter.Size = NumberSequence.new(0.12)
+                emitter.Squash = NumberSequence.new(3)
+                emitter.Color = ColorSequence.new(Color3.fromRGB(174, 205, 230))
                 emitter.Transparency = NumberSequence.new({
                     NumberSequenceKeypoint.new(0, 0.12),
                     NumberSequenceKeypoint.new(1, 0.35),
                 })
-                emitter.LightEmission = 0.12
-                emitter.Parent = attachment
+                emitter.LightInfluence = 0.6
+                emitter.LightEmission = 0.05
+                emitter.Parent = rainAnchor
                 table.insert(rainEmitters, emitter)
             end
         end
