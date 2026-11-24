@@ -31,6 +31,20 @@ GameConfig.WorldCycle = {
     NightStartsAt = 19,
 }
 
+-- Weather changes on the Starter Island every few real minutes.
+GameConfig.Weather = {
+    Enabled = true,
+    MinDurationSeconds = 120,
+    MaxDurationSeconds = 210,
+    -- Weights are relative; clear weather remains the most common.
+    Types = {
+        { Id = "Clear", Label = "Ясно", Weight = 48 },
+        { Id = "Rain", Label = "Дождь", Weight = 27 },
+        { Id = "Fog", Label = "Туман", Weight = 15 },
+        { Id = "Storm", Label = "Гроза", Weight = 10 },
+    },
+}
+
 GameConfig.Economy = {
     StartingCoins = 100,
     MaxCoins = 2_000_000_000,
