@@ -309,3 +309,6 @@ Players can choose a persistent island theme: Meadow (level 1), Arcane (level 2)
 
 ## Living Island Companions — Sprint 4.64
 Displayed companions now roam autonomously within a small bounded area around their assigned nest display point. They smoothly move, turn toward destinations, pause and idle. Existing mood, hunger, energy and sleep state influence their behavior; model attributes expose behavior and personality for future interactions. Studio testing is required for multiplayer replication, performance and movement compatibility.
+
+## Autonomous Toy Play — Sprint 4.65
+Displayed companions can now autonomously seek their equipped toy when their mood and energy allow. Toys sit separately beside the pet, animate during play, and expose a `ToyState`; pets expose `Behavior = PlayingWithToy`. Each play session is brief before the pet returns to its normal roaming cycle. Roblox Studio testing is still required for visual quality and multiplayer behavior.
