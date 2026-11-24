@@ -93,47 +93,10 @@ function ArtifactBonusService:GetHatchBonus(profile)
     return math.clamp(totalBonus, 0, MAX_HATCH_BONUS)
 end
 
--- Returns one species' actual normalized chance and its unmodified base chance.
--- Shop and collection-book odds use this same calculation as the hatch selector.
-function ArtifactBonusService:GetHatchSpeciesChance(profile, speciesWeights, speciesId)
-    if type(speciesWeights) ~= "table" or type(speciesId) ~= "string" then return 0, 0 end
-
-    local highestRank = 0
-    local baseTotal, adjustedTotal = 0, 0
-    local requestedBaseWeight, requestedAdjustedWeight = 0, 0
-    local bonus = self:GetHatchBonus(profile)
-    for candidateId, weight in pairs(speciesWeights) do
-        local definition = CompanionCatalog[candidateId]
-        local safeWeight = tonumber(weight) or 0
-        local rank = definition and HATCH_RARITY_RANK[definition.Rarity] or nil
-        if definition and rank and safeWeight > 0 then
-            highestRank = math.max(highestRank, rank)
-            baseTotal += safeWeight
-            if candidateId == speciesId then requestedBaseWeight = safeWeight end
-        end
-    end
-    if baseTotal <= 0 or requestedBaseWeight <= 0 then return 0, 0 end
-
-    for candidateId, weight in pairs(speciesWeights) do
-        local definition = CompanionCatalog[candidateId]
-        local safeWeight = tonumber(weight) or 0
-        local rank = definition and HATCH_RARITY_RANK[definition.Rarity] or nil
-        if definition and rank and safeWeight > 0 then
-            local adjustedWeight = safeWeight
-            if rank == highestRank then adjustedWeight *= (1 + bonus) end
-            adjustedTotal += adjustedWeight
-            if candidateId == speciesId then requestedAdjustedWeight = adjustedWeight end
-        end
-    end
-    if adjustedTotal <= 0 then return 0, 0 end
-
-    return requestedAdjustedWeight / adjustedTotal, requestedBaseWeight / baseTotal, bonus
-end
-
--- Returns the selected species plus the base and boosted chance of the egg's
--- highest rarity tier. Sorted IDs keep seeded simulations reproducible.
-function ArtifactBonusService:ChooseHatchSpecies(profile, speciesWeights, rollValue)
-    if type(speciesWeights) ~= "table" then return nil, 0, 0, 0, false end
+-- Build one normalized, deterministic weighted table for hatching and every
+-- player-facing odds panel. Only the highest available rarity tier is boosted.
+local function buildHatchWeightEntries(profile, speciesWeights)
+    if type(speciesWeights) ~= "table" then return {}, 0, 0, 0, 0, 0, 0 end
 
     local entries = {}
     local highestRank = 0
@@ -146,10 +109,10 @@ function ArtifactBonusService:ChooseHatchSpecies(profile, speciesWeights, rollVa
             highestRank = math.max(highestRank, rank)
         end
     end
-    if #entries == 0 then return nil, 0, 0, 0, false end
+    if #entries == 0 then return entries, 0, 0, 0, 0, 0, 0 end
     table.sort(entries, function(a, b) return a.Id < b.Id end)
 
-    local bonus = self:GetHatchBonus(profile)
+    local bonus = ArtifactBonusService:GetHatchBonus(profile)
     local baseTotal, adjustedTotal = 0, 0
     local baseTopWeight, adjustedTopWeight = 0, 0
     for _, entry in ipairs(entries) do
@@ -163,7 +126,31 @@ function ArtifactBonusService:ChooseHatchSpecies(profile, speciesWeights, rollVa
         entry.AdjustedWeight = adjustedWeight
         adjustedTotal += adjustedWeight
     end
-    if baseTotal <= 0 or adjustedTotal <= 0 then return nil, bonus, 0, 0, false end
+    return entries, bonus, baseTotal, adjustedTotal, highestRank, baseTopWeight, adjustedTopWeight
+end
+
+-- Returns one species' live normalized chance and its unmodified base chance.
+function ArtifactBonusService:GetHatchSpeciesChance(profile, speciesWeights, speciesId)
+    if type(speciesId) ~= "string" then return 0, 0 end
+    local entries, bonus, baseTotal, adjustedTotal = buildHatchWeightEntries(profile, speciesWeights)
+    if baseTotal <= 0 or adjustedTotal <= 0 then return 0, 0, bonus end
+
+    for _, entry in ipairs(entries) do
+        if entry.Id == speciesId then
+            return entry.AdjustedWeight / adjustedTotal, entry.Weight / baseTotal, bonus
+        end
+    end
+    return 0, 0, bonus
+end
+
+-- Returns the selected species plus the base and boosted chance of the egg's
+-- highest rarity tier. Uses the same normalized weights as the odds panels.
+function ArtifactBonusService:ChooseHatchSpecies(profile, speciesWeights, rollValue)
+    local entries, bonus, baseTotal, adjustedTotal, highestRank, baseTopWeight, adjustedTopWeight =
+        buildHatchWeightEntries(profile, speciesWeights)
+    if #entries == 0 or baseTotal <= 0 or adjustedTotal <= 0 then
+        return nil, bonus, 0, 0, false
+    end
 
     local baseChance = baseTopWeight / baseTotal
     local adjustedChance = adjustedTopWeight / adjustedTotal
