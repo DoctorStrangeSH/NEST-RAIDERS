@@ -22,7 +22,11 @@ bootGui.Parent = playerGui
 local bootCard = Instance.new("Frame")
 bootCard.AnchorPoint = Vector2.new(0.5, 0.5)
 bootCard.Position = UDim2.fromScale(0.5, 0.5)
-bootCard.Size = UDim2.fromOffset(420, 132)
+bootCard.Size = UDim2.new(0.9, 0, 0, 132)
+local bootCardSize = Instance.new("UISizeConstraint")
+bootCardSize.MinSize = Vector2.new(260, 132)
+bootCardSize.MaxSize = Vector2.new(420, 132)
+bootCardSize.Parent = bootCard
 bootCard.BackgroundColor3 = Color3.fromRGB(27, 39, 48)
 bootCard.BorderSizePixel = 0
 bootCard.Parent = bootGui
@@ -85,16 +89,30 @@ gui.Parent = playerGui
 local hudScale = Instance.new("UIScale")
 hudScale.Name = "ResponsiveHudScale"
 hudScale.Parent = gui
-local camera = Workspace.CurrentCamera
+local cameraViewportConnection
 local function updateHudScale()
-    local viewport = camera and camera.ViewportSize or Vector2.new(1280, 720)
-    local scale = math.min(viewport.X / 900, viewport.Y / 620, 1)
+    local currentCamera = Workspace.CurrentCamera
+    local viewport = currentCamera and currentCamera.ViewportSize or Vector2.new(1280, 720)
+    local widthScale = viewport.X / 900
+    local heightScale = viewport.Y / 620
+    local scale = math.min(widthScale, heightScale, 1)
     hudScale.Scale = math.clamp(scale, 0.72, 1)
 end
-updateHudScale()
-if camera then
-    camera:GetPropertyChangedSignal("ViewportSize"):Connect(updateHudScale)
+
+local function bindHudCamera()
+    if cameraViewportConnection then
+        cameraViewportConnection:Disconnect()
+        cameraViewportConnection = nil
+    end
+    updateHudScale()
+    local currentCamera = Workspace.CurrentCamera
+    if currentCamera then
+        cameraViewportConnection = currentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(updateHudScale)
+    end
 end
+
+bindHudCamera()
+Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindHudCamera)
 
 local function addCorner(parent, radius)
     local corner = Instance.new("UICorner")
@@ -1085,11 +1103,62 @@ navLayout.SortOrder = Enum.SortOrder.LayoutOrder
 navLayout.Padding = UDim.new(0, 7)
 navLayout.Parent = navScroll
 
+local menuIconStyles = {
+    { Code = "ПТ", Color = Color3.fromRGB(90, 166, 132) },
+    { Code = "ЯЙ", Color = Color3.fromRGB(205, 151, 74) },
+    { Code = "КБ", Color = Color3.fromRGB(115, 137, 196) },
+    { Code = "ГН", Color = Color3.fromRGB(116, 164, 113) },
+    { Code = "ВЫ", Color = Color3.fromRGB(173, 133, 92) },
+    { Code = "ДК", Color = Color3.fromRGB(153, 119, 173) },
+    { Code = "СТ", Color = Color3.fromRGB(115, 142, 164) },
+    { Code = "ГО", Color = Color3.fromRGB(95, 154, 168) },
+    { Code = "РЙ", Color = Color3.fromRGB(187, 104, 88) },
+    { Code = "КС", Color = Color3.fromRGB(166, 127, 76) },
+    { Code = "ЗС", Color = Color3.fromRGB(112, 129, 180) },
+    { Code = "МТ", Color = Color3.fromRGB(91, 139, 173) },
+    { Code = "АР", Color = Color3.fromRGB(145, 111, 185) },
+    { Code = "ПР", Color = Color3.fromRGB(90, 151, 130) },
+}
+
 for index, button in ipairs(menuButtons) do
     button.Parent = navScroll
     button.LayoutOrder = index
     button.Position = UDim2.new()
     button.Size = UDim2.new(1, -2, 0, 42)
+    button.TextXAlignment = Enum.TextXAlignment.Left
+    button.TextTruncate = Enum.TextTruncate.AtEnd
+    button.TextSize = 12
+
+    local padding = Instance.new("UIPadding")
+    padding.PaddingLeft = UDim.new(0, 44)
+    padding.PaddingRight = UDim.new(0, 8)
+    padding.Parent = button
+
+    local iconStyle = menuIconStyles[index]
+    if iconStyle then
+        local iconBadge = Instance.new("Frame")
+        iconBadge.Name = "MenuIconBadge"
+        iconBadge.Position = UDim2.new(0, 7, 0.5, -14)
+        iconBadge.Size = UDim2.fromOffset(28, 28)
+        iconBadge.BackgroundColor3 = iconStyle.Color
+        iconBadge.BackgroundTransparency = 0.08
+        iconBadge.BorderSizePixel = 0
+        iconBadge.ZIndex = button.ZIndex + 1
+        iconBadge.Parent = button
+        addCorner(iconBadge, 9)
+
+        local iconText = Instance.new("TextLabel")
+        iconText.Name = "MenuIconFallback"
+        iconText.BackgroundTransparency = 1
+        iconText.Size = UDim2.fromScale(1, 1)
+        iconText.Font = Enum.Font.GothamBlack
+        iconText.Text = iconStyle.Code
+        iconText.TextColor3 = Color3.fromRGB(255, 255, 255)
+        iconText.TextSize = 10
+        iconText.ZIndex = iconBadge.ZIndex + 1
+        iconText.Parent = iconBadge
+    end
+
     -- Close the menu after choosing any feature; existing Activated handlers still run.
     button.Activated:Connect(function()
         navScroll.Visible = false
@@ -1115,11 +1184,20 @@ local function resizeNavigation()
     navScroll.Position = UDim2.fromOffset(narrow and 12 or 18, narrow and 172 or 210)
     navScroll.Size = UDim2.fromOffset(narrow and 206 or 250, math.max(110, math.min(460, viewport.Y - (narrow and 190 or 228))))
 end
-resizeNavigation()
-if Workspace.CurrentCamera then
-    Workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(resizeNavigation)
+local navigationViewportConnection
+local function bindNavigationCamera()
+    if navigationViewportConnection then
+        navigationViewportConnection:Disconnect()
+        navigationViewportConnection = nil
+    end
+    resizeNavigation()
+    local currentCamera = Workspace.CurrentCamera
+    if currentCamera then
+        navigationViewportConnection = currentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(resizeNavigation)
+    end
 end
-Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(resizeNavigation)
+bindNavigationCamera()
+Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindNavigationCamera)
 
 local profilePanel = Instance.new("Frame")
 profilePanel.Name = "PublicProfilePanel"
@@ -2205,7 +2283,7 @@ end)
 -- Picker is the sole nested dialog and retains its companion display underneath.
 local modalPanels = {
     shopPanel, nestPanel, displayPanel, buildPanel, visitPanel,
-    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel, artifactsPanel, raidPanel, raidPanel,
+    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel, artifactsPanel, raidPanel,
 }
 local closingOtherPanels = false
 local closeAllButton = Instance.new("TextButton")
