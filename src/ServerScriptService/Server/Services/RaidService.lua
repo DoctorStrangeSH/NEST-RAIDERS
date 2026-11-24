@@ -102,8 +102,8 @@ local function buildArena(self, match)
         pillar.CanCollide = false
     end
 
-    makeArenaPart(model, "CorePedestal", Vector3.new(2, 16, 16),
-        center + Vector3.new(0, 2, 0), Color3.fromRGB(111, 86, 66), Enum.Material.Slate, Enum.PartType.Cylinder)
+    makeArenaPart(model, "CorePedestal", Vector3.new(16, 2, 16),
+        center + Vector3.new(0, 2, 0), Color3.fromRGB(111, 86, 66), Enum.Material.Slate)
     local core = makeArenaPart(model, "RaidCore", Vector3.new(8, 8, 8),
         center + Vector3.new(0, 10, 0), Color3.fromRGB(255, 183, 92), Enum.Material.Neon, Enum.PartType.Ball)
     core.CanCollide = false
