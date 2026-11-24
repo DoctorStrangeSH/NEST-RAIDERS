@@ -765,6 +765,14 @@ assert 'function ArtifactBonusService:ApplyGatherBonus(profile, baseAmount, roll
 assert 'type(rollValue) == "number" and math.clamp(rollValue, 0, 0.999999999) or math.random()' in artifact_bonus
 assert 'local simulationRandom = Random.new(444)' in inventory_service
 assert 'simulationRandom:NextNumber()' in inventory_service
+sim_start = inventory_service.index('if payload.Action == "DevSimulateGatherBonus" then')
+sim_end = inventory_service.index('if payload.Action == "Get" then', sim_start)
+simulation_block = inventory_service[sim_start:sim_end]
+assert simulation_block.index('if not RunService:IsStudio()') < simulation_block.index('Random.new(444)')
+assert 'makeSnapshot(profile)' in simulation_block
+assert not any(token in simulation_block for token in (
+    'profile.Materials', 'NodeCooldowns', 'materials.Elderwood +=', 'materials.CrystalShard +='
+))
 assert 'GathererSimulationButton' in client
 assert 'Action = "DevSimulateGatherBonus"' in client
 assert 'return response.Data, response.Message' in client
