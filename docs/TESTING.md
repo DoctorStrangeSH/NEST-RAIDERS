@@ -751,3 +751,24 @@
 - [ ] Finish a raid after damaging, repairing and destroying defenses; reopen the defender's island build panel and verify original saved placements and inventory are unchanged.
 - [ ] Start a second raid; verify every owned defense returns at full health and the previous arena state is not reused.
 - [ ] Verify defense count, role controls and construction catalogue at 320×480, 375×667, tablet and desktop sizes.
+
+ 
+## Sprint 4.51 — Battle companion acceptance
+- [ ] In a two-client Studio session, equip up to three active companions on both accounts and start an accepted raid.
+- [ ] Verify each participant sees their own active companions beside them in the arena; companions must follow their owner and never block movement, the core or defenses.
+- [ ] Verify nameplates show companion names and role labels; the selected primary battle companion has a distinct highlight.
+- [ ] Verify primary selection uses the first active companion with a `RaidAbility` in active-slot order, not collection order. Reorder active companions and start a new raid to verify the selected ability changes.
+- [ ] Verify an active roster without any raid-role companion shows the empty pet state and hides the ability button.
+- [ ] Verify raid abilities unlock at player level 5; attempt malformed action payloads, use outside an active match and use after death; all must be rejected.
+- [ ] As a Hunter, use the ability with the opponent inside range; verify a visible projectile, correct damage, cooldown and normal duel victory/reward handling.
+- [ ] As a Hunter, attempt to use the ability beyond range or excessive vertical separation; verify rejection and that cooldown is not consumed.
+- [ ] As a Healer, take duel/turret/trap damage and use the ability; verify the exact configured healing, maximum 100 health and rejection at full health.
+- [ ] Verify Healer never changes Roblox Humanoid health and cannot revive a dead character.
+- [ ] As a Guardian, activate the shield and receive a normal duel strike; verify shield capacity is consumed before combat health.
+- [ ] Verify Guardian shields also absorb parry counter-damage, Watchtower hits and Thorn Trap hits.
+- [ ] Verify shield duration expiry, full depletion, cooldown display and rejection of a second shield while one is active.
+- [ ] Spam pet ability requests; verify the server enforces per-match cooldowns even if the client button is manipulated.
+- [ ] Verify one primary pet ability per participant and no effect from companions that are not in the active roster.
+- [ ] End raids by core victory, duel victory, timer, forfeit, death and disconnect; verify all raid companions, nameplates, highlights and projectiles are removed.
+- [ ] Reopen the collection and verify companion ownership, active slots, levels, moods and needs remain unchanged.
+- [ ] Verify pet HUD controls at 320×480, 375×667, tablet and desktop.
