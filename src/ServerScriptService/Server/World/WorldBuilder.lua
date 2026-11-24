@@ -516,7 +516,7 @@ function WorldBuilder:Build()
     local oddsLabel = Instance.new("TextLabel")
     oddsLabel.Size = UDim2.fromScale(1, 1)
     oddsLabel.BackgroundTransparency = 1
-    oddsLabel.Text = "ЯЙЦО ВЕЧНОЙ ЗИМЫ\\nСнежный лис · 60%\\nПолярная сова · 30%\\nЛедниковый медвежонок · 10%"
+    oddsLabel.Text = "ЯЙЦО ВЕЧНОЙ ЗИМЫ\\nБАЗА · БЕЗ ОХОТНИКА\\nСнежный лис · 60%\\nПолярная сова · 30%\\nЛедниковый медвежонок · 10%"
     oddsLabel.TextColor3 = Color3.fromRGB(230, 248, 255)
     oddsLabel.TextScaled = true
     oddsLabel.TextWrapped = true
@@ -694,7 +694,7 @@ function WorldBuilder:Build()
     local emberOddsText = Instance.new("TextLabel")
     emberOddsText.Size = UDim2.fromScale(1, 1)
     emberOddsText.BackgroundTransparency = 1
-    emberOddsText.Text = "ЯЙЦО ПЕПЕЛЬНОГО ПЛАМЕНИ\\nУгольный лис · 60%\\nМагмовый дракончик · 30%\\nПепельный феникс · 10%"
+    emberOddsText.Text = "ЯЙЦО ПЕПЕЛЬНОГО ПЛАМЕНИ\\nБАЗА · БЕЗ ОХОТНИКА\\nУгольный лис · 60%\\nМагмовый дракончик · 30%\\nПепельный феникс · 10%"
     emberOddsText.TextColor3 = Color3.fromRGB(255, 229, 204)
     emberOddsText.TextScaled = true
     emberOddsText.TextWrapped = true
@@ -1008,7 +1008,7 @@ function WorldBuilder:Build()
     local crystalOddsText = Instance.new("TextLabel")
     crystalOddsText.Size = UDim2.fromScale(1, 1)
     crystalOddsText.BackgroundTransparency = 1
-    crystalOddsText.Text = "ЯЙЦО ПРИЗМАТИЧЕСКОГО СИЯНИЯ\\nПризматический лис · 60%\\nКристальный оленёнок · 30%\\nДракон авроры · 10%"
+    crystalOddsText.Text = "ЯЙЦО ПРИЗМАТИЧЕСКОГО СИЯНИЯ\\nБАЗА · БЕЗ ОХОТНИКА\\nПризматический лис · 60%\\nКристальный оленёнок · 30%\\nДракон авроры · 10%"
     crystalOddsText.TextColor3 = Color3.fromRGB(239, 226, 255)
     crystalOddsText.TextScaled = true
     crystalOddsText.TextWrapped = true
@@ -1301,7 +1301,7 @@ function WorldBuilder:Build()
     local ancientOddsText = Instance.new("TextLabel")
     ancientOddsText.Size = UDim2.fromScale(1, 1)
     ancientOddsText.BackgroundTransparency = 1
-    ancientOddsText.Text = "ЯЙЦО ДРЕВНЕГО ДРЕВА\\nОлень-древень · 55%\\nДух корней · 30%\\nНебесный змей · 15%"
+    ancientOddsText.Text = "ЯЙЦО ДРЕВНЕГО ДРЕВА\\nБАЗА · БЕЗ ОХОТНИКА\\nОлень-древень · 55%\\nДух корней · 30%\\nНебесный змей · 15%"
     ancientOddsText.TextColor3 = Color3.fromRGB(235, 239, 201)
     ancientOddsText.TextScaled = true
     ancientOddsText.TextWrapped = true
@@ -1844,7 +1844,7 @@ function WorldBuilder:Build()
     local caveOddsText = Instance.new("TextLabel")
     caveOddsText.Size = UDim2.fromScale(1, 1)
     caveOddsText.BackgroundTransparency = 1
-    caveOddsText.Text = "ЯЙЦО ЗАБЫТОГО СЕРДЦА\\nНетопырь 65% · Рысь 25%\\nСвет Сердца 10%"
+    caveOddsText.Text = "ЯЙЦО ЗАБЫТОГО СЕРДЦА\\nБАЗА · БЕЗ ОХОТНИКА\\nНетопырь 65% · Рысь 25%\\nСвет Сердца 10%"
     caveOddsText.TextColor3 = Color3.fromRGB(208, 235, 249)
     caveOddsText.TextScaled = true
     caveOddsText.TextWrapped = true
