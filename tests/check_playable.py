@@ -1219,7 +1219,7 @@ assert 'payload.Action == "RepairDefense"' in raid_service
 assert 'self:AttackDefense(player)' in raid_service and 'self:RepairDefense(player)' in raid_service
 assert 'buildArenaDefenses(match, PlayerDataService:GetProfile(match.Defender))' in raid_service
 assert 'activateArenaDefenses(self, match)' in raid_service
-assert 'if self._matches[match.Attacker] == match and match.State == "ACTIVE"' in raid_service
+assert 'while self._matches[match.Attacker] == match and match.State == "ACTIVE"' in raid_service
 assert 'RaidArenaDefenseCount' in client
 assert 'raidArenaDefenseStatus.Name = "DefenseStatus"' in client
 assert 'raidArenaDefenseAttack.Name = "AttackDefense"' in client
