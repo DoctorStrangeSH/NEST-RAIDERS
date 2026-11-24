@@ -19,6 +19,8 @@ server = Path("src/ServerScriptService/Server/Bootstrap.server.lua").read_text()
 watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua").read_text()
 world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
 plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
+companion_service = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+display_pet_service = Path("src/ServerScriptService/Server/Services/DisplayPetService.lua").read_text()
 build_service = Path("src/ServerScriptService/Server/Services/NestBuildService.lua").read_text()
 nest_build_catalog = Path("src/ReplicatedStorage/Shared/Config/NestBuildCatalog.lua").read_text()
 assert 'local folder = island:FindFirstChild("PlayerPlots")' in plots
@@ -1551,3 +1553,18 @@ assert 'if eggHighlight then eggHighlight.Enabled = false end' in eggs
 assert 'if eggGlow then eggGlow.Enabled = true end' in eggs
 assert 'if eggHighlight then eggHighlight.Enabled = true end' in eggs
 assert 'hatchOverlay.Active = true' in client
+# Sprint 4.64 — autonomous displayed companion behavior.
+assert 'local wanderRadius = 3.6' in companion_service
+assert 'targetPosition = home + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)' in companion_service
+assert 'local speed = energy <= 15 and 1.25 or (mood >= 80 and 3.4 or 2.5)' in companion_service
+assert 'behavior = "Sleeping"' in companion_service
+assert 'behavior = mood >= 80 and "Playful" or "Wandering"' in companion_service
+assert 'model:SetAttribute("Behavior", behavior)' in companion_service
+assert 'model:SetAttribute("Personality"' in companion_service
+assert 'model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset, 0))' in companion_service
+assert 'while model.Parent == folder and folder.Parent do' in companion_service
+assert 'function DisplayPetService:RefreshPlayer(player)' in display_pet_service
+assert 'CompanionService:RefreshDisplayedPets(player, plot' in display_pet_service
+assert 'elseif interaction == "ToyPlay" then' in display_pet_service
+assert 'elseif interaction == "Sleep" then' in display_pet_service
+
