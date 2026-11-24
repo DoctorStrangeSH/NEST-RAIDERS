@@ -602,12 +602,13 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         yawOffset = math.sin(now * 0.35 + phase) * 0.025
                     else
                         if socialPlayUntil > 0 and now >= socialPlayUntil then
-                            if not socialRewarded then
+                            if not socialRewarded and partnerModel and not partnerSleeping
+                                and (partnerModel:GetPivot().Position - currentPosition).Magnitude <= 10 then
                                 mood = math.clamp(mood + 2, 0, 100)
                                 profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
                                 profile.Nest.CompanionMood[instanceId] = mood
                                 model:SetAttribute("Mood", mood)
-                                if partnerModel and slot < partnerSlot then
+                                if slot < partnerSlot then
                                     local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
                                     local bondKey = getBondKey(instanceId, partnerId)
                                     if bondKey then
@@ -620,7 +621,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                         partnerModel:SetAttribute("FriendshipLevel", bondLevel)
                                     end
                                 end
-                                socialRewarded = true
+                            end
+                            socialRewarded = true
                             end
                             socialPlayUntil = 0
                             targetIsSocial = false
