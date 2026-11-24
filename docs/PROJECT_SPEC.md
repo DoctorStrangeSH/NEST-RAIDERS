@@ -672,3 +672,13 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Feature buttons use a consistent dark gradient, accent-colored stroke, left-aligned Gotham typography, icon-safe padding and end truncation. Mouse hover provides a subtle background transition; touch users retain the same large button targets without relying on hover.
 - The navigation remains a ScrollingFrame and inherits the responsive geometry introduced in Sprint 4.56. The menu must be tested at 320x480, 375x667, tablet, 1366x768 and 1920x1080.
 - Visual Studio/device acceptance remains open. The vector geometry is implemented but must be checked in Roblox Studio for legibility, shape quality, touch behavior and clipped labels before moving to the pet inventory panel.
+
+ 
+## Companion inventory visual system — Sprint 4.58
+- Inventory panel uses a responsive 94% viewport width / 82% height target with 300×340 minimum and 560×660 maximum design constraints. The existing UIScale uses a larger 0.9 minimum on normal phone viewports and a compact-fit calculation on very small screens to preserve touch-target and text readability.
+- Header includes the collection title, accent divider, active-team/owned-count summary pill, compact genetics odds and a separate incubator status card.
+- Each companion card has a rarity-colored outline and gradient, a native species-family portrait silhouette, rarity/star pill, level and growth stage, genetic trait/income details, and a growth XP progress bar.
+- The portrait uses only Roblox GUI primitives. It selects a silhouette family from the companion ID (turtle/shell, winged/dragon/bird, deer/stag, or fox/default) and a body palette based on biome/species family. It does not depend on emoji fonts or remote image IDs.
+- Team placement/removal is a full-width primary action with explicit Russian wording. Merge and training actions share a responsive two-column row. Ability and breeding actions are stacked below only when the companion supports them; card height is calculated from those optional rows.
+- Empty inventory is a dedicated styled empty-state card. Existing server-authoritative actions remain unchanged: Equip, Unequip, Merge, Train, UseAbility and Breed.
+- The native card portraits are UI silhouettes, not replacements for the actual procedural 3D models used in the world. Actual Studio/device review remains required before moving to the egg shop panel.
