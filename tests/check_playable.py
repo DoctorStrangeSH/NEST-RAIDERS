@@ -21,6 +21,7 @@ world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text(
 game_config = Path("src/ReplicatedStorage/Shared/Config/GameConfig.lua").read_text()
 plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
 companion_service = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+companion_catalog = Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
 display_pet_service = Path("src/ServerScriptService/Server/Services/DisplayPetService.lua").read_text()
 build_service = Path("src/ServerScriptService/Server/Services/NestBuildService.lua").read_text()
 nest_build_catalog = Path("src/ReplicatedStorage/Shared/Config/NestBuildCatalog.lua").read_text()
