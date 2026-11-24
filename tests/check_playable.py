@@ -503,6 +503,8 @@ assert 'IncomeBonus = incomeBonus' in inventory and 'total *= (1 + artifactBonus
 assert 'scaledBonus = (tonumber(definition.IncomeBonus) or 0) * (1 + (level - 1) * 0.25)' in economy
 assert 'Action = "MergeArtifacts"' in client and 'ArtifactInstanceIds' in client
 assert 'ОБЪЕДИНИТЬ ×3' in client and 'not artifact.Equipped' in client
+assert 'tostring(artifact.DevOnly == true)' in client
+assert 'local groupKey = tostring(artifact.Id) .. ":" .. tostring(level) .. ":" .. tostring(artifact.DevOnly == true)' in client
 assert 'ArtifactMergeConfirm' in client and 'ОБЪЕДИНИТЬ ТРИ АРТЕФАКТА?' in client
 assert 'Результат:' in client and 'УЛУЧШИТЬ' in client
 assert 'СЛОТЫ:' in client and 'artifact.TierName' in client
