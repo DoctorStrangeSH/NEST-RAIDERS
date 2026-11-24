@@ -797,7 +797,7 @@
 - [ ] Start a two-client Studio raid with Guardian + Healer active. Verify the HUD shows **Живой бастион**, Guardian/Healer ability power is +15%, and incoming raid combat damage is reduced by 12%.
 - [ ] With Guardian + Healer, verify reduction applies to normal melee strikes, parry counter-damage, Watchtower hits and Thorn Trap hits before any Guardian pet shield absorbs the remaining damage.
 - [ ] Start a raid with Hunter + Guardian active. Verify **Штурмовой строй**, Hunter ability power +15% and normal melee strike damage +10%.
-- [ ] Verify Hunter + Guardian does not increase Guardian shield capacity and does not change parry counter-damage.
+- [ ] Verify Hunter + Guardian increases both Hunter ability power and Guardian shield capacity by 15%, and does not change parry counter-damage.
 - [ ] Start a raid with Hunter + Healer active. Verify **Согласованный натиск**, Hunter ability power +15% and Healer restoration power +15%.
 - [ ] Verify Healer still restores only missing raid combat health and cannot exceed 100.
 - [ ] Start a raid with Hunter + Healer + Guardian active. Verify **Триада** replaces all pair synergies and applies +10% ability power, 8% damage reduction and +5% normal melee strike damage exactly once.
