@@ -84,6 +84,7 @@ assert 'CollectionSearch' in client and 'Поиск питомца или ред
 assert 'bookFilterButtons' in client and 'Открытые' in client and 'Не найдены' in client
 assert 'string.find(searchable, query, 1, true)' in client
 assert 'rarityColors' in client and 'details.TextWrapped = true' in client
+assert '["Обычный"]' in client and '["Легендарный"]' in client and '["Мифический"]' in client
 assert 'entry.Discovered and entry.Name or ""' in client, "Collection search must not reveal undiscovered species"
 assert 'база %d%%' in client
 assert 'local oddsText = ""' in client and 'entry.HatchChance' in client
