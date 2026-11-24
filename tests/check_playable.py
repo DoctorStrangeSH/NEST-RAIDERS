@@ -789,6 +789,9 @@ assert 'local MAX_HATCH_BONUS = 0.30' in artifact_bonus
 assert 'function ArtifactBonusService:GetHatchBonus(profile)' in artifact_bonus
 assert 'function ArtifactBonusService:ChooseHatchSpecies(profile, speciesWeights, rollValue)' in artifact_bonus
 assert 'function ArtifactBonusService:GetHatchSpeciesChance(profile, speciesWeights, speciesId)' in artifact_bonus
+assert 'return requestedAdjustedWeight / adjustedTotal, requestedBaseWeight / baseTotal, bonus' in artifact_bonus
+world_builder = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
+assert world_builder.count("БАЗА · БЕЗ ОХОТНИКА") >= 5
 assert 'HATCH_RARITY_RANK' in artifact_bonus
 assert 'entry.Rank == highestRank' in artifact_bonus
 assert 'adjustedWeight *= (1 + bonus)' in artifact_bonus
