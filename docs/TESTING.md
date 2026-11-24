@@ -730,3 +730,24 @@
 - [ ] Verify duel victory still uses the existing 150-coin / 100-XP winner and 50-coin participant rewards, including the persistent ten-minute cooldown.
 - [ ] Verify core attacks, defender reinforcement, round timer and return-position recovery still work after adding duel combat.
 - [ ] Verify the combat HUD and touch targets at 320×480, 375×667, tablet and desktop sizes.
+
+ 
+## Sprint 4.50 — Persistent nest defenses acceptance
+- [ ] Open **СТРОИТЬ ОСТРОВ** and verify the catalog labels Stone Bastion, Watchtower and Thorn Trap as **ОБОРОНА**.
+- [ ] Purchase each defense and verify coins decrease by the catalog cost and the defense count increases without exceeding 12.
+- [ ] Attempt to buy a seventh bastion, fourth watchtower, seventh trap, and any thirteenth total defense; verify server rejection and no coin/profile changes.
+- [ ] Place each structure on the personal island; verify distinct wall/tower/trap models render at the selected position.
+- [ ] Move and rotate each structure, then remove it; verify inventory returns exactly one item and placement data remains correct after reopening the panel.
+- [ ] Join a two-client Studio session, create an opt-in raid and accept it; verify the defender's placed structures are materialized on the arena's defender half.
+- [ ] Verify an island with no placed defenses produces an empty defense state and does not create default free structures.
+- [ ] As attacker, walk into a bastion; verify it physically blocks the route and does not block the defender spawn or Nest Core.
+- [ ] Attack a bastion within 12 studs; verify 35 structure health is removed, the 1.15-second cooldown is enforced, and the barrier disappears only at zero health.
+- [ ] As defender, repair a damaged but standing bastion within 12 studs; verify +30 health, an eight-second cooldown and the health label update.
+- [ ] Attempt to repair a destroyed structure; verify it cannot be restored in the same raid.
+- [ ] Verify a watchtower fires only at the attacker inside 38 studs, deals 8 raid-health damage on a projectile hit, and stops after destruction or match cleanup.
+- [ ] Verify a thorn trap triggers only for the attacker, deals 12 raid-health damage, and cannot trigger again for six seconds.
+- [ ] Verify defender characters, visitors and unrelated players do not trigger traps or receive turret damage.
+- [ ] Attempt attacker repair, defender structure damage, out-of-range requests and rapid remote spam; verify all are rejected server-side.
+- [ ] Finish a raid after damaging, repairing and destroying defenses; reopen the defender's island build panel and verify original saved placements and inventory are unchanged.
+- [ ] Start a second raid; verify every owned defense returns at full health and the previous arena state is not reused.
+- [ ] Verify defense count, role controls and construction catalogue at 320×480, 375×667, tablet and desktop sizes.
