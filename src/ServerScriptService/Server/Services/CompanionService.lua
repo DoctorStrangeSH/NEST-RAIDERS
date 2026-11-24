@@ -623,7 +623,6 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 end
                             end
                             socialRewarded = true
-                            end
                             socialPlayUntil = 0
                             targetIsSocial = false
                             idleUntil = now + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
