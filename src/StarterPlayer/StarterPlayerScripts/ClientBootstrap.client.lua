@@ -776,7 +776,7 @@ local raidArenaHud = Instance.new("Frame")
 raidArenaHud.Name = "RaidArenaHUD"
 raidArenaHud.AnchorPoint = Vector2.new(1, 0)
 raidArenaHud.Position = UDim2.new(1, -16, 0, 16)
-raidArenaHud.Size = UDim2.new(0.9, 0, 0, 220)
+raidArenaHud.Size = UDim2.new(0.9, 0, 0, 270)
 raidArenaHud.BackgroundColor3 = Color3.fromRGB(35, 42, 52)
 raidArenaHud.BorderSizePixel = 0
 raidArenaHud.Visible = false
@@ -785,8 +785,8 @@ raidArenaHud.Parent = gui
 addCorner(raidArenaHud, 14)
 addStroke(raidArenaHud, Color3.fromRGB(235, 158, 102), 2)
 local raidArenaSize = Instance.new("UISizeConstraint")
-raidArenaSize.MinSize = Vector2.new(280, 220)
-raidArenaSize.MaxSize = Vector2.new(420, 220)
+raidArenaSize.MinSize = Vector2.new(280, 270)
+raidArenaSize.MaxSize = Vector2.new(420, 270)
 raidArenaSize.Parent = raidArenaHud
 
 local raidArenaRole = Instance.new("TextLabel")
@@ -841,9 +841,23 @@ raidArenaDefenseStatus.TextXAlignment = Enum.TextXAlignment.Left
 raidArenaDefenseStatus.ZIndex = 61
 raidArenaDefenseStatus.Parent = raidArenaHud
 
+local raidArenaPetStatus = Instance.new("TextLabel")
+raidArenaPetStatus.Name = "PetAbilityStatus"
+raidArenaPetStatus.BackgroundTransparency = 1
+raidArenaPetStatus.Position = UDim2.fromOffset(12, 94)
+raidArenaPetStatus.Size = UDim2.new(1, -24, 0, 16)
+raidArenaPetStatus.Font = Enum.Font.GothamBold
+raidArenaPetStatus.Text = "БОЕВОЙ ПИТОМЕЦ · НЕ ВЫБРАН"
+raidArenaPetStatus.TextColor3 = Color3.fromRGB(194, 216, 225)
+raidArenaPetStatus.TextSize = 9
+raidArenaPetStatus.TextXAlignment = Enum.TextXAlignment.Left
+raidArenaPetStatus.TextTruncate = Enum.TextTruncate.AtEnd
+raidArenaPetStatus.ZIndex = 61
+raidArenaPetStatus.Parent = raidArenaHud
+
 local raidArenaStrike = Instance.new("TextButton")
 raidArenaStrike.Name = "StrikeOpponent"
-raidArenaStrike.Position = UDim2.fromOffset(10, 96)
+raidArenaStrike.Position = UDim2.fromOffset(10, 114)
 raidArenaStrike.Size = UDim2.new(0.5, -15, 0, 36)
 raidArenaStrike.BackgroundColor3 = Color3.fromRGB(173, 89, 72)
 raidArenaStrike.Text = "УДАР СОПЕРНИКА"
@@ -856,7 +870,7 @@ addCorner(raidArenaStrike, 9)
 
 local raidArenaGuard = Instance.new("TextButton")
 raidArenaGuard.Name = "RaiseGuard"
-raidArenaGuard.Position = UDim2.new(0.5, 5, 0, 96)
+raidArenaGuard.Position = UDim2.new(0.5, 5, 0, 114)
 raidArenaGuard.Size = UDim2.new(0.5, -15, 0, 36)
 raidArenaGuard.BackgroundColor3 = Color3.fromRGB(69, 126, 157)
 raidArenaGuard.Text = "ПАРИРОВАТЬ"
@@ -869,7 +883,7 @@ addCorner(raidArenaGuard, 9)
 
 local raidArenaAttack = Instance.new("TextButton")
 raidArenaAttack.Name = "AttackCore"
-raidArenaAttack.Position = UDim2.fromOffset(10, 138)
+raidArenaAttack.Position = UDim2.fromOffset(10, 156)
 raidArenaAttack.Size = UDim2.new(0.5, -15, 0, 34)
 raidArenaAttack.BackgroundColor3 = Color3.fromRGB(177, 83, 66)
 raidArenaAttack.Text = "УДАРИТЬ ЯДРО"
@@ -882,7 +896,7 @@ addCorner(raidArenaAttack, 9)
 
 local raidArenaRepair = Instance.new("TextButton")
 raidArenaRepair.Name = "ReinforceCore"
-raidArenaRepair.Position = UDim2.fromOffset(10, 138)
+raidArenaRepair.Position = UDim2.fromOffset(10, 156)
 raidArenaRepair.Size = UDim2.new(0.5, -15, 0, 34)
 raidArenaRepair.BackgroundColor3 = Color3.fromRGB(66, 139, 108)
 raidArenaRepair.Text = "УКРЕПИТЬ ЯДРО"
@@ -896,7 +910,7 @@ addCorner(raidArenaRepair, 9)
 
 local raidArenaDefenseAttack = Instance.new("TextButton")
 raidArenaDefenseAttack.Name = "AttackDefense"
-raidArenaDefenseAttack.Position = UDim2.new(0.5, 5, 0, 138)
+raidArenaDefenseAttack.Position = UDim2.new(0.5, 5, 0, 156)
 raidArenaDefenseAttack.Size = UDim2.new(0.5, -15, 0, 34)
 raidArenaDefenseAttack.BackgroundColor3 = Color3.fromRGB(130, 103, 68)
 raidArenaDefenseAttack.Text = "АТАКОВАТЬ ОБОРОНУ"
@@ -910,7 +924,7 @@ addCorner(raidArenaDefenseAttack, 9)
 
 local raidArenaDefenseRepair = Instance.new("TextButton")
 raidArenaDefenseRepair.Name = "RepairDefense"
-raidArenaDefenseRepair.Position = UDim2.new(0.5, 5, 0, 138)
+raidArenaDefenseRepair.Position = UDim2.new(0.5, 5, 0, 156)
 raidArenaDefenseRepair.Size = UDim2.new(0.5, -15, 0, 34)
 raidArenaDefenseRepair.BackgroundColor3 = Color3.fromRGB(77, 135, 104)
 raidArenaDefenseRepair.Text = "ПОЧИНИТЬ ОБОРОНУ"
@@ -922,9 +936,23 @@ raidArenaDefenseRepair.Visible = false
 raidArenaDefenseRepair.Parent = raidArenaHud
 addCorner(raidArenaDefenseRepair, 9)
 
+local raidArenaPetAbility = Instance.new("TextButton")
+raidArenaPetAbility.Name = "UsePetAbility"
+raidArenaPetAbility.Position = UDim2.fromOffset(10, 196)
+raidArenaPetAbility.Size = UDim2.new(1, -20, 0, 34)
+raidArenaPetAbility.BackgroundColor3 = Color3.fromRGB(88, 126, 111)
+raidArenaPetAbility.Text = "БОЕВАЯ СПОСОБНОСТЬ ПИТОМЦА"
+raidArenaPetAbility.TextColor3 = Color3.new(1, 1, 1)
+raidArenaPetAbility.TextSize = 10
+raidArenaPetAbility.Font = Enum.Font.GothamBlack
+raidArenaPetAbility.ZIndex = 61
+raidArenaPetAbility.Visible = false
+raidArenaPetAbility.Parent = raidArenaHud
+addCorner(raidArenaPetAbility, 9)
+
 local raidArenaExit = Instance.new("TextButton")
 raidArenaExit.Name = "Forfeit"
-raidArenaExit.Position = UDim2.fromOffset(10, 180)
+raidArenaExit.Position = UDim2.fromOffset(10, 236)
 raidArenaExit.Size = UDim2.new(1, -20, 0, 24)
 raidArenaExit.BackgroundColor3 = Color3.fromRGB(78, 78, 88)
 raidArenaExit.Text = "ЗАВЕРШИТЬ РЕЙД БЕЗ НАГРАДЫ"
@@ -3910,6 +3938,23 @@ local function updateRaidArenaHud()
     raidArenaDefenseStatus.Text = defenseCount > 0
         and ("ОБОРОНА ГНЕЗДА · " .. tostring(defenseCount) .. " СООРУЖЕНИЙ")
         or "ОБОРОНА ГНЕЗДА · НЕТ СООРУЖЕНИЙ"
+    local petName = player:GetAttribute("RaidArenaPetName") or ""
+    local petAbilityName = player:GetAttribute("RaidArenaPetAbilityName") or ""
+    local petRole = player:GetAttribute("RaidArenaPetRole") or ""
+    local petCooldown = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaPetCooldown")) or 0))
+    local petShield = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaPetShield")) or 0))
+    local petShieldSeconds = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaPetShieldSeconds")) or 0))
+    local roleLabel = petRole == "GUARDIAN" and "СТРАЖ" or (petRole == "HEALER" and "ЦЕЛИТЕЛЬ" or (petRole == "HUNTER" and "ОХОТНИК" or ""))
+    raidArenaPetStatus.Text = petAbilityName ~= ""
+        and string.format("СПУТНИК · %s · %s%s", petName, roleLabel,
+            petShield > 0 and (" · ЩИТ " .. tostring(petShield) .. " / " .. tostring(petShieldSeconds) .. "с") or "")
+        or "БОЕВОЙ ПИТОМЕЦ · НЕ ВЫБРАН"
+    raidArenaPetAbility.Visible = petAbilityName ~= ""
+    raidArenaPetAbility.Text = petCooldown > 0
+        and ("НАВЫК · " .. tostring(petCooldown) .. " С")
+        or ("ИСПОЛЬЗОВАТЬ · " .. petAbilityName)
+    raidArenaPetAbility.BackgroundColor3 = petCooldown > 0
+        and Color3.fromRGB(76, 84, 96) or Color3.fromRGB(88, 126, 111)
     raidArenaStrike.Visible = true
     raidArenaGuard.Visible = true
     raidArenaGuard.Text = guardActive and "БЛОК АКТИВЕН" or (guardCooldown > 0 and ("БЛОК · " .. tostring(guardCooldown) .. " С") or "ПАРИРОВАТЬ")
@@ -3948,6 +3993,10 @@ raidArenaDefenseRepair.Activated:Connect(function()
     invokeRaid({ Action = "RepairDefense" })
     updateRaidArenaHud()
 end)
+raidArenaPetAbility.Activated:Connect(function()
+    invokeRaid({ Action = "UsePetAbility" })
+    updateRaidArenaHud()
+end)
 raidArenaExit.Activated:Connect(function()
     invokeRaid({ Action = "CancelMatch" })
     updateRaidArenaHud()
@@ -3959,6 +4008,8 @@ for _, attribute in ipairs({
     "RaidArenaCoreHealth", "RaidArenaTimeRemaining",
     "RaidArenaCombatHealth", "RaidArenaOpponentCombatHealth",
     "RaidArenaGuardActive", "RaidArenaGuardCooldown", "RaidArenaDefenseCount",
+    "RaidArenaPetName", "RaidArenaPetAbilityName", "RaidArenaPetRole",
+    "RaidArenaPetCooldown", "RaidArenaPetShield", "RaidArenaPetShieldSeconds",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateRaidArenaHud)
 end
