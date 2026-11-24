@@ -96,7 +96,11 @@ local function updateHudScale()
     local widthScale = viewport.X / 900
     local heightScale = viewport.Y / 620
     local scale = math.min(widthScale, heightScale, 1)
-    hudScale.Scale = math.clamp(scale, 0.72, 1)
+    local compactFit = math.min(viewport.X / 300, viewport.Y / 340, 1)
+    local minimumScale = (viewport.X < 300 or viewport.Y < 360)
+        and math.clamp(compactFit, 0.68, 0.9)
+        or (viewport.X < 600 and 0.9 or 0.82)
+    hudScale.Scale = math.clamp(scale, minimumScale, 1)
 end
 
 local function bindHudCamera()
