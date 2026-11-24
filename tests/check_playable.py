@@ -1342,3 +1342,34 @@ assert 'raidArenaSynergyStatus.Text = synergyName ~= ""' in client
 assert 'СИНЕРГИЯ · НЕТ · нужны 2 разные роли' in client
 assert 'RaidArenaSynergyName' in client and 'RaidArenaSynergyDescription' in client
 
+# Sprint 4.54 — role-colored companion auras and authoritative combat cues.
+assert 'local RAID_SYNERGY_PALETTES = {' in raid_service
+for synergy_id in ("LIVING_BASTION", "ASSAULT_FORMATION", "COORDINATED_ASSAULT", "TRIAD"):
+    assert synergy_id in raid_service and synergy_id in client
+assert 'local function getRaidSynergyColor(synergy, role)' in raid_service
+assert 'local function applyRaidSynergyVisuals(match, player, synergy)' in raid_service
+assert 'model:SetAttribute("RaidSynergyId", synergy.Id)' in raid_service
+assert 'aura.Name = "RaidTeamSynergyAura"' in raid_service
+assert 'aura.FillTransparency = 0.94' in raid_service
+assert 'local function pulseRaidCompanions(match, player, cueKind, force)' in raid_service
+assert 'if not force and timestamp - lastCue < 0.32 then return false end' in raid_service
+assert 'flash.Name = "RaidSynergyCue_" .. tostring(cueKind)' in raid_service
+assert 'TweenService:Create(flash, TweenInfo.new(duration' in raid_service
+assert 'Debris:AddItem(flash, duration + 0.08)' in raid_service
+assert 'light.Name = "RaidSynergyCueLight"' in raid_service
+assert 'match.RaidFollowers = {}' in raid_service
+assert 'applyRaidSynergyVisuals(match, participant, match.RaidPetSynergy[participant])' in raid_service
+assert 'pulseRaidCompanions(match, participant, "ACTIVATION", true)' in raid_service
+assert 'pulseRaidCompanions(match, player, "ATTACK")' in raid_service
+assert 'pulseRaidCompanions(match, player, "ABILITY")' in raid_service
+assert 'pulseRaidCompanions(match, target, "DEFEND")' in raid_service
+assert 'pulseRaidCompanions(match, opponent, "DEFEND")' in raid_service
+assert 'participant:SetAttribute("RaidArenaSynergyPulse", nil)' in raid_service
+assert 'raidSynergyToast.Name = "RaidSynergyActivationToast"' in client
+assert 'local function showRaidSynergyToast(synergyId, synergyName, description)' in client
+assert 'local lastRaidSynergyPulse = ""' in client
+assert 'synergyPulse ~= lastRaidSynergyPulse' in client
+assert 'showRaidSynergyToast(synergyId, synergyName, synergyDescription)' in client
+assert '"RaidArenaSynergyId", "RaidArenaSynergyName", "RaidArenaSynergyDescription"' in client
+assert '"RaidArenaSynergyPulse", "RaidArenaPetCooldown"' in client
+
