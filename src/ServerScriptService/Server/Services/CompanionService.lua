@@ -555,7 +555,9 @@ function CompanionService:CreateRaidFollowers(player, parent)
             local catalogEntry = CompanionCatalog[companion.Id]
             local raidAbility = catalogEntry and catalogEntry.RaidAbility or nil
             local role = raidAbility and raidAbility.Role or nil
+            local petLevel = math.clamp(math.floor(tonumber(companion.Level) or 1), 1, 10)
             local displayName = companion.Name or (catalogEntry and catalogEntry.Name) or companion.Id
+            model:SetAttribute("RaidBattleLevel", petLevel)
 
             local nameplate = Instance.new("BillboardGui")
             nameplate.Name = "RaidCompanionNameplate"
@@ -572,7 +574,9 @@ function CompanionService:CreateRaidFollowers(player, parent)
             label.Font = Enum.Font.GothamBold
             label.TextColor3 = Color3.fromRGB(246, 246, 232)
             label.TextSize = 10
-            label.Text = role and (displayName .. " · " .. roleLabels[role]) or displayName
+            label.Text = role
+                and (displayName .. " · ур. " .. tostring(petLevel) .. " · " .. roleLabels[role])
+                or (displayName .. " · ур. " .. tostring(petLevel))
             label.Parent = nameplate
             local corner = Instance.new("UICorner")
             corner.CornerRadius = UDim.new(0, 8)
@@ -584,6 +588,7 @@ function CompanionService:CreateRaidFollowers(player, parent)
                 Ability = raidAbility,
                 Name = displayName,
                 Role = role,
+                Level = petLevel,
             }
             table.insert(followers, entry)
 
@@ -598,7 +603,7 @@ function CompanionService:CreateRaidFollowers(player, parent)
                 highlight.OutlineTransparency = 0.12
                 highlight.DepthMode = Enum.HighlightDepthMode.Occluded
                 highlight.Parent = model
-                label.Text = displayName .. " · " .. roleLabels[role] .. " ★"
+                label.Text = displayName .. " · ур. " .. tostring(petLevel) .. " · " .. roleLabels[role] .. " ★"
             end
         end
     end
