@@ -3941,12 +3941,14 @@ local function updateRaidArenaHud()
     local petName = player:GetAttribute("RaidArenaPetName") or ""
     local petAbilityName = player:GetAttribute("RaidArenaPetAbilityName") or ""
     local petRole = player:GetAttribute("RaidArenaPetRole") or ""
+    local petLevel = math.clamp(math.floor(tonumber(player:GetAttribute("RaidArenaPetLevel")) or 0), 0, 10)
+    local petPowerLabel = player:GetAttribute("RaidArenaPetPowerLabel") or ""
     local petCooldown = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaPetCooldown")) or 0))
     local petShield = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaPetShield")) or 0))
     local petShieldSeconds = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaPetShieldSeconds")) or 0))
     local roleLabel = petRole == "GUARDIAN" and "СТРАЖ" or (petRole == "HEALER" and "ЦЕЛИТЕЛЬ" or (petRole == "HUNTER" and "ОХОТНИК" or ""))
     raidArenaPetStatus.Text = petAbilityName ~= ""
-        and string.format("СПУТНИК · %s · %s%s", petName, roleLabel,
+        and string.format("СПУТНИК · %s · ур.%d · %s · %s%s", petName, petLevel, roleLabel, petPowerLabel,
             petShield > 0 and (" · ЩИТ " .. tostring(petShield) .. " / " .. tostring(petShieldSeconds) .. "с") or "")
         or "БОЕВОЙ ПИТОМЕЦ · НЕ ВЫБРАН"
     raidArenaPetAbility.Visible = petAbilityName ~= ""
@@ -4009,6 +4011,7 @@ for _, attribute in ipairs({
     "RaidArenaCombatHealth", "RaidArenaOpponentCombatHealth",
     "RaidArenaGuardActive", "RaidArenaGuardCooldown", "RaidArenaDefenseCount",
     "RaidArenaPetName", "RaidArenaPetAbilityName", "RaidArenaPetRole",
+    "RaidArenaPetLevel", "RaidArenaPetPower", "RaidArenaPetPowerLabel",
     "RaidArenaPetCooldown", "RaidArenaPetShield", "RaidArenaPetShieldSeconds",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateRaidArenaHud)
