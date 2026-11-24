@@ -1279,6 +1279,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Make pets greet their owner with a heart/emote when the owner approaches an idle companion.
 - [x] Expose personality, favorite toy, display slot, home position, greeting and social states through model attributes.
 - [x] Add regression checks for personality profiles, paired slots, social rewards and owner proximity reactions.
+- [x] GitHub Actions: Rojo place build, package validation and `tests/check_playable.py` passed (workflow run 45412040524).
+- [x] Publish the refreshed `NEST-RAIDERS.rbxlx` Studio artifact for Sprint 4.66 (available through 2026-12-08).
 - [ ] Roblox Studio: display two pets in slots 1–2 and 3–4; confirm they approach one another and play without crossing plot boundaries.
 - [ ] Verify all personality groups feel distinct and favorite toys are selected more often than non-favorites.
 - [ ] Walk up to idle pets and confirm they face the player and show a friendly greeting; move away and confirm normal behavior resumes.
