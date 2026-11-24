@@ -45,7 +45,7 @@ local function makeEgg(parent, position, color)
         detail.CanQuery = false
         detail.Massless = true
         detail.CastShadow = false
-        detail.Parent = parent
+        detail.Parent = egg
         local weld = Instance.new("WeldConstraint")
         weld.Part0 = egg
         weld.Part1 = detail
