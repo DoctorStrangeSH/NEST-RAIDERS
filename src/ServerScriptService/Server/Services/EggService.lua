@@ -418,6 +418,8 @@ function EggService:Init()
                     egg.Transparency = 0
                     local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
                     if prompt then
+                        local eggDefinition = spawnDefinition.Eggs[spawnDefinition.DefaultEggId]
+                        prompt.ObjectText = eggDefinition and eggDefinition.Name or "Яйцо биома"
                         prompt.Enabled = true
                         prompt.Triggered:Connect(function(player) self:Collect(player, egg) end)
                     end
