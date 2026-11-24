@@ -1145,9 +1145,9 @@ assert 'match.CombatHealth = {' in raid_service
 assert 'match.LastStrikeAt = {}' in raid_service
 assert 'match.GuardUntil = {}' in raid_service and 'match.GuardCooldownUntil = {}' in raid_service
 assert 'if targetGuardUntil > timestamp then' in raid_service
-assert 'match.CombatHealth[opponent] = math.max(0' in raid_service
-assert 'match.CombatHealth[player] = math.max(0' in raid_service
-assert 'finishMatch(self, match, winnerRole, "Соперник выбыл! Победа в дуэли.", true)' in raid_service
+assert 'applyRaidCombatDamage(self, match, opponent, RAID_DUEL_STRIKE_DAMAGE' in raid_service
+assert 'applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE' in raid_service
+assert 'finishMatch(self, match, target == match.Attacker and "DEFENDER" or "ATTACKER"' in raid_service
 assert 'function RaidService:RaiseGuard(player)' in raid_service
 assert 'match.GuardUntil[player] = guardUntil' in raid_service
 assert 'match.GuardCooldownUntil[player] = timestamp + RAID_PARRY_COOLDOWN_SECONDS' in raid_service
@@ -1228,4 +1228,49 @@ assert 'raidArenaDefenseAttack.Activated' in client and 'raidArenaDefenseRepair.
 assert 'Action = "AttackDefense"' in client and 'Action = "RepairDefense"' in client
 assert 'raidArenaDefenseStatus.Text' in client
 
+# Sprint 4.51 — active companions join raids and unlock role-based combat abilities.
+assert 'RaidAbility = { Id = "FoxPounce"' in companion_catalog and 'Role = "HUNTER"' in companion_catalog
+assert 'RaidAbility = { Id = "MossShell"' in companion_catalog and 'Role = "GUARDIAN"' in companion_catalog
+assert 'RaidAbility = { Id = "VerdantMend"' in companion_catalog and 'Role = "HEALER"' in companion_catalog
+assert 'Id = "AuroraMend"' in companion_catalog and 'HealAmount = 26' in companion_catalog
+assert 'Id = "GlacierBulwark"' in companion_catalog and 'ShieldAmount = 32' in companion_catalog
+assert 'Id = "PhoenixDive"' in companion_catalog and 'Damage = 22' in companion_catalog
+assert 'Id = "CrystalBloom"' in companion_catalog and 'HealAmount = 30' in companion_catalog
+assert 'Id = "AuroraBreath"' in companion_catalog and 'Damage = 26' in companion_catalog
+assert 'Id = "BriarAegis"' in companion_catalog and 'ShieldAmount = 28' in companion_catalog
+assert 'UnlockLevel = 5' in companion_catalog and 'CooldownSeconds = 28' in companion_catalog
+
+assert 'local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)' in companion_service
+assert 'function CompanionService:CreateRaidFollowers(player, parent)' in companion_service
+assert 'profile.ActiveCompanions' in companion_service
+assert 'buildPet(parent, companion, #followers + 1)' in companion_service
+assert 'RaidPrimaryCompanionHighlight' in companion_service
+assert 'RaidCompanionNameplate' in companion_service
+
+assert 'local CompanionService = require(ServerScriptService.Server.Services.CompanionService)' in raid_service
+assert 'local function followRaidCompanions(self, match, player, followers)' in raid_service
+assert 'CompanionService:CreateRaidFollowers(participant, folder)' in raid_service
+assert 'match.RaidPets[participant] = primary' in raid_service
+assert 'match.PetAbilityReadyAt = {}' in raid_service and 'match.PetShields = {}' in raid_service
+assert 'function RaidService:UsePetAbility(player)' in raid_service
+assert 'role == "HUNTER"' in raid_service and 'role == "HEALER"' in raid_service and 'role == "GUARDIAN"' in raid_service
+assert 'match.PetAbilityReadyAt[player] = timestamp + cooldown' in raid_service
+assert 'local function applyRaidCombatDamage(self, match, target, amount, sourceName)' in raid_service
+assert 'absorbed = math.min(remainingDamage, shield.Amount)' in raid_service
+assert 'remainingDamage -= absorbed' in raid_service
+assert 'applyRaidCombatDamage(self, match, match.Attacker, defense.Damage' in raid_service
+assert 'applyRaidCombatDamage(self, match, opponent, RAID_DUEL_STRIKE_DAMAGE' in raid_service
+assert 'applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE' in raid_service
+assert 'payload.Action == "UsePetAbility"' in raid_service and 'self:UsePetAbility(player)' in raid_service
+assert 'participant:SetAttribute("RaidArenaPetAbilityName", nil)' in raid_service
+assert 'participant:SetAttribute("RaidArenaPetShield", nil)' in raid_service
+assert 'participant:SetAttribute("RaidArenaPetCooldown"' in raid_service
+assert 'participant:SetAttribute("RaidArenaPetShieldSeconds"' in raid_service
+
+assert 'raidArenaPetStatus.Name = "PetAbilityStatus"' in client
+assert 'raidArenaPetAbility.Name = "UsePetAbility"' in client
+assert 'raidArenaPetAbility.Activated' in client and 'Action = "UsePetAbility"' in client
+assert 'RaidArenaPetAbilityName' in client and 'RaidArenaPetCooldown' in client
+assert 'RaidArenaPetShield' in client and 'RaidArenaPetShieldSeconds' in client
+assert 'raidArenaHud.Size = UDim2.new(0.9, 0, 0, 270)' in client
 
