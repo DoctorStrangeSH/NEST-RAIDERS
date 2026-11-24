@@ -779,4 +779,45 @@ assert 'return response.Data, response.Message' in client
 assert 'ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ' in client
 assert 'добычу ресурсов' in client
 
+# Gatherer bonuses must run only after every harvest guard and the existing cooldown.
+ancient_harvest = Path("src/ServerScriptService/Server/Services/AncientHarvestService.lua").read_text()
+crystal_mining = Path("src/ServerScriptService/Server/Services/CrystalMiningService.lua").read_text()
+
+def assert_gatherer_flow_order(source, fragments, label):
+    positions = [source.index(fragment) for fragment in fragments]
+    assert positions == sorted(positions), f"{label}: gatherer bonus moved outside the validated harvest flow"
+
+assert_gatherer_flow_order(ancient_harvest, [
+    'player:GetAttribute("CurrentBiome") ~= "AncientHeights"',
+    'ProgressionService:CanEnterZone(player, "AncientHeights")',
+    'humanoid.Health <= 0',
+    'PlayerDataService:GetProfile(player)',
+    'if readyAt > now then',
+    'ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)',
+    'materials.ElderwoodNodeCooldowns[nodeId] = now + NODE_COOLDOWN_SECONDS',
+    'materials.Elderwood = math.max(0, math.floor(tonumber(materials.Elderwood) or 0)) + amount',
+    'syncBalance(player, profile)',
+], "Ancient Heights harvest")
+
+assert_gatherer_flow_order(crystal_mining, [
+    'player:GetAttribute("CurrentBiome") ~= "CrystalRealm"',
+    'ProgressionService:CanEnterZone(player, "CrystalRealm")',
+    'humanoid.Health <= 0',
+    'PlayerDataService:GetProfile(player)',
+    'if readyAt > now then',
+    'local species = activeSpecies(profile)',
+    'if species.PrismFox then amount += 1 end',
+    'if species.CrystalDeer then amount += 1 end',
+    'if species.AuroraDragon and math.random() < 0.35 then amount += 2 end',
+    'local baseAmount = amount',
+    'ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)',
+    'materials.CrystalNodeCooldowns[nodeId] = now + NODE_COOLDOWN_SECONDS',
+    'materials.CrystalShard = math.max(0, math.floor(tonumber(materials.CrystalShard) or 0)) + amount',
+], "Crystal Realm mining")
+
+assert 'local NODE_COOLDOWN_SECONDS = 180' in ancient_harvest
+assert 'local NODE_COOLDOWN_SECONDS = 180' in crystal_mining
+assert 'local HARVEST_LOCKS = {}' in ancient_harvest
+assert 'if HARVEST_LOCKS[player] then return end' in ancient_harvest
+
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
