@@ -847,3 +847,18 @@
 - [ ] Verify companion motion stops cleanly on match end, forfeit, death, timeout and disconnect.
 - [ ] Run a two-client Studio test and confirm both clients see the same model motion.
 - [ ] Check server Output and frame rate during a full match with three companions per participant.
+
+ 
+## Sprint 4.56 — Responsive UI foundation acceptance
+- [ ] Test the initial boot card at 320×480 and verify the card and full error/loading text remain inside the viewport.
+- [ ] Test the feature menu at 320×480 and 375×667; verify all 14 actions remain reachable by scrolling.
+- [ ] Verify each menu button has a visible two-letter native badge and no blank image placeholder.
+- [ ] Verify menu labels begin after the badge, truncate at the end and remain readable without overlapping.
+- [ ] Test the same menu at tablet, 1366×768 and 1920×1080; verify desktop sizing and full labels return.
+- [ ] Change the Studio emulator resolution while running; verify the global UIScale and navigation geometry update.
+- [ ] Replace Workspace.CurrentCamera during a test; verify scale and navigation listeners rebind to the new camera.
+- [ ] Verify camera changes do not create duplicate resize connections or repeated UI scaling.
+- [ ] Verify all modal panels still open/close correctly and the raid panel is registered only once in modal exclusivity.
+- [ ] Verify close-all and Escape behavior remain unchanged.
+- [ ] Check Windows, Android and iOS font rendering for every native navigation badge.
+- [ ] Continue with individual modal constraints and gameplay HUD safe-area checks in the next UI sprint.
