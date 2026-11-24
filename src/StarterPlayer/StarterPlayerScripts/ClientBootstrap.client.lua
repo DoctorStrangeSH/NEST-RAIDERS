@@ -771,6 +771,90 @@ raidLayout.Padding = UDim.new(0, 7)
 raidLayout.SortOrder = Enum.SortOrder.LayoutOrder
 raidLayout.Parent = raidList
 
+-- Compact live raid controls stay visible while the players are inside the arena.
+local raidArenaHud = Instance.new("Frame")
+raidArenaHud.Name = "RaidArenaHUD"
+raidArenaHud.AnchorPoint = Vector2.new(1, 0)
+raidArenaHud.Position = UDim2.new(1, -16, 0, 16)
+raidArenaHud.Size = UDim2.new(0.9, 0, 0, 148)
+raidArenaHud.BackgroundColor3 = Color3.fromRGB(35, 42, 52)
+raidArenaHud.BorderSizePixel = 0
+raidArenaHud.Visible = false
+raidArenaHud.ZIndex = 60
+raidArenaHud.Parent = gui
+addCorner(raidArenaHud, 14)
+addStroke(raidArenaHud, Color3.fromRGB(235, 158, 102), 2)
+local raidArenaSize = Instance.new("UISizeConstraint")
+raidArenaSize.MinSize = Vector2.new(270, 148)
+raidArenaSize.MaxSize = Vector2.new(420, 148)
+raidArenaSize.Parent = raidArenaHud
+
+local raidArenaRole = Instance.new("TextLabel")
+raidArenaRole.Name = "Role"
+raidArenaRole.BackgroundTransparency = 1
+raidArenaRole.Position = UDim2.fromOffset(12, 8)
+raidArenaRole.Size = UDim2.new(1, -24, 0, 24)
+raidArenaRole.Font = Enum.Font.GothamBlack
+raidArenaRole.Text = "РЕЙД"
+raidArenaRole.TextColor3 = Color3.fromRGB(255, 211, 177)
+raidArenaRole.TextSize = 16
+raidArenaRole.TextXAlignment = Enum.TextXAlignment.Left
+raidArenaRole.ZIndex = 61
+raidArenaRole.Parent = raidArenaHud
+
+local raidArenaObjective = Instance.new("TextLabel")
+raidArenaObjective.Name = "Objective"
+raidArenaObjective.BackgroundTransparency = 1
+raidArenaObjective.Position = UDim2.fromOffset(12, 34)
+raidArenaObjective.Size = UDim2.new(1, -24, 0, 30)
+raidArenaObjective.Font = Enum.Font.GothamBold
+raidArenaObjective.Text = "ЯДРО ГНЕЗДА · 100 / 100"
+raidArenaObjective.TextColor3 = Color3.fromRGB(237, 235, 224)
+raidArenaObjective.TextSize = 13
+raidArenaObjective.TextXAlignment = Enum.TextXAlignment.Left
+raidArenaObjective.ZIndex = 61
+raidArenaObjective.Parent = raidArenaHud
+
+local raidArenaAttack = Instance.new("TextButton")
+raidArenaAttack.Name = "AttackCore"
+raidArenaAttack.Position = UDim2.fromOffset(10, 68)
+raidArenaAttack.Size = UDim2.new(1, -20, 0, 40)
+raidArenaAttack.BackgroundColor3 = Color3.fromRGB(177, 83, 66)
+raidArenaAttack.Text = "УДАРИТЬ ЯДРО"
+raidArenaAttack.TextColor3 = Color3.new(1, 1, 1)
+raidArenaAttack.TextSize = 13
+raidArenaAttack.Font = Enum.Font.GothamBlack
+raidArenaAttack.ZIndex = 61
+raidArenaAttack.Parent = raidArenaHud
+addCorner(raidArenaAttack, 9)
+
+local raidArenaRepair = Instance.new("TextButton")
+raidArenaRepair.Name = "ReinforceCore"
+raidArenaRepair.Position = UDim2.fromOffset(10, 68)
+raidArenaRepair.Size = UDim2.new(1, -20, 0, 40)
+raidArenaRepair.BackgroundColor3 = Color3.fromRGB(66, 139, 108)
+raidArenaRepair.Text = "УКРЕПИТЬ ЯДРО"
+raidArenaRepair.TextColor3 = Color3.new(1, 1, 1)
+raidArenaRepair.TextSize = 13
+raidArenaRepair.Font = Enum.Font.GothamBlack
+raidArenaRepair.ZIndex = 61
+raidArenaRepair.Visible = false
+raidArenaRepair.Parent = raidArenaHud
+addCorner(raidArenaRepair, 9)
+
+local raidArenaExit = Instance.new("TextButton")
+raidArenaExit.Name = "Forfeit"
+raidArenaExit.Position = UDim2.fromOffset(10, 114)
+raidArenaExit.Size = UDim2.new(1, -20, 0, 25)
+raidArenaExit.BackgroundColor3 = Color3.fromRGB(78, 78, 88)
+raidArenaExit.Text = "ЗАВЕРШИТЬ РЕЙД БЕЗ НАГРАДЫ"
+raidArenaExit.TextColor3 = Color3.fromRGB(238, 230, 225)
+raidArenaExit.TextSize = 10
+raidArenaExit.Font = Enum.Font.GothamBold
+raidArenaExit.ZIndex = 61
+raidArenaExit.Parent = raidArenaHud
+addCorner(raidArenaExit, 8)
+
 local contestButton = Instance.new("TextButton")
 contestButton.Name = "IslandContestButton"
 contestButton.Position = UDim2.fromOffset(18, 592)
@@ -3545,9 +3629,13 @@ local function renderRaidBoard(response)
     if state.Protected then
         raidStatus.Text = "ЗАЩИТА НОВИЧКА\n" .. tostring(state.ProtectionReason or "Рейды пока недоступны.")
     elseif response.Match then
-        raidStatus.Text = "ВЫЗОВ ПОДТВЕРЖДЁН · " .. tostring(response.Match.Opponent)
-            .. "\nОсталось на подготовку: " .. raidTime(response.Match.ExpiresIn)
-            .. " · следующий этап добавит арену."
+        if response.Match.State == "ACTIVE" then
+            raidStatus.Text = "РЕЙД ИДЁТ · " .. tostring(response.Match.Opponent)
+                .. "\nЯдро: " .. tostring(response.Match.CoreHealth or 100) .. " / 100 · осталось " .. raidTime(response.Match.ExpiresIn)
+        else
+            raidStatus.Text = "ВЫЗОВ ПОДТВЕРЖДЁН · " .. tostring(response.Match.Opponent)
+                .. "\nАрена готовится: " .. raidTime(response.Match.ExpiresIn)
+        end
     elseif response.Outgoing then
         raidStatus.Text = "ОЖИДАЕМ ОТВЕТА ОТ " .. tostring(response.Outgoing.DisplayName)
             .. "\nВызов истечёт через " .. raidTime(response.Outgoing.ExpiresIn) .. "."
@@ -3583,7 +3671,7 @@ local function renderRaidBoard(response)
         cancel.LayoutOrder = order
         cancel.Size = UDim2.new(1, -6, 0, 38)
         cancel.BackgroundColor3 = Color3.fromRGB(142, 78, 81)
-        cancel.Text = "ОТМЕНИТЬ ПОДТВЕРЖДЁННЫЙ ВЫЗОВ"
+        cancel.Text = response.Match.State == "ACTIVE" and "ПОКИНУТЬ РЕЙД БЕЗ НАГРАДЫ" or "ОТМЕНИТЬ ПОДТВЕРЖДЁННЫЙ ВЫЗОВ"
         cancel.TextColor3 = Color3.new(1, 1, 1)
         cancel.TextSize = 10
         cancel.Font = Enum.Font.GothamBlack
@@ -3720,6 +3808,43 @@ raidButton.Activated:Connect(function()
     refreshRaidBoard(true)
 end)
 raidClose.Activated:Connect(function() raidPanel.Visible = false end)
+
+local function updateRaidArenaHud()
+    local active = player:GetAttribute("RaidArenaActive") == true
+    raidArenaHud.Visible = active
+    if not active then return end
+    raidPanel.Visible = false
+    local role = player:GetAttribute("RaidArenaRole")
+    local opponent = player:GetAttribute("RaidArenaOpponentName") or "соперник"
+    local health = math.clamp(math.floor(tonumber(player:GetAttribute("RaidArenaCoreHealth")) or 100), 0, 100)
+    local remaining = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaTimeRemaining")) or 0))
+    raidArenaRole.Text = (role == "ATTACKER" and "АТАКА" or "ЗАЩИТА") .. " · " .. tostring(opponent)
+    raidArenaObjective.Text = string.format("ЯДРО ГНЕЗДА · %d / 100     ВРЕМЯ · %s", health, raidTime(remaining))
+    raidArenaAttack.Visible = role == "ATTACKER"
+    raidArenaRepair.Visible = role == "DEFENDER"
+end
+
+raidArenaAttack.Activated:Connect(function()
+    invokeRaid({ Action = "AttackCore" })
+    updateRaidArenaHud()
+end)
+raidArenaRepair.Activated:Connect(function()
+    invokeRaid({ Action = "ReinforceCore" })
+    updateRaidArenaHud()
+end)
+raidArenaExit.Activated:Connect(function()
+    invokeRaid({ Action = "CancelMatch" })
+    updateRaidArenaHud()
+    refreshRaidBoard(true)
+end)
+
+for _, attribute in ipairs({
+    "RaidArenaActive", "RaidArenaRole", "RaidArenaOpponentName",
+    "RaidArenaCoreHealth", "RaidArenaTimeRemaining",
+}) do
+    player:GetAttributeChangedSignal(attribute):Connect(updateRaidArenaHud)
+end
+updateRaidArenaHud()
 
 task.spawn(function()
     while gui.Parent do
