@@ -580,7 +580,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     if typeof(partnerHome) == "Vector3" then
                         local towardPartner = partnerHome - home
                         if towardPartner.Magnitude > 0.1 then
-                            socialApproach = home + towardPartner.Unit * 7.5
+                            local sideOffset = slot < partnerSlot and -1.5 or 1.5
+                            socialApproach = home:Lerp(partnerHome, 0.5) + towardPartner.Unit * sideOffset
                         end
                     end
                     local partnerBehavior = partnerModel and partnerModel:GetAttribute("Behavior")
