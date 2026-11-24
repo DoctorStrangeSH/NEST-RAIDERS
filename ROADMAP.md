@@ -1205,3 +1205,17 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Hatch a pet and upgrade the nest while overview is open; verify counts and level remain current.
 
 **Acceptance:** implementation and static regression coverage are integrated; live economy, device layout and touch acceptance remain open until Studio testing.
+
+### Sprint 4.62 — Living Nest Environment (foundation pass)
+- [x] Add permanent garden dressing to every player plot: four corner trees, three flower beds and a stepping-stone approach.
+- [x] Keep environmental props outside the player construction grid and disable collision, touch and query on decorative pieces.
+- [x] Improve level 2 with warm lantern posts and garden shrubs.
+- [x] Improve level 3 with softly lit garden crystals and additional flower accents.
+- [x] Preserve existing level 4 banner and level 5 master-crown progression.
+- [x] Add static regression checks for environment props, non-blocking behavior and level visuals.
+- [ ] Roblox Studio: inspect all six plots from ground and elevated camera angles; check that landscaping does not obstruct movement or building placement.
+- [ ] Verify the garden appears after a fresh server start and remains consistent after leaving/rejoining.
+- [ ] Upgrade through levels 1–5 and verify decorations are added once, replaced cleanly and match the saved level after reconnect.
+- [ ] Test multiplayer ownership: neighboring plots must not share decorations or show the wrong owner's upgrade tier.
+
+**Acceptance:** landscaping and progression visuals are integrated in source; Roblox Studio runtime, multiplayer and save/rejoin checks remain open.
