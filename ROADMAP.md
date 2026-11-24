@@ -972,3 +972,28 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify mobile/desktop build panel and raid HUD at 320×480, 375×667, tablet and desktop sizes.
 
 **Scope boundary:** Sprint 4.50 adds a first defensive layer to the existing arena. Companion guard abilities, ranged attacker weapons, resource costs for repairs, cross-server matchmaking, and island-wide destruction remain separate milestones.
+
+ 
+### Sprint 4.51 — Battle companions and raid abilities (2026-11-24)
+- [x] Summon up to three of each participant's active companions into the temporary raid arena; use the same species models as island followers.
+- [x] Make summoned companions follow their owner around the arena and add readable nameplates; visually highlight the primary battle companion.
+- [x] Select the first active companion in the player's equipped order that has a raid specialization as the primary battle companion.
+- [x] Add the Hunter role: a server-validated ranged companion attack that damages the opposing player's temporary raid combat health.
+- [x] Add the Healer role: restore temporary raid combat health without exceeding 100.
+- [x] Add the Guardian role: absorb incoming raid combat damage for a limited time.
+- [x] Assign role abilities to Meadow Fox, Moss Turtle, Sprout Dragon, Snow Owl, Glacier Bear, Ash Phoenix, Crystal Deer, Aurora Dragon and Briar Guardian.
+- [x] Unlock raid pet abilities at player level 5; enforce per-pet ability cooldowns and role-specific range/health/shield conditions on the server.
+- [x] Route duel strikes, parry counter-damage, turret hits and trap hits through one damage pipeline so Guardian shields mitigate every raid combat source.
+- [x] Add pet name, role, ability, cooldown and active shield state to the raid HUD; add a dedicated ability button.
+- [x] Keep all companion visuals, ability cooldowns, healing, damage and shields temporary to the raid; do not mutate companion ownership, active slots, profile health or Roblox Humanoid health.
+- [x] Add regression checks for catalog role abilities, active companion summoning/following, shield mitigation, healing, hunter damage, server validation and HUD controls.
+- [ ] Roblox Studio two-client: verify both players' active companions spawn beside the correct owner and follow without blocking players or the arena objective.
+- [ ] Verify the first active companion with a raid role is selected; verify no-ability rosters hide the skill button and show the empty state.
+- [ ] Verify Hunter range, height filtering, projectile effect, damage, cooldown and victory/reward flow.
+- [ ] Verify Healer restores only missing raid combat health, cannot exceed 100 and does not change Humanoid health.
+- [ ] Verify Guardian absorbs duel strikes, parry counters, turret hits and trap hits; verify expiry and shield depletion.
+- [ ] Verify ability unlock level, server cooldowns, remote spam resistance, role restrictions and active-match checks.
+- [ ] Verify arena cleanup removes all summoned pets, nameplates, highlights and projectiles after victory, forfeit, death and disconnect.
+- [ ] Verify mobile HUD layout at 320×480 and 375×667, plus tablet and desktop.
+ 
+**Scope boundary:** Sprint 4.51 adds one primary battle companion ability per participant. It does not yet add pet-versus-pet targeting, pet equipment, raid pet injuries, persistent pet progression, or a separate pet selection screen. The primary companion is the first active companion in the player's active-slot order that has a raid role.
