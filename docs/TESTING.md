@@ -772,3 +772,22 @@
 - [ ] End raids by core victory, duel victory, timer, forfeit, death and disconnect; verify all raid companions, nameplates, highlights and projectiles are removed.
 - [ ] Reopen the collection and verify companion ownership, active slots, levels, moods and needs remain unchanged.
 - [ ] Verify pet HUD controls at 320×480, 375×667, tablet and desktop.
+
+ 
+## Sprint 4.52 — Battle companion mastery acceptance
+- [ ] Verify Ash Phoenix is Hunter, Snow Owl is Healer and Glacier Bear is Guardian in the collection and raid arena.
+- [ ] Verify Cinder Fox and Frost Fox do not show the misplaced raid roles; their ordinary species abilities remain unchanged.
+- [ ] Create or train copies of one Hunter, one Healer and one Guardian to growth levels 1, 5 and 10.
+- [ ] Verify Hunter effective damage is base, base +2 and base +4 at levels 1, 5 and 10 respectively.
+- [ ] Verify Healer effective power is base, base +2 and base +4 at levels 1, 5 and 10 respectively.
+- [ ] Verify Guardian shield capacity is base, base +2 and base +6 at levels 1, 5 and 10 respectively.
+- [ ] Verify Hunter damage never exceeds 30, Healer power never exceeds 35 and Guardian shield never exceeds 40.
+- [ ] Verify a Healer with only 3 missing health restores exactly 3, even when its scaled power is higher.
+- [ ] Verify player level 4 is denied and level 5 is allowed, independently of the companion's growth level.
+- [ ] Verify Guardian shield duration and ability cooldown remain species-defined and do not shorten as the pet grows.
+- [ ] Verify the HUD displays the primary companion's actual level and effective power label on both clients.
+- [ ] Verify each raid companion nameplate shows the same growth level as the collection.
+- [ ] Reorder active companions and verify the selected primary pet's level and power change to match the first active role companion.
+- [ ] Train a companion before a raid, rejoin, and verify its saved growth level still controls combat power.
+- [ ] Verify the scaling does not change normal pet income, stars, genetic traits, breeding readiness or collection ownership.
+- [ ] Verify the raid HUD at 320×480, 375×667, tablet and desktop.
