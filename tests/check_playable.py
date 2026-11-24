@@ -1586,7 +1586,7 @@ assert '["Спокойный"] = { SocialChance = 0.08' in companion_service
 assert 'local personalityProfile = personalityProfiles[personality]' in companion_service
 assert 'local partnerSlot = slot % 2 == 1 and slot + 1 or slot - 1' in companion_service
 assert 'candidate:GetAttribute("DisplaySlot") == partnerSlot' in companion_service
-assert 'candidate:GetAttribute("NestHomePosition")' in companion_service
+assert 'partnerModel:GetAttribute("NestHomePosition")' in companion_service
 assert 'targetPosition = socialApproach' in companion_service
 assert 'behavior = targetIsSocial and "SeekingFriend"' in companion_service
 assert 'behavior = "Socializing"' in companion_service
