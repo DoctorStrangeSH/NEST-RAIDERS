@@ -386,11 +386,15 @@ function RaidService:HandleRequest(player, payload)
     if not player:GetAttribute("ProfileLoaded") or not PlayerDataService:GetProfile(player) then
         return { Ok = false, Message = "Профиль ещё загружается." }
     end
-    local timestamp = os.clock()
-    if timestamp - (self._lastRequest[player] or 0) < REQUEST_COOLDOWN_SECONDS then
-        return { Ok = false, Message = "Подожди немного перед следующим действием." }
+    -- Read-only refreshes are cheap and must remain available immediately after a button action.
+    -- Mutating actions retain a short server-side cooldown.
+    if payload.Action ~= "Get" then
+        local timestamp = os.clock()
+        if timestamp - (self._lastRequest[player] or 0) < REQUEST_COOLDOWN_SECONDS then
+            return { Ok = false, Message = "Подожди немного перед следующим действием." }
+        end
+        self._lastRequest[player] = timestamp
     end
-    self._lastRequest[player] = timestamp
 
     if payload.Action == "DevGrantAccess" then
         if not RunService:IsStudio() then

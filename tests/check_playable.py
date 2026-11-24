@@ -1098,6 +1098,7 @@ assert 'local RunService = game:GetService("RunService")' in raid_service
 assert 'if not RunService:IsStudio() then' in raid_service
 assert 'payload.Action == "DevGrantAccess"' in raid_service
 assert 'payload.Action == "DevResetAccess"' in raid_service
+assert 'if payload.Action ~= "Get" then' in raid_service
 assert 'self._studioRaidLevelOverride[player] = true' in raid_service
 assert 'RaidStudioAccessTest' in client and 'Visible = RunService:IsStudio()' in client
 assert 'Action = action' in client and 'StudioAccessOverride' in client
