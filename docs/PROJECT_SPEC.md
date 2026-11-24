@@ -538,3 +538,12 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Craft weights are rebalanced to income 36/18/6 (60%), Gatherer 12/6/2 (20%), Researcher 6/3/1 (10%), Hunter 6/3/1 (10%); all weights total 100.
 - Roblox Studio exposes a server-guarded Hunter fixture and a deterministic 7,000-hatch simulation (1,000 per natural egg table). The simulation uses the production selection formula and does not consume eggs, grant companions, change XP, or mutate profile inventory.
 - The inventory snapshot and collection summary expose all four combined equipped effects: passive income (capped at +20%), gathering (capped at +50%), XP (capped at +50%), and Hunter hatch weighting (capped at +30%).
+
+
+## Raid consent and matchmaking — Sprint 4.47
+- Raid participation is opt-in and session-only. Players separately enable attacker readiness or open their own nest to voluntary challenges; each window lasts ten minutes.
+- Both roles require a loaded profile, an assigned personal plot, level 5 or higher, and completion of a fifteen-minute newcomer protection period after joining the current server.
+- The matchmaking board lists only online players in the same server who have explicitly opened defense and remain eligible. Players visiting another island cannot participate.
+- A challenge expires after 45 seconds and requires an explicit accept or decline from the defender. Each attacker has a 30-second challenge cooldown.
+- Acceptance creates a server-owned READY match record for up to two minutes. Either participant may cancel it; disconnects and expiry clear the record for both players.
+- This foundation does not move characters, start combat, or modify coins, eggs, companions, artifacts, or profile data. Those actions require a later, separately validated raid encounter.

@@ -885,3 +885,22 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify level scaling, two-slot stacking, +30% cap, persistence, and UI at 320×480, 375×667, and desktop sizes.
 - [ ] Verify Studio fixture buttons and simulation controls scroll with the artifact cards and never overlap the summary or craft button.
 - [ ] Verify breeding eggs, genetic traits, egg inventory and companion collection are unaffected by the simulation.
+
+
+### Sprint 4.47 — Raid consent and matchmaking foundation (2026-11-24)
+- [x] Add a dedicated Russian-language Raid Board to the main responsive feature menu.
+- [x] Require level 5 and a 15-minute newcomer protection period before either raid role can opt in.
+- [x] Let players separately opt in as an attacker or open their own nest to voluntary challenges; each window lasts 10 minutes and can be closed manually.
+- [x] Show only eligible, online, same-server nests whose owners explicitly opened defense.
+- [x] Add 45-second challenge invitations with explicit accept/decline and cancellation.
+- [x] Create a short-lived, server-owned READY match record only after both players consent.
+- [x] Reject self-targets, protected players, players without assigned plots, visitors, duplicate pending invitations, and players already in a match.
+- [x] Keep all raid consent and matchmaking state session-only; do not touch coins, eggs, companions, artifacts, or saved profiles.
+- [x] Add static regression coverage for remote registration, service wiring, consent gates, UI integration, expiry and loot isolation.
+- [ ] Roblox Studio: verify protected players cannot opt in, and level-5 players become eligible only after 15 minutes.
+- [ ] Studio multiplayer: verify attack-ready players see only nests explicitly opened by other eligible players.
+- [ ] Studio multiplayer: accept, decline, cancel, expire, and disconnect during an invitation; verify both clients recover cleanly.
+- [ ] Studio multiplayer: accept a challenge and verify both players see the same opponent and READY state.
+- [ ] Verify visiting another island blocks raid participation and no player inventory or currency changes.
+
+**Scope boundary:** Sprint 4.47 implements consent, protection and matchmaking only. It does not yet start combat, move players, steal items or transfer currency. The raid arena and bounded objective/reward loop are the next sprint.

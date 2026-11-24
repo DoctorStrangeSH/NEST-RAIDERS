@@ -66,9 +66,10 @@ local buildRemote = waitRemote("NestBuild")
 local visitRemote = waitRemote("IslandVisit")
 local contestRemote = waitRemote("IslandContest")
 local publicProfileRemote = waitRemote("PublicProfile")
+local raidRemote = waitRemote("RaidBoard")
 
 if not (inventoryRemote and shopRemote and collectionRemote and nestRemote and displayRemote
-    and decorRemote and buildRemote and visitRemote and contestRemote and publicProfileRemote) then
+    and decorRemote and buildRemote and visitRemote and contestRemote and publicProfileRemote and raidRemote) then
     return
 end
 
@@ -600,6 +601,163 @@ visitLayout.Padding = UDim.new(0, 8)
 visitLayout.SortOrder = Enum.SortOrder.LayoutOrder
 visitLayout.Parent = visitList
 
+local raidButton = Instance.new("TextButton")
+raidButton.Name = "RaidBoardButton"
+raidButton.Position = UDim2.fromOffset(18, 586)
+raidButton.Size = UDim2.fromOffset(250, 44)
+raidButton.BackgroundColor3 = Color3.fromRGB(159, 83, 76)
+raidButton.Text = "РЕЙДЫ НА ГНЁЗДА"
+raidButton.TextColor3 = Color3.fromRGB(255, 245, 235)
+raidButton.TextSize = 13
+raidButton.Font = Enum.Font.GothamBlack
+raidButton.Parent = gui
+addCorner(raidButton, 12)
+addStroke(raidButton, Color3.fromRGB(235, 154, 128), 1.5)
+
+local raidPanel = Instance.new("Frame")
+raidPanel.Name = "RaidBoardPanel"
+raidPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+raidPanel.Position = UDim2.fromScale(0.5, 0.5)
+raidPanel.Size = UDim2.new(0.92, 0, 0.82, 0)
+raidPanel.BackgroundColor3 = Color3.fromRGB(43, 39, 52)
+raidPanel.BorderSizePixel = 0
+raidPanel.Visible = false
+raidPanel.Parent = gui
+addCorner(raidPanel, 18)
+addStroke(raidPanel, Color3.fromRGB(225, 145, 112), 2)
+local raidSize = Instance.new("UISizeConstraint")
+raidSize.MinSize = Vector2.new(280, 340)
+raidSize.MaxSize = Vector2.new(500, 610)
+raidSize.Parent = raidPanel
+
+local raidTitle = Instance.new("TextLabel")
+raidTitle.BackgroundTransparency = 1
+raidTitle.Position = UDim2.fromOffset(16, 10)
+raidTitle.Size = UDim2.new(1, -70, 0, 28)
+raidTitle.Font = Enum.Font.GothamBlack
+raidTitle.Text = "ДОСКА РЕЙДОВ"
+raidTitle.TextColor3 = Color3.fromRGB(255, 211, 177)
+raidTitle.TextSize = 17
+raidTitle.TextXAlignment = Enum.TextXAlignment.Left
+raidTitle.Parent = raidPanel
+
+local raidClose = Instance.new("TextButton")
+raidClose.AnchorPoint = Vector2.new(1, 0)
+raidClose.Position = UDim2.new(1, -10, 0, 8)
+raidClose.Size = UDim2.fromOffset(36, 34)
+raidClose.BackgroundColor3 = Color3.fromRGB(83, 78, 91)
+raidClose.Text = "✕"
+raidClose.TextColor3 = Color3.new(1, 1, 1)
+raidClose.TextSize = 18
+raidClose.Font = Enum.Font.GothamBold
+raidClose.Parent = raidPanel
+addCorner(raidClose, 9)
+
+local raidStatus = Instance.new("TextLabel")
+raidStatus.Name = "RaidStatus"
+raidStatus.BackgroundTransparency = 1
+raidStatus.Position = UDim2.fromOffset(16, 44)
+raidStatus.Size = UDim2.new(1, -32, 0, 43)
+raidStatus.Font = Enum.Font.GothamMedium
+raidStatus.Text = "Загрузка правил рейда..."
+raidStatus.TextColor3 = Color3.fromRGB(225, 218, 215)
+raidStatus.TextSize = 11
+raidStatus.TextWrapped = true
+raidStatus.TextXAlignment = Enum.TextXAlignment.Left
+raidStatus.TextYAlignment = Enum.TextYAlignment.Top
+raidStatus.Parent = raidPanel
+
+local raidAttackToggle = Instance.new("TextButton")
+raidAttackToggle.Position = UDim2.fromOffset(14, 91)
+raidAttackToggle.Size = UDim2.new(0.5, -20, 0, 40)
+raidAttackToggle.BackgroundColor3 = Color3.fromRGB(137, 83, 67)
+raidAttackToggle.Text = "ГОТОВ К РЕЙДУ"
+raidAttackToggle.TextColor3 = Color3.new(1, 1, 1)
+raidAttackToggle.TextSize = 10
+raidAttackToggle.Font = Enum.Font.GothamBlack
+raidAttackToggle.Parent = raidPanel
+addCorner(raidAttackToggle, 9)
+
+local raidDefenseToggle = Instance.new("TextButton")
+raidDefenseToggle.Position = UDim2.new(0.5, 6, 0, 91)
+raidDefenseToggle.Size = UDim2.new(0.5, -20, 0, 40)
+raidDefenseToggle.BackgroundColor3 = Color3.fromRGB(72, 119, 93)
+raidDefenseToggle.Text = "ОТКРЫТЬ ГНЕЗДО"
+raidDefenseToggle.TextColor3 = Color3.new(1, 1, 1)
+raidDefenseToggle.TextSize = 10
+raidDefenseToggle.Font = Enum.Font.GothamBlack
+raidDefenseToggle.Parent = raidPanel
+addCorner(raidDefenseToggle, 9)
+
+local raidIncoming = Instance.new("Frame")
+raidIncoming.Name = "IncomingRaidChallenge"
+raidIncoming.Position = UDim2.fromOffset(12, 139)
+raidIncoming.Size = UDim2.new(1, -24, 0, 82)
+raidIncoming.BackgroundColor3 = Color3.fromRGB(77, 60, 66)
+raidIncoming.BorderSizePixel = 0
+raidIncoming.Visible = false
+raidIncoming.Parent = raidPanel
+addCorner(raidIncoming, 10)
+
+local raidIncomingText = Instance.new("TextLabel")
+raidIncomingText.BackgroundTransparency = 1
+raidIncomingText.Position = UDim2.fromOffset(10, 7)
+raidIncomingText.Size = UDim2.new(1, -20, 0, 28)
+raidIncomingText.Font = Enum.Font.GothamBold
+raidIncomingText.Text = "Входящий вызов"
+raidIncomingText.TextColor3 = Color3.fromRGB(255, 228, 207)
+raidIncomingText.TextSize = 11
+raidIncomingText.TextWrapped = true
+raidIncomingText.TextXAlignment = Enum.TextXAlignment.Left
+raidIncomingText.Parent = raidIncoming
+
+local raidAccept = Instance.new("TextButton")
+raidAccept.Position = UDim2.new(0, 10, 1, -35)
+raidAccept.Size = UDim2.new(0.5, -14, 0, 28)
+raidAccept.BackgroundColor3 = Color3.fromRGB(73, 143, 100)
+raidAccept.Text = "ПРИНЯТЬ"
+raidAccept.TextColor3 = Color3.new(1, 1, 1)
+raidAccept.TextSize = 10
+raidAccept.Font = Enum.Font.GothamBlack
+raidAccept.Parent = raidIncoming
+addCorner(raidAccept, 8)
+
+local raidDecline = Instance.new("TextButton")
+raidDecline.Position = UDim2.new(0.5, 4, 1, -35)
+raidDecline.Size = UDim2.new(0.5, -14, 0, 28)
+raidDecline.BackgroundColor3 = Color3.fromRGB(145, 78, 80)
+raidDecline.Text = "ОТКЛОНИТЬ"
+raidDecline.TextColor3 = Color3.new(1, 1, 1)
+raidDecline.TextSize = 10
+raidDecline.Font = Enum.Font.GothamBlack
+raidDecline.Parent = raidIncoming
+addCorner(raidDecline, 8)
+
+local raidListTitle = Instance.new("TextLabel")
+raidListTitle.BackgroundTransparency = 1
+raidListTitle.Position = UDim2.fromOffset(16, 229)
+raidListTitle.Size = UDim2.new(1, -32, 0, 22)
+raidListTitle.Font = Enum.Font.GothamBlack
+raidListTitle.Text = "ОТКРЫТЫЕ ДЛЯ РЕЙДА ГНЁЗДА"
+raidListTitle.TextColor3 = Color3.fromRGB(255, 211, 177)
+raidListTitle.TextSize = 11
+raidListTitle.TextXAlignment = Enum.TextXAlignment.Left
+raidListTitle.Parent = raidPanel
+
+local raidList = Instance.new("ScrollingFrame")
+raidList.Name = "RaidTargetList"
+raidList.Position = UDim2.fromOffset(12, 255)
+raidList.Size = UDim2.new(1, -24, 1, -267)
+raidList.BackgroundTransparency = 1
+raidList.BorderSizePixel = 0
+raidList.ScrollBarThickness = 6
+raidList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+raidList.Parent = raidPanel
+local raidLayout = Instance.new("UIListLayout")
+raidLayout.Padding = UDim.new(0, 7)
+raidLayout.SortOrder = Enum.SortOrder.LayoutOrder
+raidLayout.Parent = raidList
+
 local contestButton = Instance.new("TextButton")
 contestButton.Name = "IslandContestButton"
 contestButton.Position = UDim2.fromOffset(18, 592)
@@ -670,7 +828,7 @@ addStroke(profileButton, Color3.fromRGB(160, 220, 192), 1.5)
 -- Previously the last buttons were fixed at Y=692 and disappeared off small screens.
 local menuButtons = {
     inventoryButton, shopButton, collectionButton, nestButton, displayButton,
-    decorButton, buildButton, visitButton, contestButton, hallButton, materialsButton, artifactsButton, profileButton,
+    decorButton, buildButton, visitButton, raidButton, contestButton, hallButton, materialsButton, artifactsButton, profileButton,
 }
 local navToggle = Instance.new("TextButton")
 navToggle.Name = "MenuToggle"
@@ -1828,7 +1986,7 @@ end)
 -- Picker is the sole nested dialog and retains its companion display underneath.
 local modalPanels = {
     shopPanel, nestPanel, displayPanel, buildPanel, visitPanel,
-    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel, artifactsPanel,
+    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel, artifactsPanel, raidPanel, raidPanel,
 }
 local closingOtherPanels = false
 local closeAllButton = Instance.new("TextButton")
@@ -3337,6 +3495,217 @@ visitButton.Activated:Connect(function()
     end
 end)
 visitClose.Activated:Connect(function() visitPanel.Visible = false end)
+
+local lastRaidSnapshot
+local refreshRaidBoard
+local function invokeRaid(payload, silent)
+    local success, response = pcall(function()
+        return raidRemote:InvokeServer(payload)
+    end)
+    if not success or type(response) ~= "table" then
+        if not silent then showNotice("Не удалось связаться с доской рейдов.") end
+        return nil
+    end
+    if not response.Ok then
+        if not silent then showNotice(response.Message or "Действие рейда не выполнено.") end
+        return nil
+    end
+    if response.Message and not silent then showNotice(response.Message) end
+    return response
+end
+
+local function clearRaidList()
+    for _, child in ipairs(raidList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") or child:IsA("TextButton") then child:Destroy() end
+    end
+end
+
+local function raidTime(seconds)
+    local safe = math.max(0, math.floor(tonumber(seconds) or 0))
+    return string.format("%d:%02d", math.floor(safe / 60), safe % 60)
+end
+
+local function renderRaidBoard(response)
+    if not response then return end
+    lastRaidSnapshot = response
+    local state = response.Self or {}
+    if state.Protected then
+        raidStatus.Text = "ЗАЩИТА НОВИЧКА\n" .. tostring(state.ProtectionReason or "Рейды пока недоступны.")
+    elseif response.Match then
+        raidStatus.Text = "ВЫЗОВ ПОДТВЕРЖДЁН · " .. tostring(response.Match.Opponent)
+            .. "\nОсталось на подготовку: " .. raidTime(response.Match.ExpiresIn)
+            .. " · следующий этап добавит арену."
+    elseif response.Outgoing then
+        raidStatus.Text = "ОЖИДАЕМ ОТВЕТА ОТ " .. tostring(response.Outgoing.DisplayName)
+            .. "\nВызов истечёт через " .. raidTime(response.Outgoing.ExpiresIn) .. "."
+    else
+        raidStatus.Text = "Уровень " .. tostring(state.Level or 1)
+            .. " · сервер: " .. tostring(response.ServerPlayers or 1) .. " игроков"
+            .. "\nОкна добровольного участия действуют 10 минут."
+    end
+
+    local canToggle = not state.Protected and not response.Match
+    raidAttackToggle.Active = canToggle
+    raidDefenseToggle.Active = canToggle
+    raidAttackToggle.AutoButtonColor = canToggle
+    raidDefenseToggle.AutoButtonColor = canToggle
+    raidAttackToggle.BackgroundColor3 = state.AttackReady and Color3.fromRGB(58, 135, 97) or Color3.fromRGB(137, 83, 67)
+    raidAttackToggle.Text = state.AttackReady and ("ГОТОВ · " .. raidTime(state.AttackSeconds)) or "ГОТОВ К РЕЙДУ"
+    raidDefenseToggle.BackgroundColor3 = state.DefenseOpen and Color3.fromRGB(58, 135, 97) or Color3.fromRGB(72, 119, 93)
+    raidDefenseToggle.Text = state.DefenseOpen and ("ГНЕЗДО ОТКРЫТО · " .. raidTime(state.DefenseSeconds)) or "ОТКРЫТЬ ГНЕЗДО"
+
+    local incoming = response.Incoming
+    raidIncoming.Visible = incoming ~= nil
+    if incoming then
+        raidIncomingText.Text = tostring(incoming.DisplayName) .. " вызывает тебя на добровольный рейд.\nОтветь за " .. raidTime(incoming.ExpiresIn) .. "."
+    end
+    raidAccept.Active = incoming ~= nil
+    raidDecline.Active = incoming ~= nil
+
+    clearRaidList()
+    local order = 0
+    if response.Match then
+        local cancel = Instance.new("TextButton")
+        cancel.LayoutOrder = order
+        cancel.Size = UDim2.new(1, -6, 0, 38)
+        cancel.BackgroundColor3 = Color3.fromRGB(142, 78, 81)
+        cancel.Text = "ОТМЕНИТЬ ПОДТВЕРЖДЁННЫЙ ВЫЗОВ"
+        cancel.TextColor3 = Color3.new(1, 1, 1)
+        cancel.TextSize = 10
+        cancel.Font = Enum.Font.GothamBlack
+        cancel.Parent = raidList
+        addCorner(cancel, 9)
+        cancel.Activated:Connect(function()
+            invokeRaid({ Action = "CancelMatch" })
+            refreshRaidBoard(true)
+        end)
+        return
+    end
+
+    if response.Outgoing then
+        local cancel = Instance.new("TextButton")
+        cancel.LayoutOrder = order
+        cancel.Size = UDim2.new(1, -6, 0, 38)
+        cancel.BackgroundColor3 = Color3.fromRGB(142, 78, 81)
+        cancel.Text = "ОТМЕНИТЬ ВЫЗОВ"
+        cancel.TextColor3 = Color3.new(1, 1, 1)
+        cancel.TextSize = 11
+        cancel.Font = Enum.Font.GothamBlack
+        cancel.Parent = raidList
+        addCorner(cancel, 9)
+        cancel.Activated:Connect(function()
+            invokeRaid({ Action = "CancelChallenge" })
+            refreshRaidBoard(true)
+        end)
+        order += 1
+    end
+
+    if #((response.Targets) or {}) == 0 then
+        local empty = Instance.new("TextLabel")
+        empty.LayoutOrder = order
+        empty.Size = UDim2.new(1, -6, 0, 54)
+        empty.BackgroundTransparency = 1
+        empty.Text = state.Protected
+            and "После окончания защиты новичка здесь появятся доступные рейды."
+            or (state.AttackReady and "Пока никто не открыл своё гнездо для рейда." or "Включи «ГОТОВ К РЕЙДУ», чтобы увидеть открытые гнёзда.")
+        empty.TextColor3 = Color3.fromRGB(198, 190, 195)
+        empty.TextSize = 11
+        empty.TextWrapped = true
+        empty.Font = Enum.Font.GothamMedium
+        empty.Parent = raidList
+        return
+    end
+
+    for index, target in ipairs(response.Targets) do
+        local entry = target
+        local row = Instance.new("Frame")
+        row.LayoutOrder = order + index
+        row.Size = UDim2.new(1, -6, 0, 58)
+        row.BackgroundColor3 = Color3.fromRGB(61, 55, 69)
+        row.BorderSizePixel = 0
+        row.Parent = raidList
+        addCorner(row, 9)
+
+        local name = Instance.new("TextLabel")
+        name.BackgroundTransparency = 1
+        name.Position = UDim2.fromOffset(10, 6)
+        name.Size = UDim2.new(1, -126, 0, 22)
+        name.Font = Enum.Font.GothamBold
+        name.Text = tostring(entry.DisplayName)
+        name.TextColor3 = Color3.fromRGB(255, 230, 211)
+        name.TextSize = 12
+        name.TextXAlignment = Enum.TextXAlignment.Left
+        name.Parent = row
+
+        local detail = Instance.new("TextLabel")
+        detail.BackgroundTransparency = 1
+        detail.Position = UDim2.fromOffset(10, 29)
+        detail.Size = UDim2.new(1, -126, 0, 18)
+        detail.Font = Enum.Font.Gotham
+        detail.Text = "Уровень " .. tostring(entry.Level) .. " · окно " .. raidTime(entry.SecondsRemaining)
+        detail.TextColor3 = Color3.fromRGB(194, 190, 203)
+        detail.TextSize = 10
+        detail.TextXAlignment = Enum.TextXAlignment.Left
+        detail.Parent = row
+
+        local challenge = Instance.new("TextButton")
+        challenge.AnchorPoint = Vector2.new(1, 0.5)
+        challenge.Position = UDim2.new(1, -7, 0.5, 0)
+        challenge.Size = UDim2.fromOffset(108, 38)
+        challenge.BackgroundColor3 = Color3.fromRGB(170, 93, 73)
+        challenge.Text = "ВЫЗВАТЬ"
+        challenge.TextColor3 = Color3.new(1, 1, 1)
+        challenge.TextSize = 10
+        challenge.Font = Enum.Font.GothamBlack
+        challenge.Active = state.AttackReady == true and response.Outgoing == nil
+        challenge.Parent = row
+        addCorner(challenge, 8)
+        challenge.Activated:Connect(function()
+            challenge.Active = false
+            invokeRaid({ Action = "Challenge", TargetUserId = entry.UserId })
+            refreshRaidBoard(true)
+        end)
+    end
+end
+
+refreshRaidBoard = function(silent)
+    local response = invokeRaid({ Action = "Get" }, silent)
+    if response then renderRaidBoard(response) end
+    return response
+end
+
+raidAttackToggle.Activated:Connect(function()
+    local current = lastRaidSnapshot and lastRaidSnapshot.Self
+    if not current then refreshRaidBoard(true); return end
+    invokeRaid({ Action = "SetAttackReady", Enabled = not current.AttackReady })
+    refreshRaidBoard(true)
+end)
+raidDefenseToggle.Activated:Connect(function()
+    local current = lastRaidSnapshot and lastRaidSnapshot.Self
+    if not current then refreshRaidBoard(true); return end
+    invokeRaid({ Action = "SetDefenseOpen", Enabled = not current.DefenseOpen })
+    refreshRaidBoard(true)
+end)
+raidAccept.Activated:Connect(function()
+    invokeRaid({ Action = "Accept" })
+    refreshRaidBoard(true)
+end)
+raidDecline.Activated:Connect(function()
+    invokeRaid({ Action = "Decline" })
+    refreshRaidBoard(true)
+end)
+raidButton.Activated:Connect(function()
+    raidPanel.Visible = true
+    refreshRaidBoard(true)
+end)
+raidClose.Activated:Connect(function() raidPanel.Visible = false end)
+
+task.spawn(function()
+    while gui.Parent do
+        task.wait(4)
+        if raidPanel.Visible then refreshRaidBoard(true) end
+    end
+end)
 
 local function invokeContest(payload)
     local success, response = pcall(function()

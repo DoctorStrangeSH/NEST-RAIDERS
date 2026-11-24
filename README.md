@@ -235,3 +235,12 @@ Boss attacks now have distinct warning colors, a smoothly animated health bar an
 - Egg Shop and Collection Book display live normalized species odds and the original base chance when Hunter artifacts change the result; fixed world signs are labeled as base odds.
 - Roblox Studio includes a temporary Hunter fixture and a 7,000-hatch simulation across all seven biome egg tables; the simulation does not award or consume gameplay items.
 - The artifact collection summary displays the combined equipped bonuses for passive income, gathering, XP, and Hunter effects.
+
+
+## Raid Board — Sprint 4.47
+The Raid Board introduces voluntary participation before any combat is enabled:
+- Players need level 5 and must complete a 15-minute newcomer protection period in the current server.
+- Attacker readiness and defender availability are separate, optional 10-minute windows.
+- Only same-server nests whose owners explicitly opened defense are listed.
+- Challenges require explicit acceptance and expire after 45 seconds; either player can cancel a confirmed READY match.
+- No items, pets, eggs or coins can be lost in this foundation. Combat and bounded rewards are deliberately deferred to the next sprint.

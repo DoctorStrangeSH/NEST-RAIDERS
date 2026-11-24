@@ -1060,3 +1060,34 @@ assert 'local HARVEST_LOCKS = {}' in ancient_harvest
 assert 'if HARVEST_LOCKS[player] then return end' in ancient_harvest
 
 print("Playable-first static regression checks passed. Roblox Studio runtime still required.")
+
+
+# Sprint 4.47: opt-in raid matchmaking and newcomer protection.
+raid_service = Path("src/ServerScriptService/Server/Services/RaidService.lua").read_text()
+assert '"RaidBoard"' in server
+assert '"RaidService"' in server and '"PlotService"' in server
+assert 'local raidRemote = waitRemote("RaidBoard")' in client
+assert 'raidRemote:InvokeServer(payload)' in client
+assert 'RaidBoardButton' in client and 'RaidBoardPanel' in client
+assert 'raidButton' in client[client.index('local menuButtons = {'):client.index('local navToggle =')]
+assert 'raidPanel' in client[client.index('local modalPanels = {'):client.index('local closingOtherPanels')]
+assert 'MINIMUM_LEVEL = 5' in raid_service
+assert 'NEWCOMER_PROTECTION_SECONDS = 15 * 60' in raid_service
+assert 'OPT_IN_WINDOW_SECONDS = 10 * 60' in raid_service
+assert 'CHALLENGE_TIMEOUT_SECONDS = 45' in raid_service
+assert 'MATCH_READY_TIMEOUT_SECONDS = 120' in raid_service
+assert 'function RaidService:SetAttackReady' in raid_service
+assert 'function RaidService:SetDefenseOpen' in raid_service
+assert 'function RaidService:Challenge' in raid_service
+assert 'function RaidService:AcceptChallenge' in raid_service
+assert 'function RaidService:DeclineChallenge' in raid_service
+assert 'RaidAttackUntil' in raid_service and 'RaidDefenseUntil' in raid_service
+assert 'self:CanParticipate(target)' in raid_service
+assert 'PlotService:GetPlayerPlot(target)' in raid_service
+assert 'IslandVisitService._visitingPlot[player]' in raid_service
+assert 'participant:SetAttribute("RaidMatchState", "READY")' in raid_service
+assert 'raidAttackToggle.Activated' in client and 'raidDefenseToggle.Activated' in client
+assert 'raidAccept.Activated' in client and 'raidDecline.Activated' in client
+assert 'raidPanel.Visible' in client and 'task.wait(4)' in client
+for forbidden in ('profile.Coins', 'profile.Companions', 'profile.EggInventory', 'profile.Artifacts'):
+    assert forbidden not in raid_service, f"Raid matchmaking must not mutate player loot: {forbidden}"

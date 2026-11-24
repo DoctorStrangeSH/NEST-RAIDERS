@@ -681,3 +681,17 @@
 - [ ] Confirm simulation leaves egg inventory, companion collection, XP, genetic traits, and saved profile data unchanged.
 - [ ] Verify test artifacts remain tagged temporary, are not persisted, and cannot merge with normal crafted copies.
 - [ ] Verify both Hunter QA actions are rejected by the server outside Roblox Studio.
+
+
+## Sprint 4.47 — Raid consent and matchmaking
+- [ ] With a new profile, open **РЕЙДЫ НА ГНЁЗДА** and verify both opt-in controls are blocked by newcomer protection.
+- [ ] Set a test profile to level 4; verify raid participation remains locked. At level 5, verify the 15-minute join protection still applies.
+- [ ] After protection expires, enable **ГОТОВ К РЕЙДУ** and verify it expires after ten minutes or can be disabled manually.
+- [ ] Enable **ОТКРЫТЬ ГНЕЗДО** on a second player; verify the first player sees that nest only after enabling attack readiness.
+- [ ] Verify a closed nest, protected player, self-target, visitor, player without a plot, and already matched player cannot be challenged.
+- [ ] Send a challenge; verify it appears only for the defender and expires after 45 seconds.
+- [ ] Accept, decline, cancel, and let a challenge expire; verify both clients receive the correct state.
+- [ ] Accept a challenge; verify both players see the same opponent, role and READY state, then cancel it from either side.
+- [ ] Disconnect either participant during an invitation and during READY state; verify the other participant is released.
+- [ ] Confirm the matchmaking system never changes coins, eggs, companions, artifacts, materials or saved profile data.
+- [ ] Verify the board, buttons, incoming invitation and target list at 320×480, 375×667, tablet and desktop sizes.

@@ -14,7 +14,7 @@ end
 for _, remoteName in ipairs({
     "CompanionInventory", "EggShop", "CollectionBook", "NestUpgrade",
     "DisplayPets", "NestDecor", "NestBuild", "IslandVisit",
-    "IslandContest", "PublicProfile",
+    "IslandContest", "PublicProfile", "RaidBoard",
 }) do
     local remote = remoteFolder:FindFirstChild(remoteName)
     if not remote then
@@ -47,7 +47,7 @@ if not worldOk then
     remoteFolder:SetAttribute("WorldError", tostring(worldError))
 end
 
-local serviceNames = { "PlayerDataService", "ProgressionService", "HeatService", "AshfallService", "FireTrialService", "CrystalMiningService", "AncientHarvestService", "AncientSecretService", "AncientCaveService", "ForgottenHeartBossService", "AncientCraftingService", "AncientTempleService", "AncientTempleBossService", "CrystalTrialService", "PlotService", "NestService", "NestDecorService", "NestBuildService", "IslandVisitService", "IslandContestService", "PublicProfileService", "CompanionService", "DisplayPetService", "InventoryService", "EggShopService", "CollectionBookService", "EggService", "EconomyService" }
+local serviceNames = { "PlayerDataService", "ProgressionService", "HeatService", "AshfallService", "FireTrialService", "CrystalMiningService", "AncientHarvestService", "AncientSecretService", "AncientCaveService", "ForgottenHeartBossService", "AncientCraftingService", "AncientTempleService", "AncientTempleBossService", "CrystalTrialService", "PlotService", "NestService", "NestDecorService", "NestBuildService", "IslandVisitService", "IslandContestService", "PublicProfileService", "RaidService", "CompanionService", "DisplayPetService", "InventoryService", "EggShopService", "CollectionBookService", "EggService", "EconomyService" }
 local services = {}
 for _, serviceName in ipairs(serviceNames) do
     local ok, result = pcall(function()
