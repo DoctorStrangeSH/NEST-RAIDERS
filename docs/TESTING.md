@@ -1001,3 +1001,16 @@ Static regression checks cover personality profiles, social pairing, mood reward
 7. Confirm old profiles without CompanionBonds load normally and receive an empty table through reconciliation.
 
 Static checks cover deterministic pair keys, threshold titles, single-award ownership and interruption guards. Roblox Studio runtime, multiplayer isolation and DataStore persistence remain required.
+
+## Sprint 4.68 — Autonomous Pet Discoveries
+1. Display a Curious or Exploratory companion and observe idle/wandering behavior until it searches a nearby point. Confirm the pet shows the Russian searching state and creates a visible cache.
+2. Repeat with a Calm or Cautious companion over a longer session. Confirm its search tendency is lower, not higher, than the curious pet's.
+3. Approach the cache as the owner and collect it. Confirm the reward notification, coin balance and mood update.
+4. Trigger the prompt repeatedly or from two nearby clients. Confirm only one reward is granted and only the owner can collect it.
+5. Confirm reward scales with companion level and stars, and the next search cannot occur until the three-minute cooldown expires.
+6. Refresh the displayed-pet lineup or rejoin after claiming. Confirm the cooldown persists and no duplicate cache/reward appears.
+7. Test two players in one server; each player must have an independent cache, reward and cooldown.
+8. Put a searching pet to sleep before it reaches its target. Confirm its search is cancelled and no cache/reward is generated.
+9. Confirm old profiles without CompanionGiftReadyAt load normally through profile reconciliation.
+
+Static checks cover migration, personality search chances, owner-only prompt validation, one-time rewards and cooldown. Roblox Studio visual, timing, multiplayer and persistence tests remain required.
