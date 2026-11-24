@@ -712,3 +712,21 @@
 - [ ] Rejoin after a rewarded match and verify the persistent reward cooldown remains active.
 - [ ] Confirm no coins, eggs, companions, artifacts, materials, nest decorations or building inventory are stolen or otherwise changed by the opponent.
 - [ ] Verify the arena HUD, role-specific action and forfeit control at 320×480, 375×667, tablet and desktop sizes.
+
+ 
+## Sprint 4.49 — Raid duel combat acceptance
+- [ ] In a two-client Studio session, start a raid and verify both players receive the correct temporary sword and shield visuals.
+- [ ] Verify the sword and shield are positioned correctly on R15 and R6 characters and do not interfere with movement or core interaction.
+- [ ] As either role, approach within 12 studs and strike; verify the opponent loses exactly 24 raid combat health.
+- [ ] Attempt a strike from beyond 12 studs; verify the server rejects it without changing either combat health value.
+- [ ] Spam strike requests; verify the server enforces the 1.15-second cooldown independently for each player.
+- [ ] Raise guard and strike inside the 0.9-second window; verify the incoming strike is negated and the attacker receives 18 counter-damage.
+- [ ] Strike after the guard window expires; verify the strike deals 24 damage normally.
+- [ ] Spam guard; verify the 3.2-second cooldown and the HUD's remaining cooldown state.
+- [ ] Verify five unblocked strikes can defeat a player; verify a successful parry can change the duel outcome and the correct role receives victory rewards.
+- [ ] Verify duel health is separate from Humanoid health: normal character health is unchanged by strikes and parries.
+- [ ] Verify both duel health values update on both clients and clear when the match ends.
+- [ ] Verify temporary RaidCombatGear, hit flashes and guard visuals are removed on core victory, duel victory, timer victory, forfeit, death and disconnect.
+- [ ] Verify duel victory still uses the existing 150-coin / 100-XP winner and 50-coin participant rewards, including the persistent ten-minute cooldown.
+- [ ] Verify core attacks, defender reinforcement, round timer and return-position recovery still work after adding duel combat.
+- [ ] Verify the combat HUD and touch targets at 320×480, 375×667, tablet and desktop sizes.
