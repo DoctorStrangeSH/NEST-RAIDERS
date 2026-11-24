@@ -578,6 +578,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         targetIsSocial = false
                         toyPlayUntil = 0
                         socialPlayUntil = 0
+                        if toyPart then toyPart:SetAttribute("ToyState", "Waiting") end
                         idleUntil = math.max(idleUntil, now + 0.2)
                         bob = math.sin(now * 1.2 + phase) * 0.025
                         yawOffset = math.sin(now * 0.35 + phase) * 0.025
@@ -628,7 +629,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             end
                         end
 
-                        if isAtTarget and now >= idleUntil and socialPlayUntil <= now then
+                        if isAtTarget and now >= idleUntil and socialPlayUntil <= now and not targetIsSocial then
                             local canSocialize = partnerModel and socialApproach and not partnerSleeping
                                 and mood >= 45 and energy >= 20
                             local socialTrigger = partnerBehavior == "SeekingFriend"
@@ -680,6 +681,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 behavior = "SeekingFriend"
                                 if nearPartner then
                                     socialPlayUntil = now + random:NextNumber(3.2, 4.6)
+                                    socialRewarded = false
                                     idleUntil = socialPlayUntil
                                     local towardFriend = partnerPosition - currentPosition
                                     facing = math.atan2(towardFriend.X, towardFriend.Z)
