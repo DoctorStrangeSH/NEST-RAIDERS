@@ -907,3 +907,23 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify visiting another island blocks raid participation and no player inventory or currency changes.
 
 **Scope boundary:** Sprint 4.47 implements consent, protection and matchmaking only. It does not yet start combat, move players, steal items or transfer currency. The raid arena and bounded objective/reward loop are the next sprint.
+
+ 
+### Sprint 4.48 — Bounded raid arena and objective loop (2026-11-24)
+- [x] Launch a private, temporary arena only after the defender explicitly accepts the challenge.
+- [x] Preserve both players' return positions and restore them when the match ends, is cancelled, or is interrupted by death/disconnect.
+- [x] Build an isolated arena instance per active match with a visible Nest Core objective and health display.
+- [x] Give the attacker a server-validated core strike (20 damage, 2.2-second cooldown, 16-stud range).
+- [x] Give the defender a server-validated core reinforcement action (+10 integrity, 8-second cooldown, 16-stud range).
+- [x] End the round after 150 seconds; surviving the timer wins for the defender, reducing core integrity to zero wins for the attacker.
+- [x] Add a compact in-game arena HUD with role, objective integrity, timer, role-specific action and voluntary forfeit.
+- [x] Award bounded participation/win rewards through EconomyService and ProgressionService, with a persistent 10-minute per-player reward cooldown.
+- [x] Keep player inventories, eggs, companions, artifacts and nest ownership untouched by the raid objective.
+- [x] Add static regression checks for arena lifecycle, distance/cooldown validation, return recovery, role UI and reward throttling.
+- [ ] Roblox Studio: verify arena geometry, spawn orientation, boundaries and core readability.
+- [ ] Studio multiplayer: verify attacker strikes, defender reinforcement, timer victory, core victory and role-specific controls.
+- [ ] Studio multiplayer: verify cancel, death, reset, disconnect and rejoin recovery; confirm both players return to their original islands.
+- [ ] Verify reward amounts, XP artifact interaction, persistent reward cooldown, and no duplicate payout.
+- [ ] Verify arena HUD and controls at 320×480, 375×667, tablet and desktop sizes.
+
+**Scope boundary:** Sprint 4.48 is an objective race, not unrestricted PvP. Players cannot damage each other or steal inventory. Weapon combat, defensive structures, raid loot and matchmaking across servers remain separate future milestones.
