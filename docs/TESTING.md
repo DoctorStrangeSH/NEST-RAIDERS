@@ -893,3 +893,23 @@
 - [ ] Confirm empty state is visible only when no companions are owned.
 - [ ] Test all inventory actions with mouse and touch, including scroll gestures.
 - [ ] Inspect long companion names, genetic trait names and parent names for truncation or wrapping issues.
+
+ 
+## Sprint 4.59 — Egg shop and hatch acceptance
+- [ ] Confirm six natural biome eggs appear in progression order and the Forgotten Cave egg is not sold in the regular shop.
+- [ ] Confirm each card displays the correct egg name, biome, rarity, price and three possible companions.
+- [ ] Compare displayed probabilities against the biome species weights and equipped hatch artifacts.
+- [ ] Verify level-locked cards, quest-locked cards, insufficient coins and full 20/20 egg capacity have distinct messages and disabled purchase buttons.
+- [ ] Attempt direct RemoteFunction purchases for locked eggs and verify the server rejects them without changing coins or inventory.
+- [ ] Buy each available egg and confirm coins, EggCount, inventory record EggId and BiomeId update exactly once.
+- [ ] Confirm the correct biome egg name appears on world ProximityPrompts.
+- [ ] Collect each world egg and confirm its welded band, runes, crown gem, glow and Highlight travel with it and respawn together.
+- [ ] Hatch a shop egg from each biome and verify OriginBiome, species table and discovery are correct.
+- [ ] Hatch a world egg and a breeding egg; confirm the correct egg is consumed and the companion is added once.
+- [ ] Trigger the hatch prompt repeatedly and verify the server serializes hatch requests.
+- [ ] Verify the reveal event is sent only after the server commits the companion and counters.
+- [ ] Verify egg shake, crack lines, pet reveal, rarity border, trait and income details.
+- [ ] Skip the animation and confirm the already-saved result is shown; close the reveal and confirm the pet remains in inventory.
+- [ ] Rejoin and confirm purchased/hatch results persist.
+- [ ] Test shop and reveal on 320×480, 375×667, tablet, 1366×768 and 1920×1080.
+- [ ] Capture Studio screenshots of shop cards and the hatch reveal at phone and desktop sizes.
