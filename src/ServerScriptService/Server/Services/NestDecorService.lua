@@ -241,10 +241,10 @@ function NestDecorService:HandleRequest(player, payload)
         if nestLevel < definition.UnlockLevel then
             return { Ok = false, Message = "Этот стиль откроется на " .. tostring(definition.UnlockLevel) .. " уровне гнезда." }
         end
-        nest.IslandStyle = styleId
         if not PlotService:ApplyIslandStyle(player, styleId) then
             return { Ok = false, Message = "Не удалось применить оформление. Попробуй ещё раз." }
         end
+        nest.IslandStyle = styleId
         player:SetAttribute("LastNotice", "Стиль острова изменён: " .. definition.Name .. "!")
         return { Ok = true, Data = getSnapshot(profile), Message = "Новое оформление применено!" }
     end
