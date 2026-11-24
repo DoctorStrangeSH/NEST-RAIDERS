@@ -282,3 +282,7 @@ Raid companions now react to validated combat events with lightweight server-rep
  
 ## UI/UX Foundation — Sprint 4.56
 The client UI now has a viewport-aware boot card, a camera-rebound global HUD scale and camera-rebound responsive navigation sizing. Feature navigation buttons use native two-letter Cyrillic badges with color accents instead of external image or emoji assets, with padded/truncated labels to prevent collisions. The modal registry duplicate for the raid panel was removed. This is the first responsive foundation pass; individual panels and gameplay HUD still require device-by-device visual acceptance.
+
+ 
+## Main Navigation — Sprint 4.57
+The island feature menu now has a dark teal visual theme, a title header, three feature groups, fourteen native vector-style icons, accent strokes, consistent button gradients and responsive text padding. Icons are composed from Roblox GUI primitives rather than image IDs or emoji fonts. Desktop hover feedback and an animated menu/close glyph are included. Roblox Studio/device visual acceptance remains open before the next panel redesign.
