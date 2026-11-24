@@ -2016,6 +2016,7 @@ local function renderInventory(data)
         end
         details.TextColor3 = Color3.fromRGB(187, 211, 203)
         details.TextSize = 12
+        details.TextWrapped = true
         details.TextXAlignment = Enum.TextXAlignment.Left
         details.Parent = card
 
@@ -2269,6 +2270,7 @@ local function renderShop(data)
         odds.TextSize = 12
         odds.TextXAlignment = Enum.TextXAlignment.Left
         odds.TextYAlignment = Enum.TextYAlignment.Top
+        odds.TextWrapped = true
         local oddsLines = {}
         for _, outcome in ipairs(item.Odds or {}) do
             local baseChance = tonumber(outcome.BaseChance)
