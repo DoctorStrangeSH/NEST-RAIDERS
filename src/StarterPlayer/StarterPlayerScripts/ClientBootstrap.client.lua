@@ -4,6 +4,7 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
+local Lighting = game:GetService("Lighting")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -200,7 +201,7 @@ local function updateWorldInfo()
     local hour = math.floor(clockTime) % 24
     local minute = math.floor((clockTime % 1) * 60)
     local worldFolder = Workspace:FindFirstChild("NestRaidersWorld")
-    local phase = worldFolder and worldFolder:GetAttribute("WorldTimeLabel") or (hour >= 19 or hour < 6 and "Ночь" or "День")
+    local phase = worldFolder and worldFolder:GetAttribute("WorldTimeLabel") or ((hour >= 19 or hour < 6) and "Ночь" or "День")
     local weather = worldFolder and worldFolder:GetAttribute("WorldWeatherLabel") or "Ясно"
     worldInfoText.Text = string.format("%02d:%02d  ·  %s  ·  %s", hour, minute, string.upper(tostring(phase)), tostring(weather))
 end
