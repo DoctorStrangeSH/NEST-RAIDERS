@@ -1243,6 +1243,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Expose behavior, mood, hunger, energy and personality as model attributes for future interaction/UI hooks.
 - [x] Keep pets inside their own small home radius so they do not roam across the island or overlap other display slots.
 - [x] Add static regression checks for movement bounds, state-driven behavior and existing toy/sleep interaction wiring.
+- [x] GitHub Actions: Rojo place build, package validation and `tests/check_playable.py` passed on the latest Sprint 4.64 commit.
+- [x] Publish the refreshed `NEST-RAIDERS.rbxlx` Studio artifact (workflow run 45410328925; available through 2026-12-08).
 - [ ] Roblox Studio: verify pets roam smoothly, stop naturally, turn toward movement and remain inside their display area.
 - [ ] Test with 1–4 displayed pets and several simultaneous players; check server frame time and replication smoothness.
 - [ ] Verify sleeping pets remain resting, low-energy pets slow down, and high-mood pets move more playfully.
