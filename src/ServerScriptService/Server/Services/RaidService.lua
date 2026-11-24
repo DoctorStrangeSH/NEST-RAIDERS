@@ -226,7 +226,7 @@ local function buildArenaDefenses(match, profile)
             Interval = def.DefenseInterval or 0,
             Cooldown = def.DefenseCooldown or 0,
             Position = base.Position,
-            LastTriggeredAt = 0,
+            LastTriggeredAt = nil,
         }
 
         if def.DefenseType == "Wall" then
@@ -603,7 +603,7 @@ local function activateArenaDefenses(self, match)
         elseif defense.Type == "Trap" and defense.Trigger then
             local connection = defense.Trigger.Touched:Connect(function(hit)
                 if match.State ~= "ACTIVE" or defense.Health <= 0
-                    or os.clock() - defense.LastTriggeredAt < defense.Cooldown then return end
+                    or (defense.LastTriggeredAt and os.clock() - defense.LastTriggeredAt < defense.Cooldown) then return end
                 local character = hit and hit:FindFirstAncestorOfClass("Model")
                 local touchingPlayer = character and Players:GetPlayerFromCharacter(character)
                 if touchingPlayer ~= match.Attacker then return end
@@ -776,7 +776,8 @@ function RaidService:AttackDefense(player)
         return { Ok = false, Message = "Нельзя атаковать сооружение сейчас." }
     end
     local timestamp = os.clock()
-    if timestamp - (match.LastDefenseAttackAt[player] or 0) < RAID_DEFENSE_STRIKE_COOLDOWN_SECONDS then
+    local lastDefenseAttack = match.LastDefenseAttackAt[player]
+    if lastDefenseAttack and timestamp - lastDefenseAttack < RAID_DEFENSE_STRIKE_COOLDOWN_SECONDS then
         return { Ok = false, Message = "Удар по сооружению ещё восстанавливается." }
     end
     local defense = findNearestDefense(match, root, RAID_DUEL_STRIKE_RANGE, false)
@@ -811,7 +812,8 @@ function RaidService:RepairDefense(player)
         return { Ok = false, Message = "Нельзя ремонтировать сооружение сейчас." }
     end
     local timestamp = os.clock()
-    if timestamp - (match.LastDefenseRepairAt[player] or 0) < RAID_DEFENSE_REPAIR_COOLDOWN_SECONDS then
+    local lastDefenseRepair = match.LastDefenseRepairAt[player]
+    if lastDefenseRepair and timestamp - lastDefenseRepair < RAID_DEFENSE_REPAIR_COOLDOWN_SECONDS then
         return { Ok = false, Message = "Ремонт обороны ещё восстанавливается." }
     end
     local defense = findNearestDefense(match, root, RAID_DUEL_STRIKE_RANGE, true)
