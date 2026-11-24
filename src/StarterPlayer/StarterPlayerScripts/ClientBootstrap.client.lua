@@ -1863,9 +1863,54 @@ bookProgress.TextSize = 14
 bookProgress.TextXAlignment = Enum.TextXAlignment.Left
 bookProgress.Parent = bookPanel
 
+local bookSearch = Instance.new("TextBox")
+bookSearch.Name = "CollectionSearch"
+bookSearch.Position = UDim2.fromOffset(12, 76)
+bookSearch.Size = UDim2.new(1, -24, 0, 32)
+bookSearch.BackgroundColor3 = Color3.fromRGB(37, 52, 74)
+bookSearch.BorderSizePixel = 0
+bookSearch.ClearTextOnFocus = false
+bookSearch.PlaceholderText = "Поиск питомца или редкости..."
+bookSearch.PlaceholderColor3 = Color3.fromRGB(145, 160, 187)
+bookSearch.Text = ""
+bookSearch.TextColor3 = Color3.fromRGB(240, 244, 255)
+bookSearch.TextSize = 12
+bookSearch.Font = Enum.Font.GothamMedium
+bookSearch.TextXAlignment = Enum.TextXAlignment.Left
+bookSearch.Parent = bookPanel
+addCorner(bookSearch, 9)
+local bookSearchPadding = Instance.new("UIPadding")
+bookSearchPadding.PaddingLeft = UDim.new(0, 10)
+bookSearchPadding.PaddingRight = UDim.new(0, 10)
+bookSearchPadding.Parent = bookSearch
+
+local bookFilter = "Все"
+local bookFilterButtons = {}
+local filterDefinitions = {
+    { Id = "Все", Label = "ВСЕ", Color = Color3.fromRGB(75, 105, 148) },
+    { Id = "Открытые", Label = "ОТКРЫТЫЕ", Color = Color3.fromRGB(66, 127, 104) },
+    { Id = "Не найдены", Label = "НЕ НАЙДЕНЫ", Color = Color3.fromRGB(93, 79, 119) },
+}
+for index, definition in ipairs(filterDefinitions) do
+    local filterButton = Instance.new("TextButton")
+    filterButton.Name = "Filter" .. string.gsub(definition.Id, " ", "")
+    filterButton.Position = UDim2.new((index - 1) / 3, 4, 0, 114)
+    filterButton.Size = UDim2.new(1 / 3, -8, 0, 28)
+    filterButton.BackgroundColor3 = definition.Color
+    filterButton.BackgroundTransparency = 0.2
+    filterButton.BorderSizePixel = 0
+    filterButton.Text = definition.Label
+    filterButton.TextColor3 = Color3.fromRGB(245, 247, 255)
+    filterButton.TextSize = 9
+    filterButton.Font = Enum.Font.GothamBlack
+    filterButton.Parent = bookPanel
+    addCorner(filterButton, 8)
+    bookFilterButtons[definition.Id] = filterButton
+end
+
 local bookList = Instance.new("ScrollingFrame")
-bookList.Position = UDim2.fromOffset(12, 78)
-bookList.Size = UDim2.new(1, -24, 1, -92)
+bookList.Position = UDim2.fromOffset(12, 150)
+bookList.Size = UDim2.new(1, -24, 1, -164)
 bookList.BackgroundTransparency = 1
 bookList.BorderSizePixel = 0
 bookList.ScrollBarThickness = 6
@@ -5782,8 +5827,10 @@ local function invokeCollectionBook()
     return response.Data
 end
 
+local latestCollectionData
 local function renderCollectionBook(data)
     if not data then return end
+    latestCollectionData = data
     bookProgress.Text = string.format("Открыто видов: %d / %d   ·   %d%%",
         data.Discovered or 0, data.Total or 0, data.CompletionPercent or 0)
 
@@ -5792,29 +5839,70 @@ local function renderCollectionBook(data)
     end
 
     for index, entry in ipairs(data.Entries or {}) do
+        local query = string.lower(bookSearch.Text or "")
+        local searchable = string.lower(table.concat({
+            tostring(entry.Name or ""),
+            tostring(entry.Rarity or ""),
+            tostring(entry.BiomeName or ""),
+            tostring(entry.EggName or ""),
+            tostring(entry.AcquisitionLabel or ""),
+        }, " "))
+        local matchesFilter = bookFilter == "Все"
+            or (bookFilter == "Открытые" and entry.Discovered == true)
+            or (bookFilter == "Не найдены" and entry.Discovered ~= true)
+        if matchesFilter and (query == "" or string.find(searchable, query, 1, true)) then
         local card = Instance.new("Frame")
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 78)
-        card.BackgroundColor3 = entry.Discovered and Color3.fromRGB(49, 68, 91) or Color3.fromRGB(39, 48, 65)
+        card.Size = UDim2.new(1, -8, 0, 88)
+        card.BackgroundColor3 = entry.Discovered and Color3.fromRGB(43, 64, 87) or Color3.fromRGB(35, 45, 61)
         card.BorderSizePixel = 0
         card.Parent = bookList
         addCorner(card, 11)
+        local rarityColors = {
+            Common = Color3.fromRGB(142, 157, 176),
+            Uncommon = Color3.fromRGB(104, 190, 132),
+            Rare = Color3.fromRGB(91, 157, 230),
+            Epic = Color3.fromRGB(170, 117, 224),
+            Legendary = Color3.fromRGB(239, 178, 78),
+            Mythic = Color3.fromRGB(239, 112, 139),
+        }
+        local rarityColor = rarityColors[entry.Rarity] or Color3.fromRGB(126, 151, 181)
+        local accent = Instance.new("Frame")
+        accent.Size = UDim2.new(0, 4, 1, -16)
+        accent.Position = UDim2.fromOffset(5, 8)
+        accent.BackgroundColor3 = rarityColor
+        accent.BorderSizePixel = 0
+        accent.Parent = card
+        addCorner(accent, 3)
 
         local name = Instance.new("TextLabel")
         name.BackgroundTransparency = 1
-        name.Position = UDim2.fromOffset(12, 8)
-        name.Size = UDim2.new(1, -24, 0, 22)
+        name.Position = UDim2.fromOffset(17, 8)
+        name.Size = UDim2.new(1, -30, 0, 22)
         name.Font = Enum.Font.GothamBold
         name.Text = entry.Discovered and entry.Name or "???  ·  Не найден"
         name.TextColor3 = entry.Discovered and Color3.fromRGB(255, 231, 174) or Color3.fromRGB(153, 164, 184)
-        name.TextSize = 15
+        name.TextSize = 14
         name.TextXAlignment = Enum.TextXAlignment.Left
+        name.TextTruncate = Enum.TextTruncate.AtEnd
         name.Parent = card
+
+        local rarity = Instance.new("TextLabel")
+        rarity.BackgroundColor3 = rarityColor
+        rarity.BackgroundTransparency = 0.12
+        rarity.Position = UDim2.fromOffset(17, 33)
+        rarity.Size = UDim2.fromOffset(78, 17)
+        rarity.Font = Enum.Font.GothamBold
+        rarity.Text = tostring(entry.Rarity or "Неизвестно"):upper()
+        rarity.TextColor3 = Color3.fromRGB(20, 27, 38)
+        rarity.TextSize = 9
+        rarity.Parent = card
+        addCorner(rarity, 6)
 
         local details = Instance.new("TextLabel")
         details.BackgroundTransparency = 1
-        details.Position = UDim2.fromOffset(12, 34)
-        details.Size = UDim2.new(1, -24, 0, 34)
+        details.Position = UDim2.fromOffset(103, 31)
+        details.Size = UDim2.new(1, -114, 0, 49)
         details.Font = Enum.Font.GothamMedium
         if entry.Discovered then
             local origin = entry.DiscoveredBiome and ("  ·  Найден: " .. tostring(entry.BiomeName)) or ""
@@ -5846,10 +5934,26 @@ local function renderCollectionBook(data)
             end
         end
         details.TextColor3 = Color3.fromRGB(190, 204, 223)
-        details.TextSize = 12
+        details.TextSize = 11
+        details.TextWrapped = true
+        details.TextYAlignment = Enum.TextYAlignment.Top
         details.TextXAlignment = Enum.TextXAlignment.Left
         details.Parent = card
+        end
     end
+end
+
+bookSearch:GetPropertyChangedSignal("Text"):Connect(function()
+    if latestCollectionData and bookPanel.Visible then renderCollectionBook(latestCollectionData) end
+end)
+for filterId, filterButton in pairs(bookFilterButtons) do
+    filterButton.Activated:Connect(function()
+        bookFilter = filterId
+        for id, button in pairs(bookFilterButtons) do
+            button.BackgroundTransparency = id == bookFilter and 0 or 0.35
+        end
+        if latestCollectionData then renderCollectionBook(latestCollectionData) end
+    end)
 end
 
 local function openCollectionBook()
