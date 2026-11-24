@@ -492,12 +492,70 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             bubbleCorner.Parent = moodLabel
 
             local phase = (slot * 1.7) % (math.pi * 2)
+            local random = Random.new(player.UserId + slot * 97 + math.floor(os.clock() * 1000) % 100000)
+            local home = basePivot.Position
+            local currentPosition = home
+            local targetPosition = home
+            local facing = 0
+            local idleUntil = os.clock() + random:NextNumber(0.5, 1.5)
+            local wanderRadius = 3.6
+            local behavior = sleeping and "Sleeping"
+                or (hunger <= 20 and "Hungry")
+                or (mood >= 80 and "Playful")
+                or "Wandering"
+            model:SetAttribute("Behavior", behavior)
+            model:SetAttribute("Mood", mood)
+            model:SetAttribute("Hunger", hunger)
+            model:SetAttribute("Energy", energy)
+            model:SetAttribute("Personality", (CompanionCatalog[companion.Id] or {}).Personality or "Обычный")
             task.spawn(function()
+                local previousTime = os.clock()
                 while model.Parent == folder and folder.Parent do
-                    local elapsed = os.clock()
-                    local bob = math.sin(elapsed * 2 + phase) * 0.12
-                    local turn = math.sin(elapsed * 1.1 + phase) * 0.06
-                    model:PivotTo(basePivot * CFrame.new(0, bob, 0) * CFrame.Angles(0, turn, 0))
+                    local now = os.clock()
+                    local delta = math.clamp(now - previousTime, 0, 0.25)
+                    previousTime = now
+                    local bob
+                    local yawOffset = 0
+
+                    if sleeping then
+                        behavior = "Sleeping"
+                        bob = math.sin(now * 1.2 + phase) * 0.025
+                        yawOffset = math.sin(now * 0.35 + phase) * 0.025
+                    else
+                        if (targetPosition - currentPosition).Magnitude < 0.2 then
+                            currentPosition = targetPosition
+                            idleUntil = math.max(idleUntil, now)
+                            if now >= idleUntil then
+                                local angle = random:NextNumber(0, math.pi * 2)
+                                local radius = math.sqrt(random:NextNumber()) * wanderRadius
+                                targetPosition = home + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)
+                                local direction = targetPosition - currentPosition
+                                if direction.Magnitude > 0.05 then
+                                    facing = math.atan2(direction.X, direction.Z)
+                                end
+                                idleUntil = now + random:NextNumber(1.0, 2.8)
+                            end
+                        end
+
+                        local moving = (targetPosition - currentPosition).Magnitude >= 0.2 and now >= idleUntil
+                        if moving then
+                            local direction = targetPosition - currentPosition
+                            local speed = energy <= 15 and 1.25 or (mood >= 80 and 3.4 or 2.5)
+                            local step = math.min(direction.Magnitude, speed * delta)
+                            currentPosition += direction.Unit * step
+                            facing = math.atan2(direction.X, direction.Z)
+                            behavior = mood >= 80 and "Playful" or "Wandering"
+                            bob = math.abs(math.sin(now * 9 + phase)) * 0.1
+                        else
+                            behavior = energy <= 15 and "Resting" or (hunger <= 20 and "Hungry" or "Idle")
+                            bob = math.sin(now * 2 + phase) * 0.055
+                            yawOffset = math.sin(now * 1.1 + phase) * 0.09
+                        end
+                    end
+
+                    model:SetAttribute("Behavior", behavior)
+                    local position = currentPosition + Vector3.new(0, bob, 0)
+                    model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset, 0))
                     task.wait(0.12)
                 end
             end)
