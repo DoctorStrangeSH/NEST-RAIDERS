@@ -776,7 +776,7 @@ local raidArenaHud = Instance.new("Frame")
 raidArenaHud.Name = "RaidArenaHUD"
 raidArenaHud.AnchorPoint = Vector2.new(1, 0)
 raidArenaHud.Position = UDim2.new(1, -16, 0, 16)
-raidArenaHud.Size = UDim2.new(0.9, 0, 0, 148)
+raidArenaHud.Size = UDim2.new(0.9, 0, 0, 198)
 raidArenaHud.BackgroundColor3 = Color3.fromRGB(35, 42, 52)
 raidArenaHud.BorderSizePixel = 0
 raidArenaHud.Visible = false
@@ -785,8 +785,8 @@ raidArenaHud.Parent = gui
 addCorner(raidArenaHud, 14)
 addStroke(raidArenaHud, Color3.fromRGB(235, 158, 102), 2)
 local raidArenaSize = Instance.new("UISizeConstraint")
-raidArenaSize.MinSize = Vector2.new(270, 148)
-raidArenaSize.MaxSize = Vector2.new(420, 148)
+raidArenaSize.MinSize = Vector2.new(280, 198)
+raidArenaSize.MaxSize = Vector2.new(420, 198)
 raidArenaSize.Parent = raidArenaHud
 
 local raidArenaRole = Instance.new("TextLabel")
@@ -806,7 +806,7 @@ local raidArenaObjective = Instance.new("TextLabel")
 raidArenaObjective.Name = "Objective"
 raidArenaObjective.BackgroundTransparency = 1
 raidArenaObjective.Position = UDim2.fromOffset(12, 34)
-raidArenaObjective.Size = UDim2.new(1, -24, 0, 30)
+raidArenaObjective.Size = UDim2.new(1, -24, 0, 22)
 raidArenaObjective.Font = Enum.Font.GothamBold
 raidArenaObjective.Text = "ЯДРО ГНЕЗДА · 100 / 100"
 raidArenaObjective.TextColor3 = Color3.fromRGB(237, 235, 224)
@@ -815,10 +815,49 @@ raidArenaObjective.TextXAlignment = Enum.TextXAlignment.Left
 raidArenaObjective.ZIndex = 61
 raidArenaObjective.Parent = raidArenaHud
 
+local raidArenaCombatStatus = Instance.new("TextLabel")
+raidArenaCombatStatus.Name = "CombatStatus"
+raidArenaCombatStatus.BackgroundTransparency = 1
+raidArenaCombatStatus.Position = UDim2.fromOffset(12, 57)
+raidArenaCombatStatus.Size = UDim2.new(1, -24, 0, 18)
+raidArenaCombatStatus.Font = Enum.Font.GothamBold
+raidArenaCombatStatus.Text = "ТЫ 100 / 100  ·  СОПЕРНИК 100 / 100"
+raidArenaCombatStatus.TextColor3 = Color3.fromRGB(205, 222, 235)
+raidArenaCombatStatus.TextSize = 10
+raidArenaCombatStatus.TextXAlignment = Enum.TextXAlignment.Left
+raidArenaCombatStatus.ZIndex = 61
+raidArenaCombatStatus.Parent = raidArenaHud
+
+local raidArenaStrike = Instance.new("TextButton")
+raidArenaStrike.Name = "StrikeOpponent"
+raidArenaStrike.Position = UDim2.fromOffset(10, 80)
+raidArenaStrike.Size = UDim2.new(0.5, -15, 0, 36)
+raidArenaStrike.BackgroundColor3 = Color3.fromRGB(173, 89, 72)
+raidArenaStrike.Text = "УДАР СОПЕРНИКА"
+raidArenaStrike.TextColor3 = Color3.new(1, 1, 1)
+raidArenaStrike.TextSize = 10
+raidArenaStrike.Font = Enum.Font.GothamBlack
+raidArenaStrike.ZIndex = 61
+raidArenaStrike.Parent = raidArenaHud
+addCorner(raidArenaStrike, 9)
+
+local raidArenaGuard = Instance.new("TextButton")
+raidArenaGuard.Name = "RaiseGuard"
+raidArenaGuard.Position = UDim2.new(0.5, 5, 0, 80)
+raidArenaGuard.Size = UDim2.new(0.5, -15, 0, 36)
+raidArenaGuard.BackgroundColor3 = Color3.fromRGB(69, 126, 157)
+raidArenaGuard.Text = "ПАРИРОВАТЬ"
+raidArenaGuard.TextColor3 = Color3.new(1, 1, 1)
+raidArenaGuard.TextSize = 10
+raidArenaGuard.Font = Enum.Font.GothamBlack
+raidArenaGuard.ZIndex = 61
+raidArenaGuard.Parent = raidArenaHud
+addCorner(raidArenaGuard, 9)
+
 local raidArenaAttack = Instance.new("TextButton")
 raidArenaAttack.Name = "AttackCore"
-raidArenaAttack.Position = UDim2.fromOffset(10, 68)
-raidArenaAttack.Size = UDim2.new(1, -20, 0, 40)
+raidArenaAttack.Position = UDim2.fromOffset(10, 122)
+raidArenaAttack.Size = UDim2.new(1, -20, 0, 34)
 raidArenaAttack.BackgroundColor3 = Color3.fromRGB(177, 83, 66)
 raidArenaAttack.Text = "УДАРИТЬ ЯДРО"
 raidArenaAttack.TextColor3 = Color3.new(1, 1, 1)
@@ -830,8 +869,8 @@ addCorner(raidArenaAttack, 9)
 
 local raidArenaRepair = Instance.new("TextButton")
 raidArenaRepair.Name = "ReinforceCore"
-raidArenaRepair.Position = UDim2.fromOffset(10, 68)
-raidArenaRepair.Size = UDim2.new(1, -20, 0, 40)
+raidArenaRepair.Position = UDim2.fromOffset(10, 122)
+raidArenaRepair.Size = UDim2.new(1, -20, 0, 34)
 raidArenaRepair.BackgroundColor3 = Color3.fromRGB(66, 139, 108)
 raidArenaRepair.Text = "УКРЕПИТЬ ЯДРО"
 raidArenaRepair.TextColor3 = Color3.new(1, 1, 1)
@@ -844,8 +883,8 @@ addCorner(raidArenaRepair, 9)
 
 local raidArenaExit = Instance.new("TextButton")
 raidArenaExit.Name = "Forfeit"
-raidArenaExit.Position = UDim2.fromOffset(10, 114)
-raidArenaExit.Size = UDim2.new(1, -20, 0, 25)
+raidArenaExit.Position = UDim2.fromOffset(10, 164)
+raidArenaExit.Size = UDim2.new(1, -20, 0, 24)
 raidArenaExit.BackgroundColor3 = Color3.fromRGB(78, 78, 88)
 raidArenaExit.Text = "ЗАВЕРШИТЬ РЕЙД БЕЗ НАГРАДЫ"
 raidArenaExit.TextColor3 = Color3.fromRGB(238, 230, 225)
@@ -3818,12 +3857,30 @@ local function updateRaidArenaHud()
     local opponent = player:GetAttribute("RaidArenaOpponentName") or "соперник"
     local health = math.clamp(math.floor(tonumber(player:GetAttribute("RaidArenaCoreHealth")) or 100), 0, 100)
     local remaining = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaTimeRemaining")) or 0))
+    local selfHealth = math.clamp(math.floor(tonumber(player:GetAttribute("RaidArenaCombatHealth")) or 100), 0, 100)
+    local opponentHealth = math.clamp(math.floor(tonumber(player:GetAttribute("RaidArenaOpponentCombatHealth")) or 100), 0, 100)
+    local guardActive = player:GetAttribute("RaidArenaGuardActive") == true
+    local guardCooldown = math.max(0, math.floor(tonumber(player:GetAttribute("RaidArenaGuardCooldown")) or 0))
     raidArenaRole.Text = (role == "ATTACKER" and "АТАКА" or "ЗАЩИТА") .. " · " .. tostring(opponent)
     raidArenaObjective.Text = string.format("ЯДРО ГНЕЗДА · %d / 100     ВРЕМЯ · %s", health, raidTime(remaining))
+    raidArenaCombatStatus.Text = string.format("ТЫ %d / 100  ·  СОПЕРНИК %d / 100", selfHealth, opponentHealth)
+    raidArenaStrike.Visible = true
+    raidArenaGuard.Visible = true
+    raidArenaGuard.Text = guardActive and "БЛОК АКТИВЕН" or (guardCooldown > 0 and ("БЛОК · " .. tostring(guardCooldown) .. " С") or "ПАРИРОВАТЬ")
+    raidArenaGuard.BackgroundColor3 = guardActive and Color3.fromRGB(66, 151, 176)
+        or (guardCooldown > 0 and Color3.fromRGB(76, 83, 100) or Color3.fromRGB(69, 126, 157))
     raidArenaAttack.Visible = role == "ATTACKER"
     raidArenaRepair.Visible = role == "DEFENDER"
 end
 
+raidArenaStrike.Activated:Connect(function()
+    invokeRaid({ Action = "StrikeOpponent" })
+    updateRaidArenaHud()
+end)
+raidArenaGuard.Activated:Connect(function()
+    invokeRaid({ Action = "RaiseGuard" })
+    updateRaidArenaHud()
+end)
 raidArenaAttack.Activated:Connect(function()
     invokeRaid({ Action = "AttackCore" })
     updateRaidArenaHud()
@@ -3841,6 +3898,8 @@ end)
 for _, attribute in ipairs({
     "RaidArenaActive", "RaidArenaRole", "RaidArenaOpponentName",
     "RaidArenaCoreHealth", "RaidArenaTimeRemaining",
+    "RaidArenaCombatHealth", "RaidArenaOpponentCombatHealth",
+    "RaidArenaGuardActive", "RaidArenaGuardCooldown",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateRaidArenaHud)
 end
