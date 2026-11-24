@@ -857,9 +857,22 @@ for egg_id, weight_source in egg_tables:
     base_top_weight = sum(weight for species, weight in weights.items() if ranks[species] == highest_rank)
     base_chance = base_top_weight / base_total
     for bonus in (0.05, 0.10, 0.15, 0.30):
-        adjusted_chance = base_top_weight * (1 + bonus) / (base_total + base_top_weight * bonus)
+        adjusted_weights = {
+            species: weight * (1 + bonus if ranks[species] == highest_rank else 1)
+            for species, weight in weights.items()
+        }
+        adjusted_total = sum(adjusted_weights.values())
+        adjusted_chance = base_top_weight * (1 + bonus) / adjusted_total
         assert adjusted_chance > base_chance, f"Hunter bonus did not improve {egg_id} top-tier odds"
         assert adjusted_chance < 1.0
+        assert abs(sum(weight / adjusted_total for weight in adjusted_weights.values()) - 1.0) < 1e-9
+        for species, weight in weights.items():
+            base_species_chance = weight / base_total
+            adjusted_species_chance = adjusted_weights[species] / adjusted_total
+            if ranks[species] == highest_rank:
+                assert adjusted_species_chance > base_species_chance
+            else:
+                assert adjusted_species_chance < base_species_chance
 
 hunter_sim_start = inventory_service.index('if payload.Action == "DevSimulateHatchBonus" then')
 hunter_sim_end = inventory_service.index('if payload.Action == "Get" then', hunter_sim_start)
