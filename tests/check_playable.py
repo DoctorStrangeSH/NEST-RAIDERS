@@ -556,6 +556,21 @@ assert 'EquippedIncomeBonus' in client and 'GatherBonus' in client and 'Research
 assert 'ДОХОД +%d%%' in client and 'ДОБЫЧА +%d%%' in client and 'ОПЫТ +%d%%' in client and 'ОХОТА +%d%%' in client
 assert 'Добыча +%d%%' in client and 'Опыт +%d%%' in client
 
+# The collection summary itself must render all four server-calculated equipped effects.
+artifact_summary_start = client.index('artifactsSlots.Text = string.format("СЛОТЫ:')
+artifact_summary_end = client.index('    if #artifacts == 0 then', artifact_summary_start)
+artifact_summary = client[artifact_summary_start:artifact_summary_end]
+for summary_field in (
+    "EquippedIncomeBonus",
+    "EquippedGatherBonus",
+    "EquippedResearchBonus",
+    "EquippedHatchBonus",
+):
+    assert summary_field in artifact_summary, f"Missing {summary_field} in artifact collection summary"
+for summary_label in ("ДОХОД +%d%%", "ДОБЫЧА +%d%%", "ОПЫТ +%d%%", "ОХОТА +%d%%"):
+    assert summary_label in artifact_summary, f"Missing {summary_label} in artifact collection summary"
+assert artifact_summary.count("math.floor(((data and data.Equipped") == 4
+
 # Ancient Tree Temple: walkable side-island, ordered runes, personal treasure claim and objective HUD.
 ancient_temple = Path("src/ServerScriptService/Server/Services/AncientTempleService.lua").read_text()
 assert '"AncientTempleService"' in server and 'function AncientTempleService:Init()' in ancient_temple
