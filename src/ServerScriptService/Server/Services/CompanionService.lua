@@ -5,6 +5,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local NestToyCatalog = require(ReplicatedStorage.Shared.Config.NestToyCatalog)
+local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 
 local CompanionService = {}
 CompanionService._folders = {}
@@ -516,6 +517,93 @@ function CompanionService:ClearPlayer(player)
     local folder = self._folders[player]
     if folder then folder:Destroy() end
     self._folders[player] = nil
+end
+
+function CompanionService:CreateRaidFollowers(player, parent)
+    local profile = PlayerDataService:GetProfile(player)
+    if not profile or not parent then return {}, nil end
+
+    local ownedById = {}
+    for _, companion in ipairs(profile.Companions or {}) do
+        if type(companion.InstanceId) == "string" then
+            ownedById[companion.InstanceId] = companion
+        end
+    end
+
+    local followers = {}
+    local primary = nil
+    local roleLabels = {
+        GUARDIAN = "СТРАЖ",
+        HEALER = "ЦЕЛИТЕЛЬ",
+        HUNTER = "ОХОТНИК",
+    }
+    local roleColors = {
+        GUARDIAN = Color3.fromRGB(118, 196, 239),
+        HEALER = Color3.fromRGB(130, 220, 155),
+        HUNTER = Color3.fromRGB(255, 166, 105),
+    }
+
+    for _, instanceId in ipairs(profile.ActiveCompanions or {}) do
+        if #followers >= MAX_VISIBLE_COMPANIONS then break end
+        local companion = ownedById[instanceId]
+        if companion then
+            local model = buildPet(parent, companion, #followers + 1)
+            model.Name = "RaidCompanion_" .. tostring(companion.Id) .. "_" .. tostring(#followers + 1)
+            model:SetAttribute("RaidOwnerUserId", player.UserId)
+            model:SetAttribute("RaidCompanion", true)
+
+            local catalogEntry = CompanionCatalog[companion.Id]
+            local raidAbility = catalogEntry and catalogEntry.RaidAbility or nil
+            local role = raidAbility and raidAbility.Role or nil
+            local displayName = companion.Name or (catalogEntry and catalogEntry.Name) or companion.Id
+
+            local nameplate = Instance.new("BillboardGui")
+            nameplate.Name = "RaidCompanionNameplate"
+            nameplate.Size = UDim2.fromOffset(150, 30)
+            nameplate.StudsOffset = Vector3.new(0, 3.2, 0)
+            nameplate.AlwaysOnTop = false
+            nameplate.Parent = model.PrimaryPart
+
+            local label = Instance.new("TextLabel")
+            label.Size = UDim2.fromScale(1, 1)
+            label.BackgroundColor3 = Color3.fromRGB(29, 42, 48)
+            label.BackgroundTransparency = 0.16
+            label.BorderSizePixel = 0
+            label.Font = Enum.Font.GothamBold
+            label.TextColor3 = Color3.fromRGB(246, 246, 232)
+            label.TextSize = 10
+            label.Text = role and (displayName .. " · " .. roleLabels[role]) or displayName
+            label.Parent = nameplate
+            local corner = Instance.new("UICorner")
+            corner.CornerRadius = UDim.new(0, 8)
+            corner.Parent = label
+
+            local entry = {
+                Model = model,
+                Companion = companion,
+                Ability = raidAbility,
+                Name = displayName,
+                Role = role,
+            }
+            table.insert(followers, entry)
+
+            if not primary and raidAbility and roleLabels[role] then
+                primary = entry
+                local highlight = Instance.new("Highlight")
+                highlight.Name = "RaidPrimaryCompanionHighlight"
+                highlight.Adornee = model
+                highlight.FillColor = roleColors[role]
+                highlight.OutlineColor = roleColors[role]
+                highlight.FillTransparency = 0.78
+                highlight.OutlineTransparency = 0.12
+                highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+                highlight.Parent = model
+                label.Text = displayName .. " · " .. roleLabels[role] .. " ★"
+            end
+        end
+    end
+
+    return followers, primary
 end
 
 function CompanionService:RefreshPlayer(player)
