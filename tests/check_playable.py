@@ -1273,7 +1273,9 @@ assert 'raidArenaPetAbility.Name = "UsePetAbility"' in client
 assert 'raidArenaPetAbility.Activated' in client and 'Action = "UsePetAbility"' in client
 assert 'RaidArenaPetAbilityName' in client and 'RaidArenaPetCooldown' in client
 assert 'RaidArenaPetShield' in client and 'RaidArenaPetShieldSeconds' in client
-assert 'raidArenaHud.Size = UDim2.new(0.9, 0, 0, 270)' in client
+assert 'raidArenaHud.Size = UDim2.new(0.9, 0, 0, 286)' in client
+assert 'raidArenaSynergyStatus.Name = "TeamSynergyStatus"' in client
+assert 'RaidArenaSynergyName' in client and 'RaidArenaSynergyDescription' in client
 
 # Sprint 4.52 — companion species-role alignment and level-scaled raid abilities.
 cinder_fox_block = companion_catalog[companion_catalog.index("    CinderFox = {"):companion_catalog.index("    MagmaWhelp = {")]
@@ -1287,13 +1289,16 @@ assert 'Id = "PhoenixDive"' in ash_phoenix_block and 'Role = "HUNTER"' in ash_ph
 assert 'Id = "AuroraMend"' in snow_owl_block and 'Role = "HEALER"' in snow_owl_block
 assert 'Id = "GlacierBulwark"' in glacier_bear_block and 'Role = "GUARDIAN"' in glacier_bear_block
 
-assert 'local function getRaidPetProgression(pet)' in raid_service
+assert 'local function getRaidPetProgression(pet, synergy)' in raid_service
 assert 'local steps = math.floor((level - 1) / 2)' in raid_service
-assert 'power = math.clamp(math.floor(tonumber(ability.Damage) or 14) + steps, 8, 30)' in raid_service
-assert 'power = math.clamp(math.floor(tonumber(ability.HealAmount) or 20) + steps, 5, 35)' in raid_service
+assert 'power = math.floor(tonumber(ability.Damage) or 14) + steps' in raid_service
+assert 'power = math.floor(tonumber(ability.HealAmount) or 20) + steps' in raid_service
 assert 'local shieldBonus = math.floor((level - 1) * 2 / 3)' in raid_service
-assert 'power = math.clamp(math.floor(tonumber(ability.ShieldAmount) or 20) + shieldBonus, 10, 40)' in raid_service
-assert 'local petLevel, power = getRaidPetProgression(primary)' in raid_service
+assert 'power = math.floor(tonumber(ability.ShieldAmount) or 20) + shieldBonus' in raid_service
+assert 'power = math.clamp(power, 8, maximum)' in raid_service
+assert 'power = math.clamp(power, 5, maximum)' in raid_service
+assert 'power = math.clamp(power, 10, maximum)' in raid_service
+assert 'local petLevel, power = getRaidPetProgression(primary, synergy)' in raid_service
 assert 'local damage = power' in raid_service
 assert 'local heal = power' in raid_service
 assert 'local shieldAmount = power' in raid_service
@@ -1308,4 +1313,31 @@ assert 'Level = petLevel' in companion_service
 assert '" · ур. " .. tostring(petLevel)' in companion_service
 assert 'RaidArenaPetLevel' in client and 'RaidArenaPetPowerLabel' in client
 assert 'СПУТНИК · %s · ур.%d · %s · %s%s' in client
+
+# Sprint 4.53 — server-authoritative companion team synergies.
+assert 'local function getRaidPetSynergy(followers)' in raid_service
+assert 'roles[follower.Role] = true' in raid_service, "Duplicate species roles must not stack synergy"
+assert 'if roleCount < 2 then return nil end' in raid_service
+assert 'if roleCount == 3 then' in raid_service
+assert 'Id = "TRIAD"' in raid_service and 'Name = "Триада"' in raid_service
+assert 'if roles.GUARDIAN and roles.HEALER then' in raid_service
+assert 'Id = "LIVING_BASTION"' in raid_service and 'DamageReduction = 0.12' in raid_service
+assert 'if roles.HUNTER and roles.GUARDIAN then' in raid_service
+assert 'Id = "ASSAULT_FORMATION"' in raid_service and 'DuelDamageMultiplier = 1.10' in raid_service
+assert 'if roles.HUNTER and roles.HEALER then' in raid_service
+assert 'Id = "COORDINATED_ASSAULT"' in raid_service
+assert raid_service.index('if roleCount == 3 then') < raid_service.index('if roles.GUARDIAN and roles.HEALER then'), "The full trio must replace, not stack with, pair bonuses"
+assert 'match.RaidPetSynergy = {}' in raid_service
+assert 'match.RaidPetSynergy[participant] = getRaidPetSynergy(followers)' in raid_service
+assert 'local synergy = match.RaidPetSynergy and match.RaidPetSynergy[target] or nil' in raid_service
+assert 'local damageReduction = math.clamp(tonumber(synergy and synergy.DamageReduction) or 0, 0, 0.2)' in raid_service
+assert 'local reducedDamage = math.max(0, math.floor(incomingDamage * (1 - damageReduction) + 0.5))' in raid_service
+assert 'local strikeMultiplier = math.clamp(tonumber(synergy and synergy.DuelDamageMultiplier) or 1, 1, 1.15)' in raid_service
+assert 'participant:SetAttribute("RaidArenaSynergyName", synergy and synergy.Name or "")' in raid_service
+assert 'participant:SetAttribute("RaidArenaSynergyDescription", synergy and synergy.Description or "")' in raid_service
+assert 'participant:SetAttribute("RaidArenaSynergyName", nil)' in raid_service
+assert 'participant:SetAttribute("RaidArenaSynergyDescription", nil)' in raid_service
+assert 'raidArenaSynergyStatus.Text = synergyName ~= ""' in client
+assert 'СИНЕРГИЯ · НЕТ · нужны 2 разные роли' in client
+assert 'RaidArenaSynergyName' in client and 'RaidArenaSynergyDescription' in client
 
