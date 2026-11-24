@@ -300,3 +300,6 @@ The Collection Book now supports in-panel search across companion name, rarity, 
 
 ## Nest Management — Sprint 4.61
 The personal nest screen is now a unified overview with live coins and companion count, server-snapshot displayed-pet income, and shortcuts to display pets, decorations, construction and nest upgrades. Upgrade pricing and all state changes remain server-authoritative. Roblox Studio runtime and device acceptance is still required.
+
+## Nest Environment — Sprint 4.62 foundation
+Player plots now receive permanent non-collidable garden dressing: corner trees, flower beds and a stepping-stone approach outside the player construction grid. Nest level 2 adds warm lanterns and shrubs; level 3 adds softly lit crystals and flower accents. Existing level 4 banner and level 5 crown progression remains intact. Studio verification is still required for movement, building placement, multiplayer ownership and reconnect behavior.
