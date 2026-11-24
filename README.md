@@ -315,3 +315,6 @@ Displayed companions can now autonomously seek their equipped toy when their moo
 
 ## Personalities & Social Life — Sprint 4.66
 Companions now use personality profiles to vary their idle rhythm, toy preferences and likelihood of social play. Paired display slots can meet for a short social interaction, and completed sessions grant a small mood bonus. Idle companions also greet their owner when approached. Roblox Studio testing is still required for visual quality, multiplayer behavior and persistence.
+
+## Companion Friendship — Sprint 4.67
+Companions now remember their social history with a specific partner. Completed shared play increases a persistent pair score and unlocks relationship titles from acquaintances to inseparable friends. The score follows companion instance IDs when display slots change; interrupted sessions do not grant progress.
