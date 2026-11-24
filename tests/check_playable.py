@@ -496,6 +496,21 @@ assert 'Artifacts = artifacts' in inventory and 'MaxEquippedArtifacts = 2' in in
 assert 'ArtifactCatalog' in economy and 'artifactBonus' in economy and 'total *= (1 + artifactBonus)' in economy
 assert 'ArtifactsButton' in client and 'ArtifactsPanel' in client and 'CraftArtifact' in client
 assert 'EquipArtifact' in client and 'UnequipArtifact' in client and 'artifactsPanel,' in client
+assert 'artifactsPanel.Size = UDim2.new(0.92, 0, 0.82, 0)' in client
+assert 'artifactsSize.MinSize = Vector2.new(280, 320)' in client
+assert 'artifactsSize.MaxSize = Vector2.new(520, 620)' in client
+assert 'artifactsList.Position = UDim2.fromOffset(14, 192)' in client
+assert 'artifactsList.Size = UDim2.new(1, -28, 1, -206)' in client
+for fixture_name, order in (
+    ("artifactsTestButton", -6),
+    ("researcherTestButton", -5),
+    ("hunterTestButton", -4),
+):
+    assert f'{fixture_name}.LayoutOrder = {order}' in client
+    assert f'{fixture_name}.Parent = artifactsList' in client
+assert 'artifactsTestButton.Position = UDim2.fromOffset' not in client
+assert 'researcherTestButton.Position = UDim2.fromOffset' not in client
+assert 'hunterTestButton.Position = UDim2.fromOffset' not in client
 assert 'АРТЕФАКТ' in world and '2 кристальных' in world and '1 пепельный' in world
 
 # Artifact upgrade tiers and safe three-to-one merging.
@@ -958,7 +973,7 @@ assert 'GathererSimulationButton' in client
 assert 'Action = "DevSimulateGatherBonus"' in client
 assert 'return response.Data, response.Message' in client
 assert 'ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ' in client
-assert 'добычу ресурсов' in client
+assert 'Добыча +%d%%' in client
 
 # Researcher artifacts add server-authoritative XP through the single progression entry point.
 progression_service = Path("src/ServerScriptService/Server/Services/ProgressionService.lua").read_text()

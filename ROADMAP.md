@@ -872,6 +872,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Scale Hunter bonuses by 25% per upgrade level and cap combined equipped modifier at +30%.
 - [x] Display per-artifact and combined Hunter bonuses in the Russian artifact collection UI.
 - [x] Show all four combined equipped effects (income, gathering, XP, and Hunter) together in the collection summary.
+- [x] Move all Studio-only artifact fixture controls into the scrollable collection list and enlarge the panel for short mobile screens.
+- [x] Repair the Gatherer UI regression assertion to match the current Russian effect label.
 - [x] Show the actual highest-tier probability before and after the modifier in natural hatch notices.
 - [x] Update Egg Shop and Collection Book to show live normalized species chances and the unmodified base chance when Hunter artifacts are equipped.
 - [x] Label shared world egg signs as base odds without Hunter artifacts so fixed world text cannot be mistaken for player-specific odds.
@@ -880,5 +882,6 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add static regression coverage for rarity weighting, natural-vs-breeding routing, odds, UI, QA guards and simulation side effects.
 - [ ] GitHub Actions: build the latest Rojo place file and pass the full static regression suite.
 - [ ] Verify Hunter odds in Roblox Studio Play for every biome egg.
-- [ ] Verify level scaling, two-slot stacking, +30% cap, persistence, and 375px UI.
+- [ ] Verify level scaling, two-slot stacking, +30% cap, persistence, and UI at 320×480, 375×667, and desktop sizes.
+- [ ] Verify Studio fixture buttons and simulation controls scroll with the artifact cards and never overlap the summary or craft button.
 - [ ] Verify breeding eggs, genetic traits, egg inventory and companion collection are unaffected by the simulation.

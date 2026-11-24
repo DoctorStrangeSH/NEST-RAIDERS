@@ -1396,7 +1396,7 @@ artifactsPanel = Instance.new("Frame")
 artifactsPanel.Name = "ArtifactsPanel"
 artifactsPanel.AnchorPoint = Vector2.new(0.5, 0.5)
 artifactsPanel.Position = UDim2.fromScale(0.5, 0.5)
-artifactsPanel.Size = UDim2.new(0.9, 0, 0.72, 0)
+artifactsPanel.Size = UDim2.new(0.92, 0, 0.82, 0)
 artifactsPanel.BackgroundColor3 = Color3.fromRGB(31, 35, 58)
 artifactsPanel.BorderSizePixel = 0
 artifactsPanel.Visible = false
@@ -1404,8 +1404,8 @@ artifactsPanel.Parent = gui
 addCorner(artifactsPanel, 18)
 addStroke(artifactsPanel, Color3.fromRGB(204, 174, 255), 2)
 local artifactsSize = Instance.new("UISizeConstraint")
-artifactsSize.MinSize = Vector2.new(290, 340)
-artifactsSize.MaxSize = Vector2.new(520, 520)
+artifactsSize.MinSize = Vector2.new(280, 320)
+artifactsSize.MaxSize = Vector2.new(520, 620)
 artifactsSize.Parent = artifactsPanel
 
 local artifactsTitle = Instance.new("TextLabel")
@@ -1454,64 +1454,7 @@ artifactsCraft.Font = Enum.Font.GothamBlack
 artifactsCraft.Parent = artifactsPanel
 addCorner(artifactsCraft, 10)
 
-if RunService:IsStudio() then
-    local artifactsTestButton = Instance.new("TextButton")
-    artifactsTestButton.Name = "GathererArtifactTestButton"
-    artifactsTestButton.Position = UDim2.fromOffset(16, 194)
-    artifactsTestButton.Size = UDim2.new(1, -32, 0, 32)
-    artifactsTestButton.BackgroundColor3 = Color3.fromRGB(55, 105, 91)
-    artifactsTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ"
-    artifactsTestButton.TextColor3 = Color3.fromRGB(235, 255, 241)
-    artifactsTestButton.TextSize = 10
-    artifactsTestButton.Font = Enum.Font.GothamBlack
-    artifactsTestButton.Parent = artifactsPanel
-    addCorner(artifactsTestButton, 9)
-    artifactsTestButton.Activated:Connect(function()
-        local data = invokeInventory({ Action = "DevSeedGathererArtifacts" })
-        if data then
-            renderArtifacts(data)
-            showNotice("Тестовые Собиратели добавлены: по 3 каждого вида.")
-        end
-    end)
 
-    local researcherTestButton = Instance.new("TextButton")
-    researcherTestButton.Name = "ResearcherArtifactTestButton"
-    researcherTestButton.Position = UDim2.fromOffset(16, 230)
-    researcherTestButton.Size = UDim2.new(1, -32, 0, 32)
-    researcherTestButton.BackgroundColor3 = Color3.fromRGB(81, 88, 135)
-    researcherTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 ИССЛЕДОВАТЕЛЕЙ"
-    researcherTestButton.TextColor3 = Color3.fromRGB(241, 239, 255)
-    researcherTestButton.TextSize = 10
-    researcherTestButton.Font = Enum.Font.GothamBlack
-    researcherTestButton.Parent = artifactsPanel
-    addCorner(researcherTestButton, 9)
-    researcherTestButton.Activated:Connect(function()
-        local data = invokeInventory({ Action = "DevSeedResearcherArtifacts" })
-        if data then
-            renderArtifacts(data)
-            showNotice("Тестовые Исследователи добавлены: по 3 каждого вида.")
-        end
-    end)
-
-    local hunterTestButton = Instance.new("TextButton")
-    hunterTestButton.Name = "HunterArtifactTestButton"
-    hunterTestButton.Position = UDim2.fromOffset(16, 266)
-    hunterTestButton.Size = UDim2.new(1, -32, 0, 32)
-    hunterTestButton.BackgroundColor3 = Color3.fromRGB(128, 91, 63)
-    hunterTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 ОХОТНИКОВ"
-    hunterTestButton.TextColor3 = Color3.fromRGB(255, 244, 226)
-    hunterTestButton.TextSize = 10
-    hunterTestButton.Font = Enum.Font.GothamBlack
-    hunterTestButton.Parent = artifactsPanel
-    addCorner(hunterTestButton, 9)
-    hunterTestButton.Activated:Connect(function()
-        local data = invokeInventory({ Action = "DevSeedHunterArtifacts" })
-        if data then
-            renderArtifacts(data)
-            showNotice("Тестовые Охотники добавлены: по 3 каждого вида.")
-        end
-    end)
-end
 
 local artifactsSlots = Instance.new("TextLabel")
 artifactsSlots.BackgroundTransparency = 1
@@ -1528,8 +1471,8 @@ artifactsSlots.Parent = artifactsPanel
 
 local artifactsList = Instance.new("ScrollingFrame")
 artifactsList.Name = "ArtifactList"
-artifactsList.Position = UDim2.fromOffset(14, RunService:IsStudio() and 304 or 192)
-artifactsList.Size = UDim2.new(1, -28, 1, (RunService:IsStudio() and -318 or -206))
+artifactsList.Position = UDim2.fromOffset(14, 192)
+artifactsList.Size = UDim2.new(1, -28, 1, -206)
 artifactsList.BackgroundTransparency = 1
 artifactsList.BorderSizePixel = 0
 artifactsList.ScrollBarThickness = 5
@@ -1540,6 +1483,65 @@ local artifactsLayout = Instance.new("UIListLayout")
 artifactsLayout.Padding = UDim.new(0, 8)
 artifactsLayout.SortOrder = Enum.SortOrder.LayoutOrder
 artifactsLayout.Parent = artifactsList
+
+if RunService:IsStudio() then
+    local artifactsTestButton = Instance.new("TextButton")
+    artifactsTestButton.Name = "GathererArtifactTestButton"
+    artifactsTestButton.LayoutOrder = -6
+    artifactsTestButton.Size = UDim2.new(1, -8, 0, 36)
+    artifactsTestButton.BackgroundColor3 = Color3.fromRGB(55, 105, 91)
+    artifactsTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ"
+    artifactsTestButton.TextColor3 = Color3.fromRGB(235, 255, 241)
+    artifactsTestButton.TextSize = 10
+    artifactsTestButton.Font = Enum.Font.GothamBlack
+    artifactsTestButton.Parent = artifactsList
+    addCorner(artifactsTestButton, 9)
+    artifactsTestButton.Activated:Connect(function()
+        local data = invokeInventory({ Action = "DevSeedGathererArtifacts" })
+        if data then
+            renderArtifacts(data)
+            showNotice("Тестовые Собиратели добавлены: по 3 каждого вида.")
+        end
+    end)
+
+    local researcherTestButton = Instance.new("TextButton")
+    researcherTestButton.Name = "ResearcherArtifactTestButton"
+    researcherTestButton.LayoutOrder = -5
+    researcherTestButton.Size = UDim2.new(1, -8, 0, 36)
+    researcherTestButton.BackgroundColor3 = Color3.fromRGB(81, 88, 135)
+    researcherTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 ИССЛЕДОВАТЕЛЕЙ"
+    researcherTestButton.TextColor3 = Color3.fromRGB(241, 239, 255)
+    researcherTestButton.TextSize = 10
+    researcherTestButton.Font = Enum.Font.GothamBlack
+    researcherTestButton.Parent = artifactsList
+    addCorner(researcherTestButton, 9)
+    researcherTestButton.Activated:Connect(function()
+        local data = invokeInventory({ Action = "DevSeedResearcherArtifacts" })
+        if data then
+            renderArtifacts(data)
+            showNotice("Тестовые Исследователи добавлены: по 3 каждого вида.")
+        end
+    end)
+
+    local hunterTestButton = Instance.new("TextButton")
+    hunterTestButton.Name = "HunterArtifactTestButton"
+    hunterTestButton.LayoutOrder = -4
+    hunterTestButton.Size = UDim2.new(1, -8, 0, 36)
+    hunterTestButton.BackgroundColor3 = Color3.fromRGB(128, 91, 63)
+    hunterTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 ОХОТНИКОВ"
+    hunterTestButton.TextColor3 = Color3.fromRGB(255, 244, 226)
+    hunterTestButton.TextSize = 10
+    hunterTestButton.Font = Enum.Font.GothamBlack
+    hunterTestButton.Parent = artifactsList
+    addCorner(hunterTestButton, 9)
+    hunterTestButton.Activated:Connect(function()
+        local data = invokeInventory({ Action = "DevSeedHunterArtifacts" })
+        if data then
+            renderArtifacts(data)
+            showNotice("Тестовые Охотники добавлены: по 3 каждого вида.")
+        end
+    end)
+end
 
 if RunService:IsStudio() then
     local hunterSimulationButton = Instance.new("TextButton")

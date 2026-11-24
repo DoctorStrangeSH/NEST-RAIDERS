@@ -664,8 +664,11 @@
 - [ ] Verify hatch notices show the highest-tier probability before and after the Hunter modifier only for natural eggs.
 - [ ] Verify Egg Shop and Collection Book show each species' live normalized chance and its base chance when Hunter artifacts change it, for both discovered and undiscovered companions.
 - [ ] Verify shared world egg signs explicitly identify their displayed percentages as base odds without Hunter artifacts.
-- [ ] Verify 375px mobile and desktop collection UI shows Hunter descriptions, individual effects and combined Hunter bonus without overlap.
+- [ ] Verify collection UI at 320×480, 375×667, and desktop sizes; confirm the panel stays within the viewport and the summary remains readable.
+- [ ] Verify all three Studio fixture buttons and all three simulations appear inside the scrollable list, can be reached by scrolling, and do not overlap the craft button or combined-bonus summary.
+- [ ] Verify Hunter descriptions, individual effects and combined Hunter bonus remain readable without overlap.
 - [ ] Verify the collection summary shows all four combined equipped effects (income, gathering, XP, Hunter) and matches the equipped artifacts.
+- [ ] Verify the UI regression test checks the exact current Gatherer effect label and the Studio fixture scroll-layout contract.
 
 ## Sprint 4.46 — Studio Hunter QA
 - In Roblox Studio only, open **АРТЕФАКТЫ** and use **ТЕСТ: ВЫДАТЬ ×3 ОХОТНИКОВ**.
