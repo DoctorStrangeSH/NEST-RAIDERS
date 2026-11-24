@@ -1558,6 +1558,8 @@ assert 'local wanderRadius = 3.6' in companion_service
 assert 'targetPosition = home + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)' in companion_service
 assert 'local speed = energy <= 15 and 1.25 or (mood >= 80 and 3.4 or 2.5)' in companion_service
 assert 'behavior = "Sleeping"' in companion_service
+assert 'local isSleeping = (tonumber(needs.RestingUntil) or 0) > os.time()' in companion_service
+assert 'model:SetAttribute("IsSleeping", isSleeping)' in companion_service
 assert 'behavior = mood >= 80 and "Playful" or "Wandering"' in companion_service
 assert 'model:SetAttribute("Behavior", behavior)' in companion_service
 assert 'model:SetAttribute("Personality"' in companion_service
