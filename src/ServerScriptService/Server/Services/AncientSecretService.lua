@@ -131,9 +131,9 @@ function AncientSecretService:Init()
                 player:SetAttribute("Moonpetal", profile.Materials.Moonpetal)
                 player:SetAttribute("WhisperingGroveCacheOpened", true)
                 EconomyService:GrantCoins(player, 400, "Тайник четырёх рун")
-                local _, awardedXP, _, extraXP = ProgressionService:AddXP(player, 200)
+                local _, awardedXP, researchBonus, extraXP = ProgressionService:AddXP(player, 200)
                 player:SetAttribute("LastNotice", "Тайник открыт! +5 лунных лепестков · +400 монет · "
-                    .. ProgressionService:FormatXPReward(awardedXP, extraXP) .. ".")
+                    .. ProgressionService:FormatXPReward(awardedXP, researchBonus, extraXP) .. ".")
             end)
             CLAIM_LOCKS[player] = nil
             if not ok then
@@ -181,10 +181,10 @@ function AncientSecretService:Init()
             profile.Materials.Elderwood = math.max(0, math.floor(tonumber(profile.Materials.Elderwood) or 0)) + 8
             player:SetAttribute("Elderwood", profile.Materials.Elderwood)
             EconomyService:GrantCoins(player, 250, "Секрет древней рощи")
-            local _, awardedXP, _, extraXP = ProgressionService:AddXP(player, 150)
+            local _, awardedXP, researchBonus, extraXP = ProgressionService:AddXP(player, 150)
             player:SetAttribute("AncientGroveSecretFound", true)
             player:SetAttribute("LastNotice", "Сердце древней рощи пробуждено! +250 монет · "
-                .. ProgressionService:FormatXPReward(awardedXP, extraXP) .. " · +8 древесной эссенции.")
+                .. ProgressionService:FormatXPReward(awardedXP, researchBonus, extraXP) .. " · +8 древесной эссенции.")
         end)
         CLAIM_LOCKS[player] = nil
         if not ok then
