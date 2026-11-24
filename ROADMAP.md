@@ -848,3 +848,17 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add a Studio-only, server-authoritative 1000-harvest gathering simulation, using the real bonus formula without awarding materials or changing cooldowns.
 - [ ] Confirm simulation output in Roblox Studio Play for unequipped and equipped Gatherer artifacts.
 - [x] Add regression coverage that the Studio-only 1000-harvest simulation cannot write resource balances or node cooldowns.
+- [x] Add static ordering checks proving Gatherer bonuses run only after biome, progression, health, distance, profile and node-cooldown validation.
+- [ ] Confirm all Gatherer gameplay and notices in Roblox Studio before closing Sprint 4.44.
+
+### Sprint 4.45 — Researcher artifact family (2026-11-24)
+- [x] Add Field Journal (+5% XP), Moon Atlas (+10% XP), and Star Compass (+15% XP).
+- [x] Apply equipped Researcher bonuses centrally through the server-authoritative ProgressionService:AddXP path.
+- [x] Scale Researcher bonuses by 25% per upgrade level and cap combined XP bonus at +50%.
+- [x] Rebalance catalog weights to income 42/21/7 (70%), Gatherer 12/6/2 (20%), Researcher 6/3/1 (10%); all weights total 100.
+- [x] Expose individual and combined XP bonuses in the artifact snapshot and Russian collection UI.
+- [x] Add Studio-only Researcher test inventory and a deterministic 1000-award simulation that does not award XP or change level.
+- [x] Add static regression checks for catalog odds, progression integration, UI, fixture guards and simulation side effects.
+- [ ] Verify +5% / +10% / +15% XP outcomes in Roblox Studio Play.
+- [ ] Verify level scaling, two-slot stacking, +50% cap, save persistence and 375px UI.
+- [ ] Verify all XP reward sources remain server-authoritative and the simulation does not mutate player progression.
