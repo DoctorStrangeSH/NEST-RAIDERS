@@ -222,5 +222,12 @@ Boss attacks now have distinct warning colors, a smoothly animated health bar an
 - Bonuses scale with artifact upgrades, stack additively across the two equipped slots, and are capped at +50%.
 - XP bonuses are applied centrally by the server progression service; clients cannot choose the reward amount.
 - Trial, secret, boss and companion-ability notices show actual XP, extra XP, and the expected Researcher percentage, including zero-extra rolls.
-- Craft odds: 70% income artifacts, 20% Gatherer artifacts, and 10% Researcher artifacts, with a 6:3:1 rarity ratio inside each family.
+- Craft odds: 60% income artifacts, 20% Gatherer artifacts, 10% Researcher artifacts, and 10% Hunter artifacts, with a 6:3:1 rarity ratio inside each family.
 - Roblox Studio includes temporary Researcher test artifacts and a 1000-award simulation that does not change player XP.
+
+
+## Hunter artifact family — Sprint 4.46
+- Hunter Trophy (+5%), Moon Tracker (+10%), and Hunter Crown (+15%) increase the relative weight of the highest-rarity companion in natural eggs.
+- The bonus is normalized against the egg's original species table, capped at +30% combined, and does not affect breeding eggs or genetic traits.
+- Natural hatch notices show the actual highest-rarity chance before and after the modifier.
+- Roblox Studio includes a temporary Hunter fixture and a 7,000-hatch simulation across all seven biome egg tables; the simulation does not award or consume gameplay items.
