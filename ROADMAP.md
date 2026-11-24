@@ -1288,3 +1288,18 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Test four pets and multiple players; monitor server performance, animation readability and save/rejoin persistence.
 
 **Acceptance:** personality-driven activity, paired social play, mood reward and owner greeting are integrated in source; Roblox Studio visual, multiplayer and persistence checks remain open.
+
+### Sprint 4.67 — Companion Friendship
+- [x] Add a backward-compatible `Nest.CompanionBonds` profile field; existing saves receive an empty table through profile reconciliation.
+- [x] Give each displayed companion a stable instance-ID attribute and store pair bonds under a deterministic, order-independent key.
+- [x] Award one friendship point to a pair only after the lower-numbered display slot completes a shared social session with its awake partner nearby.
+- [x] Prevent duplicate pair awards from both companions' independent behavior loops; interrupted or separated sessions grant no friendship points.
+- [x] Expose friendship score and relationship title on both pet models; show the score in the social interaction bubble.
+- [x] Add five relationship stages: Знакомство, Приятели, Друзья, Лучшие друзья, Неразлучные.
+- [x] Add static regression checks for migration-safe storage, pair key ordering, thresholds, single-award ownership and interrupted-session guards.
+- [ ] Roblox Studio: complete multiple social sessions and confirm the same pair progresses through relationship stages.
+- [ ] Remove or sleep a partner before the session ends; confirm neither mood nor friendship is rewarded for the interrupted session.
+- [ ] Rejoin a published private test server and confirm friendship score and title persist.
+- [ ] Test both display pairs (1–2, 3–4), changing displayed pets, and multiple players for cross-pair or cross-player leakage.
+
+**Acceptance:** persistent pair friendship is integrated and covered by static checks; in-Studio progression, interruption, multiplayer isolation and DataStore persistence remain open.
