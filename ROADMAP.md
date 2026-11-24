@@ -1048,3 +1048,26 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify the new HUD line remains readable at 320×480, 375×667, tablet and desktop.
  
 **Scope boundary:** Sprint 4.53 adds one mutually exclusive team synergy per raid participant. It does not add pet switching mid-match, new active slots, persistent team bonuses, additional currencies, or pet-vs-pet combat.
+
+ 
+### Sprint 4.54 — Companion synergy visual presentation (2026-11-24)
+- [x] Add a subtle persistent, role-colored team aura to each summoned raid companion when a synergy is active.
+- [x] Give Living Bastion, Assault Formation, Coordinated Assault and Triad distinct role-color palettes.
+- [x] Play a one-shot activation pulse on each active companion when the server starts the raid and confirms the roster synergy.
+- [x] Add short, automatically cleaned-up light/highlight cues when the team completes a validated strike, damages the core/defense, or successfully activates a pet ability.
+- [x] Add a defensive companion pulse when a Bastion/Triad synergy actually reduces incoming combat damage, including the existing shared damage pipeline.
+- [x] Trigger the defender's team cue on a successful parry; keep the existing counter-damage and combat balance unchanged.
+- [x] Throttle transient companion cues per participant; use short-lived effects and Debris cleanup to prevent particle/highlight accumulation.
+- [x] Add a compact animated activation toast to the raid HUD, deduplicated by a server-issued match/synergy pulse and styled by synergy type.
+- [x] Keep visuals cosmetic: no extra damage, healing, shields, cooldown changes, rewards, or client-authoritative combat state.
+- [x] Add static regression checks for all palettes, aura setup, throttling, cleanup, authoritative event hooks, toast deduplication and replicated attributes.
+- [ ] Roblox Studio: verify aura colors on all four synergies and ensure every active role companion receives the correct palette.
+- [ ] Verify activation pulse and HUD toast appear once per participant at raid start, including late HUD initialization.
+- [ ] Verify normal strikes, core/defense hits, Hunter/Healer/Guardian abilities and successful parries trigger the intended team cue.
+- [ ] Verify defensive pulses only occur when a real synergy damage reduction was applied.
+- [ ] Verify repeated strikes do not accumulate Highlights or PointLights and the visual throttle behaves on both clients.
+- [ ] Verify no-synergy teams receive no synergy aura, activation toast or coordinated synergy cue.
+- [ ] Verify visual effects do not obscure character attacks, pet nameplates, mobile controls or opponent readability at 320×480 and 375×667.
+- [ ] Run a full two-client match and check performance with three companions on each side.
+
+**Scope boundary:** Sprint 4.54 is presentation-only. It does not add new attacks, autonomous pet AI, additional combat events, client-side damage, permanent particle emitters or new progression data.
