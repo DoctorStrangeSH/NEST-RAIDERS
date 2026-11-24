@@ -1354,6 +1354,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add clear in-game pet states for seeking shelter, sheltering and enjoying rain.
 - [x] Add a responsive HUD strip showing live in-game time, day/night phase and current weather.
 - [x] Add static regression checks for weather configuration, effects, attributes, pet reactions and HUD updates.
+- [x] GitHub Actions: Rojo build, output verification, regression suite and Studio artifact upload passed (workflow run 45418731758).
+- [x] Downloaded and extracted the Studio artifact; `.rbxlx` parsed successfully as XML (artifact expires 2026-12-08).
 - [ ] Roblox Studio: verify rain particles cover the island, fade correctly, and do not obstruct building or prompts.
 - [ ] Verify fog visibility and cloud coverage at multiple camera zoom levels and on low graphics settings.
 - [ ] Verify lightning flashes are brief, readable and do not leave Lighting brightness in an incorrect state.
