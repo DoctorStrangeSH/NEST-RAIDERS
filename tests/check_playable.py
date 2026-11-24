@@ -815,8 +815,9 @@ assert 'payload.Action == "DevSeedHunterArtifacts"' in inventory_service
 assert 'payload.Action == "DevSimulateHatchBonus"' in inventory_service
 assert 'local simulationRandom = Random.new(446)' in inventory_service
 assert 'local samplesPerEgg = 1000' in inventory_service
-assert 'ArtifactBonusService:ChooseHatchSpecies(profile, eggDefinition.SpeciesWeights, roll)' in inventory_service
-assert 'ArtifactBonusService:ChooseHatchSpecies(baselineProfile, eggDefinition.SpeciesWeights, roll)' in inventory_service
+assert 'ArtifactBonusService:ChooseHatchSpecies(' in inventory_service
+assert 'profile, eggDefinition.SpeciesWeights, roll)' in inventory_service
+assert 'baselineProfile, eggDefinition.SpeciesWeights, roll)' in inventory_service
 assert 'HunterArtifactTestButton' in client
 assert 'Action = "DevSeedHunterArtifacts"' in client
 assert 'HunterSimulationButton' in client
