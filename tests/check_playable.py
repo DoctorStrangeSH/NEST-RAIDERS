@@ -819,8 +819,9 @@ assert 'profile.XP += awardedAmount' in progression_service
 assert 'player:SetAttribute("LastXPBonusAmount", extraXP)' in progression_service
 assert 'return true, awardedAmount, researchBonus, extraXP' in progression_service
 assert 'if safeAmount <= 0 then return false end' in progression_service
-assert 'function ProgressionService:FormatXPReward(awardedAmount, extraXP)' in progression_service
-assert 'self:FormatXPReward(awardedXP, extraXP)' in progression_service
+assert 'function ProgressionService:FormatXPReward(awardedAmount, researchBonus, extraXP)' in progression_service
+assert 'self:FormatXPReward(awardedXP, researchBonus, extraXP)' in progression_service
+assert 'бонус +%d%%' in progression_service
 
 xp_reward_sources = {
     "AncientSecretService": Path("src/ServerScriptService/Server/Services/AncientSecretService.lua").read_text(),
@@ -830,10 +831,10 @@ xp_reward_sources = {
     "ForgottenHeartBossService": Path("src/ServerScriptService/Server/Services/ForgottenHeartBossService.lua").read_text(),
 }
 for source_name, source_content in xp_reward_sources.items():
-    assert 'local _, awardedXP, _, extraXP = ProgressionService:AddXP' in source_content, source_name
-    assert 'ProgressionService:FormatXPReward(awardedXP, extraXP)' in source_content, source_name
-assert 'local ok, awardedXP, _, extraXP = ProgressionService:AddXP(player, reward)' in inventory_service
-assert 'ProgressionService:FormatXPReward(awardedXP, extraXP)' in inventory_service
+    assert 'local _, awardedXP, researchBonus, extraXP = ProgressionService:AddXP' in source_content, source_name
+    assert 'ProgressionService:FormatXPReward(awardedXP, researchBonus, extraXP)' in source_content, source_name
+assert 'local ok, awardedXP, researchBonus, extraXP = ProgressionService:AddXP(player, reward)' in inventory_service
+assert 'ProgressionService:FormatXPReward(awardedXP, researchBonus, extraXP)' in inventory_service
 assert 'EquippedResearchBonus' in inventory_service
 assert 'payload.Action == "DevSeedResearcherArtifacts"' in inventory_service
 assert 'payload.Action == "DevSimulateResearchBonus"' in inventory_service
