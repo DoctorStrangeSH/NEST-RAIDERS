@@ -1836,17 +1836,24 @@ local inventoryPanel = Instance.new("Frame")
 inventoryPanel.Name = "CompanionInventory"
 inventoryPanel.AnchorPoint = Vector2.new(0.5, 0.5)
 inventoryPanel.Position = UDim2.fromScale(0.5, 0.5)
-inventoryPanel.Size = UDim2.new(0.9, 0, 0.72, 0)
+inventoryPanel.Size = UDim2.new(0.94, 0, 0.82, 0)
 inventoryPanel.BackgroundColor3 = Color3.fromRGB(25, 42, 52)
 inventoryPanel.BorderSizePixel = 0
 inventoryPanel.Visible = false
 inventoryPanel.Parent = gui
-addCorner(inventoryPanel, 18)
+addCorner(inventoryPanel, 20)
 addStroke(inventoryPanel, Color3.fromRGB(123, 211, 163), 2)
+local inventoryGradient = Instance.new("UIGradient")
+inventoryGradient.Color = ColorSequence.new(
+    Color3.fromRGB(37, 64, 70),
+    Color3.fromRGB(22, 35, 48)
+)
+inventoryGradient.Rotation = 90
+inventoryGradient.Parent = inventoryPanel
 
 local sizeLimit = Instance.new("UISizeConstraint")
-sizeLimit.MinSize = Vector2.new(290, 300)
-sizeLimit.MaxSize = Vector2.new(460, 560)
+sizeLimit.MinSize = Vector2.new(300, 340)
+sizeLimit.MaxSize = Vector2.new(560, 660)
 sizeLimit.Parent = inventoryPanel
 
 local inventoryTitle = Instance.new("TextLabel")
@@ -1856,9 +1863,18 @@ inventoryTitle.Size = UDim2.new(1, -76, 0, 30)
 inventoryTitle.Font = Enum.Font.GothamBlack
 inventoryTitle.Text = "КОЛЛЕКЦИЯ ПИТОМЦЕВ"
 inventoryTitle.TextColor3 = Color3.fromRGB(255, 224, 135)
-inventoryTitle.TextSize = 18
+inventoryTitle.TextSize = 17
 inventoryTitle.TextXAlignment = Enum.TextXAlignment.Left
 inventoryTitle.Parent = inventoryPanel
+
+local inventoryHeaderLine = Instance.new("Frame")
+inventoryHeaderLine.Name = "HeaderAccent"
+inventoryHeaderLine.Position = UDim2.fromOffset(16, 41)
+inventoryHeaderLine.Size = UDim2.new(1, -32, 0, 2)
+inventoryHeaderLine.BackgroundColor3 = Color3.fromRGB(120, 193, 154)
+inventoryHeaderLine.BorderSizePixel = 0
+inventoryHeaderLine.Parent = inventoryPanel
+addCorner(inventoryHeaderLine, 2)
 
 local closeButton = Instance.new("TextButton")
 closeButton.AnchorPoint = Vector2.new(1, 0)
@@ -1872,47 +1888,67 @@ closeButton.Font = Enum.Font.GothamBold
 closeButton.Parent = inventoryPanel
 addCorner(closeButton, 10)
 
+local inventorySummaryFrame = Instance.new("Frame")
+inventorySummaryFrame.Name = "TeamSummary"
+inventorySummaryFrame.Position = UDim2.fromOffset(16, 49)
+inventorySummaryFrame.Size = UDim2.new(1, -32, 0, 24)
+inventorySummaryFrame.BackgroundColor3 = Color3.fromRGB(43, 70, 69)
+inventorySummaryFrame.BorderSizePixel = 0
+inventorySummaryFrame.Parent = inventoryPanel
+addCorner(inventorySummaryFrame, 8)
+
 local inventorySummary = Instance.new("TextLabel")
+inventorySummary.Name = "TeamSummaryText"
 inventorySummary.BackgroundTransparency = 1
-inventorySummary.Position = UDim2.fromOffset(18, 46)
-inventorySummary.Size = UDim2.new(1, -36, 0, 24)
-inventorySummary.Font = Enum.Font.GothamMedium
-inventorySummary.Text = "Активные питомцы: 0 / 3"
-inventorySummary.TextColor3 = Color3.fromRGB(194, 215, 211)
-inventorySummary.TextSize = 14
+inventorySummary.Position = UDim2.fromOffset(10, 0)
+inventorySummary.Size = UDim2.new(1, -20, 1, 0)
+inventorySummary.Font = Enum.Font.GothamBold
+inventorySummary.Text = "В КОМАНДЕ · 0 / 3"
+inventorySummary.TextColor3 = Color3.fromRGB(222, 244, 220)
+inventorySummary.TextSize = 11
 inventorySummary.TextXAlignment = Enum.TextXAlignment.Left
-inventorySummary.Parent = inventoryPanel
+inventorySummary.Parent = inventorySummaryFrame
 
 local geneticsHint = Instance.new("TextLabel")
 geneticsHint.Name = "GeneticOdds"
 geneticsHint.BackgroundTransparency = 1
-geneticsHint.Position = UDim2.fromOffset(18, 68)
-geneticsHint.Size = UDim2.new(1, -36, 0, 24)
+geneticsHint.Position = UDim2.fromOffset(18, 76)
+geneticsHint.Size = UDim2.new(1, -36, 0, 15)
 geneticsHint.Font = Enum.Font.GothamMedium
-geneticsHint.Text = "ГЕНЕТИКА · Естеств. 72% · Изумруд 18% · Свет 8% · Призма 2%"
+geneticsHint.Text = "ГЕНЕТИКА  ·  Естеств. 72%  ·  Изумруд 18%  ·  Свет 8%  ·  Призма 2%"
 geneticsHint.TextColor3 = Color3.fromRGB(171, 205, 191)
-geneticsHint.TextSize = 9
+geneticsHint.TextSize = 8
 geneticsHint.TextXAlignment = Enum.TextXAlignment.Left
-geneticsHint.TextWrapped = true
+geneticsHint.TextTruncate = Enum.TextTruncate.AtEnd
 geneticsHint.Parent = inventoryPanel
 
 local incubatorSummary = Instance.new("TextLabel")
 incubatorSummary.Name = "IncubatorSummary"
 incubatorSummary.BackgroundTransparency = 1
-incubatorSummary.Position = UDim2.fromOffset(18, 94)
-incubatorSummary.Size = UDim2.new(1, -36, 0, 32)
+local incubatorFrame = Instance.new("Frame")
+incubatorFrame.Name = "IncubatorStatus"
+incubatorFrame.Position = UDim2.fromOffset(16, 96)
+incubatorFrame.Size = UDim2.new(1, -32, 0, 36)
+incubatorFrame.BackgroundColor3 = Color3.fromRGB(62, 59, 53)
+incubatorFrame.BackgroundTransparency = 0.12
+incubatorFrame.BorderSizePixel = 0
+incubatorFrame.Parent = inventoryPanel
+addCorner(incubatorFrame, 9)
+
+incubatorSummary.Position = UDim2.fromOffset(10, 3)
+incubatorSummary.Size = UDim2.new(1, -20, 1, -6)
 incubatorSummary.Font = Enum.Font.GothamMedium
 incubatorSummary.Text = "ИНКУБАТОР · Яиц пока нет"
-incubatorSummary.TextColor3 = Color3.fromRGB(255, 205, 137)
-incubatorSummary.TextSize = 10
+incubatorSummary.TextColor3 = Color3.fromRGB(255, 220, 166)
+incubatorSummary.TextSize = 9
 incubatorSummary.TextXAlignment = Enum.TextXAlignment.Left
 incubatorSummary.TextWrapped = true
-incubatorSummary.Parent = inventoryPanel
+incubatorSummary.Parent = incubatorFrame
 
 local list = Instance.new("ScrollingFrame")
 list.Name = "CompanionList"
-list.Position = UDim2.fromOffset(12, 130)
-list.Size = UDim2.new(1, -24, 1, -144)
+list.Position = UDim2.fromOffset(12, 140)
+list.Size = UDim2.new(1, -24, 1, -154)
 list.BackgroundTransparency = 1
 list.BorderSizePixel = 0
 list.ScrollBarThickness = 6
@@ -1927,15 +1963,19 @@ listLayout.Parent = list
 
 local emptyLabel = Instance.new("TextLabel")
 emptyLabel.Name = "EmptyState"
-emptyLabel.Size = UDim2.new(1, -20, 0, 76)
-emptyLabel.BackgroundTransparency = 1
+emptyLabel.Size = UDim2.new(1, -12, 0, 92)
+emptyLabel.BackgroundColor3 = Color3.fromRGB(40, 61, 65)
+emptyLabel.BackgroundTransparency = 0.08
 emptyLabel.Font = Enum.Font.GothamMedium
-emptyLabel.Text = "Питомцев пока нет. Найди яйцо и вылупи своего первого друга!"
-emptyLabel.TextColor3 = Color3.fromRGB(194, 215, 211)
-emptyLabel.TextSize = 15
+emptyLabel.Text = "ПОКА НЕТ ПИТОМЦЕВ\nНайди яйцо на острове и вылупи своего первого друга!"
+emptyLabel.TextColor3 = Color3.fromRGB(218, 232, 220)
+emptyLabel.TextSize = 13
 emptyLabel.TextWrapped = true
+emptyLabel.TextXAlignment = Enum.TextXAlignment.Center
 emptyLabel.Visible = false
 emptyLabel.Parent = list
+addCorner(emptyLabel, 14)
+addStroke(emptyLabel, Color3.fromRGB(106, 156, 132), 1)
 
 -- Unified saved-material inventory: one source of truth for all gathered biome resources.
 materialsPanel = Instance.new("Frame")
