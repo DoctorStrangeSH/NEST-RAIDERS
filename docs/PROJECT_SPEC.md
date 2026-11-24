@@ -507,7 +507,7 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The server-only ArtifactBonusService calculates bonuses from owned artifact instances referenced by EquippedArtifacts. Client input cannot choose a bonus or resource amount.
 - Bonuses are applied to the successful base yield of Elderwood roots in Ancient Heights and crystal veins in Crystal Realm, after existing companion mining bonuses.
 - Fractional expected bonus yield is rolled once per successful node harvest. It does not bypass or shorten the existing per-node cooldown.
-- After adding Researchers in Sprint 4.45, current weights total 100: income artifacts use 42/21/7 (70%), Gatherer artifacts use 12/6/2 (20%), and Researcher artifacts use 6/3/1 (10%). Each family retains a 6:3:1 relative rarity ratio.
+- After adding Hunters in Sprint 4.46, current weights total 100: income artifacts use 36/18/6 (60%), Gatherer artifacts use 12/6/2 (20%), Researcher artifacts use 6/3/1 (10%), and Hunter artifacts use 6/3/1 (10%). Each family retains a 6:3:1 relative rarity ratio.
 
 ### Studio QA fixture — Gatherer artifacts
 - The artifact collection exposes a temporary QA action only when the client is running in Roblox Studio.
@@ -522,5 +522,16 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Fractional expected bonus XP is rolled once per XP award. A zero or invalid base reward awards no XP and does not trigger a bonus roll.
 - Trial, secret, boss, and companion-ability notices display the actual XP awarded, the actual extra XP, and the expected Researcher percentage when equipped (including a zero-extra roll); they never display the unmodified base reward as if it were the final amount.
 - The artifact snapshot exposes each Researcher bonus and the combined equipped XP bonus. The collection UI displays the scaled effect and equipped XP total.
-- Current craft odds reserve 10% for the Researcher family (6/3/1), while preserving 70% income (42/21/7) and 20% gathering (12/6/2).
+- Current craft odds reserve 10% for Researchers (6/3/1) and 10% for Hunters (6/3/1), alongside 60% income (36/18/6) and 20% gathering (12/6/2).
 - Roblox Studio exposes a temporary Researcher fixture and a deterministic 1000-award simulation. Both are server-guarded, use an isolated random stream, and the simulation never changes profile XP or player level.
+
+
+## Hunter artifact family — Sprint 4.46
+- Three Hunter artifacts improve the chance of hatching a companion from the highest rarity tier present in the selected natural egg: Hunter Trophy (+5%), Moon Tracker (+10%), Hunter Crown (+15%).
+- The percentage is a relative multiplier on the weights of the egg's highest available rarity tier, not a percentage-point guarantee. All lower rarity weights remain unchanged and the complete table is renormalized.
+- The server derives rarity rank from CompanionCatalog and selects from the original biome egg SpeciesWeights. It does not add species, alter base tables, or change genetic-trait odds.
+- Hunter bonuses apply only to natural world/shop eggs. Breeding eggs retain their inherited offspring and trait without any Hunter reroll.
+- Hunter bonuses scale by 25% per artifact upgrade level; the combined equipped Hunter bonus is capped at +30%. The two existing equipment slots remain unchanged.
+- Successful natural hatch notices display the actual highest-tier chance before and after the equipped Hunter modifier.
+- Craft weights are rebalanced to income 36/18/6 (60%), Gatherer 12/6/2 (20%), Researcher 6/3/1 (10%), Hunter 6/3/1 (10%); all weights total 100.
+- Roblox Studio exposes a server-guarded Hunter fixture and a deterministic 7,000-hatch simulation (1,000 per natural egg table). The simulation uses the production selection formula and does not consume eggs, grant companions, change XP, or mutate profile inventory.
