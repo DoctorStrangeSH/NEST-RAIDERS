@@ -18,6 +18,7 @@ assert '🪙' not in client, "Avoid unsupported currency emoji glyphs in UI"
 server = Path("src/ServerScriptService/Server/Bootstrap.server.lua").read_text()
 watchdog = Path("src/StarterPlayer/StarterPlayerScripts/BootRecovery.client.lua").read_text()
 world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
+game_config = Path("src/ReplicatedStorage/Shared/Config/GameConfig.lua").read_text()
 plots = Path("src/ServerScriptService/Server/Services/PlotService.lua").read_text()
 companion_service = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
 display_pet_service = Path("src/ServerScriptService/Server/Services/DisplayPetService.lua").read_text()
@@ -28,6 +29,27 @@ assert 'local ok, model, station, ownerLabel = pcall(buildPlot, folder, definiti
 assert 'folder:SetAttribute("CreatedCount", created)' in plots
 assert 'folder:SetAttribute("ExpectedCount", #PLOT_DEFINITIONS)' in plots
 assert 'return self._initialized, created' in plots
+
+# Sprint 4.69 — synchronized world clock and species-specific activity windows.
+assert 'GameConfig.WorldCycle = {' in game_config
+assert 'SecondsPerGameHour = 60' in game_config
+assert 'StartClockTime = 14' in game_config
+assert 'DayStartsAt = 6' in game_config and 'NightStartsAt = 19' in game_config
+assert 'local cycleConfig = GameConfig.WorldCycle or {}' in world
+assert 'while world.Parent == Workspace do' in world
+assert 'Lighting.ClockTime = clockTime' in world
+assert 'world:SetAttribute("WorldTimePhase", isNight and "Night" or "Day")' in world
+assert 'world:SetAttribute("WorldTimeLabel", isNight and "Ночь" or "День")' in world
+assert 'local isNight = clockTime >= nightStartsAt or clockTime < dayStartsAt' in world
+assert 'ActivityPeriod = "Day"' in companion_catalog
+assert companion_catalog.count('ActivityPeriod = "Night"') >= 4
+assert 'NightGlowColor = Color3.fromRGB' in companion_catalog
+assert 'local activityPeriod = petDefinition.ActivityPeriod or "Any"' in companion_service
+assert 'local isPreferredTime = activityPeriod == "Any"' in companion_service
+assert 'nightGlow.Brightness = isNight and 0.8 or 0' in companion_service
+assert 'treasureChance *= isPreferredTime and 1.25 or 0.55' in companion_service
+assert 'speed *= isPreferredTime and 1.18 or 0.72' in companion_service
+assert 'ActivityState' in companion_service
 world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
 grove_secret = Path("src/ServerScriptService/Server/Services/AncientSecretService.lua").read_text()
 ancient_cave = Path("src/ServerScriptService/Server/Services/AncientCaveService.lua").read_text()
