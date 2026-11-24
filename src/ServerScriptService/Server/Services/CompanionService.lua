@@ -4,6 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
+local EconomyService = require(ServerScriptService.Server.Services.EconomyService)
 local NestToyCatalog = require(ReplicatedStorage.Shared.Config.NestToyCatalog)
 local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 
@@ -465,6 +466,12 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
         end
     end
 
+    profile.Nest.CompanionGiftReadyAt = math.max(0, math.floor(tonumber(profile.Nest.CompanionGiftReadyAt) or 0))
+    local nextTreasureAt = math.max(os.time() + 20, profile.Nest.CompanionGiftReadyAt)
+    local giftCache = nil
+    local giftCacheClaimed = false
+    local treasureSearchOwner = nil
+
     for rawSlot, instanceId in pairs(displayedIds or {}) do
         local slot = tonumber(rawSlot)
         local companion = ownedById[instanceId]
@@ -521,16 +528,16 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local petDefinition = CompanionCatalog[companion.Id] or {}
             local personality = petDefinition.Personality or "Обычный"
             local personalityProfiles = {
-                ["Игривый"] = { SocialChance = 0.28, IdleMin = 0.7, IdleMax = 1.5, ToyChance = 0.58 },
-                ["Энергичный"] = { SocialChance = 0.25, IdleMin = 0.6, IdleMax = 1.4, ToyChance = 0.62 },
-                ["Любопытный"] = { SocialChance = 0.24, IdleMin = 0.8, IdleMax = 1.7, ToyChance = 0.55 },
-                ["Любознательный"] = { SocialChance = 0.22, IdleMin = 0.8, IdleMax = 1.8, ToyChance = 0.52 },
-                ["Дружелюбный"] = { SocialChance = 0.34, IdleMin = 0.8, IdleMax = 1.8, ToyChance = 0.42 },
-                ["Спокойный"] = { SocialChance = 0.08, IdleMin = 1.8, IdleMax = 3.2, ToyChance = 0.24 },
-                ["Мудрый"] = { SocialChance = 0.12, IdleMin = 1.6, IdleMax = 2.8, ToyChance = 0.28 },
-                ["Осторожный"] = { SocialChance = 0.07, IdleMin = 1.7, IdleMax = 3.0, ToyChance = 0.2 },
-                ["Мечтательный"] = { SocialChance = 0.14, IdleMin = 1.5, IdleMax = 2.8, ToyChance = 0.32 },
-                ["Добродушный"] = { SocialChance = 0.3, IdleMin = 1.0, IdleMax = 2.0, ToyChance = 0.4 },
+                ["Игривый"] = { SocialChance = 0.28, IdleMin = 0.7, IdleMax = 1.5, ToyChance = 0.58, TreasureChance = 0.09 },
+                ["Энергичный"] = { SocialChance = 0.25, IdleMin = 0.6, IdleMax = 1.4, ToyChance = 0.62, TreasureChance = 0.11 },
+                ["Любопытный"] = { SocialChance = 0.24, IdleMin = 0.8, IdleMax = 1.7, ToyChance = 0.55, TreasureChance = 0.24 },
+                ["Любознательный"] = { SocialChance = 0.22, IdleMin = 0.8, IdleMax = 1.8, ToyChance = 0.52, TreasureChance = 0.22 },
+                ["Дружелюбный"] = { SocialChance = 0.34, IdleMin = 0.8, IdleMax = 1.8, ToyChance = 0.42, TreasureChance = 0.1 },
+                ["Спокойный"] = { SocialChance = 0.08, IdleMin = 1.8, IdleMax = 3.2, ToyChance = 0.24, TreasureChance = 0.04 },
+                ["Мудрый"] = { SocialChance = 0.12, IdleMin = 1.6, IdleMax = 2.8, ToyChance = 0.28, TreasureChance = 0.16 },
+                ["Осторожный"] = { SocialChance = 0.07, IdleMin = 1.7, IdleMax = 3.0, ToyChance = 0.2, TreasureChance = 0.05 },
+                ["Мечтательный"] = { SocialChance = 0.14, IdleMin = 1.5, IdleMax = 2.8, ToyChance = 0.32, TreasureChance = 0.13 },
+                ["Добродушный"] = { SocialChance = 0.3, IdleMin = 1.0, IdleMax = 2.0, ToyChance = 0.4, TreasureChance = 0.12 },
             }
             local personalityProfile = personalityProfiles[personality] or {
                 SocialChance = 0.16, IdleMin = 1.0, IdleMax = 2.4, ToyChance = 0.38,
@@ -548,6 +555,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local toyPlayUntil = 0
             local socialPlayUntil = 0
             local socialRewarded = false
+            local targetIsTreasure = false
             local partnerSlot = slot % 2 == 1 and slot + 1 or slot - 1
             local behavior = sleeping and "Sleeping"
                 or (hunger <= 20 and "Hungry")
@@ -649,6 +657,63 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 targetIsToy = false
                                 toyPlayUntil = now + random:NextNumber(2.8, 4.2)
                                 idleUntil = toyPlayUntil
+                            elseif targetIsTreasure then
+                                targetIsTreasure = false
+                                local cache = Instance.new("Part")
+                                cache.Name = "CompanionGiftCache"
+                                cache.Size = Vector3.new(1.5, 0.9, 1.15)
+                                cache.CFrame = CFrame.new(currentPosition + Vector3.new(0, 0.55, 0))
+                                cache.Anchored = true
+                                cache.CanCollide = false
+                                cache.Material = Enum.Material.WoodPlanks
+                                cache.Color = Color3.fromRGB(145, 91, 48)
+                                cache.Parent = folder
+                                giftCache = cache
+                                giftCacheClaimed = false
+                                local lid = Instance.new("Part")
+                                lid.Name = "CacheLid"
+                                lid.Size = Vector3.new(1.58, 0.22, 1.2)
+                                lid.CFrame = cache.CFrame * CFrame.new(0, 0.52, 0)
+                                lid.Anchored = true
+                                lid.CanCollide = false
+                                lid.Material = Enum.Material.Wood
+                                lid.Color = Color3.fromRGB(190, 132, 69)
+                                lid.Parent = cache
+                                local glow = Instance.new("PointLight")
+                                glow.Color = Color3.fromRGB(255, 210, 105)
+                                glow.Brightness = 1.2
+                                glow.Range = 9
+                                glow.Parent = cache
+                                local prompt = Instance.new("ProximityPrompt")
+                                prompt.Name = "CollectCompanionGift"
+                                prompt.ActionText = "Забрать подарок"
+                                prompt.ObjectText = "Находка питомца"
+                                prompt.KeyboardKeyCode = Enum.KeyCode.E
+                                prompt.HoldDuration = 0.35
+                                prompt.MaxActivationDistance = 10
+                                prompt.RequiresLineOfSight = false
+                                prompt.Parent = cache
+                                local finder = companion
+                                prompt.Triggered:Connect(function(collector)
+                                    if collector ~= player or not player.Parent or giftCache ~= cache or giftCacheClaimed then return end
+                                    giftCacheClaimed = true
+                                    local reward = 25 + math.clamp(math.floor(tonumber(finder.Level) or 1), 1, 10) * 2
+                                        + math.clamp(math.floor(tonumber(finder.Stars) or 1), 1, 3) * 8
+                                    if not EconomyService:GrantCoins(player, reward, "Подарок питомца") then
+                                        giftCacheClaimed = false
+                                        return
+                                    end
+                                    profile.Nest.CompanionGiftReadyAt = os.time() + 180
+                                    nextTreasureAt = profile.Nest.CompanionGiftReadyAt
+                                    mood = math.clamp(mood + 3, 0, 100)
+                                    profile.Nest.CompanionMood[instanceId] = mood
+                                    model:SetAttribute("Mood", mood)
+                                    player:SetAttribute("LastNotice", finder.Name .. " принёс подарок: +" .. reward .. " монет!")
+                                    treasureSearchOwner = nil
+                                    giftCache = nil
+                                    cache:Destroy()
+                                end)
+                                idleUntil = now + 2
                             elseif targetIsSocial then
                                 local partnerPosition = partnerModel and partnerModel:GetPivot().Position
                                 if partnerPosition and (partnerPosition - currentPosition).Magnitude <= 10 then
@@ -672,7 +737,16 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 and energy >= math.max(0, math.floor(tonumber(toyDefinition.EnergyCost) or 0))
                             local favoriteToy = toyId ~= nil and toyId == petDefinition.FavoriteToy
                             local toyChance = personalityProfile.ToyChance + (favoriteToy and 0.2 or 0)
-                            if canSocialize and socialTrigger then
+                            local treasureChance = personalityProfile.TreasureChance or 0.08
+                            local canSearch = not giftCache and not treasureSearchOwner
+                                and os.time() >= nextTreasureAt and energy >= 35 and hunger >= 25
+                            if canSearch and random:NextNumber() < treasureChance then
+                                treasureSearchOwner = instanceId
+                                targetPosition = home + Vector3.new(random:NextNumber(-2.8, 2.8), 0, random:NextNumber(-2.8, 2.8))
+                                targetIsTreasure = true
+                                targetIsToy = false
+                                targetIsSocial = false
+                            elseif canSocialize and socialTrigger then
                                 targetPosition = socialApproach
                                 targetIsSocial = true
                                 targetIsToy = false
@@ -699,7 +773,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local step = math.min(direction.Magnitude, speed * delta)
                             currentPosition += direction.Unit * step
                             facing = math.atan2(direction.X, direction.Z)
-                            behavior = targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering")
+                            behavior = targetIsTreasure and "Searching" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering"))
                             bob = math.abs(math.sin(now * 9 + phase)) * 0.1
                         else
                             local nearToy = toyPart and (currentPosition - toyApproach).Magnitude < 0.55
@@ -758,6 +832,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     model:SetAttribute("FriendshipScore", bondScore)
                     model:SetAttribute("FriendshipLevel", getBondLevel(bondScore))
                     moodLabel.Text = isSleeping and "Zzz"
+                        or (behavior == "Searching" and "🔎 Ищет находку")
                         or (behavior == "Socializing" and string.format("♥♥  Дружба %d%%", bondScore))
                         or (behavior == "Greeting" and string.format("♥%d ✨", mood))
                         or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
