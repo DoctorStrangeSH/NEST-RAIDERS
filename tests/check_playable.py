@@ -517,8 +517,15 @@ assert 'MAX_GATHER_BONUS = 0.50' in artifact_bonus
 assert 'definition.GatherBonus' in artifact_bonus and 'profile.EquippedArtifacts' in artifact_bonus
 assert 'RootHarvester' in artifact_catalog and 'MoonForager' in artifact_catalog and 'StarProspector' in artifact_catalog
 assert 'GatherBonus = 0.05' in artifact_catalog and 'GatherBonus = 0.10' in artifact_catalog and 'GatherBonus = 0.15' in artifact_catalog
-assert 'Weight = 48' in artifact_catalog and 'Weight = 24' in artifact_catalog and 'Weight = 8' in artifact_catalog
+assert 'Weight = 42' in artifact_catalog and 'Weight = 21' in artifact_catalog and 'Weight = 7' in artifact_catalog
 assert 'Weight = 12' in artifact_catalog and 'Weight = 6' in artifact_catalog and 'Weight = 2' in artifact_catalog
+assert 'FieldJournal' in artifact_catalog and 'MoonAtlas' in artifact_catalog and 'StarCompass' in artifact_catalog
+assert 'ResearchBonus = 0.05' in artifact_catalog and 'ResearchBonus = 0.10' in artifact_catalog and 'ResearchBonus = 0.15' in artifact_catalog
+assert 'Weight = 6' in artifact_catalog and 'Weight = 3' in artifact_catalog and 'Weight = 1' in artifact_catalog
+assert 'function ArtifactBonusService:GetResearchBonus(profile)' in artifact_bonus
+assert 'function ArtifactBonusService:ApplyResearchBonus(profile, baseAmount, rollValue)' in artifact_bonus
+assert 'MAX_RESEARCH_BONUS = 0.50' in artifact_bonus
+assert 'definition.ResearchBonus' in artifact_bonus
 assert 'ApplyGatherBonus(profile, baseAmount)' in ancient_harvest
 assert 'gatherBonus > 0' in ancient_harvest and 'артефакт: +%d дополнительно (средний бонус +%d%%)' in ancient_harvest
 assert 'local amount, gatherBonus, extraMaterials = ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)' in ancient_harvest
@@ -530,8 +537,10 @@ assert 'NODE_COOLDOWN_SECONDS = 180' in ancient_harvest and 'NODE_COOLDOWN_SECON
 assert 'CurrentBiome") ~= "AncientHeights"' in ancient_harvest
 assert 'CurrentBiome") ~= "CrystalRealm"' in crystal_mining
 assert 'GatherBonus = math.min(0.50' in inventory
-assert 'EquippedGatherBonus' in inventory and 'GatherBonus' in client
-assert 'ДОБЫЧА +%d%%' in client and 'Добыча +%d%%' in client
+assert 'ResearchBonus = math.min(0.50' in inventory
+assert 'EquippedGatherBonus' in inventory and 'EquippedResearchBonus' in inventory
+assert 'GatherBonus' in client and 'ResearchBonus' in client
+assert 'ДОБЫЧА +%d%%' in client and 'ОПЫТ +%d%%' in client and 'Добыча +%d%%' in client and 'Опыт +%d%%' in client
 
 # Ancient Tree Temple: walkable side-island, ordered runes, personal treasure claim and objective HUD.
 ancient_temple = Path("src/ServerScriptService/Server/Services/AncientTempleService.lua").read_text()
@@ -727,7 +736,29 @@ for artifact_id, (base_bonus, _) in gatherer_definitions.items():
     assert all(level_bonuses[index] < level_bonuses[index + 1] for index in range(5))
 assert min(0.50, 0.3375 + 0.225) == 0.50
 assert min(0.50, 0.3375 + 0.3375) == 0.50
+
+researcher_definitions = {
+    "FieldJournal": (0.05, 6),
+    "MoonAtlas": (0.10, 3),
+    "StarCompass": (0.15, 1),
+}
+for artifact_id, (base_bonus, weight) in researcher_definitions.items():
+    match = re.search(
+        rf'{artifact_id} = \\{{.*?ResearchBonus = ([0-9.]+), Weight = (\\d+),',
+        artifact_catalog,
+        re.S,
+    )
+    assert match, f"Missing researcher catalog entry: {artifact_id}"
+    assert float(match.group(1)) == base_bonus
+    assert int(match.group(2)) == weight
+assert sum(weight for _, weight in researcher_definitions.values()) == 10
+assert sum(weight for _, weight in gatherer_definitions.values()) == 20
+assert sum(weight for _, weight in researcher_definitions.values()) + sum(weight for _, weight in gatherer_definitions.values()) == 30
+assert 'local MAX_RESEARCH_BONUS = 0.50' in artifact_bonus
+assert '1 + (level - 1) * 0.25' in artifact_bonus
 assert 'local expectedExtra = safeBase * bonus' in artifact_bonus
+assert 'if fraction > 0 then' in artifact_bonus
+assert 'local roll = type(rollValue) == "number" and math.clamp(rollValue, 0, 0.999999999) or math.random()' in artifact_bonus
 assert 'local fraction = expectedExtra - extra' in artifact_bonus
 assert 'if fraction > 0 and roll < fraction then' in artifact_bonus
 assert 'or math.random()' in artifact_bonus
@@ -778,6 +809,32 @@ assert 'Action = "DevSimulateGatherBonus"' in client
 assert 'return response.Data, response.Message' in client
 assert 'ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ' in client
 assert 'добычу ресурсов' in client
+
+# Researcher artifacts add server-authoritative XP through the single progression entry point.
+progression_service = Path("src/ServerScriptService/Server/Services/ProgressionService.lua").read_text()
+assert 'ArtifactBonusService:ApplyResearchBonus(profile, safeAmount)' in progression_service
+assert 'profile.XP += awardedAmount' in progression_service
+assert 'player:SetAttribute("LastXPBonusAmount", extraXP)' in progression_service
+assert 'return true, awardedAmount, researchBonus, extraXP' in progression_service
+assert 'EquippedResearchBonus' in inventory_service
+assert 'payload.Action == "DevSeedResearcherArtifacts"' in inventory_service
+assert 'payload.Action == "DevSimulateResearchBonus"' in inventory_service
+assert 'local simulationRandom = Random.new(445)' in inventory_service
+assert 'for sample = 1, 1000 do' in inventory_service
+assert 'ArtifactBonusService:ApplyResearchBonus(profile, baseAmount, simulationRandom:NextNumber())' in inventory_service
+assert 'ResearcherArtifactTestButton' in client
+assert 'Action = "DevSeedResearcherArtifacts"' in client
+assert 'ResearcherSimulationButton' in client
+assert 'Action = "DevSimulateResearchBonus"' in client
+
+research_start = inventory_service.index('if payload.Action == "DevSimulateResearchBonus" then')
+research_end = inventory_service.index('if payload.Action == "Get" then', research_start)
+research_simulation_block = inventory_service[research_start:research_end]
+assert research_simulation_block.index('if not RunService:IsStudio()') < research_simulation_block.index('Random.new(445)')
+assert 'makeSnapshot(profile)' in research_simulation_block
+assert not any(token in research_simulation_block for token in (
+    'profile.XP', 'profile.Level', 'ProgressionService:AddXP', 'profile.Materials', 'NodeCooldowns'
+))
 
 # Gatherer bonuses must run only after every harvest guard and the existing cooldown.
 ancient_harvest = Path("src/ServerScriptService/Server/Services/AncientHarvestService.lua").read_text()
