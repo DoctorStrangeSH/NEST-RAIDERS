@@ -806,7 +806,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify passive income changes only while artifacts are equipped and remains correct after rejoin.
 - [ ] Test collection panel on 375px mobile and desktop; verify workshop range and biome restrictions.
 
-**Scope note:** Artifact effects currently include passive-income bonuses and the Sprint 4.44 gathering bonuses. Hatch-rate bonuses remain reserved for a later balance-tested artifact family.
+**Historical scope note (Sprint 4.42):** At this milestone, artifacts affected passive income only. Gathering, XP, and hatch-rate effects were introduced in Sprints 4.44, 4.45, and 4.46 respectively. Current family odds and behavior are documented in the latest artifact sprint entries.
 
 ### Sprint 4.43 — Artifact upgrades and merging (2026-11-23)
 
