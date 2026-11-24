@@ -1665,7 +1665,7 @@ renderArtifacts = function(data)
             if updated then renderArtifacts(updated) end
         end)
 
-        local groupKey = tostring(artifact.Id) .. ":" .. tostring(level)
+        local groupKey = tostring(artifact.Id) .. ":" .. tostring(level) .. ":" .. tostring(artifact.DevOnly == true)
         local mergeIds = mergeGroups[groupKey]
         if mergeIds and artifact.InstanceId == mergeIds[1].InstanceId then
             local mergeButton = Instance.new("TextButton")
