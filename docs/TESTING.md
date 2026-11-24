@@ -625,3 +625,4 @@
 - [ ] Unequip the Gatherer and rerun to confirm the bonus disappears.
 - [ ] Ensure simulated samples never award real materials or bypass node cooldowns.
 - The 1000-sample Studio simulation uses its own seeded `Random` generator and passes rolls into the production bonus function. It does not consume the game's shared `math.random()` sequence, so QA sampling cannot perturb unrelated drops or gameplay randomness.
+- Static regression also verifies the Studio guard runs before sampling and the simulation handler contains no resource-balance or node-cooldown writes.
