@@ -997,3 +997,26 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify mobile HUD layout at 320×480 and 375×667, plus tablet and desktop.
  
 **Scope boundary:** Sprint 4.51 adds one primary battle companion ability per participant. It does not yet add pet-versus-pet targeting, pet equipment, raid pet injuries, persistent pet progression, or a separate pet selection screen. The primary companion is the first active companion in the player's active-slot order that has a raid role.
+
+ 
+### Sprint 4.52 — Battle companion mastery (2026-11-24)
+- [x] Correct role ownership in the companion catalogue: Ash Phoenix is the volcanic Hunter, Snow Owl is the frost Healer, and Glacier Bear is the frost Guardian.
+- [x] Remove accidental raid specializations from Cinder Fox and Frost Fox; their non-raid species identities and ordinary abilities remain unchanged.
+- [x] Scale Hunter damage from the selected companion's saved growth level: +1 damage per two levels above level 1, capped by the existing 30-damage server limit.
+- [x] Scale Healer restoration using the same +1 per two levels rule, capped at 35 and never above missing raid combat health.
+- [x] Scale Guardian shield capacity by +1 per 1.5 growth levels (rounded down), capped at 40; duration and cooldown remain species-defined.
+- [x] Keep the existing player-level-5 raid unlock gate; companion level affects ability strength, not matchmaking eligibility.
+- [x] Show the selected battle companion's growth level and current ability power in the raid HUD.
+- [x] Show companion growth level in each summoned raid nameplate and expose it as a model attribute for Studio inspection.
+- [x] Keep progression derived from the existing saved companion Level (1–10); add no duplicate progression fields or profile migration.
+- [x] Add static regression checks for corrected species-to-role mapping, all three scaling formulas, server use of scaled values, replicated HUD attributes and nameplates.
+- [ ] Roblox Studio: verify Ash Phoenix, Snow Owl and Glacier Bear show the intended Hunter, Healer and Guardian abilities; Cinder Fox and Frost Fox must not inherit those roles.
+- [ ] Test the same species at growth levels 1, 5 and 10; verify Hunter and Healer gains (+0, +2, +4) and Guardian gains (+0, +2, +6).
+- [ ] Verify level-scaled ability output never exceeds 30 Hunter damage, 35 healing or 40 shield capacity.
+- [ ] Verify player level 4 remains locked and player level 5 can use the ability regardless of companion growth level.
+- [ ] Verify Healer never exceeds 100 combat health and Guardian duration/cooldown are unchanged at all growth levels.
+- [ ] Verify the displayed nameplate level, HUD level and effective ability power match the selected active companion.
+- [ ] Verify normal companion training, income scaling, stars, breeding, genetic traits and saved growth XP are unchanged.
+- [ ] Verify 320×480, 375×667, tablet and desktop raid HUD readability.
+
+**Scope boundary:** Sprint 4.52 makes existing companion growth matter in raid combat and fixes the species-role assignments. It does not add new currencies, separate battle XP, new profile fields, ability evolution trees or extra active slots.
