@@ -361,9 +361,10 @@ function AncientTempleBossService:Init()
                 publish(player, profile, progress)
                 grantUniqueCompanion(player, profile)
                 grantGuardianTrophy(player, profile)
-                ProgressionService:AddXP(player, REWARD_XP)
+                local _, awardedXP, _, extraXP = ProgressionService:AddXP(player, REWARD_XP)
                 player:SetAttribute("LastNotice",
-                    "Страж повержен! +600 опыта. Получены Страж Сердцевины и трофей «Сердце Древа» для твоего гнезда!")
+                    "Страж повержен! " .. ProgressionService:FormatXPReward(awardedXP, extraXP)
+                    .. ". Получены Страж Сердцевины и трофей «Сердце Древа» для твоего гнезда!")
                 return
             end
 
