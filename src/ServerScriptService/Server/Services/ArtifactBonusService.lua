@@ -93,6 +93,43 @@ function ArtifactBonusService:GetHatchBonus(profile)
     return math.clamp(totalBonus, 0, MAX_HATCH_BONUS)
 end
 
+-- Returns one species' actual normalized chance and its unmodified base chance.
+-- Shop and collection-book odds use this same calculation as the hatch selector.
+function ArtifactBonusService:GetHatchSpeciesChance(profile, speciesWeights, speciesId)
+    if type(speciesWeights) ~= "table" or type(speciesId) ~= "string" then return 0, 0 end
+
+    local highestRank = 0
+    local baseTotal, adjustedTotal = 0, 0
+    local requestedBaseWeight, requestedAdjustedWeight = 0, 0
+    local bonus = self:GetHatchBonus(profile)
+    for candidateId, weight in pairs(speciesWeights) do
+        local definition = CompanionCatalog[candidateId]
+        local safeWeight = tonumber(weight) or 0
+        local rank = definition and HATCH_RARITY_RANK[definition.Rarity] or nil
+        if definition and rank and safeWeight > 0 then
+            highestRank = math.max(highestRank, rank)
+            baseTotal += safeWeight
+            if candidateId == speciesId then requestedBaseWeight = safeWeight end
+        end
+    end
+    if baseTotal <= 0 or requestedBaseWeight <= 0 then return 0, 0 end
+
+    for candidateId, weight in pairs(speciesWeights) do
+        local definition = CompanionCatalog[candidateId]
+        local safeWeight = tonumber(weight) or 0
+        local rank = definition and HATCH_RARITY_RANK[definition.Rarity] or nil
+        if definition and rank and safeWeight > 0 then
+            local adjustedWeight = safeWeight
+            if rank == highestRank then adjustedWeight *= (1 + bonus) end
+            adjustedTotal += adjustedWeight
+            if candidateId == speciesId then requestedAdjustedWeight = adjustedWeight end
+        end
+    end
+    if adjustedTotal <= 0 then return 0, 0 end
+
+    return requestedAdjustedWeight / adjustedTotal, requestedBaseWeight / baseTotal, bonus
+end
+
 -- Returns the selected species plus the base and boosted chance of the egg's
 -- highest rarity tier. Sorted IDs keep seeded simulations reproducible.
 function ArtifactBonusService:ChooseHatchSpecies(profile, speciesWeights, rollValue)
