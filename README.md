@@ -294,3 +294,6 @@ The pet inventory now has a responsive themed panel, team and owned-count summar
  
 ## Biome Egg Shop and Hatch Reveal — Sprint 4.59
 The egg shop now offers six progression-gated biome eggs with server-validated prices, capacity and species odds. The Forgotten Cave egg remains a secret exploration reward. Shop cards use biome-colored egg portraits and rarity badges. World eggs have welded decorations and a complete collect/respawn visual. Hatching now sends a cosmetic reveal event only after the server has committed the pet; the reveal can be skipped without affecting the saved result. Roblox Studio/device acceptance remains open.
+
+## Collection Book — Sprint 4.60
+The Collection Book now supports in-panel search across companion name, rarity, biome and acquisition source, plus quick filters for all, discovered and undiscovered species. Cards use rarity-colored accents and wrapped detail text. Discovery state and all hatch data remain server-authoritative. Roblox Studio device and interaction acceptance is still required.
