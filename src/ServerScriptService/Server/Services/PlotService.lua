@@ -40,6 +40,68 @@ local function buildPlot(parent, definition)
     makePart(plot, "PlotFoundation", Vector3.new(38, 2, 38), CFrame.new(center), Color3.fromRGB(112, 91, 70), Enum.Material.WoodPlanks)
     makePart(plot, "PlotGrass", Vector3.new(36, 0.6, 36), CFrame.new(center + Vector3.new(0, 1.3, 0)), Color3.fromRGB(119, 190, 111), Enum.Material.Grass)
 
+    -- Permanent garden dressing stays outside the 30x30 player building grid.
+    -- Every decorative part is non-collidable so it cannot trap visitors.
+    local garden = Instance.new("Folder")
+    garden.Name = "EnvironmentDecorations"
+    garden.Parent = plot
+    local groundY = center.Y + 1.62
+    local function gardenPart(name, size, offset, color, material, shape, rotation)
+        local part = makePart(garden, name, size,
+            CFrame.new(center + offset) * (rotation or CFrame.new()),
+            color, material)
+        if shape then part.Shape = shape end
+        part.CanCollide = false
+        part.CanTouch = false
+        part.CanQuery = false
+        return part
+    end
+    local function flowerCluster(prefix, x, z, palette)
+        gardenPart(prefix .. "_Soil", Vector3.new(3.2, 0.16, 1.8),
+            Vector3.new(x, groundY - center.Y, z), Color3.fromRGB(91, 72, 55), Enum.Material.Ground)
+        for index, offset in ipairs({
+            Vector3.new(-0.9, 0.28, -0.35),
+            Vector3.new(0, 0.32, 0.25),
+            Vector3.new(0.9, 0.27, -0.3),
+        }) do
+            local stem = gardenPart(prefix .. "_Leaf_" .. index, Vector3.new(0.22, 0.55, 0.22),
+                Vector3.new(x + offset.X, groundY - center.Y + offset.Y / 2, z + offset.Z),
+                Color3.fromRGB(78, 151, 86), Enum.Material.Grass)
+            stem.Shape = Enum.PartType.Ball
+            local bloom = gardenPart(prefix .. "_Bloom_" .. index, Vector3.new(0.48, 0.34, 0.48),
+                Vector3.new(x + offset.X, groundY - center.Y + offset.Y, z + offset.Z),
+                palette[index], Enum.Material.SmoothPlastic, Enum.PartType.Ball)
+        end
+    end
+    local function gardenTree(prefix, x, z, leafColor)
+        gardenPart(prefix .. "_Trunk", Vector3.new(0.72, 3.4, 0.72),
+            Vector3.new(x, groundY - center.Y + 1.7, z), Color3.fromRGB(112, 78, 52), Enum.Material.Wood, Enum.PartType.Cylinder)
+        gardenPart(prefix .. "_Canopy", Vector3.new(3.8, 3.3, 3.8),
+            Vector3.new(x, groundY - center.Y + 3.5, z), leafColor, Enum.Material.Grass, Enum.PartType.Ball)
+        gardenPart(prefix .. "_CanopyTop", Vector3.new(2.4, 2.3, 2.4),
+            Vector3.new(x + 0.35, groundY - center.Y + 4.65, z - 0.2),
+            Color3.fromRGB(135, 202, 119), Enum.Material.Grass, Enum.PartType.Ball)
+    end
+    gardenTree("GardenTree_NW", -15.5, -15.5, Color3.fromRGB(77, 157, 91))
+    gardenTree("GardenTree_NE", 15.5, -15.5, Color3.fromRGB(92, 174, 103))
+    gardenTree("GardenTree_SW", -15.5, 15.5, Color3.fromRGB(92, 174, 103))
+    gardenTree("GardenTree_SE", 15.5, 15.5, Color3.fromRGB(77, 157, 91))
+    flowerCluster("FlowerBed_W", -16.1, 0, {
+        Color3.fromRGB(244, 157, 188), Color3.fromRGB(255, 218, 127), Color3.fromRGB(174, 158, 245),
+    })
+    flowerCluster("FlowerBed_E", 16.1, 0, {
+        Color3.fromRGB(255, 218, 127), Color3.fromRGB(174, 158, 245), Color3.fromRGB(244, 157, 188),
+    })
+    flowerCluster("FlowerBed_S", 0, 16.1, {
+        Color3.fromRGB(174, 158, 245), Color3.fromRGB(244, 157, 188), Color3.fromRGB(255, 218, 127),
+    })
+    for index = 1, 5 do
+        local x = -8 + (index - 1) * 4
+        gardenPart("GardenPathStone_" .. index, Vector3.new(2.5, 0.18, 2.5),
+            Vector3.new(x, groundY - center.Y + 0.02, 16.2),
+            Color3.fromRGB(151, 146, 130), Enum.Material.Slate, Enum.PartType.Cylinder)
+    end
+
     local nest = makePart(plot, "NestBowl", Vector3.new(2, 13, 11), CFrame.new(center + Vector3.new(0, 3, 0)), Color3.fromRGB(153, 111, 69), Enum.Material.Wood)
     nest.Shape = Enum.PartType.Cylinder
     nest.CFrame = CFrame.new(center + Vector3.new(0, 3, 0)) * CFrame.Angles(0, 0, math.rad(90))
@@ -395,12 +457,41 @@ function PlotService:ApplyNestLevel(player, level)
 
     if level >= 2 then
         for _, x in ipairs({-8, 8}) do
-            decor("NestLantern", Vector3.new(1.2, 4, 1.2), Vector3.new(x, 4, -8), Color3.fromRGB(255, 205, 105), Enum.Material.Neon)
+            local pole = decor("NestLanternPole", Vector3.new(0.35, 4, 0.35),
+                Vector3.new(x, 3.2, -8), Color3.fromRGB(105, 79, 57), Enum.Material.Wood)
+            local lamp = decor("NestLantern", Vector3.new(1.15, 1.15, 1.15),
+                Vector3.new(x, 5.45, -8), Color3.fromRGB(255, 205, 105), Enum.Material.Neon, Enum.PartType.Ball)
+            local light = Instance.new("PointLight")
+            light.Name = "WarmGardenLight"
+            light.Color = Color3.fromRGB(255, 197, 112)
+            light.Brightness = 0.85
+            light.Range = 11
+            light.Shadows = false
+            light.Parent = lamp
+        end
+        for _, offset in ipairs({Vector3.new(-14, 0.2, 5), Vector3.new(14, 0.2, 5)}) do
+            local shrub = decor("LevelTwoShrub", Vector3.new(2.1, 1.5, 2.1),
+                offset, Color3.fromRGB(73, 151, 88), Enum.Material.Grass, Enum.PartType.Ball)
+            shrub.CanTouch = false
+            shrub.CanQuery = false
         end
     end
     if level >= 3 then
         for _, x in ipairs({-12, 12}) do
-            decor("GardenCrystal", Vector3.new(2.2, 3.5, 2.2), Vector3.new(x, 3.2, 7), Color3.fromRGB(104, 219, 163), Enum.Material.Glass, Enum.PartType.Ball)
+            local crystal = decor("GardenCrystal", Vector3.new(1.65, 2.6, 1.65),
+                Vector3.new(x, 3.2, 7), Color3.fromRGB(104, 219, 163), Enum.Material.Glass, Enum.PartType.Ball)
+            crystal.Transparency = 0.12
+            local glow = Instance.new("PointLight")
+            glow.Name = "GardenCrystalGlow"
+            glow.Color = crystal.Color
+            glow.Brightness = 0.65
+            glow.Range = 9
+            glow.Shadows = false
+            glow.Parent = crystal
+        end
+        for _, x in ipairs({-7, 7}) do
+            decor("LevelThreeFlower", Vector3.new(1.0, 0.55, 1.0),
+                Vector3.new(x, 1.95, 15), Color3.fromRGB(244, 157, 198), Enum.Material.SmoothPlastic, Enum.PartType.Ball)
         end
     end
     if level >= 4 then
