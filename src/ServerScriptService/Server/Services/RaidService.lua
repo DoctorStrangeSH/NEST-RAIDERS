@@ -559,7 +559,7 @@ local function startDefenseTurret(self, match, defense)
     task.spawn(function()
         while self._matches[match.Attacker] == match and match.State == "ACTIVE"
             and defense.Health > 0 and defense.Model and defense.Model.Parent do
-            task.wait(math.max(1.5, defense.Interval))
+            task.wait(math.max(1.3, defense.Interval - 0.22))
             if self._matches[match.Attacker] ~= match or match.State ~= "ACTIVE"
                 or defense.Health <= 0 or not defense.Model or not defense.Model.Parent then
                 break
