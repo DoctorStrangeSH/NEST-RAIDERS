@@ -150,19 +150,38 @@ function EggService:Collect(player, egg)
     player:SetAttribute("LastNotice", "Ты подобрал: " .. (biome.Eggs[biome.DefaultEggId].Name or "яйцо") .. "!")
 
     local originalSize = egg.Size
+    local detailStates = {}
+    for _, detail in ipairs(egg:GetChildren()) do
+        if detail:IsA("BasePart") then
+            detailStates[detail] = { Size = detail.Size, Transparency = detail.Transparency }
+        end
+    end
+    local eggGlow = egg:FindFirstChild("EggGlow")
+    local eggHighlight = egg:FindFirstChildOfClass("Highlight")
+    if eggGlow then eggGlow.Enabled = false end
+    if eggHighlight then eggHighlight.Enabled = false end
     egg:SetAttribute("SpawnSlot", nil)
     egg.CanCollide = false
     local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
     if prompt then prompt.Enabled = false end
 
-    -- Clear visual feedback: the egg flies toward the avatar and shrinks away.
+    -- The shell and its welded ornaments fly away as one collectible visual.
+    local collectInfo = TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.In)
     local collectTarget = root.CFrame * CFrame.new(0, 0.5, -1.5)
     local collectTween = TweenService:Create(
         egg,
-        TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.In),
+        collectInfo,
         { CFrame = collectTarget, Size = Vector3.new(0.15, 0.15, 0.15), Transparency = 1 }
     )
     collectTween:Play()
+    for detail, state in pairs(detailStates) do
+        if detail.Parent then
+            TweenService:Create(detail, collectInfo, {
+                Size = Vector3.new(0.04, 0.04, 0.04),
+                Transparency = 1,
+            }):Play()
+        end
+    end
 
     task.delay(EGG_RESPAWN_SECONDS, function()
         if not egg or not egg.Parent then return end
@@ -193,13 +212,26 @@ function EggService:Collect(player, egg)
         egg.Size = originalSize
         egg.Transparency = 1
         egg:SetAttribute("Collected", false)
-        egg.CanCollide = true
+        egg.CanCollide = false
+        local respawnInfo = TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
         local respawnTween = TweenService:Create(
             egg,
-            TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+            respawnInfo,
             { Transparency = 0, Size = originalSize }
         )
         respawnTween:Play()
+        for detail, state in pairs(detailStates) do
+            if detail.Parent == egg then
+                detail.Size = Vector3.new(0.04, 0.04, 0.04)
+                detail.Transparency = 1
+                TweenService:Create(detail, respawnInfo, {
+                    Transparency = state.Transparency,
+                    Size = state.Size,
+                }):Play()
+            end
+        end
+        if eggGlow then eggGlow.Enabled = true end
+        if eggHighlight then eggHighlight.Enabled = true end
         if prompt then prompt.Enabled = true end
     end)
 end
