@@ -596,3 +596,15 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Guardian abilities create a temporary shield that absorbs incoming raid combat damage until its capacity is depleted or its duration expires. The shared server damage pipeline applies this shield to opponent strikes, parry counter-damage, Watchtower hits and Thorn Trap hits. Current Guardian examples: Moss Turtle (22 shield / 7 sec / 20 sec cooldown), Briar Guardian (28 / 8 / 22), Glacier Bear (32 / 8 / 24).
 - The HUD shows the primary companion name, role, ability cooldown and remaining shield capacity/time, with a dedicated ability button. The button is available only when a primary raid ability is equipped.
 - All raid companion effects are temporary. They do not change companion ownership, active slots, companion level, persistent profile values, normal Humanoid health or the existing raid reward cooldown. Arena cleanup removes summoned companion models, nameplates, highlights and projectiles.
+
+ 
+## Battle companion mastery — Sprint 4.52
+- Raid role definitions belong to their intended species: Meadow Fox (Hunter), Moss Turtle (Guardian), Sprout Dragon (Healer), Ash Phoenix (Hunter), Snow Owl (Healer), Glacier Bear (Guardian), Crystal Deer (Healer), Aurora Dragon (Hunter), and Briar Guardian (Guardian). Cinder Fox and Frost Fox do not inherit the abilities intended for Ash Phoenix and Snow Owl.
+- The primary battle companion continues to be the first active companion in active-slot order with a raid role. Its existing persistent growth level (1–10) determines combat ability power. No second battle-level or XP track is created.
+- Hunter damage is base catalogue damage plus one point per two growth levels above level 1: `base + floor((level - 1) / 2)`. The server clamps Hunter power to 8–30.
+- Healer restoration uses the same formula with the catalogue HealAmount and a server cap of 35. Actual restored health is still limited to the missing amount below 100 raid combat health.
+- Guardian shield capacity is base catalogue ShieldAmount plus `floor((level - 1) * 2 / 3)`, clamped to 10–40. Shield duration and species cooldown do not change with growth level.
+- At growth level 10, a Hunter/Healer gains at most +4 power and a Guardian gains +6 shield capacity. Levels 1, 5 and 10 therefore produce predictable progression steps (+0, +2, +4 for Hunter/Healer; +0, +2, +6 for Guardian).
+- The existing player level 5 raid ability unlock remains unchanged. Companion growth level changes power only; it does not alter eligibility or player-level matchmaking requirements.
+- The raid HUD displays the primary companion's name, growth level, role, current effective power, cooldown and active shield state. Summoned companion nameplates also show growth level.
+- All power is derived from saved companion Level at match time. No new profile fields, currency costs, training actions, or migration are introduced. Normal companion training, income, stars, breeding, genetics and ordinary abilities remain unchanged.
