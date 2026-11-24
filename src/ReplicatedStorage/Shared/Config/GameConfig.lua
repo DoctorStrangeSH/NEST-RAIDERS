@@ -22,6 +22,15 @@ GameConfig.Progression = {
     },
 }
 
+-- One complete in-game day lasts 24 real minutes. Server Lighting replicates the clock to all clients.
+GameConfig.WorldCycle = {
+    Enabled = true,
+    SecondsPerGameHour = 60,
+    StartClockTime = 14,
+    DayStartsAt = 6,
+    NightStartsAt = 19,
+}
+
 GameConfig.Economy = {
     StartingCoins = 100,
     MaxCoins = 2_000_000_000,
