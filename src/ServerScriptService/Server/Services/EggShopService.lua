@@ -1,50 +1,84 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local HttpService = game:GetService("HttpService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
+local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
 local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
 local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)
+local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local EggShopService = {}
 local MAX_EGGS = 20
 local REQUEST_COOLDOWN = 0.5
 
-local CATALOG = {
-    MeadowEgg = {
-        Id = "MeadowEgg",
-        Name = "Яйцо луга",
-        Description = "Первое яйцо для начинающих искателей приключений.",
-        Price = 50,
-        RequiredLevel = 1,
-    },
+-- The hidden Forgotten Cave egg remains an exploration/cache reward.
+-- Natural biome eggs are sold only after their biome has been unlocked.
+local SHOP_ORDER = {
+    "MeadowEgg",
+    "EmeraldEgg",
+    "FrostEgg",
+    "EmberEgg",
+    "CrystalEgg",
+    "AncientEgg",
+}
+
+local SHOP_PRICES = {
+    MeadowEgg = 50,
+    EmeraldEgg = 250,
+    FrostEgg = 700,
+    EmberEgg = 1800,
+    CrystalEgg = 4500,
+    AncientEgg = 10000,
+}
+
+local ZONE_BY_BIOME = {
+    Meadow = "StarterIsland",
+    EmeraldWilds = "EmeraldWilds",
+    FrostHighlands = "FrostHighlands",
+    Emberlands = "Emberlands",
+    CrystalRealm = "CrystalRealm",
+    AncientHeights = "AncientHeights",
 }
 
 EggShopService._lastRequest = {}
 
-local function buildOdds(profile, eggId)
-    local eggDefinition
-    for _, biome in pairs(BiomeCatalog) do
+local function findEgg(eggId)
+    for biomeId, biome in pairs(BiomeCatalog) do
         for _, egg in pairs(biome.Eggs or {}) do
-            if egg.Id == eggId then eggDefinition = egg break end
+            if egg.Id == eggId then
+                return biomeId, biome, egg
+            end
         end
-        if eggDefinition then break end
     end
-    if not eggDefinition then return {} end
+    return nil, nil, nil
+end
 
+local function getRequiredLevel(zoneId)
+    for _, zone in ipairs(GameConfig.Progression.Zones or {}) do
+        if zone.Id == zoneId then
+            return zone.RequiredLevel or 1, zone.RequiredQuest
+        end
+    end
+    return 1, nil
+end
+
+local function buildOdds(profile, eggDefinition)
     local odds = {}
-    for speciesId, weight in pairs(eggDefinition.SpeciesWeights or {}) do
+    local weights = eggDefinition and eggDefinition.SpeciesWeights or {}
+    for speciesId, weight in pairs(weights) do
         local companion = CompanionCatalog[speciesId]
-        local safeWeight = tonumber(weight) or 0
-        if companion and safeWeight > 0 then
+        if companion and (tonumber(weight) or 0) > 0 then
             local actualChance, baseChance = ArtifactBonusService:GetHatchSpeciesChance(
-                profile, eggDefinition.SpeciesWeights, speciesId)
+                profile, weights, speciesId)
             table.insert(odds, {
+                Id = speciesId,
                 Name = companion.Name,
                 Rarity = companion.Rarity,
-                Chance = math.floor(actualChance * 100 + 0.5),
-                BaseChance = math.floor(baseChance * 100 + 0.5),
+                Chance = math.max(0, actualChance * 100),
+                BaseChance = math.max(0, baseChance * 100),
             })
         end
     end
@@ -55,23 +89,70 @@ local function buildOdds(profile, eggId)
     return odds
 end
 
-local function snapshot(profile)
-    local items = {}
-    for _, item in pairs(CATALOG) do
-        table.insert(items, {
-            Id = item.Id,
-            Name = item.Name,
-            Description = item.Description,
-            Price = item.Price,
-            RequiredLevel = item.RequiredLevel,
-            Odds = buildOdds(profile, item.Id),
-        })
+local function getLockReason(player, profile, zoneId, requiredLevel, requiredQuest)
+    local unlocked = ProgressionService:CanEnterZone(player, zoneId)
+    if unlocked then return true, nil end
+    if (tonumber(profile.Level) or 1) < requiredLevel then
+        return false, "Откроется с " .. tostring(requiredLevel) .. " уровня"
     end
-    table.sort(items, function(a, b) return a.Price < b.Price end)
+    if requiredQuest and profile.CompletedQuests and profile.CompletedQuests[requiredQuest] ~= true then
+        return false, "Сначала пройди испытание биома"
+    end
+    return false, "Сначала открой этот биом"
+end
+
+local function buildCatalogItem(eggId)
+    local biomeId, biome, egg = findEgg(eggId)
+    if not biome or not egg then return nil end
+    local zoneId = ZONE_BY_BIOME[biomeId]
+    if not zoneId then return nil end
+    local requiredLevel, requiredQuest = getRequiredLevel(zoneId)
+    return {
+        Id = eggId,
+        Name = egg.Name,
+        Description = "Яйцо из биома «" .. biome.Name .. "». Внутри может оказаться один из трёх местных видов.",
+        Rarity = egg.Rarity or "Обычное",
+        Price = SHOP_PRICES[eggId],
+        BiomeId = biomeId,
+        BiomeName = biome.Name,
+        ZoneId = zoneId,
+        RequiredLevel = requiredLevel,
+        RequiredQuest = requiredQuest,
+        EggDefinition = egg,
+    }
+end
+
+local function snapshot(player, profile)
+    local items = {}
+    for index, eggId in ipairs(SHOP_ORDER) do
+        local item = buildCatalogItem(eggId)
+        if item then
+            local unlocked, lockReason = getLockReason(
+                player, profile, item.ZoneId, item.RequiredLevel, item.RequiredQuest)
+            local enoughCoins = (tonumber(profile.Coins) or 0) >= item.Price
+            local hasCapacity = #(profile.EggInventory or {}) < MAX_EGGS
+            table.insert(items, {
+                Id = item.Id,
+                Name = item.Name,
+                Description = item.Description,
+                Rarity = item.Rarity,
+                Price = item.Price,
+                BiomeId = item.BiomeId,
+                BiomeName = item.BiomeName,
+                RequiredLevel = item.RequiredLevel,
+                RequiredQuest = item.RequiredQuest,
+                Unlocked = unlocked,
+                CanBuy = unlocked and enoughCoins and hasCapacity,
+                LockReason = lockReason,
+                Odds = buildOdds(profile, item.EggDefinition),
+                LayoutOrder = index,
+            })
+        end
+    end
     return {
         Items = items,
         Coins = profile.Coins,
-        EggCount = #profile.EggInventory,
+        EggCount = #(profile.EggInventory or {}),
         EggCapacity = MAX_EGGS,
     }
 end
@@ -93,38 +174,46 @@ function EggShopService:HandleRequest(player, payload)
     end
 
     if payload.Action == "Get" then
-        return { Ok = true, Data = snapshot(profile) }
+        return { Ok = true, Data = snapshot(player, profile) }
     end
     if payload.Action ~= "Buy" or type(payload.EggId) ~= "string" then
         return { Ok = false, Message = "Неизвестное действие." }
     end
 
-    local item = CATALOG[payload.EggId]
+    local item = buildCatalogItem(payload.EggId)
     if not item then
-        return { Ok = false, Message = "Такого яйца нет в магазине." }
+        return { Ok = false, Message = "Это яйцо нельзя купить в лавке. Ищи его в соответствующем приключении." }
     end
-    if profile.Level < item.RequiredLevel then
-        return { Ok = false, Message = "Нужен уровень " .. item.RequiredLevel .. "." }
+
+    local unlocked, lockReason = getLockReason(
+        player, profile, item.ZoneId, item.RequiredLevel, item.RequiredQuest)
+    if not unlocked then
+        return { Ok = false, Message = lockReason .. "." }
     end
-    if #profile.EggInventory >= MAX_EGGS then
+    if #(profile.EggInventory or {}) >= MAX_EGGS then
         return { Ok = false, Message = "Сумка для яиц заполнена (20/20)." }
     end
-    if profile.Coins < item.Price then
-        return { Ok = false, Message = "Не хватает монет. Нужно: " .. item.Price .. "." }
+    if (tonumber(profile.Coins) or 0) < item.Price then
+        return { Ok = false, Message = "Не хватает монет. Нужно: " .. tostring(item.Price) .. "." }
     end
 
     profile.Coins -= item.Price
     table.insert(profile.EggInventory, {
         Id = item.Id,
-        InstanceId = game:GetService("HttpService"):GenerateGUID(false),
+        BiomeId = item.BiomeId,
+        InstanceId = HttpService:GenerateGUID(false),
         CollectedAt = os.time(),
         Source = "Shop",
     })
 
     player:SetAttribute("Coins", profile.Coins)
     player:SetAttribute("EggCount", #profile.EggInventory)
-    player:SetAttribute("LastNotice", "Куплено: " .. item.Name .. "!")
-    return { Ok = true, Data = snapshot(profile), Message = "Покупка успешна!" }
+    player:SetAttribute("LastNotice", "В сумке новое яйцо: " .. item.Name .. "!")
+    return {
+        Ok = true,
+        Data = snapshot(player, profile),
+        Message = item.Name .. " добавлено в сумку!",
+    }
 end
 
 function EggShopService:Init()
