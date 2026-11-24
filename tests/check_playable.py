@@ -1510,3 +1510,13 @@ assert 'EggDecorBand' in world
 assert 'EggRune_Left' in world and 'EggRune_Right' in world and 'EggRune_Center' in world
 assert 'EggCrownGem' in world
 assert 'EggGlow' in world and 'EggHighlight' in world
+assert 'detail.Parent = egg' in world, "Egg ornaments must follow their collectible shell"
+assert 'local detailStates = {}' in eggs
+assert 'local collectInfo = TweenInfo.new(0.32' in eggs
+assert 'TweenService:Create(detail, collectInfo' in eggs
+assert 'TweenService:Create(detail, respawnInfo' in eggs
+assert 'if eggGlow then eggGlow.Enabled = false end' in eggs
+assert 'if eggHighlight then eggHighlight.Enabled = false end' in eggs
+assert 'if eggGlow then eggGlow.Enabled = true end' in eggs
+assert 'if eggHighlight then eggHighlight.Enabled = true end' in eggs
+assert 'hatchOverlay.Active = true' in client
