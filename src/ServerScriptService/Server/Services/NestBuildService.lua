@@ -65,7 +65,7 @@ local function getSnapshot(profile)
         table.insert(catalog, { Id=id, Name=def.Name, Description=def.Description, Cost=def.Cost, Footprint=def.Footprint, Category=def.Category, DefenseType=def.DefenseType })
     end
     table.sort(catalog, function(a,b) return a.Cost < b.Cost end)
-    return { Coins=math.max(0, math.floor(tonumber(profile.Coins) or 0)), Inventory=inventory, Placed=placed, Catalog=catalog, Limit=LIMIT }
+    return { Coins=math.max(0, math.floor(tonumber(profile.Coins) or 0)), Inventory=inventory, Placed=placed, Catalog=catalog, Limit=LIMIT, DefenseCount=countDefenseOwned(nest), DefenseLimit=MAX_DEFENSE_TOTAL }
 end
 
 local function makePart(parent, name, size, cf, color, material, shape)
