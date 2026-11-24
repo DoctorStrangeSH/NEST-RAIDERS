@@ -758,7 +758,7 @@ assert 'local function invokeInventory(payload)' not in client
 assert 'Action = "DevSeedGathererArtifacts"' in client
 assert 'payload.Action == "DevSimulateGatherBonus"' in inventory_service
 assert 'for sample = 1, 1000 do' in inventory_service
-assert 'ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)' in inventory_service
+assert 'ArtifactBonusService:ApplyGatherBonus(profile, baseAmount, simulationRandom:NextNumber())' in inventory_service
 assert 'totalExtra += extra' in inventory_service
 assert 'function ArtifactBonusService:ApplyGatherBonus(profile, baseAmount, rollValue)' in artifact_bonus
 assert 'type(rollValue) == "number" and math.clamp(rollValue, 0, 0.999999999) or math.random()' in artifact_bonus
