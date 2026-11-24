@@ -1305,3 +1305,19 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Test both display pairs (1–2, 3–4), changing displayed pets, and multiple players for cross-pair or cross-player leakage.
 
 **Acceptance:** persistent pair friendship is integrated and covered by static checks; in-Studio progression, interruption, multiplayer isolation and DataStore persistence remain open.
+
+### Sprint 4.68 — Personality-driven treasure hunts
+- [x] Add migration-safe `Nest.CompanionGiftReadyAt` profile state.
+- [x] Give each personality its own treasure-search tendency; Curious/Exploratory pets search more often, calm/cautious pets less often.
+- [x] Let one displayed pet at a time leave its idle routine to search a nearby spot when rested and fed.
+- [x] Spawn a visible wooden gift cache with a warm glow and a clear `Забрать подарок` prompt when the pet reaches the search point.
+- [x] Validate cache ownership, one-time claiming and live player/profile state on the server; other players cannot claim another owner's gift.
+- [x] Reward coins scaled by companion growth level and stars, grant a small mood bonus, and show a Russian owner notification.
+- [x] Apply a persistent three-minute cooldown after a successful claim; interrupted treasure searches are cancelled when the searching pet goes to sleep.
+- [x] Add regression checks for personality odds, cooldown migration, ownership validation, one-time rewards and discovery feedback.
+- [ ] Roblox Studio: verify search timing across personality types and confirm a curious pet searches more often than a cautious pet over a long session.
+- [ ] Verify cache appearance, prompt distance, owner-only collection, duplicate prompt activation and reward notification.
+- [ ] Confirm coins, mood and cooldown persist after rejoin; confirm a cache is not duplicated after pet display refresh.
+- [ ] Test two players with active pets in the same server; each player must only see and collect their own cache.
+
+**Acceptance:** autonomous treasure-search behavior and owner-bound gift caches are integrated and covered by static checks; Roblox Studio visual, timing, multiplayer and DataStore acceptance remain open.
