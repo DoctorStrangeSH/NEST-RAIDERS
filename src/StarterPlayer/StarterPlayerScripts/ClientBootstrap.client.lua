@@ -3389,6 +3389,272 @@ end
 shopButton.Activated:Connect(openShop)
 shopClose.Activated:Connect(function() shopPanel.Visible = false end)
 
+
+-- Cosmetic hatch reveal. The server has already committed the pet before this
+-- event arrives; skipping the animation only closes the presentation.
+local hatchOverlay = Instance.new("Frame")
+hatchOverlay.Name = "HatchRevealOverlay"
+hatchOverlay.Size = UDim2.fromScale(1, 1)
+hatchOverlay.BackgroundColor3 = Color3.fromRGB(8, 15, 21)
+hatchOverlay.BackgroundTransparency = 0.28
+hatchOverlay.BorderSizePixel = 0
+hatchOverlay.Visible = false
+hatchOverlay.ZIndex = 150
+hatchOverlay.Parent = gui
+
+local hatchCard = Instance.new("Frame")
+hatchCard.Name = "HatchRevealCard"
+hatchCard.AnchorPoint = Vector2.new(0.5, 0.5)
+hatchCard.Position = UDim2.fromScale(0.5, 0.5)
+hatchCard.Size = UDim2.new(0.88, 0, 0, 350)
+hatchCard.BackgroundColor3 = Color3.fromRGB(35, 52, 64)
+hatchCard.BorderSizePixel = 0
+hatchCard.ZIndex = 151
+hatchCard.Parent = hatchOverlay
+addCorner(hatchCard, 22)
+local hatchCardSize = Instance.new("UISizeConstraint")
+hatchCardSize.MinSize = Vector2.new(260, 330)
+hatchCardSize.MaxSize = Vector2.new(390, 350)
+hatchCardSize.Parent = hatchCard
+local hatchCardGradient = Instance.new("UIGradient")
+hatchCardGradient.Color = ColorSequence.new(
+    Color3.fromRGB(60, 77, 84),
+    Color3.fromRGB(27, 40, 54)
+)
+hatchCardGradient.Rotation = 90
+hatchCardGradient.Parent = hatchCard
+local hatchCardStroke = addStroke(hatchCard, Color3.fromRGB(229, 190, 111), 2)
+
+local hatchTitle = Instance.new("TextLabel")
+hatchTitle.Name = "HatchTitle"
+hatchTitle.BackgroundTransparency = 1
+hatchTitle.Position = UDim2.fromOffset(16, 18)
+hatchTitle.Size = UDim2.new(1, -32, 0, 28)
+hatchTitle.Font = Enum.Font.GothamBlack
+hatchTitle.Text = "ЯЙЦО ТРЕЩИТ..."
+hatchTitle.TextColor3 = Color3.fromRGB(255, 231, 177)
+hatchTitle.TextSize = 17
+hatchTitle.TextXAlignment = Enum.TextXAlignment.Center
+hatchTitle.ZIndex = 152
+hatchTitle.Parent = hatchCard
+
+local hatchSubtitle = Instance.new("TextLabel")
+hatchSubtitle.Name = "HatchSubtitle"
+hatchSubtitle.BackgroundTransparency = 1
+hatchSubtitle.Position = UDim2.fromOffset(16, 48)
+hatchSubtitle.Size = UDim2.new(1, -32, 0, 22)
+hatchSubtitle.Font = Enum.Font.GothamMedium
+hatchSubtitle.Text = "Кто же прячется внутри?"
+hatchSubtitle.TextColor3 = Color3.fromRGB(203, 219, 207)
+hatchSubtitle.TextSize = 11
+hatchSubtitle.TextXAlignment = Enum.TextXAlignment.Center
+hatchSubtitle.ZIndex = 152
+hatchSubtitle.Parent = hatchCard
+
+local hatchEggVisual = Instance.new("Frame")
+hatchEggVisual.Name = "HatchEggVisual"
+hatchEggVisual.AnchorPoint = Vector2.new(0.5, 0.5)
+hatchEggVisual.Position = UDim2.fromScale(0.5, 0.48)
+hatchEggVisual.Size = UDim2.fromOffset(112, 128)
+hatchEggVisual.BackgroundColor3 = Color3.fromRGB(204, 159, 87)
+hatchEggVisual.BorderSizePixel = 0
+hatchEggVisual.ZIndex = 153
+hatchEggVisual.Parent = hatchCard
+addCorner(hatchEggVisual, 26)
+local hatchEggGradient = Instance.new("UIGradient")
+hatchEggGradient.Color = ColorSequence.new(Color3.fromRGB(255, 235, 174), Color3.fromRGB(158, 111, 58))
+hatchEggGradient.Rotation = 90
+hatchEggGradient.Parent = hatchEggVisual
+addPetPortraitShape(hatchEggVisual, "RevealEggShell", 56, 65, 48, 70, Color3.fromRGB(255, 246, 218), -7, 24)
+addPetPortraitShape(hatchEggVisual, "RevealEggBand", 56, 67, 51, 9, Color3.fromRGB(224, 179, 91), -7, 5)
+addPetPortraitShape(hatchEggVisual, "RevealEggShine", 42, 42, 7, 18, Color3.fromRGB(255, 255, 245), -12, 4)
+local hatchCrackA = addPetPortraitShape(hatchEggVisual, "RevealEggCrackA", 61, 63, 4, 28, Color3.fromRGB(104, 75, 49), 34, 2)
+local hatchCrackB = addPetPortraitShape(hatchEggVisual, "RevealEggCrackB", 67, 77, 4, 20, Color3.fromRGB(104, 75, 49), -28, 2)
+hatchCrackA.BackgroundTransparency = 1
+hatchCrackB.BackgroundTransparency = 1
+
+local hatchPetPortrait = Instance.new("Frame")
+hatchPetPortrait.Name = "HatchPetPortrait"
+hatchPetPortrait.AnchorPoint = Vector2.new(0.5, 0.5)
+hatchPetPortrait.Position = UDim2.fromScale(0.5, 0.48)
+hatchPetPortrait.Size = UDim2.fromOffset(112, 112)
+hatchPetPortrait.BackgroundColor3 = Color3.fromRGB(93, 145, 115)
+hatchPetPortrait.BorderSizePixel = 0
+hatchPetPortrait.Visible = false
+hatchPetPortrait.ZIndex = 153
+hatchPetPortrait.Parent = hatchCard
+addCorner(hatchPetPortrait, 24)
+addStroke(hatchPetPortrait, Color3.fromRGB(246, 224, 170), 2)
+
+local hatchPetName = Instance.new("TextLabel")
+hatchPetName.Name = "HatchPetName"
+hatchPetName.BackgroundTransparency = 1
+hatchPetName.Position = UDim2.fromOffset(14, 260)
+hatchPetName.Size = UDim2.new(1, -28, 0, 26)
+hatchPetName.Font = Enum.Font.GothamBlack
+hatchPetName.Text = ""
+hatchPetName.TextColor3 = Color3.fromRGB(255, 240, 202)
+hatchPetName.TextSize = 17
+hatchPetName.TextXAlignment = Enum.TextXAlignment.Center
+hatchPetName.TextTruncate = Enum.TextTruncate.AtEnd
+hatchPetName.Visible = false
+hatchPetName.ZIndex = 154
+hatchPetName.Parent = hatchCard
+
+local hatchPetDetails = Instance.new("TextLabel")
+hatchPetDetails.Name = "HatchPetDetails"
+hatchPetDetails.BackgroundTransparency = 1
+hatchPetDetails.Position = UDim2.fromOffset(14, 287)
+hatchPetDetails.Size = UDim2.new(1, -28, 0, 28)
+hatchPetDetails.Font = Enum.Font.GothamBold
+hatchPetDetails.Text = ""
+hatchPetDetails.TextColor3 = Color3.fromRGB(217, 228, 211)
+hatchPetDetails.TextSize = 10
+hatchPetDetails.TextXAlignment = Enum.TextXAlignment.Center
+hatchPetDetails.TextWrapped = true
+hatchPetDetails.Visible = false
+hatchPetDetails.ZIndex = 154
+hatchPetDetails.Parent = hatchCard
+
+local hatchSkip = Instance.new("TextButton")
+hatchSkip.Name = "HatchSkipButton"
+hatchSkip.AnchorPoint = Vector2.new(0.5, 1)
+hatchSkip.Position = UDim2.new(0.5, 0, 1, -14)
+hatchSkip.Size = UDim2.new(1, -32, 0, 34)
+hatchSkip.BackgroundColor3 = Color3.fromRGB(181, 133, 64)
+hatchSkip.Text = "ПРОПУСТИТЬ АНИМАЦИЮ"
+hatchSkip.TextColor3 = Color3.fromRGB(255, 255, 244)
+hatchSkip.TextSize = 10
+hatchSkip.Font = Enum.Font.GothamBlack
+hatchSkip.ZIndex = 154
+hatchSkip.Parent = hatchCard
+addCorner(hatchSkip, 10)
+
+local hatchRevealToken = 0
+local hatchRevealFinished = false
+local activeHatchPayload
+
+local function closeHatchReveal()
+    hatchRevealToken += 1
+    hatchOverlay.Visible = false
+    activeHatchPayload = nil
+end
+
+local function finishHatchReveal()
+    if hatchRevealFinished or not activeHatchPayload then return end
+    hatchRevealFinished = true
+    local payload = activeHatchPayload
+    local rarityColor = eggRarityColors[payload.Rarity or "Обычный"]
+        or companionRarityColors[payload.Rarity or "Обычный"]
+        or Color3.fromRGB(126, 164, 137)
+    hatchTitle.Text = "НОВЫЙ ПИТОМЕЦ!"
+    hatchSubtitle.Text = "Он уже добавлен в твою коллекцию"
+    hatchCardStroke.Color = rarityColor
+    hatchEggVisual.Visible = false
+    hatchPetPortrait.Visible = true
+    hatchPetPortrait.BackgroundColor3 = rarityColor
+    for _, child in ipairs(hatchPetPortrait:GetChildren()) do
+        if child ~= hatchPetPortrait:FindFirstChildOfClass("UICorner")
+            and child ~= hatchPetPortrait:FindFirstChildOfClass("UIStroke") then
+            child:Destroy()
+        end
+    end
+    drawCompanionPortrait(hatchPetPortrait, payload, rarityColor)
+    hatchPetName.Text = payload.Name or "Новый питомец"
+    hatchPetName.Visible = true
+    hatchPetDetails.Text = string.upper(payload.Rarity or "ОБЫЧНЫЙ")
+        .. "  ·  " .. tostring(payload.TraitName or "Естественный")
+        .. "  ·  +" .. tostring(payload.Income or 0) .. " мон./10 сек."
+    hatchPetDetails.Visible = true
+    hatchSkip.Text = "ЗАБРАТЬ ПИТОМЦА"
+    hatchSkip.BackgroundColor3 = rarityColor
+    local pop = TweenService:Create(hatchPetPortrait,
+        TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        { Size = UDim2.fromOffset(124, 124), Rotation = 0 })
+    hatchPetPortrait.Size = UDim2.fromOffset(72, 72)
+    pop:Play()
+    for index = 1, 12 do
+        local angle = math.rad(index * 30)
+        local sparkle = Instance.new("Frame")
+        sparkle.Name = "HatchSparkle"
+        sparkle.AnchorPoint = Vector2.new(0.5, 0.5)
+        sparkle.Position = UDim2.new(0.5, math.cos(angle) * 105, 0.48, math.sin(angle) * 100)
+        sparkle.Size = UDim2.fromOffset(7, 7)
+        sparkle.BackgroundColor3 = index % 3 == 0 and Color3.fromRGB(255, 232, 157) or rarityColor
+        sparkle.BorderSizePixel = 0
+        sparkle.ZIndex = 155
+        sparkle.Parent = hatchCard
+        addCorner(sparkle, 3)
+        TweenService:Create(sparkle, TweenInfo.new(0.42, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Position = sparkle.Position + UDim2.fromOffset(math.cos(angle) * 22, math.sin(angle) * 22),
+            BackgroundTransparency = 1,
+            Rotation = 90,
+        }):Play()
+        task.delay(0.46, function()
+            if sparkle.Parent then sparkle:Destroy() end
+        end)
+    end
+end
+
+hatchSkip.Activated:Connect(function()
+    if not hatchOverlay.Visible then return end
+    if not hatchRevealFinished then
+        finishHatchReveal()
+    else
+        closeHatchReveal()
+    end
+end)
+
+hatchRevealRemote.OnClientEvent:Connect(function(payload)
+    if type(payload) ~= "table" then return end
+    hatchRevealToken += 1
+    local token = hatchRevealToken
+    activeHatchPayload = payload
+    hatchRevealFinished = false
+    hatchTitle.Text = "ЯЙЦО ТРЕЩИТ..."
+    hatchSubtitle.Text = "Кто же прячется внутри?"
+    hatchEggVisual.Visible = true
+    hatchEggVisual.Rotation = 0
+    hatchEggVisual.Size = UDim2.fromOffset(112, 128)
+    hatchCrackA.BackgroundTransparency = 1
+    hatchCrackB.BackgroundTransparency = 1
+    hatchPetPortrait.Visible = false
+    hatchPetName.Visible = false
+    hatchPetDetails.Visible = false
+    hatchSkip.Text = "ПРОПУСТИТЬ АНИМАЦИЮ"
+    hatchSkip.BackgroundColor3 = Color3.fromRGB(181, 133, 64)
+    for _, child in ipairs(hatchPetPortrait:GetChildren()) do
+        if child.Name ~= "UICorner" and child.Name ~= "UIStroke" then child:Destroy() end
+    end
+    hatchOverlay.Visible = true
+
+    local shakeSequence = {
+        { Rotation = -9 }, { Rotation = 8 }, { Rotation = -12 },
+        { Rotation = 11 }, { Rotation = -5 }, { Rotation = 0 },
+    }
+    for index, pose in ipairs(shakeSequence) do
+        if token ~= hatchRevealToken or not hatchOverlay.Visible then return end
+        TweenService:Create(hatchEggVisual,
+            TweenInfo.new(index == #shakeSequence and 0.16 or 0.11, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+            pose):Play()
+        if index == 3 then
+            TweenService:Create(hatchCrackA, TweenInfo.new(0.18), { BackgroundTransparency = 0 }):Play()
+        elseif index == 5 then
+            TweenService:Create(hatchCrackB, TweenInfo.new(0.18), { BackgroundTransparency = 0 }):Play()
+        end
+        task.wait(0.12)
+    end
+    if token ~= hatchRevealToken or not hatchOverlay.Visible then return end
+    TweenService:Create(hatchEggVisual, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Size = UDim2.fromOffset(12, 12),
+        BackgroundTransparency = 1,
+    }):Play()
+    task.wait(0.18)
+    if token == hatchRevealToken and hatchOverlay.Visible then
+        finishHatchReveal()
+    end
+end)
+
 local function invokeNest(payload)
     local success, response = pcall(function()
         return nestRemote:InvokeServer(payload)
