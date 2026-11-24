@@ -615,7 +615,7 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - A roster with fewer than two distinct combat roles receives no synergy. Multiple companions with the same role count once and cannot stack a bonus.
 - Exactly two distinct roles activate one pair synergy:
   - Guardian + Healer — **Живой бастион**: +15% power to Guardian/Healer abilities and 12% less incoming raid combat damage.
-  - Hunter + Guardian — **Штурмовой строй**: +15% Hunter ability power and +10% normal melee strike damage.
+  - Hunter + Guardian — **Штурмовой строй**: +15% Hunter/Guardian ability power and +10% normal melee strike damage.
   - Hunter + Healer — **Согласованный натиск**: +15% Hunter and Healer ability power.
 - All three distinct roles activate **Триада** instead of any pair synergy: +10% ability power, 8% less incoming raid combat damage and +5% normal melee strike damage. The full trio never stacks the three pair bonuses.
 - Synergy is stored only in temporary match state, separately for each participant. It is not saved, traded, or copied to the opponent.
