@@ -328,25 +328,29 @@ local nestPanel = Instance.new("Frame")
 nestPanel.Name = "NestUpgradePanel"
 nestPanel.AnchorPoint = Vector2.new(0.5, 0.5)
 nestPanel.Position = UDim2.fromScale(0.5, 0.5)
-nestPanel.Size = UDim2.new(0.9, 0, 0.48, 0)
-nestPanel.BackgroundColor3 = Color3.fromRGB(30, 49, 48)
+nestPanel.Size = UDim2.new(0.9, 0, 0.78, 0)
+nestPanel.BackgroundColor3 = Color3.fromRGB(24, 43, 46)
 nestPanel.BorderSizePixel = 0
 nestPanel.Visible = false
 nestPanel.Parent = gui
-addCorner(nestPanel, 18)
+addCorner(nestPanel, 20)
 addStroke(nestPanel, Color3.fromRGB(143, 206, 157), 2)
+local nestGradient = Instance.new("UIGradient")
+nestGradient.Color = ColorSequence.new(Color3.fromRGB(37, 67, 65), Color3.fromRGB(22, 36, 47))
+nestGradient.Rotation = 90
+nestGradient.Parent = nestPanel
 
 local nestSize = Instance.new("UISizeConstraint")
-nestSize.MinSize = Vector2.new(290, 250)
-nestSize.MaxSize = Vector2.new(440, 350)
+nestSize.MinSize = Vector2.new(290, 360)
+nestSize.MaxSize = Vector2.new(460, 500)
 nestSize.Parent = nestPanel
 
 local nestTitle = Instance.new("TextLabel")
 nestTitle.BackgroundTransparency = 1
-nestTitle.Position = UDim2.fromOffset(18, 14)
+nestTitle.Position = UDim2.fromOffset(18, 13)
 nestTitle.Size = UDim2.new(1, -76, 0, 30)
 nestTitle.Font = Enum.Font.GothamBlack
-nestTitle.Text = "РАЗВИТИЕ ГНЕЗДА"
+nestTitle.Text = "МОЁ ГНЕЗДО"
 nestTitle.TextColor3 = Color3.fromRGB(203, 239, 190)
 nestTitle.TextSize = 18
 nestTitle.TextXAlignment = Enum.TextXAlignment.Left
@@ -366,30 +370,118 @@ addCorner(nestClose, 10)
 
 local nestLevel = Instance.new("TextLabel")
 nestLevel.BackgroundTransparency = 1
-nestLevel.Position = UDim2.fromOffset(18, 62)
-nestLevel.Size = UDim2.new(1, -36, 0, 34)
+nestLevel.Position = UDim2.fromOffset(18, 54)
+nestLevel.Size = UDim2.new(1, -36, 0, 32)
 nestLevel.Font = Enum.Font.GothamBlack
-nestLevel.Text = "Уровень гнезда: 1 / 5"
+nestLevel.Text = "Уровень гнезда · 1 / 5"
 nestLevel.TextColor3 = Color3.fromRGB(255, 231, 176)
-nestLevel.TextSize = 21
+nestLevel.TextSize = 20
 nestLevel.TextXAlignment = Enum.TextXAlignment.Left
 nestLevel.Parent = nestPanel
 
 local nestDescription = Instance.new("TextLabel")
 nestDescription.BackgroundTransparency = 1
-nestDescription.Position = UDim2.fromOffset(18, 104)
-nestDescription.Size = UDim2.new(1, -36, 0, 72)
+nestDescription.Position = UDim2.fromOffset(18, 88)
+nestDescription.Size = UDim2.new(1, -36, 0, 42)
 nestDescription.Font = Enum.Font.GothamMedium
-nestDescription.Text = "Улучшай своё гнездо: открывай новые украшения и места для питомцев."
+nestDescription.Text = "Твоё личное пространство: заботься о питомцах, украшай остров и развивай гнездо."
 nestDescription.TextColor3 = Color3.fromRGB(203, 220, 209)
-nestDescription.TextSize = 14
+nestDescription.TextSize = 12
 nestDescription.TextWrapped = true
 nestDescription.TextXAlignment = Enum.TextXAlignment.Left
 nestDescription.TextYAlignment = Enum.TextYAlignment.Top
 nestDescription.Parent = nestPanel
 
+local nestStats = Instance.new("Frame")
+nestStats.Name = "NestOverviewStats"
+nestStats.Position = UDim2.fromOffset(14, 136)
+nestStats.Size = UDim2.new(1, -28, 0, 72)
+nestStats.BackgroundColor3 = Color3.fromRGB(31, 54, 58)
+nestStats.BorderSizePixel = 0
+nestStats.Parent = nestPanel
+addCorner(nestStats, 12)
+local nestStatsLayout = Instance.new("UIListLayout")
+nestStatsLayout.FillDirection = Enum.FillDirection.Horizontal
+nestStatsLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+nestStatsLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+nestStatsLayout.Padding = UDim.new(0, 4)
+nestStatsLayout.Parent = nestStats
+
+local function makeNestStat(name, initial, color)
+    local item = Instance.new("Frame")
+    item.Name = name
+    item.Size = UDim2.new(1 / 3, -6, 1, -10)
+    item.BackgroundColor3 = Color3.fromRGB(40, 69, 70)
+    item.BorderSizePixel = 0
+    item.Parent = nestStats
+    addCorner(item, 9)
+    local value = Instance.new("TextLabel")
+    value.Name = "Value"
+    value.BackgroundTransparency = 1
+    value.Position = UDim2.fromOffset(4, 7)
+    value.Size = UDim2.new(1, -8, 0, 23)
+    value.Font = Enum.Font.GothamBlack
+    value.Text = initial
+    value.TextColor3 = color
+    value.TextSize = 16
+    value.Parent = item
+    local caption = Instance.new("TextLabel")
+    caption.BackgroundTransparency = 1
+    caption.Position = UDim2.fromOffset(3, 31)
+    caption.Size = UDim2.new(1, -6, 0, 18)
+    caption.Font = Enum.Font.GothamMedium
+    caption.Text = name
+    caption.TextColor3 = Color3.fromRGB(194, 216, 207)
+    caption.TextSize = 9
+    caption.Parent = item
+    return value
+end
+local nestCoinsValue = makeNestStat("МОНЕТЫ", "0", Color3.fromRGB(255, 218, 130))
+local nestPetsValue = makeNestStat("ПИТОМЦЫ", "0", Color3.fromRGB(175, 221, 255))
+local nestIncomeValue = makeNestStat("ДОХОД / 10 СЕК.", "—", Color3.fromRGB(155, 238, 185))
+
+local nestShortcutsTitle = Instance.new("TextLabel")
+nestShortcutsTitle.BackgroundTransparency = 1
+nestShortcutsTitle.Position = UDim2.fromOffset(18, 218)
+nestShortcutsTitle.Size = UDim2.new(1, -36, 0, 22)
+nestShortcutsTitle.Font = Enum.Font.GothamBlack
+nestShortcutsTitle.Text = "УПРАВЛЕНИЕ ГНЕЗДОМ"
+nestShortcutsTitle.TextColor3 = Color3.fromRGB(219, 235, 221)
+nestShortcutsTitle.TextSize = 12
+nestShortcutsTitle.TextXAlignment = Enum.TextXAlignment.Left
+nestShortcutsTitle.Parent = nestPanel
+
+local nestShortcutGrid = Instance.new("Frame")
+nestShortcutGrid.BackgroundTransparency = 1
+nestShortcutGrid.Position = UDim2.fromOffset(14, 244)
+nestShortcutGrid.Size = UDim2.new(1, -28, 0, 92)
+nestShortcutGrid.Parent = nestPanel
+local nestShortcutLayout = Instance.new("UIGridLayout")
+nestShortcutLayout.CellSize = UDim2.new(0.5, -5, 0, 40)
+nestShortcutLayout.CellPadding = UDim2.fromOffset(8, 8)
+nestShortcutLayout.SortOrder = Enum.SortOrder.LayoutOrder
+nestShortcutLayout.Parent = nestShortcutGrid
+
+local function makeNestShortcut(name, label, color)
+    local button = Instance.new("TextButton")
+    button.Name = name
+    button.BackgroundColor3 = color
+    button.BorderSizePixel = 0
+    button.Text = label
+    button.TextColor3 = Color3.fromRGB(248, 250, 244)
+    button.TextSize = 11
+    button.Font = Enum.Font.GothamBlack
+    button.Parent = nestShortcutGrid
+    addCorner(button, 10)
+    return button
+end
+local nestDisplayShortcut = makeNestShortcut("NestDisplayShortcut", "ПИТОМЦЫ НА ВИТРИНАХ", Color3.fromRGB(72, 119, 153))
+local nestDecorShortcut = makeNestShortcut("NestDecorShortcut", "УКРАШЕНИЯ", Color3.fromRGB(139, 91, 132))
+local nestBuildShortcut = makeNestShortcut("NestBuildShortcut", "СТРОИТЕЛЬСТВО", Color3.fromRGB(133, 105, 69))
+local nestUpgradeShortcut = makeNestShortcut("NestUpgradeShortcut", "УЛУЧШИТЬ ГНЕЗДО", Color3.fromRGB(70, 135, 92))
+
 local nestUpgrade = Instance.new("TextButton")
-nestUpgrade.Position = UDim2.new(0, 18, 1, -58)
+nestUpgrade.Position = UDim2.new(0, 18, 1, -56)
 nestUpgrade.Size = UDim2.new(1, -36, 0, 42)
 nestUpgrade.BackgroundColor3 = Color3.fromRGB(83, 151, 103)
 nestUpgrade.Text = "УЛУЧШИТЬ"
@@ -3724,21 +3816,31 @@ local function invokeNest(payload)
     return response.Data
 end
 
+local refreshNestIncome
 local function renderNest(data)
     if not data then return end
-    nestLevel.Text = string.format("Уровень гнезда: %d / %d", data.Level or 1, data.MaxLevel or 5)
+    nestLevel.Text = string.format("Уровень гнезда · %d / %d", data.Level or 1, data.MaxLevel or 5)
+    nestCoinsValue.Text = tostring(data.Coins or player:GetAttribute("Coins") or 0)
+    nestPetsValue.Text = tostring(player:GetAttribute("CompanionCount") or 0)
+    if refreshNestIncome then refreshNestIncome() end
     if data.IsMaxLevel then
-        nestDescription.Text = string.format("Максимальный уровень! Открыто мест для питомцев: %d. Твоё гнездо сияет во всей красе.", data.DisplaySlots or 0)
+        nestDescription.Text = string.format("Максимальный уровень! Открыто мест на витринах: %d. Гнездо полностью развито.", data.DisplaySlots or 0)
         nestUpgrade.Text = "МАКСИМАЛЬНЫЙ УРОВЕНЬ"
         nestUpgrade.Active = false
         nestUpgrade.AutoButtonColor = false
         nestUpgrade.BackgroundColor3 = Color3.fromRGB(83, 101, 87)
+        nestUpgradeShortcut.Text = "МАКСИМАЛЬНЫЙ УРОВЕНЬ"
+        nestUpgradeShortcut.Active = false
+        nestUpgradeShortcut.AutoButtonColor = false
     else
-        nestDescription.Text = string.format("Следующее улучшение откроет новые украшения и места для питомцев. Доступно мест: %d.", data.DisplaySlots or 0)
+        nestDescription.Text = string.format("Следующее улучшение откроет новые места для питомцев. Сейчас доступно: %d.", data.DisplaySlots or 0)
         nestUpgrade.Text = "УЛУЧШИТЬ · " .. tostring(data.NextCost or 0) .. " мон."
         nestUpgrade.Active = true
         nestUpgrade.AutoButtonColor = true
         nestUpgrade.BackgroundColor3 = Color3.fromRGB(83, 151, 103)
+        nestUpgradeShortcut.Text = "УЛУЧШИТЬ ГНЕЗДО"
+        nestUpgradeShortcut.Active = true
+        nestUpgradeShortcut.AutoButtonColor = true
     end
 end
 
@@ -5802,6 +5904,31 @@ local function openDisplay()
     local data = invokeDisplay({ Action = "Get" })
     if data then renderDisplay(data) end
 end
+
+refreshNestIncome = function()
+    local snapshot = invokeDisplay({ Action = "Get" })
+    if not snapshot then
+        nestIncomeValue.Text = "—"
+        return
+    end
+    nestIncomeValue.Text = tostring(snapshot.IncomePerTick or 0)
+end
+
+nestDisplayShortcut.Activated:Connect(function()
+    nestPanel.Visible = false
+    openDisplay()
+end)
+nestDecorShortcut.Activated:Connect(function()
+    nestPanel.Visible = false
+    openDecor()
+end)
+nestBuildShortcut.Activated:Connect(function()
+    nestPanel.Visible = false
+    openBuild()
+end)
+nestUpgradeShortcut.Activated:Connect(function()
+    if nestUpgradeShortcut.Active then nestUpgrade:Activate() end
+end)
 
 displayButton.Activated:Connect(openDisplay)
 displayClose.Activated:Connect(function() displayPanel.Visible = false end)
