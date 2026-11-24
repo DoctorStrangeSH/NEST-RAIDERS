@@ -968,3 +968,14 @@ Static source checks validate the catalogue, persistence field, server-side unlo
 7. Test with multiple players and monitor server performance, movement replication, plot boundaries, building placement and decoration placement.
 
 Static regression checks validate bounded movement, state-driven behavior and existing interaction wiring. Roblox Studio runtime and multiplayer performance checks are still required.
+
+## Sprint 4.65 — Autonomous Toy Play
+1. Equip Meadow Ball, Cozy Plush and Wind Spinner on separate displayed pets. Confirm each toy appears on the ground beside its pet, not attached to its body.
+2. Wait for a pet to choose its toy. Confirm it walks to the toy, pauses, performs a playful bob/turn, and the toy bounces or rocks. Confirm the Wind Spinner keeps rotating.
+3. After a short play session, confirm the pet resumes wandering and may choose the toy again later.
+4. Set mood low or energy below the toy's energy requirement. Confirm the pet does not start a new toy session. Put it to sleep and confirm toy play stops.
+5. Re-equip a different toy and confirm the previous toy is removed and only one new toy remains.
+6. Remove the pet while it is moving or playing. Confirm both pet and toy are removed with no orphaned parts.
+7. Test up to four displayed pets and multiple players. Check movement boundaries, server performance, character movement, building placement and decoration placement.
+
+Static checks validate the toy state machine and cleanup ownership. Roblox Studio runtime, multiplayer and visual checks remain required.
