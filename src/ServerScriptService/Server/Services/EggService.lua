@@ -14,6 +14,7 @@ local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)
 local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local EggService = {}
+local hatchRevealRemote
 local EGG_RESPAWN_SECONDS = 20
 local EGG_CAPACITY = 20
 local ACTIVE_WORLD_EGGS = 3
@@ -330,6 +331,23 @@ function EggService:_HatchUnlocked(player, station)
         " · Охота: высшая редкость %.1f%% → %.1f%%", baseTopChance * 100, boostedTopChance * 100) or ""
     player:SetAttribute("LastNotice", "Вылупился питомец: " .. definition.Name .. " (" .. definition.Rarity .. ") · "
         .. geneticTrait.Name .. originMessage .. hunterMessage .. "!" .. xpMessage)
+
+    -- The server decides the result and commits it before the client receives a
+    -- cosmetic reveal. A lost animation can never undo or duplicate the hatch.
+    if hatchRevealRemote then
+        hatchRevealRemote:FireClient(player, {
+            Id = definition.Id,
+            Name = definition.Name,
+            Rarity = definition.Rarity,
+            TraitName = geneticTrait.Name,
+            TraitRarity = geneticTrait.Rarity or "Обычный",
+            Origin = egg.Origin or "World",
+            Income = companion.Income,
+            HatchBonus = hatchBonus,
+            BaseTopChance = baseTopChance,
+            BoostedTopChance = boostedTopChance,
+        })
+    end
 end
 
 
@@ -351,6 +369,22 @@ function EggService:Hatch(player, station)
 end
 
 function EggService:Init()
+    local remotes = ReplicatedStorage:FindFirstChild("NestRaidersRemotes")
+    if not remotes then
+        remotes = Instance.new("Folder")
+        remotes.Name = "NestRaidersRemotes"
+        remotes.Parent = ReplicatedStorage
+    end
+    hatchRevealRemote = remotes:FindFirstChild("HatchReveal")
+    if not hatchRevealRemote then
+        hatchRevealRemote = Instance.new("RemoteEvent")
+        hatchRevealRemote.Name = "HatchReveal"
+        hatchRevealRemote.Parent = remotes
+    elseif not hatchRevealRemote:IsA("RemoteEvent") then
+        warn("[NEST RAIDERS] HatchReveal exists but is not a RemoteEvent.")
+        hatchRevealRemote = nil
+    end
+
     local world = Workspace:WaitForChild("NestRaidersWorld", 30)
     if not world then
         warn("[NEST RAIDERS] World was not built before EggService initialized.")
