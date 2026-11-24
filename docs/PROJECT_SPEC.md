@@ -560,3 +560,14 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - A win grants 150 coins and 100 XP; the other participant receives 50 coins. Each player's reward is independently throttled by a persistent ten-minute cooldown in QuestProgress.RaidRewardCooldownUntil.
 - A voluntary early exit, death or disconnect cancels the match without rewards. A timed-out match is a defender win.
 - The arena HUD exposes role, core integrity, remaining time, one role-specific action, and a no-reward forfeit control.
+
+ 
+## Raid duel combat — Sprint 4.49
+- Both participants receive temporary, role-colored sword and shield visuals when the arena starts. These models are welded to the character and are destroyed at match cleanup; they are not Tools, inventory items, or saved profile data.
+- Either participant can request a melee strike. The server validates an active match, living characters, a maximum 12-stud distance, and a per-player 1.15-second cooldown. A successful unblocked strike removes 24 points from the opponent's raid combat health.
+- Raid combat health is independent of Roblox Humanoid health. A duel strike never calls Humanoid:TakeDamage, cannot kill the character, and cannot affect ordinary island gameplay after the match ends.
+- Either participant can raise a timed guard. The parry window lasts 0.9 seconds and has a 3.2-second cooldown. A strike during the window is negated and counters for 18 raid combat damage against the attacker.
+- Each participant begins with 100 raid combat health. The first player reduced to zero loses; the opponent wins and receives the normal Sprint 4.48 victory reward. The losing participant receives the normal participation reward, subject to the persistent ten-minute reward cooldown.
+- The HUD shows both combat health values, strike and parry controls, the core objective, timer, role-specific core action and voluntary forfeit.
+- Duel combat does not replace the Nest Core objective: the attacker can still win by destroying the core, and the defender can still win by surviving the round timer.
+- Combat requests are server-authoritative. Client controls only request actions; the server owns range, cooldown, guard timing, damage, match completion and rewards.
