@@ -1315,6 +1315,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Reward coins scaled by companion growth level and stars, grant a small mood bonus, and show a Russian owner notification.
 - [x] Apply a persistent three-minute cooldown after a successful claim; interrupted treasure searches are cancelled when the searching pet goes to sleep.
 - [x] Add regression checks for personality odds, cooldown migration, ownership validation, one-time rewards and discovery feedback.
+- [x] GitHub Actions: Rojo place build, output verification and all `tests/check_playable.py` checks passed (workflow run 45416116492).
+- [x] Publish the Sprint 4.68 Roblox Studio artifact; extracted `.rbxlx` parsed successfully as XML (artifact expires 2026-12-08).
 - [ ] Roblox Studio: verify search timing across personality types and confirm a curious pet searches more often than a cautious pet over a long session.
 - [ ] Verify cache appearance, prompt distance, owner-only collection, duplicate prompt activation and reward notification.
 - [ ] Confirm coins, mood and cooldown persist after rejoin; confirm a cache is not duplicated after pet display refresh.
