@@ -764,6 +764,68 @@ function RaidService:ReinforceCore(player)
     return { Ok = true, Message = "Ядро укреплено: " .. tostring(match.CoreHealth) .. " / " .. tostring(RAID_CORE_MAX_HEALTH) .. "." }
 end
 
+function RaidService:AttackDefense(player)
+    local match = self._matches[player]
+    if not match or match.State ~= "ACTIVE" or match.Attacker ~= player then
+        return { Ok = false, Message = "Разрушать оборону может только атакующий." }
+    end
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+    if not root or not humanoid or humanoid.Health <= 0 then
+        return { Ok = false, Message = "Нельзя атаковать сооружение сейчас." }
+    end
+    local timestamp = os.clock()
+    if timestamp - (match.LastDefenseAttackAt[player] or 0) < RAID_DEFENSE_STRIKE_COOLDOWN_SECONDS then
+        return { Ok = false, Message = "Удар по сооружению ещё восстанавливается." }
+    end
+    local defense = findNearestDefense(match, root, RAID_DUEL_STRIKE_RANGE, false)
+    if not defense then
+        return { Ok = false, Message = "Подойди ближе к оборонительному сооружению." }
+    end
+    match.LastDefenseAttackAt[player] = timestamp
+    defense.Health = math.max(0, defense.Health - RAID_DEFENSE_STRIKE_DAMAGE)
+    updateDefenseLabel(defense)
+    if defense.Health <= 0 then
+        if defense.Model and defense.Model.Parent then defense.Model:Destroy() end
+        player:SetAttribute("LastNotice", defense.Name .. " разрушено! Путь к ядру открыт.")
+    else
+        player:SetAttribute("LastNotice", defense.Name .. " повреждено: " .. tostring(defense.Health)
+            .. " / " .. tostring(defense.MaxHealth) .. ".")
+    end
+    publishArenaState(match)
+    return { Ok = true, Message = defense.Health <= 0
+        and (defense.Name .. " уничтожено!")
+        or (defense.Name .. ": " .. tostring(defense.Health) .. " / " .. tostring(defense.MaxHealth) .. " прочности.") }
+end
+
+function RaidService:RepairDefense(player)
+    local match = self._matches[player]
+    if not match or match.State ~= "ACTIVE" or match.Defender ~= player then
+        return { Ok = false, Message = "Ремонтировать оборону может только защитник." }
+    end
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+    if not root or not humanoid or humanoid.Health <= 0 then
+        return { Ok = false, Message = "Нельзя ремонтировать сооружение сейчас." }
+    end
+    local timestamp = os.clock()
+    if timestamp - (match.LastDefenseRepairAt[player] or 0) < RAID_DEFENSE_REPAIR_COOLDOWN_SECONDS then
+        return { Ok = false, Message = "Ремонт обороны ещё восстанавливается." }
+    end
+    local defense = findNearestDefense(match, root, RAID_DUEL_STRIKE_RANGE, true)
+    if not defense then
+        return { Ok = false, Message = "Рядом нет повреждённых сооружений для ремонта." }
+    end
+    match.LastDefenseRepairAt[player] = timestamp
+    defense.Health = math.min(defense.MaxHealth, defense.Health + RAID_DEFENSE_REPAIR_AMOUNT)
+    updateDefenseLabel(defense)
+    publishArenaState(match)
+    return { Ok = true, Message = defense.Name .. " восстановлено: " .. tostring(defense.Health)
+        .. " / " .. tostring(defense.MaxHealth) .. "." }
+end
+
 function RaidService:StrikeOpponent(player)
     local match = self._matches[player]
     if not match or match.State ~= "ACTIVE" or (match.Attacker ~= player and match.Defender ~= player) then
@@ -1182,6 +1244,8 @@ function RaidService:HandleRequest(player, payload)
     if payload.Action == "ReinforceCore" then return self:ReinforceCore(player) end
     if payload.Action == "StrikeOpponent" then return self:StrikeOpponent(player) end
     if payload.Action == "RaiseGuard" then return self:RaiseGuard(player) end
+    if payload.Action == "AttackDefense" then return self:AttackDefense(player) end
+    if payload.Action == "RepairDefense" then return self:RepairDefense(player) end
     return { Ok = false, Message = "Неизвестное действие рейда." }
 end
 
