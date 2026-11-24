@@ -1,5 +1,7 @@
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local WorldBuilder = {}
 
 local function part(parent, name, size, position, color, material, shape)
@@ -109,6 +111,31 @@ function WorldBuilder:Build()
     Lighting.EnvironmentSpecularScale = 0.35
     Lighting.Ambient = Color3.fromRGB(145, 164, 180)
     Lighting.OutdoorAmbient = Color3.fromRGB(170, 190, 205)
+
+    local cycleConfig = GameConfig.WorldCycle or {}
+    if cycleConfig.Enabled ~= false then
+        local secondsPerHour = math.max(15, tonumber(cycleConfig.SecondsPerGameHour) or 60)
+        local startClockTime = (tonumber(cycleConfig.StartClockTime) or 14) % 24
+        local dayStartsAt = (tonumber(cycleConfig.DayStartsAt) or 6) % 24
+        local nightStartsAt = (tonumber(cycleConfig.NightStartsAt) or 19) % 24
+        local cycleStartedAt = os.clock()
+        world:SetAttribute("WorldCycleEnabled", true)
+        task.spawn(function()
+            while world.Parent == Workspace do
+                local elapsedHours = (os.clock() - cycleStartedAt) / secondsPerHour
+                local clockTime = (startClockTime + elapsedHours) % 24
+                Lighting.ClockTime = clockTime
+                local isNight = clockTime >= nightStartsAt or clockTime < dayStartsAt
+                world:SetAttribute("WorldTimePhase", isNight and "Night" or "Day")
+                world:SetAttribute("WorldTimeLabel", isNight and "Ночь" or "День")
+                task.wait(1)
+            end
+        end)
+    else
+        world:SetAttribute("WorldCycleEnabled", false)
+        world:SetAttribute("WorldTimePhase", "Day")
+        world:SetAttribute("WorldTimeLabel", "День")
+    end
 
     local island = Instance.new("Folder")
     island.Name = "StarterIsland"
