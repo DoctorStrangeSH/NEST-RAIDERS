@@ -1560,6 +1560,15 @@ assert 'local speed = energy <= 15 and 1.25 or (mood >= 80 and 3.4 or 2.5)' in c
 assert 'behavior = "Sleeping"' in companion_service
 assert 'local isSleeping = (tonumber(needs.RestingUntil) or 0) > os.time()' in companion_service
 assert 'model:SetAttribute("IsSleeping", isSleeping)' in companion_service
+assert 'local home = basePivot.Position' in companion_service
+assert 'makeShape(folder, "NestToy_"' in companion_service
+assert 'targetPosition = toyApproach' in companion_service
+assert 'local toyPlayUntil = 0' in companion_service
+assert 'toyPlayUntil = now + random:NextNumber(2.8, 4.2)' in companion_service
+assert 'behavior = "PlayingWithToy"' in companion_service
+assert 'toyPart:SetAttribute("ToyState", "InUse")' in companion_service
+assert 'toyPart:SetAttribute("ToyState", "Waiting")' in companion_service
+assert 'while model.Parent == folder and folder.Parent do' in companion_service
 assert 'behavior = mood >= 80 and "Playful" or "Wandering"' in companion_service
 assert 'model:SetAttribute("Behavior", behavior)' in companion_service
 assert 'model:SetAttribute("Personality"' in companion_service
