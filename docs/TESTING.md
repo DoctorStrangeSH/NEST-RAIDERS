@@ -696,3 +696,19 @@
 - [ ] Disconnect either participant during an invitation and during READY state; verify the other participant is released.
 - [ ] Confirm the matchmaking system never changes coins, eggs, companions, artifacts, materials or saved profile data.
 - [ ] Verify the board, buttons, incoming invitation and target list at 320×480, 375×667, tablet and desktop sizes.
+
+ 
+## Sprint 4.48 — Bounded raid arena acceptance
+- [ ] In a two-client Studio session, open a defender's nest, enable attacker readiness, send a challenge and explicitly accept it; verify both players are moved to the same isolated arena.
+- [ ] Verify each arena has a stable floor, enclosing walls, two separated spawn points, a visible core pedestal and a readable floating health label.
+- [ ] As attacker, approach the core and strike it; verify exactly 20 integrity is removed and the action is rejected beyond 16 studs.
+- [ ] Spam the attack action; verify the server enforces the 2.2-second cooldown and cannot reduce integrity below zero.
+- [ ] As defender, approach the core and reinforce it; verify exactly 10 integrity is restored up to 100 and the action is rejected beyond 16 studs.
+- [ ] Spam reinforcement; verify the server enforces the 8-second cooldown and a full core cannot be overfilled.
+- [ ] Verify the attacker wins at zero integrity and the defender wins when the 150-second timer expires.
+- [ ] Verify the attacker receives 150 coins and 100 XP, while the defender receives 50 coins; confirm XP uses the normal Researcher artifact path.
+- [ ] Complete another match inside the ten-minute reward cooldown; verify neither participant receives duplicate rewards.
+- [ ] Forfeit, reset/die, and disconnect during an active round; verify the arena is destroyed, no reward is granted, and the remaining player returns to their saved position.
+- [ ] Rejoin after a rewarded match and verify the persistent reward cooldown remains active.
+- [ ] Confirm no coins, eggs, companions, artifacts, materials, nest decorations or building inventory are stolen or otherwise changed by the opponent.
+- [ ] Verify the arena HUD, role-specific action and forfeit control at 320×480, 375×667, tablet and desktop sizes.
