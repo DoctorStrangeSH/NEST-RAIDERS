@@ -655,6 +655,18 @@ assert 'FlowerBed_W' in plots and 'FlowerBed_E' in plots and 'FlowerBed_S' in pl
 assert 'GardenPathStone_' in plots and 'part.CanCollide = false' in plots
 assert 'NestLanternPole' in plots and 'WarmGardenLight' in plots
 assert 'GardenCrystalGlow' in plots and 'LevelThreeFlower' in plots
+island_styles = Path("src/ReplicatedStorage/Shared/Config/IslandStyleCatalog.lua").read_text()
+decor_service = Path("src/ServerScriptService/Server/Services/NestDecorService.lua").read_text()
+assert 'IslandStyleCatalog' in plots and 'PlotService:ApplyIslandStyle' in plots
+assert 'ArcanePrism_' in plots and 'AncientColumn_' in plots and 'RoyalPost_' in plots
+assert all(style in island_styles for style in ['Meadow', 'Arcane', 'Ancient', 'Royal'])
+assert 'IslandStyle = "Meadow"' in profile_template
+assert 'Action == "SetStyle"' in decor_service
+assert 'definition.UnlockLevel' in decor_service and 'nest.IslandStyle = styleId' in decor_service
+assert 'CurrentStyle = currentStyle' in decor_service and 'Styles = styles' in decor_service
+assert 'СТИЛЬ ТВОЕГО ОСТРОВА' in client and 'КАТАЛОГ УКРАШЕНИЙ' in client
+assert 'Action = "SetStyle", StyleId = style.Id' in client
+
 assert 'ApplyNestLevel(player, profile.Nest.Level or 1)' in plots
 assert 'PlotService:ApplyContestTrophies(player)' in ancient_boss
 assert 'AncientTemple = "СЕРДЦЕ ДРЕВА"' in plots and 'СЕРДЦЕ ДРЕВА' in plots
