@@ -61,6 +61,7 @@ function ProgressionService:AddXP(player, amount)
     end
 
     local safeAmount = math.floor(math.min(amount, 10000))
+    if safeAmount <= 0 then return false end
     local awardedAmount, researchBonus, extraXP = ArtifactBonusService:ApplyResearchBonus(profile, safeAmount)
     profile.XP += awardedAmount
 
@@ -82,6 +83,15 @@ function ProgressionService:AddXP(player, amount)
     player:SetAttribute("LastXPBonusPercent", math.floor(researchBonus * 100 + 0.5))
     self:RefreshZoneUnlocks(player)
     return true, awardedAmount, researchBonus, extraXP
+end
+
+function ProgressionService:FormatXPReward(awardedAmount, extraXP)
+    local safeAwarded = math.max(0, math.floor(tonumber(awardedAmount) or 0))
+    local safeExtra = math.max(0, math.floor(tonumber(extraXP) or 0))
+    if safeExtra > 0 then
+        return string.format("+%d опыта (артефакт +%d)", safeAwarded, safeExtra)
+    end
+    return string.format("+%d опыта", safeAwarded)
 end
 
 function ProgressionService:Init()
@@ -124,9 +134,10 @@ function ProgressionService:Init()
                     if count >= 3 and profile.CompletedQuests.emerald_trial ~= true then
                         profile.CompletedQuests.emerald_trial = true
                         player:SetAttribute("EmeraldTrialCompleted", true)
-                        self:AddXP(player, 100)
+                        local _, awardedXP, _, extraXP = self:AddXP(player, 100)
                         self:RefreshZoneUnlocks(player)
-                        player:SetAttribute("LastNotice", "Испытание Изумрудной рощи пройдено! Все три руны пробуждены. +100 опыта. Путь к Ледяным нагорьям откроется на 12 уровне.")
+                        player:SetAttribute("LastNotice", "Испытание Изумрудной рощи пройдено! Все три руны пробуждены. "
+                            .. self:FormatXPReward(awardedXP, extraXP) .. ". Путь к Ледяным нагорьям откроется на 12 уровне.")
                     else
                         player:SetAttribute("LastNotice", string.format("Древняя руна пробуждена! Испытание: %d / 3", count))
                     end
@@ -175,9 +186,10 @@ function ProgressionService:Init()
                     if count >= 3 and profile.CompletedQuests.frost_trial ~= true then
                         profile.CompletedQuests.frost_trial = true
                         player:SetAttribute("FrostTrialCompleted", true)
-                        self:AddXP(player, 180)
+                        local _, awardedXP, _, extraXP = self:AddXP(player, 180)
                         self:RefreshZoneUnlocks(player)
-                        player:SetAttribute("LastNotice", "Испытание Сердца зимы пройдено! Все три руны пробуждены. +180 опыта.")
+                        player:SetAttribute("LastNotice", "Испытание Сердца зимы пройдено! Все три руны пробуждены. "
+                            .. self:FormatXPReward(awardedXP, extraXP) .. ".")
                     else
                         player:SetAttribute("LastNotice", string.format("Ледяная руна пробуждена! Испытание: %d / 3", count))
                     end
