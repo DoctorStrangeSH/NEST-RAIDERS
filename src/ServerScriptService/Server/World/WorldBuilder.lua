@@ -1,5 +1,6 @@
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local WorldBuilder = {}
@@ -135,6 +136,167 @@ function WorldBuilder:Build()
         world:SetAttribute("WorldCycleEnabled", false)
         world:SetAttribute("WorldTimePhase", "Day")
         world:SetAttribute("WorldTimeLabel", "День")
+    end
+
+    local weatherConfig = GameConfig.Weather or {}
+    if weatherConfig.Enabled ~= false then
+        local weatherFolder = Instance.new("Folder")
+        weatherFolder.Name = "WeatherEffects"
+        weatherFolder.Parent = world
+
+        local atmosphere = Lighting:FindFirstChild("NestRaidersAtmosphere")
+        if not atmosphere then
+            atmosphere = Instance.new("Atmosphere")
+            atmosphere.Name = "NestRaidersAtmosphere"
+            atmosphere.Parent = Lighting
+        end
+
+        local terrain = Workspace.Terrain
+        local clouds = terrain:FindFirstChild("NestRaidersClouds")
+        if not clouds then
+            clouds = Instance.new("Clouds")
+            clouds.Name = "NestRaidersClouds"
+            clouds.Parent = terrain
+        end
+
+        local rainEmitters = {}
+        for gridX = -1, 1 do
+            for gridZ = -1, 1 do
+                local rainAnchor = Instance.new("Part")
+                rainAnchor.Name = "RainAnchor_" .. gridX .. "_" .. gridZ
+                rainAnchor.Size = Vector3.new(1, 1, 1)
+                rainAnchor.Position = Vector3.new(gridX * 100, 88, gridZ * 100)
+                rainAnchor.Anchored = true
+                rainAnchor.Transparency = 1
+                rainAnchor.CanCollide = false
+                rainAnchor.CanTouch = false
+                rainAnchor.CanQuery = false
+                rainAnchor.Parent = weatherFolder
+
+                local attachment = Instance.new("Attachment")
+                attachment.Parent = rainAnchor
+                local emitter = Instance.new("ParticleEmitter")
+                emitter.Name = "Rainfall"
+                emitter.Texture = "rbxasset://textures/particles/rain_main.dds"
+                emitter.Enabled = false
+                emitter.Rate = 42
+                emitter.Lifetime = NumberRange.new(0.9, 1.2)
+                emitter.Speed = NumberRange.new(68, 82)
+                emitter.Acceleration = Vector3.new(5, -12, 0)
+                emitter.SpreadAngle = Vector2.new(5, 5)
+                emitter.EmissionDirection = Enum.NormalId.Bottom
+                emitter.Shape = Enum.ParticleEmitterShape.Box
+                emitter.ShapeSize = Vector3.new(100, 1, 100)
+                emitter.Size = NumberSequence.new(0.08)
+                emitter.Transparency = NumberSequence.new({
+                    NumberSequenceKeypoint.new(0, 0.12),
+                    NumberSequenceKeypoint.new(1, 0.35),
+                })
+                emitter.LightEmission = 0.12
+                emitter.Parent = attachment
+                table.insert(rainEmitters, emitter)
+            end
+        end
+
+        local presets = {
+            Clear = {
+                Brightness = 2.2, Ambient = Color3.fromRGB(145, 164, 180),
+                Outdoor = Color3.fromRGB(170, 190, 205), FogEnd = 100000,
+                Density = 0.12, Haze = 0.4, Cover = 0.28, CloudDensity = 0.32,
+                CloudColor = Color3.fromRGB(255, 255, 255), RainRate = 0,
+            },
+            Rain = {
+                Brightness = 1.65, Ambient = Color3.fromRGB(112, 132, 151),
+                Outdoor = Color3.fromRGB(126, 148, 165), FogEnd = 850,
+                Density = 0.24, Haze = 1.4, Cover = 0.72, CloudDensity = 0.68,
+                CloudColor = Color3.fromRGB(176, 190, 204), RainRate = 1,
+            },
+            Fog = {
+                Brightness = 1.55, Ambient = Color3.fromRGB(151, 164, 166),
+                Outdoor = Color3.fromRGB(164, 176, 178), FogEnd = 230,
+                Density = 0.42, Haze = 2.1, Cover = 0.55, CloudDensity = 0.52,
+                CloudColor = Color3.fromRGB(211, 216, 214), RainRate = 0,
+            },
+            Storm = {
+                Brightness = 1.15, Ambient = Color3.fromRGB(76, 91, 111),
+                Outdoor = Color3.fromRGB(91, 109, 129), FogEnd = 620,
+                Density = 0.32, Haze = 1.8, Cover = 0.92, CloudDensity = 0.88,
+                CloudColor = Color3.fromRGB(115, 128, 148), RainRate = 1,
+            },
+        }
+
+        local weatherTypes = weatherConfig.Types or {}
+        local random = Random.new()
+        local function chooseWeather()
+            local totalWeight = 0
+            for _, entry in ipairs(weatherTypes) do
+                totalWeight += math.max(0, tonumber(entry.Weight) or 0)
+            end
+            if totalWeight <= 0 then return "Clear" end
+            local roll = random:NextNumber(0, totalWeight)
+            for _, entry in ipairs(weatherTypes) do
+                roll -= math.max(0, tonumber(entry.Weight) or 0)
+                if roll <= 0 and presets[entry.Id] then return entry.Id end
+            end
+            return "Clear"
+        end
+
+        local function applyWeather(weatherId)
+            local preset = presets[weatherId] or presets.Clear
+            local tweenInfo = TweenInfo.new(5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+            TweenService:Create(Lighting, tweenInfo, {
+                Brightness = preset.Brightness,
+                Ambient = preset.Ambient,
+                OutdoorAmbient = preset.Outdoor,
+                FogEnd = preset.FogEnd,
+            }):Play()
+            TweenService:Create(atmosphere, tweenInfo, {
+                Density = preset.Density,
+                Haze = preset.Haze,
+            }):Play()
+            TweenService:Create(clouds, tweenInfo, {
+                Cover = preset.Cover,
+                Density = preset.CloudDensity,
+                Color = preset.CloudColor,
+            }):Play()
+            for _, emitter in ipairs(rainEmitters) do
+                emitter.Enabled = preset.RainRate > 0
+                emitter.Rate = weatherId == "Storm" and 72 or 42
+            end
+            world:SetAttribute("WorldWeather", weatherId)
+            for _, entry in ipairs(weatherTypes) do
+                if entry.Id == weatherId then
+                    world:SetAttribute("WorldWeatherLabel", entry.Label)
+                    break
+                end
+            end
+            world:SetAttribute("WorldWeatherLabel", world:GetAttribute("WorldWeatherLabel") or "Ясно")
+        end
+
+        task.spawn(function()
+            local minDuration = math.max(30, tonumber(weatherConfig.MinDurationSeconds) or 120)
+            local maxDuration = math.max(minDuration, tonumber(weatherConfig.MaxDurationSeconds) or 210)
+            while world.Parent == Workspace do
+                local weatherId = chooseWeather()
+                applyWeather(weatherId)
+                local duration = random:NextNumber(minDuration, maxDuration)
+                local endsAt = os.clock() + duration
+                while world.Parent == Workspace and os.clock() < endsAt do
+                    if weatherId == "Storm" and random:NextNumber() < 0.035 then
+                        local previousBrightness = Lighting.Brightness
+                        Lighting.Brightness = math.min(4.5, previousBrightness + 2.2)
+                        task.wait(0.12)
+                        if world.Parent == Workspace then
+                            Lighting.Brightness = previousBrightness
+                        end
+                    end
+                    task.wait(1)
+                end
+            end
+        end)
+    else
+        world:SetAttribute("WorldWeather", "Clear")
+        world:SetAttribute("WorldWeatherLabel", "Ясно")
     end
 
     local island = Instance.new("Folder")
