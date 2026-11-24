@@ -51,6 +51,34 @@ assert 'nightGlow.Brightness = isNight and 0.8 or 0' in companion_service
 assert 'treasureChance *= isPreferredTime and 1.25 or 0.55' in companion_service
 assert 'speed *= isPreferredTime and 1.18 or 0.72' in companion_service
 assert 'ActivityState' in companion_service
+
+# Sprint 4.70 — dynamic weather, species reactions and live HUD status.
+assert 'GameConfig.Weather = {' in game_config
+assert 'MinDurationSeconds = 120' in game_config
+assert 'MaxDurationSeconds = 210' in game_config
+for weather_id in ('Clear', 'Rain', 'Fog', 'Storm'):
+    assert f'{weather_id} =' in world
+assert 'local weatherConfig = GameConfig.Weather or {}' in world
+assert 'Instance.new("Atmosphere")' in world
+assert 'Instance.new("Clouds")' in world
+assert 'rbxasset://textures/particles/rain_main.dds' in world
+assert 'emitter.ShapeSize = Vector3.new(100, 1, 100)' in world
+assert 'world:SetAttribute("WorldWeather", weatherId)' in world
+assert 'world:SetAttribute("WorldWeatherLabel"' in world
+assert 'weatherId == "Storm" and random:NextNumber() < 0.035' in world
+assert 'WeatherPreference = "Rain"' in companion_catalog
+assert companion_catalog.count('WeatherPreference = "Shelter"') >= 4
+assert 'local weatherState = worldFolder and worldFolder:GetAttribute("WorldWeather") or "Clear"' in companion_service
+assert 'local seeksShelter = weatherState == "Storm" and weatherPreference == "Shelter"' in companion_service
+assert 'local enjoysRain = isWetWeather and weatherPreference == "Rain"' in companion_service
+assert 'targetIsShelter = true' in companion_service
+assert 'behavior == "SeekingShelter" and "Ищет укрытие"' in companion_service
+assert 'behavior == "Sheltering" and "Прячется от грозы"' in companion_service
+assert 'local worldInfo = Instance.new("Frame")' in client
+assert 'worldInfo.Name = "WorldInfo"' in client
+assert 'Lighting:GetPropertyChangedSignal("ClockTime"):Connect(updateWorldInfo)' in client
+assert 'GetAttributeChangedSignal("WorldWeatherLabel")' in client
+assert 'worldInfo.Size = UDim2.fromOffset(narrow and 188 or 252, 32)' in client
 world_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
 grove_secret = Path("src/ServerScriptService/Server/Services/AncientSecretService.lua").read_text()
 ancient_cave = Path("src/ServerScriptService/Server/Services/AncientCaveService.lua").read_text()
