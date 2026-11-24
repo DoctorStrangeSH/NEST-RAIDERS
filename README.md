@@ -325,3 +325,7 @@ Companions can now interrupt their normal wandering to search for a small gift. 
 
 ## Living Island — Sprint 4.69
 The Starter Island now has a server-synchronized day/night cycle (24 real minutes per in-game day). Selected pets follow day or night activity schedules; nocturnal companions gain a soft night glow and become more active during their preferred hours. The world exposes Day/Night phase attributes for future UI and event features.
+
+
+## Dynamic Weather — Sprint 4.70
+The Starter Island now cycles through clear skies, rain, fog and storms. Weather changes the lighting, clouds and atmosphere, adds island-wide rainfall and occasional storm flashes, and affects companion behavior. The HUD displays the live in-game clock, day/night phase and weather. Selected pets enjoy rain or seek shelter during storms.
