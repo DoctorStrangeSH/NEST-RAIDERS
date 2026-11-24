@@ -533,5 +533,6 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Hunter bonuses apply only to natural world/shop eggs. Breeding eggs retain their inherited offspring and trait without any Hunter reroll.
 - Hunter bonuses scale by 25% per artifact upgrade level; the combined equipped Hunter bonus is capped at +30%. The two existing equipment slots remain unchanged.
 - Successful natural hatch notices display the actual highest-tier chance before and after the equipped Hunter modifier.
+- Egg Shop and Collection Book calculate each species' current normalized chance from the same server-side helper used by hatching. When a Hunter changes a species chance, the UI also shows its unmodified base chance.
 - Craft weights are rebalanced to income 36/18/6 (60%), Gatherer 12/6/2 (20%), Researcher 6/3/1 (10%), Hunter 6/3/1 (10%); all weights total 100.
 - Roblox Studio exposes a server-guarded Hunter fixture and a deterministic 7,000-hatch simulation (1,000 per natural egg table). The simulation uses the production selection formula and does not consume eggs, grant companions, change XP, or mutate profile inventory.
