@@ -1258,7 +1258,8 @@ assert 'match.PetAbilityReadyAt[player] = timestamp + cooldown' in raid_service
 assert 'local function applyRaidCombatDamage(self, match, target, amount, sourceName)' in raid_service
 assert 'absorbed = math.min(remainingDamage, shield.Amount)' in raid_service
 assert 'remainingDamage -= absorbed' in raid_service
-assert 'applyRaidCombatDamage(self, match, match.Attacker, defense.Damage' in raid_service
+assert 'return applyRaidCombatDamage(self, match, target, amount, sourceName)' in raid_service
+assert 'applyDefenseDamage(self, match, match.Attacker, defense.Damage' in raid_service
 assert 'applyRaidCombatDamage(self, match, opponent, RAID_DUEL_STRIKE_DAMAGE' in raid_service
 assert 'applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE' in raid_service
 assert 'payload.Action == "UsePetAbility"' in raid_service and 'self:UsePetAbility(player)' in raid_service
