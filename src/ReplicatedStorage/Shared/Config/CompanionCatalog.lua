@@ -120,7 +120,6 @@ local CompanionCatalog = {
         Personality = "Любознательный", PersonalityDescription = "Обожает исследовать вулканические туннели.",
         FavoriteFood = "Жареные ягоды", FavoriteToy = "MeadowBall", PetMoodBonus = 8, PlayMoodBonus = 4,
         EggId = "EmberEgg",
-        RaidAbility = { Id = "PhoenixDive", Name = "Пикирование феникса", Role = "HUNTER", Description = "Наносит сопернику 22 боевого урона на расстоянии до 24 studs.", UnlockLevel = 5, CooldownSeconds = 24, Damage = 22, Range = 24 },
         Ability = { Id = "CinderHide", Name = "Угольная шёрстка", Description = "Снижает накопление жара рядом с лавой.", UnlockLevel = 7, CooldownSeconds = 300 },
     },
     MagmaWhelp = {
@@ -137,6 +136,7 @@ local CompanionCatalog = {
         Personality = "Гордый", PersonalityDescription = "Любит высоту и огненные рассветы.",
         FavoriteFood = "Солнечные зёрна", FavoriteToy = "CozyPlush", PetMoodBonus = 12, PlayMoodBonus = 0,
         EggId = "EmberEgg",
+        RaidAbility = { Id = "PhoenixDive", Name = "Пикирование феникса", Role = "HUNTER", Description = "Наносит сопернику 22 боевого урона на расстоянии до 24 studs.", UnlockLevel = 5, CooldownSeconds = 24, Damage = 22, Range = 24 },
         Ability = { Id = "PhoenixRenewal", Name = "Возрождение", Description = "Один раз за поход спасает от критического перегрева.", UnlockLevel = 7, CooldownSeconds = 600 },
     },
     FrostFox = {
@@ -153,7 +153,6 @@ local CompanionCatalog = {
         PetMoodBonus = 8,
         PlayMoodBonus = 4,
         EggId = "FrostEgg",
-        RaidAbility = { Id = "AuroraMend", Name = "Исцеление авроры", Role = "HEALER", Description = "Восстанавливает 26 боевого здоровья.", UnlockLevel = 5, CooldownSeconds = 22, HealAmount = 26 },
         Ability = {
             Id = "FrostCache",
             Name = "Морозный тайник",
@@ -176,7 +175,7 @@ local CompanionCatalog = {
         PetMoodBonus = 4,
         PlayMoodBonus = 8,
         EggId = "FrostEgg",
-        RaidAbility = { Id = "GlacierBulwark", Name = "Ледниковый заслон", Role = "GUARDIAN", Description = "Поглощает до 32 входящего боевого урона в течение 8 секунд.", UnlockLevel = 5, CooldownSeconds = 24, ShieldAmount = 32, ShieldDuration = 8 },
+        RaidAbility = { Id = "AuroraMend", Name = "Исцеление авроры", Role = "HEALER", Description = "Восстанавливает 26 боевого здоровья.", UnlockLevel = 5, CooldownSeconds = 22, HealAmount = 26 },
         Ability = {
             Id = "AuroraGaze",
             Name = "Взгляд авроры",
@@ -199,6 +198,7 @@ local CompanionCatalog = {
         PetMoodBonus = 12,
         PlayMoodBonus = 0,
         EggId = "FrostEgg",
+        RaidAbility = { Id = "GlacierBulwark", Name = "Ледниковый заслон", Role = "GUARDIAN", Description = "Поглощает до 32 входящего боевого урона в течение 8 секунд.", UnlockLevel = 5, CooldownSeconds = 24, ShieldAmount = 32, ShieldDuration = 8 },
         Ability = {
             Id = "GlacierGuard",
             Name = "Страж ледника",
