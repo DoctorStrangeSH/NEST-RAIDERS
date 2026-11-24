@@ -14,6 +14,12 @@ on:
 permissions:
   contents: read
 
+# Keep only the newest build for this development branch; older queued builds
+# are obsolete as soon as a newer source commit is pushed.
+concurrency:
+  group: nest-raiders-studio-build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build NEST RAIDERS place file
