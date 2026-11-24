@@ -201,17 +201,24 @@ local shopPanel = Instance.new("Frame")
 shopPanel.Name = "EggShopPanel"
 shopPanel.AnchorPoint = Vector2.new(0.5, 0.5)
 shopPanel.Position = UDim2.fromScale(0.5, 0.5)
-shopPanel.Size = UDim2.new(0.9, 0, 0.62, 0)
-shopPanel.BackgroundColor3 = Color3.fromRGB(35, 43, 54)
+shopPanel.Size = UDim2.new(0.94, 0, 0.82, 0)
+shopPanel.BackgroundColor3 = Color3.fromRGB(27, 40, 52)
 shopPanel.BorderSizePixel = 0
 shopPanel.Visible = false
 shopPanel.Parent = gui
-addCorner(shopPanel, 18)
-addStroke(shopPanel, Color3.fromRGB(255, 198, 105), 2)
+addCorner(shopPanel, 20)
+addStroke(shopPanel, Color3.fromRGB(229, 184, 104), 2)
+local shopGradient = Instance.new("UIGradient")
+shopGradient.Color = ColorSequence.new(
+    Color3.fromRGB(49, 63, 72),
+    Color3.fromRGB(24, 36, 49)
+)
+shopGradient.Rotation = 90
+shopGradient.Parent = shopPanel
 
 local shopSize = Instance.new("UISizeConstraint")
-shopSize.MinSize = Vector2.new(290, 280)
-shopSize.MaxSize = Vector2.new(460, 440)
+shopSize.MinSize = Vector2.new(300, 340)
+shopSize.MaxSize = Vector2.new(620, 680)
 shopSize.Parent = shopPanel
 
 local shopTitle = Instance.new("TextLabel")
@@ -221,14 +228,36 @@ shopTitle.Size = UDim2.new(1, -76, 0, 30)
 shopTitle.Font = Enum.Font.GothamBlack
 shopTitle.Text = "ЛАВКА ЯИЦ"
 shopTitle.TextColor3 = Color3.fromRGB(255, 220, 145)
-shopTitle.TextSize = 19
+shopTitle.TextSize = 18
 shopTitle.TextXAlignment = Enum.TextXAlignment.Left
 shopTitle.Parent = shopPanel
+
+local shopSubtitle = Instance.new("TextLabel")
+shopSubtitle.Name = "ShopSubtitle"
+shopSubtitle.BackgroundTransparency = 1
+shopSubtitle.Position = UDim2.fromOffset(18, 36)
+shopSubtitle.Size = UDim2.new(1, -76, 0, 15)
+shopSubtitle.Font = Enum.Font.GothamMedium
+shopSubtitle.Text = "ЯЙЦА ИЗ ОТКРЫТЫХ БИОМОВ · В КАЖДОМ ТРИ ВИДА"
+shopSubtitle.TextColor3 = Color3.fromRGB(189, 208, 195)
+shopSubtitle.TextSize = 8
+shopSubtitle.TextXAlignment = Enum.TextXAlignment.Left
+shopSubtitle.TextTruncate = Enum.TextTruncate.AtEnd
+shopSubtitle.Parent = shopPanel
+
+local shopDivider = Instance.new("Frame")
+shopDivider.Name = "ShopHeaderAccent"
+shopDivider.Position = UDim2.fromOffset(16, 56)
+shopDivider.Size = UDim2.new(1, -32, 0, 2)
+shopDivider.BackgroundColor3 = Color3.fromRGB(207, 164, 91)
+shopDivider.BorderSizePixel = 0
+shopDivider.Parent = shopPanel
+addCorner(shopDivider, 2)
 
 local shopClose = Instance.new("TextButton")
 shopClose.AnchorPoint = Vector2.new(1, 0)
 shopClose.Position = UDim2.new(1, -12, 0, 10)
-shopClose.Size = UDim2.fromOffset(38, 34)
+shopClose.Size = UDim2.fromOffset(36, 34)
 shopClose.BackgroundColor3 = Color3.fromRGB(74, 91, 101)
 shopClose.Text = "✕"
 shopClose.TextColor3 = Color3.new(1, 1, 1)
@@ -239,25 +268,33 @@ addCorner(shopClose, 10)
 
 local shopBalance = Instance.new("TextLabel")
 shopBalance.BackgroundTransparency = 1
-shopBalance.Position = UDim2.fromOffset(18, 48)
-shopBalance.Size = UDim2.new(1, -36, 0, 24)
-shopBalance.Font = Enum.Font.GothamMedium
-shopBalance.TextColor3 = Color3.fromRGB(210, 220, 211)
-shopBalance.TextSize = 14
+shopBalance.Position = UDim2.fromOffset(16, 64)
+shopBalance.Size = UDim2.new(1, -32, 0, 25)
+shopBalance.BackgroundColor3 = Color3.fromRGB(48, 70, 68)
+shopBalance.BackgroundTransparency = 0.05
+shopBalance.Font = Enum.Font.GothamBold
+shopBalance.TextColor3 = Color3.fromRGB(230, 243, 211)
+shopBalance.TextSize = 11
 shopBalance.TextXAlignment = Enum.TextXAlignment.Left
 shopBalance.Parent = shopPanel
+addCorner(shopBalance, 8)
+local shopBalancePadding = Instance.new("UIPadding")
+shopBalancePadding.PaddingLeft = UDim.new(0, 10)
+shopBalancePadding.Parent = shopBalance
 
 local shopList = Instance.new("ScrollingFrame")
-shopList.Position = UDim2.fromOffset(12, 80)
-shopList.Size = UDim2.new(1, -24, 1, -94)
+shopList.Position = UDim2.fromOffset(12, 98)
+shopList.Size = UDim2.new(1, -24, 1, -110)
 shopList.BackgroundTransparency = 1
 shopList.BorderSizePixel = 0
-shopList.ScrollBarThickness = 6
+shopList.ScrollBarThickness = 4
+shopList.ScrollingDirection = Enum.ScrollingDirection.Y
 shopList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+shopList.CanvasSize = UDim2.new()
 shopList.Parent = shopPanel
 
 local shopLayout = Instance.new("UIListLayout")
-shopLayout.Padding = UDim.new(0, 10)
+shopLayout.Padding = UDim.new(0, 9)
 shopLayout.SortOrder = Enum.SortOrder.LayoutOrder
 shopLayout.Parent = shopList
 
