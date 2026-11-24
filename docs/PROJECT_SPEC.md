@@ -608,3 +608,19 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The existing player level 5 raid ability unlock remains unchanged. Companion growth level changes power only; it does not alter eligibility or player-level matchmaking requirements.
 - The raid HUD displays the primary companion's name, growth level, role, current effective power, cooldown and active shield state. Summoned companion nameplates also show growth level.
 - All power is derived from saved companion Level at match time. No new profile fields, currency costs, training actions, or migration are introduced. Normal companion training, income, stars, breeding, genetics and ordinary abilities remain unchanged.
+
+ 
+## Raid companion team synergies — Sprint 4.53
+- A participant's synergy is derived once when the arena starts from the roles of the companions actually summoned from their saved active-companion roster. Only the distinct roles HUNTER, HEALER and GUARDIAN count. Companions without a raid role do not contribute.
+- A roster with fewer than two distinct combat roles receives no synergy. Multiple companions with the same role count once and cannot stack a bonus.
+- Exactly two distinct roles activate one pair synergy:
+  - Guardian + Healer — **Живой бастион**: +15% power to Guardian/Healer abilities and 12% less incoming raid combat damage.
+  - Hunter + Guardian — **Штурмовой строй**: +15% Hunter ability power and +10% normal melee strike damage.
+  - Hunter + Healer — **Согласованный натиск**: +15% Hunter and Healer ability power.
+- All three distinct roles activate **Триада** instead of any pair synergy: +10% ability power, 8% less incoming raid combat damage and +5% normal melee strike damage. The full trio never stacks the three pair bonuses.
+- Synergy is stored only in temporary match state, separately for each participant. It is not saved, traded, or copied to the opponent.
+- Ability power multipliers are applied to the existing growth-scaled primary pet ability, then the existing server caps are enforced: Hunter 8–30, Healer 5–35, Guardian 10–40. Healing remains limited by missing combat health below 100. Guardian shield duration and cooldown are unchanged.
+- Incoming damage reduction is applied before the existing Guardian pet shield, through the shared server damage pipeline. It therefore covers melee hits, parry counter-damage, Watchtower projectiles and Thorn Trap hits. Damage reduction is clamped to 0–20%.
+- The Hunter + Guardian melee bonus and Triad melee bonus affect normal opponent strikes only. The strike multiplier is clamped to 1.0–1.15. Parry counter-damage is not multiplied.
+- The raid HUD shows the participant's active synergy name and short effect description. A roster without two distinct roles shows that a second role is required.
+- Synergy is calculated once from the active roster at match start. It cannot be changed by client attributes or remote payloads. No profile schema, save migration, matchmaking eligibility, reward, active-slot, pet cooldown, or ordinary companion behavior changes are introduced.
