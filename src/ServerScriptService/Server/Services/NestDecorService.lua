@@ -5,6 +5,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
 local NestDecorCatalog = require(ReplicatedStorage.Shared.Config.NestDecorCatalog)
+local IslandStyleCatalog = require(ReplicatedStorage.Shared.Config.IslandStyleCatalog)
 
 local NestDecorService = {}
 NestDecorService._lastRequest = {}
@@ -83,8 +84,26 @@ local function getSnapshot(profile)
     end
     table.sort(placed, function(a, b) return a.Slot < b.Slot end)
 
+    local styles = {}
+    local currentStyle = IslandStyleCatalog[nest.IslandStyle] and nest.IslandStyle or "Meadow"
+    local nestLevel = math.clamp(math.floor(tonumber(nest.Level) or 1), 1, 5)
+    for _, id in ipairs({"Meadow", "Arcane", "Ancient", "Royal"}) do
+        local definition = IslandStyleCatalog[id]
+        table.insert(styles, {
+            Id = id,
+            Name = definition.Name,
+            Description = definition.Description,
+            UnlockLevel = definition.UnlockLevel,
+            Unlocked = nestLevel >= definition.UnlockLevel,
+            IsSelected = currentStyle == id,
+        })
+    end
+
     return {
         Coins = math.max(0, math.floor(tonumber(profile.Coins) or 0)),
+        NestLevel = nestLevel,
+        CurrentStyle = currentStyle,
+        Styles = styles,
         SlotLimit = getSlotLimit(profile),
         Inventory = inventory,
         Placed = placed,
@@ -210,6 +229,24 @@ function NestDecorService:HandleRequest(player, payload)
     if payload.Action == "Get" then
         self:RefreshPlayer(player)
         return { Ok = true, Data = getSnapshot(profile) }
+    end
+
+    if payload.Action == "SetStyle" then
+        local styleId = payload.StyleId
+        local definition = type(styleId) == "string" and IslandStyleCatalog[styleId] or nil
+        if not definition then
+            return { Ok = false, Message = "Такого стиля острова нет." }
+        end
+        local nestLevel = math.clamp(math.floor(tonumber(nest.Level) or 1), 1, 5)
+        if nestLevel < definition.UnlockLevel then
+            return { Ok = false, Message = "Этот стиль откроется на " .. tostring(definition.UnlockLevel) .. " уровне гнезда." }
+        end
+        nest.IslandStyle = styleId
+        if not PlotService:ApplyIslandStyle(player, styleId) then
+            return { Ok = false, Message = "Не удалось применить оформление. Попробуй ещё раз." }
+        end
+        player:SetAttribute("LastNotice", "Стиль острова изменён: " .. definition.Name .. "!")
+        return { Ok = true, Data = getSnapshot(profile), Message = "Новое оформление применено!" }
     end
 
     if payload.Action == "Buy" then
