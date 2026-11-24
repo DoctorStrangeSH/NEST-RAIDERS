@@ -321,3 +321,7 @@ Companions now remember their social history with a specific partner. Completed 
 
 ## Autonomous Pet Discoveries — Sprint 4.68
 Companions can now interrupt their normal wandering to search for a small gift. Personality affects how curious each pet is. When a pet finds a cache, its owner can collect a level- and star-scaled coin reward; the server enforces owner-only collection, one-time claiming and a persistent three-minute cooldown.
+
+
+## Living Island — Sprint 4.69
+The Starter Island now has a server-synchronized day/night cycle (24 real minutes per in-game day). Selected pets follow day or night activity schedules; nocturnal companions gain a soft night glow and become more active during their preferred hours. The world exposes Day/Night phase attributes for future UI and event features.
