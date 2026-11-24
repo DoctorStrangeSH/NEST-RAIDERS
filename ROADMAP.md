@@ -898,6 +898,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Prevent cross-invitations and overlapping outgoing/incoming challenges for the same player.
 - [x] Keep all raid consent and matchmaking state session-only; do not touch coins, eggs, companions, artifacts, or saved profiles.
 - [x] Add static regression coverage for remote registration, service wiring, consent gates, UI integration, expiry and loot isolation.
+- [x] GitHub Actions: Rojo build and full static regression suite passed (run #509, commit `74f7cc60`).
 - [ ] Roblox Studio: verify protected players cannot opt in, and level-5 players become eligible only after 15 minutes.
 - [ ] Studio multiplayer: verify attack-ready players see only nests explicitly opened by other eligible players.
 - [ ] Studio multiplayer: accept, decline, cancel, expire, and disconnect during an invitation; verify both clients recover cleanly.
