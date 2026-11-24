@@ -1621,3 +1621,23 @@ assert 'not socialRewarded and partnerModel and not partnerSleeping' in companio
 assert '(partnerModel:GetPivot().Position - currentPosition).Magnitude <= 10' in companion_service
 assert 'socialApproach = home:Lerp(partnerHome, 0.5) + towardPartner.Unit * sideOffset' in companion_service
 assert 'local sideOffset = slot < partnerSlot and -1.5 or 1.5' in companion_service
+
+# Sprint 4.68 — personality-driven treasure hunts and owner-only gift caches.
+assert 'CompanionGiftReadyAt = 0' in profile_template
+assert 'local EconomyService = require(ServerScriptService.Server.Services.EconomyService)' in companion_service
+assert 'local treasureSearchOwner = nil' in companion_service
+assert 'local nextTreasureAt = math.max(os.time() + 20, profile.Nest.CompanionGiftReadyAt)' in companion_service
+assert 'TreasureChance = 0.24' in companion_service
+assert 'TreasureChance = 0.04' in companion_service
+assert 'local canSearch = not giftCache and not treasureSearchOwner' in companion_service
+assert 'targetIsTreasure = true' in companion_service
+assert 'behavior = targetIsTreasure and "Searching"' in companion_service
+assert 'cache.Name = "CompanionGiftCache"' in companion_service
+assert 'prompt.Name = "CollectCompanionGift"' in companion_service
+assert 'prompt.ActionText = "Забрать подарок"' in companion_service
+assert 'if collector ~= player or not player.Parent or giftCache ~= cache or giftCacheClaimed then return end' in companion_service
+assert 'EconomyService:GrantCoins(player, reward, "Подарок питомца")' in companion_service
+assert 'profile.Nest.CompanionGiftReadyAt = os.time() + 180' in companion_service
+assert 'finder.Name .. " принёс подарок: +" .. reward .. " монет!"' in companion_service
+assert 'targetIsTreasure = false' in companion_service
+assert 'behavior == "FoundGift" and "Нашёл подарок!"' in companion_service
