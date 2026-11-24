@@ -744,7 +744,7 @@ researcher_definitions = {
 }
 for artifact_id, (base_bonus, weight) in researcher_definitions.items():
     match = re.search(
-        rf'{artifact_id} = \\{{.*?ResearchBonus = ([0-9.]+), Weight = (\\d+),',
+        rf'{artifact_id} = \{{.*?ResearchBonus = ([0-9.]+), Weight = (\d+),',
         artifact_catalog,
         re.S,
     )
