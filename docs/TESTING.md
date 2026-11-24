@@ -1014,3 +1014,18 @@ Static checks cover deterministic pair keys, threshold titles, single-award owne
 9. Confirm old profiles without CompanionGiftReadyAt load normally through profile reconciliation.
 
 Static checks cover migration, personality search chances, owner-only prompt validation, one-time rewards and cooldown. Roblox Studio visual, timing, multiplayer and persistence tests remain required.
+
+
+## Sprint 4.69 — Living Island: Day/Night and Companion Routines
+1. Start a fresh Studio server and confirm the world begins at 14:00 and the clock advances continuously.
+2. Observe the world phase attributes on `Workspace.NestRaidersWorld`; confirm `WorldTimePhase` changes from Day to Night at 19:00 and back to Day at 06:00.
+3. Start a second client in the same server. Confirm both clients see the same lighting and phase changes.
+4. Display GlowMoth, SnowOwl, CaveGlimmerbat and HeartWisp. Confirm their glow is visible at night and fades during daylight.
+5. Compare a nocturnal pet across daytime/nighttime: it should move more briskly and have a higher treasure-search tendency during its preferred hours.
+6. Compare MeadowFox, MossTurtle and SproutDragon across day/night: they should be more active during daylight and calmer at night.
+7. Manually put a pet to sleep, play with a toy and complete a social interaction during both phases. Confirm the schedule never cancels the explicit sleep state or breaks existing interactions.
+8. Collect a companion gift, then observe a full phase transition. Confirm the persistent three-minute reward cooldown remains authoritative.
+9. Rebuild the world in a controlled test and confirm the old clock loop stops instead of competing with the new one.
+10. Run a full 24-minute cycle with multiple players and monitor server Output for errors and unnecessary per-frame work.
+
+Static checks verify cycle settings, phase replication, activity traits and behavior modifiers. Roblox Studio runtime, lighting, multiplayer and performance tests remain required.
