@@ -322,6 +322,11 @@ local function publishArenaState(match)
             participant:SetAttribute("RaidArenaGuardActive", match.GuardUntil and (match.GuardUntil[participant] or 0) > timestamp or false)
             participant:SetAttribute("RaidArenaGuardCooldown", match.GuardCooldownUntil
                 and math.max(0, math.ceil((match.GuardCooldownUntil[participant] or 0) - timestamp)) or 0)
+            local defenseCount = 0
+            for _, defense in ipairs(match.Defenses or {}) do
+                if defense.Health > 0 and defense.Model and defense.Model.Parent then defenseCount += 1 end
+            end
+            participant:SetAttribute("RaidArenaDefenseCount", defenseCount)
         end
     end
     if match.CoreLabel and match.CoreLabel.Parent then
@@ -464,6 +469,11 @@ local function clearMatch(self, match, message)
             if connection.Connected then connection:Disconnect() end
         end
     end
+    if match.DefenseConnections then
+        for _, connection in ipairs(match.DefenseConnections) do
+            if connection.Connected then connection:Disconnect() end
+        end
+    end
     restoreParticipant(self, attacker, match)
     restoreParticipant(self, defender, match)
     if match.Gear then
@@ -488,6 +498,7 @@ local function clearMatch(self, match, message)
             participant:SetAttribute("RaidArenaOpponentCombatHealth", nil)
             participant:SetAttribute("RaidArenaGuardActive", nil)
             participant:SetAttribute("RaidArenaGuardCooldown", nil)
+            participant:SetAttribute("RaidArenaDefenseCount", nil)
             participant:SetAttribute("RaidArenaMatchId", nil)
             if message then participant:SetAttribute("LastNotice", message) end
         end
@@ -529,6 +540,95 @@ local function finishMatch(self, match, winnerRole, message, awardRewards)
     if loser and loser.Parent == Players then grantRaidReward(loser, false) end
 end
 
+local function applyDefenseDamage(self, match, target, amount, sourceName)
+    if not match or match.State ~= "ACTIVE" or self._matches[target] ~= match then return false end
+    match.CombatHealth[target] = math.max(0, (match.CombatHealth[target] or 100) - amount)
+    showRaidCombatHit(target.Character, false)
+    target:SetAttribute("LastNotice", sourceName .. " нанесла " .. tostring(amount)
+        .. " урона. Здоровье: " .. tostring(match.CombatHealth[target]) .. " / 100.")
+    publishArenaState(match)
+    if match.CombatHealth[target] <= 0 then
+        finishMatch(self, match, target == match.Attacker and "DEFENDER" or "ATTACKER",
+            "Оборона гнезда остановила налётчика!", true)
+        return true
+    end
+    return false
+end
+
+local function startDefenseTurret(self, match, defense)
+    task.spawn(function()
+        while self._matches[match.Attacker] == match and match.State == "ACTIVE"
+            and defense.Health > 0 and defense.Model and defense.Model.Parent do
+            task.wait(math.max(1.5, defense.Interval))
+            if self._matches[match.Attacker] ~= match or match.State ~= "ACTIVE"
+                or defense.Health <= 0 or not defense.Model or not defense.Model.Parent then
+                break
+            end
+            local character = match.Attacker.Character
+            local root = character and character:FindFirstChild("HumanoidRootPart")
+            local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+            if root and humanoid and humanoid.Health > 0 and defense.Muzzle and defense.Muzzle.Parent
+                and (root.Position - defense.Muzzle.Position).Magnitude <= defense.Range then
+                local targetPosition = root.Position
+                local bolt = Instance.new("Part")
+                bolt.Name = "NestDefenseBolt"
+                bolt.Shape = Enum.PartType.Ball
+                bolt.Size = Vector3.new(0.55, 0.55, 0.55)
+                bolt.Material = Enum.Material.Neon
+                bolt.Color = Color3.fromRGB(120, 224, 255)
+                bolt.Anchored = true
+                bolt.CanCollide = false
+                bolt.CanTouch = false
+                bolt.CanQuery = false
+                bolt.CFrame = CFrame.new(defense.Muzzle.Position)
+                bolt.Parent = match.ArenaModel
+                local tween = TweenService:Create(bolt, TweenInfo.new(0.22, Enum.EasingStyle.Linear),
+                    { Position = targetPosition })
+                tween:Play()
+                tween.Completed:Wait()
+                if bolt.Parent then bolt:Destroy() end
+                local currentRoot = match.Attacker.Character and match.Attacker.Character:FindFirstChild("HumanoidRootPart")
+                if currentRoot and (currentRoot.Position - targetPosition).Magnitude <= 7 then
+                    applyDefenseDamage(self, match, match.Attacker, defense.Damage, "Сторожевая башня")
+                end
+            end
+        end
+    end)
+end
+
+local function activateArenaDefenses(self, match)
+    for _, defense in ipairs(match.Defenses or {}) do
+        if defense.Type == "Turret" then
+            startDefenseTurret(self, match, defense)
+        elseif defense.Type == "Trap" and defense.Trigger then
+            local connection = defense.Trigger.Touched:Connect(function(hit)
+                if match.State ~= "ACTIVE" or defense.Health <= 0
+                    or os.clock() - defense.LastTriggeredAt < defense.Cooldown then return end
+                local character = hit and hit:FindFirstAncestorOfClass("Model")
+                local touchingPlayer = character and Players:GetPlayerFromCharacter(character)
+                if touchingPlayer ~= match.Attacker then return end
+                defense.LastTriggeredAt = os.clock()
+                applyDefenseDamage(self, match, match.Attacker, defense.Damage, "Ловушка из шипов")
+            end)
+            table.insert(match.DefenseConnections, connection)
+        end
+    end
+end
+
+local function findNearestDefense(match, root, maxDistance, damagedOnly)
+    local nearest, nearestDistance
+    for _, defense in ipairs(match.Defenses or {}) do
+        if defense.Health > 0 and defense.Model and defense.Model.Parent
+            and (not damagedOnly or defense.Health < defense.MaxHealth) then
+            local distance = (root.Position - defense.Position).Magnitude
+            if distance <= maxDistance and (not nearestDistance or distance < nearestDistance) then
+                nearest, nearestDistance = defense, distance
+            end
+        end
+    end
+    return nearest, nearestDistance
+end
+
 function RaidService:StartArena(match)
     if not match or match.State ~= "READY" then
         return false, "Подтверждённый вызов больше недоступен."
@@ -551,11 +651,14 @@ function RaidService:StartArena(match)
     }
     match.DeathConnections = {}
     buildArena(self, match)
+    buildArenaDefenses(match, PlayerDataService:GetProfile(match.Defender))
     match.State = "ACTIVE"
     match.CoreHealth = RAID_CORE_MAX_HEALTH
     match.ExpiresAt = now() + RAID_DURATION_SECONDS
     match.LastAttackAt = {}
     match.LastRepairAt = {}
+    match.LastDefenseAttackAt = {}
+    match.LastDefenseRepairAt = {}
     match.LastStrikeAt = {}
     match.GuardUntil = {}
     match.GuardCooldownUntil = {}
@@ -592,9 +695,14 @@ function RaidService:StartArena(match)
         end
     end))
 
+    activateArenaDefenses(self, match)
     publishArenaState(match)
-    match.Attacker:SetAttribute("LastNotice", "Рейд начался! Доберись до ядра и разрушь его.")
-    match.Defender:SetAttribute("LastNotice", "Рейд начался! Защищай ядро и восстанавливай его.")
+    match.Attacker:SetAttribute("LastNotice", #match.Defenses > 0
+        and ("Рейд начался! На острове защитника подготовлено сооружений: " .. tostring(#match.Defenses) .. ".")
+        or "Рейд начался! У защитника пока нет оборонительных сооружений.")
+    match.Defender:SetAttribute("LastNotice", #match.Defenses > 0
+        and ("Твоя оборона активирована! Сооружений: " .. tostring(#match.Defenses) .. ".")
+        or "Твоё гнездо пока без оборонительных сооружений. В следующий раз построй защиту.")
     return true
 end
 
