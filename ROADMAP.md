@@ -1333,6 +1333,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add species-specific night glow to nocturnal companions; glow fades out during daytime.
 - [x] Let each species' activity window affect movement speed, roaming radius and autonomous treasure-search odds without overriding manual sleep/needs.
 - [x] Add static regression checks for clock configuration, replicated phase, species schedules and behavior modifiers.
+- [x] GitHub Actions: Rojo build, output validation and all playable-first regression checks passed (workflow run 45417575647).
+- [x] Publish the Sprint 4.69 Studio artifact; extracted `.rbxlx` parsed successfully as XML (artifact expires 2026-12-08).
 - [ ] Roblox Studio: verify day-to-night transition and that all clients see the same lighting and phase.
 - [ ] Verify GlowMoth, SnowOwl, CaveGlimmerbat and HeartWisp glow only at night and are visibly more active during their preferred hours.
 - [ ] Verify day-active pets are more lively during daylight and naturally calmer at night.
