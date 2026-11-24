@@ -913,3 +913,14 @@
 - [ ] Rejoin and confirm purchased/hatch results persist.
 - [ ] Test shop and reveal on 320×480, 375×667, tablet, 1366×768 and 1920×1080.
 - [ ] Capture Studio screenshots of shop cards and the hatch reveal at phone and desktop sizes.
+
+## Sprint 4.60 — Collection Book UX
+1. Open the Collection Book and search by a known species name, rarity, biome name and acquisition label.
+2. Test filters: All, Discovered, Not discovered. Confirm counts/results change correctly and clearing the search restores results.
+3. Verify hidden species remain hidden as undiscovered; search must not reveal undiscovered names.
+4. Verify discovered entries still show owned count, income, discovery biome and normalized hatch odds; boss-only and breeding-only entries retain their acquisition labels.
+5. Test long names and detail text at 320×480, 375px, tablet and desktop. Confirm list scroll, panel close and menu/modal exclusivity.
+6. Hatch a new species while the book is open. Confirm the book refreshes once and the new discovery appears without reopening.
+7. Confirm no client-side action changes collection data or hatch odds; server response remains authoritative.
+
+Static CI checks are not a substitute for these Roblox Studio runtime checks.
