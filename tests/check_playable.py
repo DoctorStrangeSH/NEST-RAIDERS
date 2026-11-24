@@ -1619,3 +1619,5 @@ assert 'moodBillboard.Size = UDim2.fromOffset(148, 28)' in companion_service
 assert 'string.format("♥♥  Дружба %d%%", bondScore)' in companion_service
 assert 'not socialRewarded and partnerModel and not partnerSleeping' in companion_service
 assert '(partnerModel:GetPivot().Position - currentPosition).Magnitude <= 10' in companion_service
+assert 'socialApproach = home:Lerp(partnerHome, 0.5) + towardPartner.Unit * sideOffset' in companion_service
+assert 'local sideOffset = slot < partnerSlot and -1.5 or 1.5' in companion_service
