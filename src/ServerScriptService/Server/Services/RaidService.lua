@@ -4,6 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
+local Debris = game:GetService("Debris")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
@@ -31,6 +32,12 @@ local RAID_CORE_HIT_DAMAGE = 20
 local RAID_ATTACK_COOLDOWN_SECONDS = 2.2
 local RAID_REPAIR_AMOUNT = 10
 local RAID_REPAIR_COOLDOWN_SECONDS = 8
+local RAID_DUEL_STRIKE_DAMAGE = 24
+local RAID_DUEL_STRIKE_COOLDOWN_SECONDS = 1.15
+local RAID_DUEL_STRIKE_RANGE = 12
+local RAID_PARRY_WINDOW_SECONDS = 0.9
+local RAID_PARRY_COOLDOWN_SECONDS = 3.2
+local RAID_PARRY_COUNTER_DAMAGE = 18
 local RAID_REWARD_COOLDOWN_SECONDS = 10 * 60
 local RAID_WIN_COINS = 150
 local RAID_WIN_XP = 100
@@ -159,15 +166,85 @@ end
 
 local function publishArenaState(match)
     local remaining = math.max(0, match.ExpiresAt - now())
+    local timestamp = os.clock()
     for _, participant in ipairs({ match.Attacker, match.Defender }) do
         if participant and participant.Parent == Players then
+            local opponent = participant == match.Attacker and match.Defender or match.Attacker
             participant:SetAttribute("RaidArenaCoreHealth", match.CoreHealth)
             participant:SetAttribute("RaidArenaTimeRemaining", remaining)
+            participant:SetAttribute("RaidArenaCombatHealth", match.CombatHealth and match.CombatHealth[participant] or 100)
+            participant:SetAttribute("RaidArenaOpponentCombatHealth", match.CombatHealth and match.CombatHealth[opponent] or 100)
+            participant:SetAttribute("RaidArenaGuardActive", match.GuardUntil and (match.GuardUntil[participant] or 0) > timestamp or false)
+            participant:SetAttribute("RaidArenaGuardCooldown", match.GuardCooldownUntil
+                and math.max(0, math.ceil((match.GuardCooldownUntil[participant] or 0) - timestamp)) or 0)
         end
     end
     if match.CoreLabel and match.CoreLabel.Parent then
         match.CoreLabel.Text = string.format("ЯДРО ГНЕЗДА · %d / %d", match.CoreHealth, RAID_CORE_MAX_HEALTH)
     end
+end
+
+local function makeGearPart(parent, name, size, cframe, color, material, weldTo)
+    local part = Instance.new("Part")
+    part.Name = name
+    part.Size = size
+    part.CFrame = cframe
+    part.Color = color
+    part.Material = material or Enum.Material.Metal
+    part.Anchored = false
+    part.CanCollide = false
+    part.CanTouch = false
+    part.CanQuery = false
+    part.Massless = true
+    part.TopSurface = Enum.SurfaceType.Smooth
+    part.BottomSurface = Enum.SurfaceType.Smooth
+    part.Parent = parent
+
+    local weld = Instance.new("WeldConstraint")
+    weld.Part0 = weldTo
+    weld.Part1 = part
+    weld.Parent = part
+    return part
+end
+
+local function equipRaidGear(player, role)
+    local character = player.Character
+    local rightHand = character and (character:FindFirstChild("RightHand") or character:FindFirstChild("Right Arm"))
+    local leftHand = character and (character:FindFirstChild("LeftHand") or character:FindFirstChild("Left Arm"))
+    if not character or not rightHand or not leftHand then return nil end
+
+    local gear = Instance.new("Model")
+    gear.Name = "RaidCombatGear"
+    gear.Parent = character
+    local accent = role == "ATTACKER" and Color3.fromRGB(255, 145, 91) or Color3.fromRGB(111, 203, 232)
+    local dark = Color3.fromRGB(49, 58, 72)
+
+    local handle = makeGearPart(gear, "RaidSwordHandle", Vector3.new(0.28, 1.05, 0.28),
+        rightHand.CFrame * CFrame.new(0, -0.28, -0.08), dark, Enum.Material.Slate, rightHand)
+    makeGearPart(gear, "RaidSwordBlade", Vector3.new(0.34, 2.25, 0.13),
+        handle.CFrame * CFrame.new(0, 1.55, 0), accent, Enum.Material.Neon, handle)
+    makeGearPart(gear, "RaidSwordGuard", Vector3.new(0.95, 0.16, 0.24),
+        handle.CFrame * CFrame.new(0, 0.5, 0), Color3.fromRGB(226, 190, 119), Enum.Material.Metal, handle)
+
+    local shield = makeGearPart(gear, "RaidShield", Vector3.new(0.28, 2.05, 1.45),
+        leftHand.CFrame * CFrame.new(0, 0.05, -0.48), dark, Enum.Material.Metal, leftHand)
+    makeGearPart(gear, "RaidShieldEmblem", Vector3.new(0.12, 1.05, 0.72),
+        shield.CFrame * CFrame.new(-0.18, 0, 0), accent, Enum.Material.Neon, shield)
+    return gear
+end
+
+local function showRaidCombatHit(character, parried)
+    if not character or not character.Parent then return end
+    local highlight = Instance.new("Highlight")
+    highlight.Name = parried and "RaidParryFlash" or "RaidHitFlash"
+    highlight.Adornee = character
+    highlight.FillColor = parried and Color3.fromRGB(105, 205, 255) or Color3.fromRGB(255, 105, 92)
+    highlight.OutlineColor = parried and Color3.fromRGB(198, 239, 255) or Color3.fromRGB(255, 218, 169)
+    highlight.FillTransparency = 0.28
+    highlight.OutlineTransparency = 0.05
+    highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+    highlight.Parent = character
+    Debris:AddItem(highlight, 0.22)
 end
 
 function RaidService:GetProtection(player)
@@ -244,6 +321,11 @@ local function clearMatch(self, match, message)
     end
     restoreParticipant(self, attacker, match)
     restoreParticipant(self, defender, match)
+    if match.Gear then
+        for _, gear in pairs(match.Gear) do
+            if gear and gear.Parent then gear:Destroy() end
+        end
+    end
     if match.ArenaModel and match.ArenaModel.Parent then match.ArenaModel:Destroy() end
 
     for _, participant in ipairs({ attacker, defender }) do
@@ -257,6 +339,10 @@ local function clearMatch(self, match, message)
             participant:SetAttribute("RaidArenaOpponentName", nil)
             participant:SetAttribute("RaidArenaCoreHealth", nil)
             participant:SetAttribute("RaidArenaTimeRemaining", nil)
+            participant:SetAttribute("RaidArenaCombatHealth", nil)
+            participant:SetAttribute("RaidArenaOpponentCombatHealth", nil)
+            participant:SetAttribute("RaidArenaGuardActive", nil)
+            participant:SetAttribute("RaidArenaGuardCooldown", nil)
             participant:SetAttribute("RaidArenaMatchId", nil)
             if message then participant:SetAttribute("LastNotice", message) end
         end
@@ -325,9 +411,19 @@ function RaidService:StartArena(match)
     match.ExpiresAt = now() + RAID_DURATION_SECONDS
     match.LastAttackAt = {}
     match.LastRepairAt = {}
+    match.LastStrikeAt = {}
+    match.GuardUntil = {}
+    match.GuardCooldownUntil = {}
+    match.CombatHealth = {
+        [match.Attacker] = 100,
+        [match.Defender] = 100,
+    }
+    match.Gear = {}
 
     attackerCharacter:PivotTo(CFrame.lookAt(match.ArenaCenter + Vector3.new(-34, 5, 0), match.ArenaCenter + Vector3.new(0, 5, 0)))
     defenderCharacter:PivotTo(CFrame.lookAt(match.ArenaCenter + Vector3.new(34, 5, 0), match.ArenaCenter + Vector3.new(0, 5, 0)))
+    match.Gear[match.Attacker] = equipRaidGear(match.Attacker, "ATTACKER")
+    match.Gear[match.Defender] = equipRaidGear(match.Defender, "DEFENDER")
 
     for _, participant in ipairs({ match.Attacker, match.Defender }) do
         participant:SetAttribute("RaidMatchState", "ACTIVE")
@@ -413,6 +509,103 @@ function RaidService:ReinforceCore(player)
     match.CoreHealth = math.min(RAID_CORE_MAX_HEALTH, match.CoreHealth + RAID_REPAIR_AMOUNT)
     publishArenaState(match)
     return { Ok = true, Message = "Ядро укреплено: " .. tostring(match.CoreHealth) .. " / " .. tostring(RAID_CORE_MAX_HEALTH) .. "." }
+end
+
+function RaidService:StrikeOpponent(player)
+    local match = self._matches[player]
+    if not match or match.State ~= "ACTIVE" or (match.Attacker ~= player and match.Defender ~= player) then
+        return { Ok = false, Message = "Нет активного соперника для удара." }
+    end
+    local opponent = match.Attacker == player and match.Defender or match.Attacker
+    local character = player.Character
+    local targetCharacter = opponent and opponent.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    local targetRoot = targetCharacter and targetCharacter:FindFirstChild("HumanoidRootPart")
+    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+    local targetHumanoid = targetCharacter and targetCharacter:FindFirstChildOfClass("Humanoid")
+    if not root or not targetRoot or not humanoid or not targetHumanoid
+        or humanoid.Health <= 0 or targetHumanoid.Health <= 0 then
+        return { Ok = false, Message = "Соперник сейчас недоступен." }
+    end
+    local offset = targetRoot.Position - root.Position
+    if offset.Magnitude > RAID_DUEL_STRIKE_RANGE or math.abs(offset.Y) > 7 then
+        return { Ok = false, Message = "Подойди ближе к сопернику для удара." }
+    end
+
+    local timestamp = os.clock()
+    local lastStrike = match.LastStrikeAt[player] or 0
+    if timestamp - lastStrike < RAID_DUEL_STRIKE_COOLDOWN_SECONDS then
+        return { Ok = false, Message = "Удар ещё восстанавливается." }
+    end
+    match.LastStrikeAt[player] = timestamp
+
+    local targetGuardUntil = match.GuardUntil[opponent] or 0
+    if targetGuardUntil > timestamp then
+        match.GuardUntil[opponent] = 0
+        match.CombatHealth[player] = math.max(0, (match.CombatHealth[player] or 100) - RAID_PARRY_COUNTER_DAMAGE)
+        showRaidCombatHit(character, true)
+        player:SetAttribute("LastNotice", "Соперник парировал удар! Получено " .. tostring(RAID_PARRY_COUNTER_DAMAGE) .. " урона.")
+        opponent:SetAttribute("LastNotice", "Идеальное парирование! Соперник потерял " .. tostring(RAID_PARRY_COUNTER_DAMAGE) .. " здоровья.")
+        if match.CombatHealth[player] <= 0 then
+            local winnerRole = opponent == match.Attacker and "ATTACKER" or "DEFENDER"
+            finishMatch(self, match, winnerRole, "Парирование! Соперник выбыл — победа защитника.", true)
+            return { Ok = true, Message = "Парирование! Ты отразил удар и победил." }
+        end
+    else
+        match.CombatHealth[opponent] = math.max(0, (match.CombatHealth[opponent] or 100) - RAID_DUEL_STRIKE_DAMAGE)
+        showRaidCombatHit(targetCharacter, false)
+        player:SetAttribute("LastNotice", "Попадание! Здоровье соперника: " .. tostring(match.CombatHealth[opponent]) .. " / 100.")
+        opponent:SetAttribute("LastNotice", "Тебя ударили! Осталось здоровья: " .. tostring(match.CombatHealth[opponent]) .. " / 100.")
+        if match.CombatHealth[opponent] <= 0 then
+            local winnerRole = player == match.Attacker and "ATTACKER" or "DEFENDER"
+            finishMatch(self, match, winnerRole, "Соперник выбыл! Победа в дуэли.", true)
+            return { Ok = true, Message = "Соперник выбыл! Победа в рейде." }
+        end
+    end
+
+    publishArenaState(match)
+    return { Ok = true, Message = "Боевой удар выполнен." }
+end
+
+function RaidService:RaiseGuard(player)
+    local match = self._matches[player]
+    if not match or match.State ~= "ACTIVE" or (match.Attacker ~= player and match.Defender ~= player) then
+        return { Ok = false, Message = "Блок доступен только во время активного рейда." }
+    end
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+    if not root or not humanoid or humanoid.Health <= 0 then
+        return { Ok = false, Message = "Нельзя выставить блок сейчас." }
+    end
+
+    local timestamp = os.clock()
+    local cooldownUntil = match.GuardCooldownUntil[player] or 0
+    if cooldownUntil > timestamp then
+        return { Ok = false, Message = "Парирование восстановится через " .. tostring(math.ceil(cooldownUntil - timestamp)) .. " сек." }
+    end
+    local guardUntil = timestamp + RAID_PARRY_WINDOW_SECONDS
+    match.GuardUntil[player] = guardUntil
+    match.GuardCooldownUntil[player] = timestamp + RAID_PARRY_COOLDOWN_SECONDS
+
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "RaidGuardFlash"
+    highlight.Adornee = character
+    highlight.FillColor = Color3.fromRGB(100, 193, 232)
+    highlight.OutlineColor = Color3.fromRGB(218, 245, 255)
+    highlight.FillTransparency = 0.68
+    highlight.OutlineTransparency = 0.05
+    highlight.Parent = character
+    Debris:AddItem(highlight, RAID_PARRY_WINDOW_SECONDS)
+
+    publishArenaState(match)
+    task.delay(RAID_PARRY_WINDOW_SECONDS + 0.05, function()
+        if self._matches[player] == match and match.GuardUntil[player] == guardUntil then
+            match.GuardUntil[player] = 0
+            publishArenaState(match)
+        end
+    end)
+    return { Ok = true, Message = "Блок поднят! Окно парирования: 0,9 секунды." }
 end
 
 function RaidService:CleanupExpired()
@@ -734,6 +927,8 @@ function RaidService:HandleRequest(player, payload)
     if payload.Action == "CancelMatch" then return self:CancelMatch(player) end
     if payload.Action == "AttackCore" then return self:AttackCore(player) end
     if payload.Action == "ReinforceCore" then return self:ReinforceCore(player) end
+    if payload.Action == "StrikeOpponent" then return self:StrikeOpponent(player) end
+    if payload.Action == "RaiseGuard" then return self:RaiseGuard(player) end
     return { Ok = false, Message = "Неизвестное действие рейда." }
 end
 
