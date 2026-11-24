@@ -4,6 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
+local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local ProgressionService = {}
 
@@ -60,7 +61,8 @@ function ProgressionService:AddXP(player, amount)
     end
 
     local safeAmount = math.floor(math.min(amount, 10000))
-    profile.XP += safeAmount
+    local awardedAmount, researchBonus, extraXP = ArtifactBonusService:ApplyResearchBonus(profile, safeAmount)
+    profile.XP += awardedAmount
 
     while profile.Level < GameConfig.Progression.MaxLevel do
         local required = math.floor(GameConfig.Progression.BaseXPToNextLevel
@@ -74,8 +76,12 @@ function ProgressionService:AddXP(player, amount)
     end
 
     player:SetAttribute("Level", profile.Level)
+    player:SetAttribute("XP", profile.XP)
+    player:SetAttribute("LastXPBaseAmount", safeAmount)
+    player:SetAttribute("LastXPBonusAmount", extraXP)
+    player:SetAttribute("LastXPBonusPercent", math.floor(researchBonus * 100 + 0.5))
     self:RefreshZoneUnlocks(player)
-    return true
+    return true, awardedAmount, researchBonus, extraXP
 end
 
 function ProgressionService:Init()
