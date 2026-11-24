@@ -318,3 +318,6 @@ Companions now use personality profiles to vary their idle rhythm, toy preferenc
 
 ## Companion Friendship — Sprint 4.67
 Companions now remember their social history with a specific partner. Completed shared play increases a persistent pair score and unlocks relationship titles from acquaintances to inseparable friends. The score follows companion instance IDs when display slots change; interrupted sessions do not grant progress.
+
+## Autonomous Pet Discoveries — Sprint 4.68
+Companions can now interrupt their normal wandering to search for a small gift. Personality affects how curious each pet is. When a pet finds a cache, its owner can collect a level- and star-scaled coin reward; the server enforces owner-only collection, one-time claiming and a persistent three-minute cooldown.
