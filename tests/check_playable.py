@@ -86,6 +86,12 @@ assert 'string.find(searchable, query, 1, true)' in client
 assert 'rarityColors' in client and 'details.TextWrapped = true' in client
 assert '["Обычный"]' in client and '["Легендарный"]' in client and '["Мифический"]' in client
 assert 'entry.Discovered and entry.Name or ""' in client, "Collection search must not reveal undiscovered species"
+assert 'NestOverviewStats' in client and 'МОЁ ГНЕЗДО' in client
+assert 'NestDisplayShortcut' in client and 'NestDecorShortcut' in client and 'NestBuildShortcut' in client
+assert 'NestUpgradeShortcut' in client and 'refreshNestIncome = function()' in client
+assert 'snapshot.IncomePerTick' in client and 'player:GetAttributeChangedSignal("CompanionCount")' in client
+assert 'player:GetAttributeChangedSignal("Coins")' in client
+assert 'nestPanel.Visible = false' in client and 'openDisplay()' in client and 'openDecor()' in client and 'openBuild()' in client
 assert 'база %d%%' in client
 assert 'local oddsText = ""' in client and 'entry.HatchChance' in client
 
