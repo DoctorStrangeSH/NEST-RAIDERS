@@ -290,3 +290,7 @@ The island feature menu now has a dark teal visual theme, a title header, three 
  
 ## Companion Inventory — Sprint 4.58
 The pet inventory now has a responsive themed panel, team and owned-count summary, genetics and incubator status cards, rarity-colored native portrait silhouettes, level/trait/income details, growth XP bars, explicit team controls and dynamically stacked merge/training/ability/breeding actions. The existing server-authoritative gameplay actions are preserved. Studio/device visual acceptance remains open before the egg shop redesign.
+
+ 
+## Biome Egg Shop and Hatch Reveal — Sprint 4.59
+The egg shop now offers six progression-gated biome eggs with server-validated prices, capacity and species odds. The Forgotten Cave egg remains a secret exploration reward. Shop cards use biome-colored egg portraits and rarity badges. World eggs have welded decorations and a complete collect/respawn visual. Hatching now sends a cosmetic reveal event only after the server has committed the pet; the reveal can be skipped without affecting the saved result. Roblox Studio/device acceptance remains open.
