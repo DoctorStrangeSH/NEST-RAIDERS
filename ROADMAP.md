@@ -1219,3 +1219,19 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Test multiplayer ownership: neighboring plots must not share decorations or show the wrong owner's upgrade tier.
 
 **Acceptance:** landscaping and progression visuals are integrated in source; Roblox Studio runtime, multiplayer and save/rejoin checks remain open.
+
+### Sprint 4.63 — Island Identity Styles
+- [x] Add four island themes: Meadow, Arcane, Ancient Temple and Royal Garden.
+- [x] Persist the selected theme in the player nest profile; legacy profiles default to Meadow.
+- [x] Unlock Arcane at nest level 2, Ancient at level 3 and Royal at level 5; Meadow is available from level 1.
+- [x] Validate style IDs and unlock requirements on the server before changing the active theme.
+- [x] Apply theme palettes to grass, foliage, flower beds and path stones; add theme-specific non-collidable world details.
+- [x] Add style selection cards to the existing nest decoration panel and show selected/locked states.
+- [x] Add static regression checks for style catalogue, server validation, persistence and UI actions.
+- [ ] Roblox Studio: select each unlocked style and inspect its palette and signature structures from multiple camera angles.
+- [ ] Verify locked styles cannot be selected through UI or forged RemoteFunction requests.
+- [ ] Rejoin and confirm the selected style is restored; upgrade nest level and verify new styles unlock without losing the current selection.
+- [ ] Verify theme props do not block movement, pet displays, building placement, contest trophies or decoration placement.
+- [ ] Test style cards and scrolling at 320×480, 375×667, tablet and desktop.
+
+**Acceptance:** server-backed style selection, saved profile field and UI are integrated; Studio visuals, exploit checks and reconnect acceptance remain open.
