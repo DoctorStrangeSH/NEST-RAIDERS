@@ -78,7 +78,7 @@ assert 'BaseHatchChance = baseBiomeChance' in book
 shop_service = Path("src/ServerScriptService/Server/Services/EggShopService.lua").read_text()
 assert 'local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)' in shop_service
 assert 'ArtifactBonusService:GetHatchSpeciesChance(' in shop_service and 'profile, eggDefinition.SpeciesWeights, speciesId)' in shop_service
-assert 'Odds = buildOdds(profile, item.Id)' in shop_service and 'BaseChance = math.floor(baseChance * 100 + 0.5)' in shop_service
+assert 'Odds = buildOdds(profile, item.EggDefinition)' in shop_service and 'BaseChance = math.max(0, baseChance * 100)' in shop_service
 assert 'entry.DiscoveredBiome' in client and 'entry.EggName' in client
 assert 'база %d%%' in client
 assert 'local oddsText = ""' in client and 'entry.HatchChance' in client
@@ -1452,3 +1452,61 @@ assert 'abilityButton.Position = UDim2.fromOffset(12, 174)' in client
 assert 'breedButton.Position = UDim2.fromOffset(12, companion.Ability and 206 or 174)' in client
 assert 'emptyLabel.Text = "ПОКА НЕТ ПИТОМЦЕВ\\nНайди яйцо на острове и вылупи своего первого друга!"' in client
 assert 'inventorySummary.Text = string.format("В КОМАНДЕ · %d / %d     ВСЕГО · %d"' in client
+
+# Sprint 4.59 — biome egg shop, server-confirmed purchases and hatch reveal.
+for egg_id in ("MeadowEgg", "EmeraldEgg", "FrostEgg", "EmberEgg", "CrystalEgg", "AncientEgg"):
+    assert f'"{egg_id}"' in shop_service, f"Missing natural biome egg from shop: {egg_id}"
+assert 'local SHOP_ORDER = {' in shop_service
+assert 'local SHOP_PRICES = {' in shop_service
+assert 'local ZONE_BY_BIOME = {' in shop_service
+assert 'local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)' in shop_service
+assert 'ProgressionService:CanEnterZone(player, zoneId)' in shop_service
+assert 'CanBuy = unlocked and enoughCoins and hasCapacity' in shop_service
+assert 'BuyBlockReason = buyBlockReason' in shop_service
+assert 'BiomeId = item.BiomeId' in shop_service
+assert 'Source = "Shop"' in shop_service
+assert 'HttpService:GenerateGUID(false)' in shop_service
+assert 'EggCount = #(profile.EggInventory or {})' in shop_service
+assert 'profile.Coins -= item.Price' in shop_service
+assert 'local unlocked, lockReason = getLockReason(' in shop_service
+assert 'local function getRequiredLevel(zoneId)' in shop_service
+assert 'RequiredQuest = requiredQuest' in shop_service
+
+assert 'shopPanel.Size = UDim2.new(0.94, 0, 0.82, 0)' in client
+assert 'shopSize.MinSize = Vector2.new(300, 340)' in client
+assert 'shopSize.MaxSize = Vector2.new(620, 680)' in client
+assert 'local eggBiomeColors = {' in client
+assert 'local eggRarityColors = {' in client
+assert 'local function drawEggShopPortrait(parent, item, accent)' in client
+assert 'local function formatEggChance(value)' in client
+assert 'oddsHeader.Text = "ВОЗМОЖНЫЕ ПИТОМЦЫ"' in client
+assert 'item.BuyBlockReason or "ДОСТУПНО К ПОКУПКЕ"' in client
+assert 'buy.Active = item.CanBuy == true' in client
+assert 'ЯЙЦА В СУМКЕ' in client
+assert 'EggShopCard_' in client
+assert 'EggRarityPill' in client
+assert 'OddsRarityDot' in client
+
+assert 'local hatchRevealRemote = remotes:WaitForChild("HatchReveal", 20)' in client
+assert 'HatchRevealOverlay' in client
+assert 'local function finishHatchReveal()' in client
+assert 'hatchSkip.Text = "ПРОПУСТИТЬ АНИМАЦИЮ"' in client
+assert 'hatchSkip.Text = "ЗАБРАТЬ ПИТОМЦА"' in client
+assert 'hatchRevealRemote.OnClientEvent:Connect(function(payload)' in client
+assert 'drawCompanionPortrait(hatchPetPortrait, payload, rarityColor)' in client
+assert 'hatchEggVisual.Rotation = 0' in client
+assert 'hatchCrackA.BackgroundTransparency = 1' in client
+
+assert 'local hatchRevealRemote' in eggs
+assert 'hatchRevealRemote:FireClient(player, {' in eggs
+assert 'hatchRevealRemote = Instance.new("RemoteEvent")' in eggs
+assert 'hatchRevealRemote.Name = "HatchReveal"' in eggs
+assert 'prompt.ObjectText = eggDefinition and eggDefinition.Name or "Яйцо биома"' in eggs
+assert eggs.index('table.insert(profile.Companions, companion)') < eggs.index('hatchRevealRemote:FireClient(player, {')
+assert eggs.index('syncAttributes(player, profile)') < eggs.index('hatchRevealRemote:FireClient(player, {')
+
+assert 'local function attachDetail(name, size, offset, detailColor, shape, material)' in world
+assert 'EggDecorBand' in world
+assert 'EggRune_Left' in world and 'EggRune_Right' in world and 'EggRune_Center' in world
+assert 'EggCrownGem' in world
+assert 'EggGlow' in world and 'EggHighlight' in world
