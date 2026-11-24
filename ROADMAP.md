@@ -1020,3 +1020,31 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify 320×480, 375×667, tablet and desktop raid HUD readability.
 
 **Scope boundary:** Sprint 4.52 makes existing companion growth matter in raid combat and fixes the species-role assignments. It does not add new currencies, separate battle XP, new profile fields, ability evolution trees or extra active slots.
+
+ 
+### Sprint 4.53 — Raid companion team synergies (2026-11-24)
+- [x] Derive team composition from the three already-summoned active raid companions; only distinct combat roles count.
+- [x] Add Guardian + Healer: **Живой бастион** — +15% Guardian/Healer ability power and 12% less incoming raid combat damage.
+- [x] Add Hunter + Guardian: **Штурмовой строй** — +15% Hunter ability power and +10% normal melee strike damage.
+- [x] Add Hunter + Healer: **Согласованный натиск** — +15% Hunter/Healer ability power.
+- [x] Add all three distinct roles: **Триада** — +10% ability power, 8% less incoming damage and +5% normal melee strike damage.
+- [x] Make the three-role Triad mutually exclusive with pair bonuses; duplicate roles do not create or stack extra synergy.
+- [x] Apply synergy server-side at match start; derive it from the actual active roster and keep it in temporary match state only.
+- [x] Apply incoming damage reduction before the existing Guardian shield pipeline, so the same authoritative path covers melee, parry counter, turret and trap damage.
+- [x] Keep ability power inside existing Hunter (30), Healer (35) and Guardian (40) caps; keep strike multiplier capped at 1.15 and mitigation capped at 20%.
+- [x] Show the active synergy name and effect in the raid HUD; show a clear no-synergy state when fewer than two distinct roles are present.
+- [x] Keep player-level unlocks, pet cooldowns, shield duration, rewards, profile schema and normal companion progression unchanged.
+- [x] Add static regression coverage for every pair, full-trio precedence, duplicate-role handling, server damage/ability modifiers, cleanup and HUD attributes.
+- [ ] Roblox Studio: verify each of the three pair combinations produces only its intended synergy.
+- [ ] Verify a Hunter + Healer + Guardian roster activates only Triad, not three pair bonuses.
+- [ ] Verify two or three companions with duplicate roles do not produce a synergy until a second distinct role is present.
+- [ ] Verify GH damage reduction applies to melee, parry counter, turret and trap hits before shield absorption.
+- [ ] Verify GH ability power bonus works for both Guardian and Healer primary pets and never exceeds existing caps.
+- [ ] Verify HG boosts Hunter ability and normal melee strike damage only; verify it does not increase Guardian shield power.
+- [ ] Verify HH boosts Hunter damage and Healer restoration, with healing still limited by missing raid combat health.
+- [ ] Verify Triad applies its three bonuses once and no pair effect is also applied.
+- [ ] Verify no-synergy rosters retain Sprint 4.52 combat values exactly.
+- [ ] Verify synergy state is removed on victory, defeat, forfeit, death, timeout and disconnect, and is not saved to the player profile.
+- [ ] Verify the new HUD line remains readable at 320×480, 375×667, tablet and desktop.
+ 
+**Scope boundary:** Sprint 4.53 adds one mutually exclusive team synergy per raid participant. It does not add pet switching mid-match, new active slots, persistent team bonuses, additional currencies, or pet-vs-pet combat.
