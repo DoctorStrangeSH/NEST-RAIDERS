@@ -465,10 +465,16 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local sleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
             local toyId = profile.Nest and profile.Nest.CompanionToys and profile.Nest.CompanionToys[instanceId]
             local toyDefinition = NestToyCatalog[toyId or ""]
+            local toyPart = nil
+            local toyPosition = nil
+            local toyApproach = nil
             if toyDefinition then
-                local toyPart = makeShape(model, "EquippedNestToy", Vector3.new(0.8, 0.8, 0.8), Vector3.new(1.35, 0.85, 0.75), toyDefinition.Color, toyDefinition.Shape)
-                toyPart.Material = Enum.Material.Neon
+                toyPosition = home + Vector3.new(2.8, -1.05, 0)
+                toyApproach = home + Vector3.new(2.8, 0, 0)
+                toyPart = makeShape(folder, "NestToy_" .. tostring(slot), Vector3.new(0.8, 0.8, 0.8), toyPosition, toyDefinition.Color, toyDefinition.Shape)
+                toyPart.Material = toyId == "WindSpinner" and Enum.Material.Neon or Enum.Material.SmoothPlastic
                 toyPart:SetAttribute("ToyId", toyDefinition.Id)
+                toyPart:SetAttribute("ToyState", "Waiting")
             end
             local moodBillboard = Instance.new("BillboardGui")
             moodBillboard.Name = "MoodBubble"
@@ -529,9 +535,14 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             currentPosition = targetPosition
                             idleUntil = math.max(idleUntil, now)
                             if now >= idleUntil then
-                                local angle = random:NextNumber(0, math.pi * 2)
-                                local radius = math.sqrt(random:NextNumber()) * wanderRadius
-                                targetPosition = home + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)
+                                local canPlay = toyPart and mood >= 35 and energy >= math.max(0, math.floor(tonumber(toyDefinition.EnergyCost) or 0))
+                                if canPlay and random:NextNumber() < 0.42 then
+                                    targetPosition = toyApproach
+                                else
+                                    local angle = random:NextNumber(0, math.pi * 2)
+                                    local radius = math.sqrt(random:NextNumber()) * wanderRadius
+                                    targetPosition = home + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)
+                                end
                                 local direction = targetPosition - currentPosition
                                 if direction.Magnitude > 0.05 then
                                     facing = math.atan2(direction.X, direction.Z)
@@ -550,10 +561,26 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             behavior = mood >= 80 and "Playful" or "Wandering"
                             bob = math.abs(math.sin(now * 9 + phase)) * 0.1
                         else
-                            behavior = energy <= 15 and "Resting" or (hunger <= 20 and "Hungry" or "Idle")
-                            bob = math.sin(now * 2 + phase) * 0.055
-                            yawOffset = math.sin(now * 1.1 + phase) * 0.09
+                            local nearToy = toyPart and (currentPosition - toyApproach).Magnitude < 0.55
+                            if nearToy and energy > 10 then
+                                behavior = "PlayingWithToy"
+                                idleUntil = math.max(idleUntil, now + 0.15)
+                                bob = math.abs(math.sin(now * 7 + phase)) * 0.13
+                                yawOffset = math.sin(now * 5 + phase) * 0.18
+                                toyPart:SetAttribute("ToyState", "InUse")
+                            else
+                                behavior = energy <= 15 and "Resting" or (hunger <= 20 and "Hungry" or "Idle")
+                                bob = math.sin(now * 2 + phase) * 0.055
+                                yawOffset = math.sin(now * 1.1 + phase) * 0.09
+                                if toyPart then toyPart:SetAttribute("ToyState", "Waiting") end
+                            end
                         end
+                    end
+
+                    if toyPart and toyPart.Parent then
+                        local toyBob = toyPart:GetAttribute("ToyState") == "InUse" and math.abs(math.sin(now * 7 + phase)) * 0.22 or math.sin(now * 2 + phase) * 0.035
+                        local spin = toyId == "WindSpinner" and now * 2.8 or (toyPart:GetAttribute("ToyState") == "InUse" and math.sin(now * 6 + phase) * 0.35 or 0)
+                        toyPart.CFrame = CFrame.new(toyPosition + Vector3.new(0, toyBob, 0)) * CFrame.Angles(0, spin, 0)
                     end
 
                     model:SetAttribute("Behavior", behavior)
