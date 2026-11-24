@@ -128,6 +128,106 @@ local function getRaidPetSynergy(followers)
     return nil
 end
 
+local RAID_SYNERGY_PALETTES = {
+    LIVING_BASTION = {
+        GUARDIAN = Color3.fromRGB(115, 204, 255),
+        HEALER = Color3.fromRGB(132, 242, 180),
+    },
+    ASSAULT_FORMATION = {
+        HUNTER = Color3.fromRGB(255, 151, 91),
+        GUARDIAN = Color3.fromRGB(111, 184, 255),
+    },
+    COORDINATED_ASSAULT = {
+        HUNTER = Color3.fromRGB(255, 166, 103),
+        HEALER = Color3.fromRGB(158, 239, 178),
+    },
+    TRIAD = {
+        HUNTER = Color3.fromRGB(255, 150, 99),
+        HEALER = Color3.fromRGB(173, 145, 255),
+        GUARDIAN = Color3.fromRGB(105, 213, 255),
+    },
+}
+
+local function getRaidSynergyColor(synergy, role)
+    local palette = synergy and RAID_SYNERGY_PALETTES[synergy.Id]
+    return palette and palette[role] or Color3.fromRGB(225, 207, 150)
+end
+
+local function applyRaidSynergyVisuals(match, player, synergy)
+    if not synergy then return end
+    for _, follower in ipairs(match.RaidFollowers and match.RaidFollowers[player] or {}) do
+        local model = follower.Model
+        if model and model.Parent then
+            local color = getRaidSynergyColor(synergy, follower.Role)
+            model:SetAttribute("RaidSynergyId", synergy.Id)
+            model:SetAttribute("RaidSynergyRole", follower.Role or "")
+            local aura = Instance.new("Highlight")
+            aura.Name = "RaidTeamSynergyAura"
+            aura.Adornee = model
+            aura.FillColor = color
+            aura.OutlineColor = color
+            aura.FillTransparency = 0.94
+            aura.OutlineTransparency = 0.3
+            aura.DepthMode = Enum.HighlightDepthMode.Occluded
+            aura.Parent = model
+        end
+    end
+end
+
+local function pulseRaidCompanions(match, player, cueKind, force)
+    local synergy = match and match.RaidPetSynergy and match.RaidPetSynergy[player] or nil
+    if not synergy then return false end
+
+    local timestamp = os.clock()
+    match.LastCompanionCueAt = match.LastCompanionCueAt or {}
+    local lastCue = match.LastCompanionCueAt[player] or 0
+    if not force and timestamp - lastCue < 0.32 then return false end
+    match.LastCompanionCueAt[player] = timestamp
+
+    local duration = cueKind == "ACTIVATION" and 0.78
+        or (cueKind == "ABILITY" and 0.58 or (cueKind == "DEFEND" and 0.48 or 0.38))
+    local fillTransparency = cueKind == "ACTIVATION" and 0.48
+        or (cueKind == "ABILITY" and 0.58 or 0.68)
+
+    for _, follower in ipairs(match.RaidFollowers and match.RaidFollowers[player] or {}) do
+        local model = follower.Model
+        if model and model.Parent then
+            local color = getRaidSynergyColor(synergy, follower.Role)
+            local flash = Instance.new("Highlight")
+            flash.Name = "RaidSynergyCue_" .. tostring(cueKind)
+            flash.Adornee = model
+            flash.FillColor = color
+            flash.OutlineColor = color
+            flash.FillTransparency = fillTransparency
+            flash.OutlineTransparency = 0.04
+            flash.DepthMode = Enum.HighlightDepthMode.Occluded
+            flash.Parent = model
+            TweenService:Create(flash, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                FillTransparency = 1,
+                OutlineTransparency = 1,
+            }):Play()
+            Debris:AddItem(flash, duration + 0.08)
+
+            local root = model.PrimaryPart or model:FindFirstChildWhichIsA("BasePart")
+            if root then
+                local light = Instance.new("PointLight")
+                light.Name = "RaidSynergyCueLight"
+                light.Color = color
+                light.Range = cueKind == "ACTIVATION" and 11 or 8
+                light.Brightness = cueKind == "ACTIVATION" and 2 or 1.35
+                light.Shadows = false
+                light.Parent = root
+                TweenService:Create(light, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                    Brightness = 0,
+                    Range = 0,
+                }):Play()
+                Debris:AddItem(light, duration + 0.08)
+            end
+        end
+    end
+    return true
+end
+
 local function getRaidPetProgression(pet, synergy)
     local companion = pet and pet.Companion
     local level = math.clamp(math.floor(tonumber(companion and companion.Level) or 1), 1, 10)
@@ -436,6 +536,7 @@ local function publishArenaState(match)
             participant:SetAttribute("RaidArenaPetLevel", ability and petLevel or 0)
             participant:SetAttribute("RaidArenaPetPower", petPower)
             participant:SetAttribute("RaidArenaPetPowerLabel", petPowerLabel)
+            participant:SetAttribute("RaidArenaSynergyId", synergy and synergy.Id or "")
             participant:SetAttribute("RaidArenaSynergyName", synergy and synergy.Name or "")
             participant:SetAttribute("RaidArenaSynergyDescription", synergy and synergy.Description or "")
             participant:SetAttribute("RaidArenaPetCooldown", match.PetAbilityReadyAt
@@ -623,8 +724,10 @@ local function clearMatch(self, match, message)
             participant:SetAttribute("RaidArenaPetLevel", nil)
             participant:SetAttribute("RaidArenaPetPower", nil)
             participant:SetAttribute("RaidArenaPetPowerLabel", nil)
+            participant:SetAttribute("RaidArenaSynergyId", nil)
             participant:SetAttribute("RaidArenaSynergyName", nil)
             participant:SetAttribute("RaidArenaSynergyDescription", nil)
+            participant:SetAttribute("RaidArenaSynergyPulse", nil)
             participant:SetAttribute("RaidArenaPetCooldown", nil)
             participant:SetAttribute("RaidArenaPetShield", nil)
             participant:SetAttribute("RaidArenaPetShieldSeconds", nil)
@@ -693,6 +796,9 @@ local function applyRaidCombatDamage(self, match, target, amount, sourceName)
     local shieldText = absorbed > 0 and (" Щит питомца поглотил " .. tostring(absorbed) .. ".") or ""
     local synergyText = reducedDamage < incomingDamage
         and (" Синергия «" .. tostring(synergy.Name) .. "» смягчила удар.") or ""
+    if reducedDamage < incomingDamage then
+        pulseRaidCompanions(match, target, "DEFEND")
+    end
     target:SetAttribute("LastNotice", sourceName .. ": получено " .. tostring(remainingDamage)
         .. " урона." .. shieldText .. synergyText .. " Здоровье: " .. tostring(match.CombatHealth[target]) .. " / 100.")
     publishArenaState(match)
@@ -840,7 +946,9 @@ function RaidService:StartArena(match)
     match.PetShields = {}
     match.RaidPets = {}
     match.RaidPetModels = {}
+    match.RaidFollowers = {}
     match.RaidPetSynergy = {}
+    match.LastCompanionCueAt = {}
     match.CombatHealth = {
         [match.Attacker] = 100,
         [match.Defender] = 100,
@@ -857,11 +965,11 @@ function RaidService:StartArena(match)
         folder.Name = "RaidCompanions_" .. tostring(participant.UserId)
         folder.Parent = match.ArenaModel
         local followers, primary = CompanionService:CreateRaidFollowers(participant, folder)
-        match.RaidFollowers = match.RaidFollowers or {}
         match.RaidFollowers[participant] = followers
         match.RaidPets[participant] = primary
         match.RaidPetModels[participant] = primary and primary.Model or nil
         match.RaidPetSynergy[participant] = getRaidPetSynergy(followers)
+        applyRaidSynergyVisuals(match, participant, match.RaidPetSynergy[participant])
         if #followers > 0 then followRaidCompanions(self, match, participant, followers) end
     end
 
@@ -874,6 +982,12 @@ function RaidService:StartArena(match)
         participant:SetAttribute("RaidArenaOpponentName",
             participant == match.Attacker and match.Defender.DisplayName or match.Attacker.DisplayName)
         participant:SetAttribute("RaidArenaRole", participant == match.Attacker and "ATTACKER" or "DEFENDER")
+        local synergy = match.RaidPetSynergy[participant]
+        participant:SetAttribute("RaidArenaSynergyPulse",
+            synergy and (tostring(match.Id) .. ":" .. synergy.Id) or "")
+        if synergy then
+            pulseRaidCompanions(match, participant, "ACTIVATION", true)
+        end
     end
 
     table.insert(match.DeathConnections, attackerHumanoid.Died:Connect(function()
@@ -917,6 +1031,7 @@ function RaidService:AttackCore(player)
     end
     match.LastAttackAt[player] = timestamp
     match.CoreHealth = math.max(0, match.CoreHealth - RAID_CORE_HIT_DAMAGE)
+    pulseRaidCompanions(match, player, "ATTACK")
     if match.CorePart and match.CorePart.Parent then
         match.CorePart.Color = match.CoreHealth <= 30 and Color3.fromRGB(255, 91, 91)
             or match.CoreHealth <= 60 and Color3.fromRGB(255, 151, 83)
@@ -978,6 +1093,7 @@ function RaidService:AttackDefense(player)
     end
     match.LastDefenseAttackAt[player] = timestamp
     defense.Health = math.max(0, defense.Health - RAID_DEFENSE_STRIKE_DAMAGE)
+    pulseRaidCompanions(match, player, "ATTACK")
     updateDefenseLabel(defense)
     if defense.Health <= 0 then
         if defense.Model and defense.Model.Parent then defense.Model:Destroy() end
@@ -1067,6 +1183,7 @@ function RaidService:UsePetAbility(player)
         end
         local damage = power
         match.PetAbilityReadyAt[player] = timestamp + cooldown
+        pulseRaidCompanions(match, player, "ABILITY")
         local petModel = match.RaidPetModels and match.RaidPetModels[player]
         local petRoot = petModel and petModel.PrimaryPart
         local projectile = Instance.new("Part")
@@ -1098,6 +1215,7 @@ function RaidService:UsePetAbility(player)
         end
         match.PetAbilityReadyAt[player] = timestamp + cooldown
         match.CombatHealth[player] = currentHealth + restored
+        pulseRaidCompanions(match, player, "ABILITY")
         local highlight = Instance.new("Highlight")
         highlight.Name = "RaidPetHealFlash"
         highlight.Adornee = character
@@ -1118,6 +1236,7 @@ function RaidService:UsePetAbility(player)
         local duration = math.clamp(tonumber(ability.ShieldDuration) or 7, 4, 10)
         match.PetAbilityReadyAt[player] = timestamp + cooldown
         match.PetShields[player] = { Amount = shieldAmount, ExpiresAt = timestamp + duration }
+        pulseRaidCompanions(match, player, "ABILITY")
         local highlight = Instance.new("Highlight")
         highlight.Name = "RaidPetGuardianShield"
         highlight.Adornee = character
@@ -1168,6 +1287,7 @@ function RaidService:StrikeOpponent(player)
     local targetGuardUntil = match.GuardUntil[opponent] or 0
     if targetGuardUntil > timestamp then
         match.GuardUntil[opponent] = 0
+        pulseRaidCompanions(match, opponent, "DEFEND")
         local ended = applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE, "Контрудар парирования")
         if ended then
             return { Ok = true, Message = "Парирование! Ты отразил удар и победил." }
@@ -1177,6 +1297,7 @@ function RaidService:StrikeOpponent(player)
         local synergy = match.RaidPetSynergy and match.RaidPetSynergy[player] or nil
         local strikeMultiplier = math.clamp(tonumber(synergy and synergy.DuelDamageMultiplier) or 1, 1, 1.15)
         local strikeDamage = math.floor(RAID_DUEL_STRIKE_DAMAGE * strikeMultiplier + 0.5)
+        pulseRaidCompanions(match, player, "ATTACK")
         local ended = applyRaidCombatDamage(self, match, opponent, strikeDamage, "Удар соперника")
         if ended then return { Ok = true, Message = "Соперник выбыл! Победа в рейде." } end
         player:SetAttribute("LastNotice", "Попадание! Урон: " .. tostring(strikeDamage)
