@@ -792,8 +792,8 @@ assert 'definition, hatchBonus, baseTopChance, boostedTopChance = chooseCompanio
 assert 'local hunterMessage = hatchBonus > 0 and string.format(' in egg_service
 assert 'высшая редкость %.1f%% → %.1f%%' in egg_service
 hatch_selection = egg_service[egg_service.index('    local definition\n    local geneticTrait'):egg_service.index('    -- Validate everything needed for the pet')]
-assert hatch_selection.index('if egg.Origin == "Breeding" then') < hatch_selection.index('definition = chooseCompanion')
-assert 'definition = chooseCompanion(egg.Id or "MeadowEgg", profile)' in hatch_selection
+assert hatch_selection.index('if egg.Origin == "Breeding" then') < hatch_selection.index('definition, hatchBonus, baseTopChance, boostedTopChance = chooseCompanion')
+assert 'definition, hatchBonus, baseTopChance, boostedTopChance = chooseCompanion(egg.Id or "MeadowEgg", profile)' in hatch_selection
 
 assert 'HatchBonus = math.min(0.30' in inventory_service
 assert 'EquippedHatchBonus' in inventory_service
