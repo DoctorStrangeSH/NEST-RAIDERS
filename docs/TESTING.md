@@ -791,3 +791,22 @@
 - [ ] Train a companion before a raid, rejoin, and verify its saved growth level still controls combat power.
 - [ ] Verify the scaling does not change normal pet income, stars, genetic traits, breeding readiness or collection ownership.
 - [ ] Verify the raid HUD at 320×480, 375×667, tablet and desktop.
+
+ 
+## Sprint 4.53 — Raid companion team synergy acceptance
+- [ ] Start a two-client Studio raid with Guardian + Healer active. Verify the HUD shows **Живой бастион**, Guardian/Healer ability power is +15%, and incoming raid combat damage is reduced by 12%.
+- [ ] With Guardian + Healer, verify reduction applies to normal melee strikes, parry counter-damage, Watchtower hits and Thorn Trap hits before any Guardian pet shield absorbs the remaining damage.
+- [ ] Start a raid with Hunter + Guardian active. Verify **Штурмовой строй**, Hunter ability power +15% and normal melee strike damage +10%.
+- [ ] Verify Hunter + Guardian does not increase Guardian shield capacity and does not change parry counter-damage.
+- [ ] Start a raid with Hunter + Healer active. Verify **Согласованный натиск**, Hunter ability power +15% and Healer restoration power +15%.
+- [ ] Verify Healer still restores only missing raid combat health and cannot exceed 100.
+- [ ] Start a raid with Hunter + Healer + Guardian active. Verify **Триада** replaces all pair synergies and applies +10% ability power, 8% damage reduction and +5% normal melee strike damage exactly once.
+- [ ] Verify a roster with two Hunters and one Guardian counts as two distinct roles and activates only Hunter + Guardian.
+- [ ] Verify three companions with the same role show no synergy; adding a second distinct role activates only its matching pair.
+- [ ] Verify a single role, an empty active roster or companions without raid abilities show the no-synergy HUD state and preserve Sprint 4.52 values.
+- [ ] Verify the server derives composition from the saved active roster; forged client attributes or request payload fields cannot grant or change synergy.
+- [ ] Verify Hunter, Healer and Guardian ability power still respects caps 30, 35 and 40 after synergy.
+- [ ] Verify synergy cannot shorten pet cooldowns, extend Guardian shield duration, change player-level unlock requirements or increase raid rewards.
+- [ ] Verify the synergy name and effect description are visible on both clients and update correctly when each participant has a different roster.
+- [ ] Finish by core victory, duel victory, timer, forfeit, death and disconnect; verify synergy attributes clear and no synergy data appears in the saved profile.
+- [ ] Verify the synergy line and 286-pixel raid HUD at 320×480, 375×667, tablet and desktop.
