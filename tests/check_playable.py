@@ -1569,7 +1569,7 @@ assert 'behavior = "PlayingWithToy"' in companion_service
 assert 'toyPart:SetAttribute("ToyState", "InUse")' in companion_service
 assert 'toyPart:SetAttribute("ToyState", "Waiting")' in companion_service
 assert 'while model.Parent == folder and folder.Parent do' in companion_service
-assert 'behavior = targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering")' in companion_service
+assert 'behavior = targetIsTreasure and "Searching" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering"))' in companion_service
 assert 'model:SetAttribute("Behavior", behavior)' in companion_service
 assert 'model:SetAttribute("Personality"' in companion_service
 assert 'model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset, 0))' in companion_service
