@@ -131,6 +131,12 @@ local function snapshot(player, profile)
                 player, profile, item.ZoneId, item.RequiredLevel, item.RequiredQuest)
             local enoughCoins = (tonumber(profile.Coins) or 0) >= item.Price
             local hasCapacity = #(profile.EggInventory or {}) < MAX_EGGS
+            local buyBlockReason = lockReason
+            if unlocked and not hasCapacity then
+                buyBlockReason = "Сумка заполнена · 20/20"
+            elseif unlocked and not enoughCoins then
+                buyBlockReason = "Нужно ещё " .. tostring(item.Price - (tonumber(profile.Coins) or 0)) .. " мон."
+            end
             table.insert(items, {
                 Id = item.Id,
                 Name = item.Name,
@@ -144,6 +150,7 @@ local function snapshot(player, profile)
                 Unlocked = unlocked,
                 CanBuy = unlocked and enoughCoins and hasCapacity,
                 LockReason = lockReason,
+                BuyBlockReason = buyBlockReason,
                 Odds = buildOdds(profile, item.EggDefinition),
                 LayoutOrder = index,
             })
