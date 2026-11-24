@@ -990,3 +990,14 @@ Static checks validate the toy state machine and cleanup ownership. Roblox Studi
 7. Test all four slots, multiple players, re-equipping toys, removing pets and rejoining. Check for stuck SeekingFriend states, orphaned toys, duplicate mood rewards and server performance issues.
 
 Static regression checks cover personality profiles, social pairing, mood rewards and greeting triggers. Roblox Studio runtime, multiplayer and persistence checks remain required.
+
+## Sprint 4.67 — Companion Friendship
+1. Display two companions in slots 1 and 2 and complete several social interactions. Confirm the friendship score increases once per completed interaction, not twice.
+2. Verify the relationship title advances at 10, 30, 60 and 90 points: Приятели, Друзья, Лучшие друзья and Неразлучные.
+3. Start a social interaction, then remove the partner or put it to sleep before the timer ends. Confirm no friendship or mood reward is granted for that interrupted session.
+4. Repeat with slots 3 and 4. Swap displayed pets and verify friendship remains tied to the same two companion instance IDs rather than slot numbers.
+5. Use two players in the same server. Confirm each player's pair scores remain private and never affect the other player's companions.
+6. In a published private test experience, complete interactions, leave and rejoin. Confirm friendship score and title are restored from the profile.
+7. Confirm old profiles without CompanionBonds load normally and receive an empty table through reconciliation.
+
+Static checks cover deterministic pair keys, threshold titles, single-award ownership and interruption guards. Roblox Studio runtime, multiplayer isolation and DataStore persistence remain required.
