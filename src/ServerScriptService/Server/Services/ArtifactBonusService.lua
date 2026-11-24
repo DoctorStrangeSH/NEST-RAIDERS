@@ -103,7 +103,7 @@ local function buildHatchWeightEntries(profile, speciesWeights)
     for speciesId, weight in pairs(speciesWeights) do
         local definition = CompanionCatalog[speciesId]
         local safeWeight = tonumber(weight) or 0
-        local rank = definition and HATCH_RARITY_RANK[definition.Rarity] or nil
+        local rank = definition and (HATCH_RARITY_RANK[definition.Rarity] or 1) or nil
         if definition and rank and safeWeight > 0 then
             table.insert(entries, { Id = speciesId, Weight = safeWeight, Rank = rank })
             highestRank = math.max(highestRank, rank)
