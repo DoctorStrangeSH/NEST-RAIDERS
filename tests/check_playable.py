@@ -1599,3 +1599,23 @@ assert 'model:SetAttribute("FavoriteToy"' in companion_service
 assert 'model:SetAttribute("DisplaySlot", slot)' in companion_service
 assert 'model:SetAttribute("NestHomePosition", home)' in companion_service
 assert 'moodLabel.Text = isSleeping and "Zzz"' in companion_service
+
+# Sprint 4.67 — persistent friendship between displayed companions.
+assert 'CompanionBonds = {}' in profile_template
+assert 'local function getBondKey(firstId, secondId)' in companion_service
+assert 'if first > second then first, second = second, first end' in companion_service
+assert 'local function getBondLevel(score)' in companion_service
+assert 'if score >= 90 then return "Неразлучные" end' in companion_service
+assert 'if score >= 60 then return "Лучшие друзья" end' in companion_service
+assert 'if score >= 30 then return "Друзья" end' in companion_service
+assert 'if score >= 10 then return "Приятели" end' in companion_service
+assert 'model:SetAttribute("CompanionInstanceId", companion.InstanceId or "")' in companion_service
+assert 'profile.Nest.CompanionBonds = profile.Nest.CompanionBonds or {}' in companion_service
+assert 'profile.Nest.CompanionBonds[bondKey] = bondScore' in companion_service
+assert 'if slot < partnerSlot then' in companion_service
+assert 'partnerModel:SetAttribute("FriendshipScore", bondScore)' in companion_service
+assert 'partnerModel:SetAttribute("FriendshipLevel", bondLevel)' in companion_service
+assert 'moodLabel.Size = UDim2.fromOffset(148, 28)' in companion_service
+assert 'string.format("♥♥  Дружба %d%%", bondScore)' in companion_service
+assert 'not socialRewarded and partnerModel and not partnerSleeping' in companion_service
+assert '(partnerModel:GetPivot().Position - currentPosition).Magnitude <= 10' in companion_service
