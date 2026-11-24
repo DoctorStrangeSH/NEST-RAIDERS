@@ -651,3 +651,14 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Combat motions run for all raid companions, even if the roster has no synergy. Synergy continues to control only the existing role-color aura and highlight effects.
 - No new damage, healing, shields, cooldowns, target selection, autonomous AI, remote client combat authority, persistent animation loops or external AnimationId dependencies are introduced.
 - The current procedural companion models are animated by replicated Model:PivotTo movement. Authored rig animation tracks are a future extension, not a prerequisite for this sprint.
+
+ 
+## UI/UX responsive foundation — Sprint 4.56
+- All current client interface elements are built in `ClientBootstrap.client.lua`. The current implementation does not use ImageLabel/ImageButton image assets; blank image slots are therefore not caused by missing asset IDs. The navigation now uses native Frame + TextLabel badges with short Cyrillic codes and per-feature color accents, avoiding image-loading and emoji-font dependencies.
+- The navigation menu keeps its feature buttons in a ScrollingFrame. Every button uses left-aligned text, a 44px left inset for its badge, a right inset and end truncation so labels cannot overlap the badge or spill outside the button.
+- The initial boot diagnostic card uses viewport-relative width and a 260–420px size constraint.
+- The main HUD UIScale is recalculated from the active camera's ViewportSize and is rebound when Workspace.CurrentCamera changes. The viewport listener is disconnected/replaced when the camera changes to avoid stale connections.
+- Responsive navigation layout uses the same active-camera rebinding pattern and recalculates its narrow/desktop geometry on viewport changes.
+- Existing bounded scale floor is retained to avoid making text and touch targets excessively small on phones.
+- The modal exclusivity registry contains each modal exactly once; picker remains the only supported nested dialog over the display panel.
+- This foundation does not yet certify every panel at all aspect ratios. Follow-up UI work must audit modal min/max constraints, text wrapping, card density, close affordances, gameplay HUD, building controls, and empty states individually.
