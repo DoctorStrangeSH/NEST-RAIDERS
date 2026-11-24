@@ -1342,3 +1342,23 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Run a full 24-minute cycle with multiple players and check server performance and cleanup after world rebuild.
 
 **Acceptance:** synchronized day/night cycle and species-specific routines are integrated and statically checked; in-Studio visual, multiplayer, performance and full-cycle acceptance remain open.
+
+
+### Sprint 4.70 — Dynamic weather and pet reactions
+- [x] Add weighted, configurable Clear/Rain/Fog/Storm weather states with 2–3.5 minute durations.
+- [x] Blend Lighting, Atmosphere and volumetric Clouds between weather presets rather than snapping the scene.
+- [x] Add island-wide rain particle emitters for rain and storms; add occasional distant lightning flashes during storms.
+- [x] Publish current weather ID and Russian label on the world folder for HUD and gameplay systems.
+- [x] Give MossTurtle a rain-loving preference; GlowMoth, SnowOwl, CaveGlimmerbat and HeartWisp seek shelter during storms.
+- [x] Make rain, fog and storms influence companion speed and roaming radius; storm conditions reduce treasure-search chance.
+- [x] Add clear in-game pet states for seeking shelter, sheltering and enjoying rain.
+- [x] Add a responsive HUD strip showing live in-game time, day/night phase and current weather.
+- [x] Add static regression checks for weather configuration, effects, attributes, pet reactions and HUD updates.
+- [ ] Roblox Studio: verify rain particles cover the island, fade correctly, and do not obstruct building or prompts.
+- [ ] Verify fog visibility and cloud coverage at multiple camera zoom levels and on low graphics settings.
+- [ ] Verify lightning flashes are brief, readable and do not leave Lighting brightness in an incorrect state.
+- [ ] Confirm weather transitions remain synchronized for all players and the HUD updates without reopening menus.
+- [ ] Test shelter behavior for nocturnal pets, rain-loving behavior for MossTurtle, and normal pet interactions in all weather.
+- [ ] Run multiple weather rotations and monitor particle, tween and server performance.
+
+**Acceptance:** weather presets, environmental effects, species reactions and live HUD display are integrated and statically checked; visual, low-end performance, multiplayer and gameplay acceptance remain open.
