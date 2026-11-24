@@ -1435,7 +1435,7 @@ artifactsHint.BackgroundTransparency = 1
 artifactsHint.Position = UDim2.fromOffset(18, 48)
 artifactsHint.Size = UDim2.new(1, -36, 0, 48)
 artifactsHint.Font = Enum.Font.Gotham
-artifactsHint.Text = "Экипируй до 2 артефактов: они усиливают пассивный доход питомцев и добычу ресурсов. Создание доступно у мастерской Древних высот."
+artifactsHint.Text = "Экипируй до 2 артефактов: они усиливают доход, добычу, опыт и шанс питомца высшей редкости. Создание доступно у мастерской Древних высот."
 artifactsHint.TextColor3 = Color3.fromRGB(190, 190, 220)
 artifactsHint.TextSize = 11
 artifactsHint.TextWrapped = true
@@ -1457,7 +1457,7 @@ addCorner(artifactsCraft, 10)
 if RunService:IsStudio() then
     local artifactsTestButton = Instance.new("TextButton")
     artifactsTestButton.Name = "GathererArtifactTestButton"
-    artifactsTestButton.Position = UDim2.fromOffset(16, 182)
+    artifactsTestButton.Position = UDim2.fromOffset(16, 194)
     artifactsTestButton.Size = UDim2.new(1, -32, 0, 32)
     artifactsTestButton.BackgroundColor3 = Color3.fromRGB(55, 105, 91)
     artifactsTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 СОБИРАТЕЛЕЙ"
@@ -1476,7 +1476,7 @@ if RunService:IsStudio() then
 
     local researcherTestButton = Instance.new("TextButton")
     researcherTestButton.Name = "ResearcherArtifactTestButton"
-    researcherTestButton.Position = UDim2.fromOffset(16, 218)
+    researcherTestButton.Position = UDim2.fromOffset(16, 230)
     researcherTestButton.Size = UDim2.new(1, -32, 0, 32)
     researcherTestButton.BackgroundColor3 = Color3.fromRGB(81, 88, 135)
     researcherTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 ИССЛЕДОВАТЕЛЕЙ"
@@ -1492,12 +1492,31 @@ if RunService:IsStudio() then
             showNotice("Тестовые Исследователи добавлены: по 3 каждого вида.")
         end
     end)
+
+    local hunterTestButton = Instance.new("TextButton")
+    hunterTestButton.Name = "HunterArtifactTestButton"
+    hunterTestButton.Position = UDim2.fromOffset(16, 266)
+    hunterTestButton.Size = UDim2.new(1, -32, 0, 32)
+    hunterTestButton.BackgroundColor3 = Color3.fromRGB(128, 91, 63)
+    hunterTestButton.Text = "ТЕСТ: ВЫДАТЬ ×3 ОХОТНИКОВ"
+    hunterTestButton.TextColor3 = Color3.fromRGB(255, 244, 226)
+    hunterTestButton.TextSize = 10
+    hunterTestButton.Font = Enum.Font.GothamBlack
+    hunterTestButton.Parent = artifactsPanel
+    addCorner(hunterTestButton, 9)
+    hunterTestButton.Activated:Connect(function()
+        local data = invokeInventory({ Action = "DevSeedHunterArtifacts" })
+        if data then
+            renderArtifacts(data)
+            showNotice("Тестовые Охотники добавлены: по 3 каждого вида.")
+        end
+    end)
 end
 
 local artifactsSlots = Instance.new("TextLabel")
 artifactsSlots.BackgroundTransparency = 1
 artifactsSlots.Position = UDim2.fromOffset(18, 146)
-artifactsSlots.Size = UDim2.new(1, -36, 0, 32)
+artifactsSlots.Size = UDim2.new(1, -36, 0, 42)
 artifactsSlots.Font = Enum.Font.GothamBold
 artifactsSlots.Text = "СЛОТЫ: 0 / 2"
 artifactsSlots.TextColor3 = Color3.fromRGB(255, 221, 164)
@@ -1509,8 +1528,8 @@ artifactsSlots.Parent = artifactsPanel
 
 local artifactsList = Instance.new("ScrollingFrame")
 artifactsList.Name = "ArtifactList"
-artifactsList.Position = UDim2.fromOffset(14, RunService:IsStudio() and 256 or 174)
-artifactsList.Size = UDim2.new(1, -28, 1, (RunService:IsStudio() and -270 or -188))
+artifactsList.Position = UDim2.fromOffset(14, RunService:IsStudio() and 304 or 192)
+artifactsList.Size = UDim2.new(1, -28, 1, (RunService:IsStudio() and -318 or -206))
 artifactsList.BackgroundTransparency = 1
 artifactsList.BorderSizePixel = 0
 artifactsList.ScrollBarThickness = 5
@@ -1523,6 +1542,25 @@ artifactsLayout.SortOrder = Enum.SortOrder.LayoutOrder
 artifactsLayout.Parent = artifactsList
 
 if RunService:IsStudio() then
+    local hunterSimulationButton = Instance.new("TextButton")
+    hunterSimulationButton.Name = "HunterSimulationButton"
+    hunterSimulationButton.LayoutOrder = -3
+    hunterSimulationButton.Size = UDim2.new(1, -8, 0, 36)
+    hunterSimulationButton.BackgroundColor3 = Color3.fromRGB(132, 91, 58)
+    hunterSimulationButton.Text = "ТЕСТ: 7000 ВЫЛУПЛЕНИЙ БЕЗ НАГРАД"
+    hunterSimulationButton.TextColor3 = Color3.fromRGB(255, 244, 226)
+    hunterSimulationButton.TextSize = 10
+    hunterSimulationButton.Font = Enum.Font.GothamBlack
+    hunterSimulationButton.Parent = artifactsList
+    addCorner(hunterSimulationButton, 9)
+    hunterSimulationButton.Activated:Connect(function()
+        local data, message = invokeInventory({ Action = "DevSimulateHatchBonus" })
+        if data then
+            renderArtifacts(data)
+            showNotice(message or "Проверка шанса вылупления завершена.")
+        end
+    end)
+
     local simulateButton = Instance.new("TextButton")
     simulateButton.Name = "GathererSimulationButton"
     simulateButton.LayoutOrder = -1
@@ -1567,10 +1605,11 @@ renderArtifacts = function(data)
         if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
     end
     local artifacts = data and data.Artifacts or {}
-    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d  ·  КОЛЛЕКЦИЯ: %d / 40\nДОБЫЧА +%d%%  ·  ОПЫТ +%d%%",
+    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d  ·  КОЛЛЕКЦИЯ: %d / 40\nДОБЫЧА +%d%%  ·  ОПЫТ +%d%%\nОХОТА +%d%%",
         data and data.EquippedArtifactCount or 0, data and data.MaxEquippedArtifacts or 2, #artifacts,
         math.floor(((data and data.EquippedGatherBonus) or 0) * 100 + 0.5),
-        math.floor(((data and data.EquippedResearchBonus) or 0) * 100 + 0.5))
+        math.floor(((data and data.EquippedResearchBonus) or 0) * 100 + 0.5),
+        math.floor(((data and data.EquippedHatchBonus) or 0) * 100 + 0.5))
     if #artifacts == 0 then
         local empty = Instance.new("TextLabel")
         empty.Size = UDim2.new(1, -8, 0, 70)
@@ -1637,6 +1676,9 @@ renderArtifacts = function(data)
         end
         if (artifact.ResearchBonus or 0) > 0 then
             table.insert(effects, string.format("Опыт +%d%%", math.floor(artifact.ResearchBonus * 100 + 0.5)))
+        end
+        if (artifact.HatchBonus or 0) > 0 then
+            table.insert(effects, string.format("Охота +%d%%", math.floor(artifact.HatchBonus * 100 + 0.5)))
         end
         detail.Text = string.format("%s\n%s\n%s",
             artifact.Rarity or "", artifact.Description or "", table.concat(effects, " · "))
