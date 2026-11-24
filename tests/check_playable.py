@@ -796,7 +796,7 @@ assert_gatherer_flow_order(ancient_harvest, [
     'ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)',
     'materials.ElderwoodNodeCooldowns[nodeId] = now + NODE_COOLDOWN_SECONDS',
     'materials.Elderwood = math.max(0, math.floor(tonumber(materials.Elderwood) or 0)) + amount',
-    'syncBalance(player, profile)',
+    '\\n    syncBalance(player, profile)\\n    player:SetAttribute("LastNotice", string.format(',
 ], "Ancient Heights harvest")
 
 assert_gatherer_flow_order(crystal_mining, [
