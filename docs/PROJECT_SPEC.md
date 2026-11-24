@@ -520,7 +520,7 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Research bonuses scale by 25% per artifact upgrade level; the combined equipped Researcher bonus is capped at +50%.
 - All positive XP awards pass through the server-authoritative `ProgressionService:AddXP` entry point. It applies the equipped Researcher bonus after validating the profile and base reward; clients cannot select an XP amount or bonus.
 - Fractional expected bonus XP is rolled once per XP award. A zero or invalid base reward awards no XP and does not trigger a bonus roll.
-- Trial, secret, boss, and companion-ability notices display the actual XP awarded and separately identify extra XP from Researcher artifacts; they never display the unmodified base reward as if it were the final amount.
+- Trial, secret, boss, and companion-ability notices display the actual XP awarded, the actual extra XP, and the expected Researcher percentage when equipped (including a zero-extra roll); they never display the unmodified base reward as if it were the final amount.
 - The artifact snapshot exposes each Researcher bonus and the combined equipped XP bonus. The collection UI displays the scaled effect and equipped XP total.
 - Current craft odds reserve 10% for the Researcher family (6/3/1), while preserving 70% income (42/21/7) and 20% gathering (12/6/2).
 - Roblox Studio exposes a temporary Researcher fixture and a deterministic 1000-award simulation. Both are server-guarded, use an isolated random stream, and the simulation never changes profile XP or player level.
