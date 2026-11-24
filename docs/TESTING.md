@@ -636,7 +636,7 @@
 - [ ] Upgrade a Researcher artifact and verify its bonus scales by 25% per level.
 - [ ] Equip two upgraded Researchers and verify combined XP bonus is capped at +50%.
 - [ ] Verify invalid profiles, zero/negative XP, and rejected reward paths do not award bonus XP.
-- [ ] Verify trial, secret, boss, and companion-ability notices show the actual XP awarded and separately identify extra XP from Researcher artifacts.
+- [ ] Verify trial, secret, boss, and companion-ability notices show actual XP, actual extra XP, and the expected Researcher percentage, including when a fractional roll grants zero extra XP.
 - [ ] Rejoin and verify artifact levels, equipment and displayed XP bonus persist.
 - [ ] Check artifact names, effect text, summary and Studio-only controls at 375px mobile width.
 
