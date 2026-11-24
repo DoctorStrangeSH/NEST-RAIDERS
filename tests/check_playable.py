@@ -659,7 +659,7 @@ assert 'Kind = "CaveGlimmerbat"' in companion_service and 'Kind = "CrystalProwle
 assert 'BatEarLeft' in companion_service and 'CrystalCrest' in companion_service and 'HeartWisp' in companion_service
 assert 'Id = "ForgottenCaveEgg"' in ancient_cave and 'Source = "ForgottenCaveCache"' in ancient_cave
 assert 'player:SetAttribute("EggCount", #profile.EggInventory)' in ancient_cave
-assert 'local function chooseCompanion(eggId)' in Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
+assert 'local function chooseCompanion(eggId, profile)' in Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
 
 assert 'ForgottenHeartBossService' in server
 assert 'ForgottenHeartGuardian' in companion_catalog
