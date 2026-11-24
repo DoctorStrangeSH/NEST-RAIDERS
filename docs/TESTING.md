@@ -662,6 +662,7 @@
 - [ ] Hatch a breeding egg with Hunters equipped and verify offspring species and inherited genetic trait are unchanged.
 - [ ] Verify Hunter artifacts never alter genetic-trait odds.
 - [ ] Verify hatch notices show the highest-tier probability before and after the Hunter modifier only for natural eggs.
+- [ ] Verify Egg Shop and Collection Book show each species' live normalized chance and its base chance when Hunter artifacts change it.
 - [ ] Verify 375px mobile and desktop collection UI shows Hunter descriptions, individual effects and combined Hunter bonus without overlap.
 
 ## Sprint 4.46 — Studio Hunter QA
