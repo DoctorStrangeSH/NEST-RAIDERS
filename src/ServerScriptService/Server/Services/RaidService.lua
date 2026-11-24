@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
 local PlotService = require(ServerScriptService.Server.Services.PlotService)
@@ -9,14 +10,13 @@ local IslandVisitService = require(ServerScriptService.Server.Services.IslandVis
 
 local RaidService = {}
 RaidService._joinedAt = {}
+RaidService._studioRaidLevelOverride = {}
 RaidService._lastRequest = {}
 RaidService._lastChallengeAt = {}
 RaidService._pendingByTarget = {}
 RaidService._pendingByAttacker = {}
 RaidService._matches = {}
 
-local MINIMUM_LEVEL = 5
-local NEWCOMER_PROTECTION_SECONDS = 15 * 60
 local OPT_IN_WINDOW_SECONDS = 10 * 60
 local CHALLENGE_TIMEOUT_SECONDS = 45
 local MATCH_READY_TIMEOUT_SECONDS = 120
@@ -24,11 +24,15 @@ local CHALLENGE_COOLDOWN_SECONDS = 30
 local REQUEST_COOLDOWN_SECONDS = 0.25
 local MAX_TARGETS = 20
 
+local MINIMUM_LEVEL = 5
+local NEWCOMER_PROTECTION_SECONDS = 15 * 60
+
 local function now()
     return os.time()
 end
 
 local function getLevel(player)
+    if RaidService._studioRaidLevelOverride[player] then return MINIMUM_LEVEL end
     return math.clamp(math.floor(tonumber(player:GetAttribute("Level")) or 1), 1, 100)
 end
 
@@ -387,6 +391,24 @@ function RaidService:HandleRequest(player, payload)
     end
     self._lastRequest[player] = timestamp
 
+    if payload.Action == "DevGrantAccess" then
+        if not RunService:IsStudio() then
+            return { Ok = false, Message = "Тестовый доступ доступен только в Roblox Studio." }
+        end
+        self._studioRaidLevelOverride[player] = true
+        self._joinedAt[player] = now() - NEWCOMER_PROTECTION_SECONDS
+        return { Ok = true, Message = "Тестовый доступ к рейдам включён. Профиль и сохранённый уровень не изменены." }
+    end
+    if payload.Action == "DevResetAccess" then
+        if not RunService:IsStudio() then
+            return { Ok = false, Message = "Сброс тестового доступа доступен только в Roblox Studio." }
+        end
+        self._studioRaidLevelOverride[player] = nil
+        self._joinedAt[player] = now()
+        self._studioRaidLevelOverride[player] = nil
+        clearPlayerWindows(player)
+        return { Ok = true, Message = "Тестовый доступ сброшен. Защита новичка снова активна." }
+    end
     if payload.Action == "Get" then return self:GetSnapshot(player) end
     if payload.Action == "SetAttackReady" then return self:SetAttackReady(player, payload.Enabled) end
     if payload.Action == "SetDefenseOpen" then return self:SetDefenseOpen(player, payload.Enabled) end
@@ -438,6 +460,7 @@ function RaidService:Init()
         local match = self._matches[player]
         if match then clearMatch(self, match, "Соперник покинул сервер. Подтверждённый вызов отменён.") end
         self._joinedAt[player] = nil
+        self._studioRaidLevelOverride[player] = nil
         self._lastRequest[player] = nil
         self._lastChallengeAt[player] = nil
     end)

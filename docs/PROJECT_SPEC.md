@@ -547,3 +547,5 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - A challenge expires after 45 seconds and requires an explicit accept or decline from the defender. Each attacker has a 30-second challenge cooldown.
 - Acceptance creates a server-owned READY match record for up to two minutes. Either participant may cancel it; disconnects and expiry clear the record for both players.
 - This foundation does not move characters, start combat, or modify coins, eggs, companions, artifacts, or profile data. Those actions require a later, separately validated raid encounter.
+
+- Roblox Studio exposes a temporary **ТЕСТ: ОТКРЫТЬ ДОСТУП К РЕЙДАМ** control. It bypasses the level/time gates only in the current Studio session; it does not edit the profile, saved level, or published-server rules. A separate reset action restores newcomer protection.

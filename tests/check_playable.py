@@ -1093,3 +1093,11 @@ assert 'raidAccept.Activated' in client and 'raidDecline.Activated' in client
 assert 'raidPanel.Visible' in client and 'task.wait(4)' in client
 for forbidden in ('profile.Coins', 'profile.Companions', 'profile.EggInventory', 'profile.Artifacts'):
     assert forbidden not in raid_service, f"Raid matchmaking must not mutate player loot: {forbidden}"
+
+assert 'local RunService = game:GetService("RunService")' in raid_service
+assert 'if not RunService:IsStudio() then' in raid_service
+assert 'payload.Action == "DevGrantAccess"' in raid_service
+assert 'payload.Action == "DevResetAccess"' in raid_service
+assert 'self._studioRaidLevelOverride[player] = true' in raid_service
+assert 'RaidStudioAccessTest' in client and 'Visible = RunService:IsStudio()' in client
+assert 'Action = "DevGrantAccess"' in client

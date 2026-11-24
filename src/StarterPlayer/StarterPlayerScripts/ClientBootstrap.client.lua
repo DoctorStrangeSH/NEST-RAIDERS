@@ -691,7 +691,20 @@ addCorner(raidDefenseToggle, 9)
 
 local raidIncoming = Instance.new("Frame")
 raidIncoming.Name = "IncomingRaidChallenge"
-raidIncoming.Position = UDim2.fromOffset(12, 139)
+local raidTestAccess = Instance.new("TextButton")
+raidTestAccess.Name = "RaidStudioAccessTest"
+raidTestAccess.Position = UDim2.fromOffset(12, 139)
+raidTestAccess.Size = UDim2.new(1, -24, 0, 28)
+raidTestAccess.BackgroundColor3 = Color3.fromRGB(104, 90, 135)
+raidTestAccess.Text = "ТЕСТ: ОТКРЫТЬ ДОСТУП К РЕЙДАМ"
+raidTestAccess.TextColor3 = Color3.new(1, 1, 1)
+raidTestAccess.TextSize = 10
+raidTestAccess.Font = Enum.Font.GothamBlack
+raidTestAccess.Visible = RunService:IsStudio()
+raidTestAccess.Parent = raidPanel
+addCorner(raidTestAccess, 8)
+
+raidIncoming.Position = UDim2.fromOffset(12, 175)
 raidIncoming.Size = UDim2.new(1, -24, 0, 82)
 raidIncoming.BackgroundColor3 = Color3.fromRGB(77, 60, 66)
 raidIncoming.BorderSizePixel = 0
@@ -735,7 +748,7 @@ addCorner(raidDecline, 8)
 
 local raidListTitle = Instance.new("TextLabel")
 raidListTitle.BackgroundTransparency = 1
-raidListTitle.Position = UDim2.fromOffset(16, 229)
+raidListTitle.Position = UDim2.fromOffset(16, 265)
 raidListTitle.Size = UDim2.new(1, -32, 0, 22)
 raidListTitle.Font = Enum.Font.GothamBlack
 raidListTitle.Text = "ОТКРЫТЫЕ ДЛЯ РЕЙДА ГНЁЗДА"
@@ -746,8 +759,8 @@ raidListTitle.Parent = raidPanel
 
 local raidList = Instance.new("ScrollingFrame")
 raidList.Name = "RaidTargetList"
-raidList.Position = UDim2.fromOffset(12, 255)
-raidList.Size = UDim2.new(1, -24, 1, -267)
+raidList.Position = UDim2.fromOffset(12, 291)
+raidList.Size = UDim2.new(1, -24, 1, -303)
 raidList.BackgroundTransparency = 1
 raidList.BorderSizePixel = 0
 raidList.ScrollBarThickness = 6
@@ -3674,6 +3687,11 @@ refreshRaidBoard = function(silent)
     return response
 end
 
+raidTestAccess.Activated:Connect(function()
+    if not RunService:IsStudio() then return end
+    invokeRaid({ Action = "DevGrantAccess" })
+    refreshRaidBoard(true)
+end)
 raidAttackToggle.Activated:Connect(function()
     local current = lastRaidSnapshot and lastRaidSnapshot.Self
     if not current then refreshRaidBoard(true); return end

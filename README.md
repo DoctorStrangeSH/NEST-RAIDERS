@@ -244,3 +244,5 @@ The Raid Board introduces voluntary participation before any combat is enabled:
 - Only same-server nests whose owners explicitly opened defense are listed.
 - Challenges require explicit acceptance and expire after 45 seconds; either player can cancel a confirmed READY match.
 - No items, pets, eggs or coins can be lost in this foundation. Combat and bounded rewards are deliberately deferred to the next sprint.
+
+- Roblox Studio includes a temporary QA shortcut for testing matchmaking without grinding to level 5 or waiting 15 minutes. The server guards this action with `RunService:IsStudio()`; it changes only the in-memory raid eligibility override and join timestamp, never the saved profile or published-server behavior.
