@@ -810,3 +810,23 @@
 - [ ] Verify the synergy name and effect description are visible on both clients and update correctly when each participant has a different roster.
 - [ ] Finish by core victory, duel victory, timer, forfeit, death and disconnect; verify synergy attributes clear and no synergy data appears in the saved profile.
 - [ ] Verify the synergy line and 286-pixel raid HUD at 320×480, 375×667, tablet and desktop.
+
+ 
+## Sprint 4.54 — Companion synergy visual acceptance
+- [ ] Start a Guardian + Healer raid and verify Guardian companions use the Bastion cyan/blue aura while Healers use mint green.
+- [ ] Start a Hunter + Guardian raid and verify warm orange Hunter and blue Guardian auras.
+- [ ] Start a Hunter + Healer raid and verify warm orange Hunter and green Healer auras.
+- [ ] Start a full Hunter + Healer + Guardian raid and verify orange, violet and cyan role colors for Triad.
+- [ ] Verify the aura is subtle at rest and does not hide the existing primary-pet highlight, pet silhouette or nameplate.
+- [ ] Verify the server-issued activation pulse lights every companion in the roster once when the raid starts.
+- [ ] Verify each participant sees one animated activation toast with the correct synergy title and description; no repeated toast on ordinary HUD updates.
+- [ ] Verify the attack team pulses on a validated opponent strike, core hit and defense hit.
+- [ ] Verify a successful Hunter projectile, Healer restoration and Guardian shield activation each cue the active companion team.
+- [ ] Verify a successful parry cues the defender's team, not the attacking team.
+- [ ] Verify Bastion/Triad defensive cues appear only when incoming damage was actually reduced; no cue for no-synergy teams.
+- [ ] Spam strike requests within existing server cooldowns and confirm no duplicate effects, persistent emitters, or growing Highlight/PointLight counts.
+- [ ] Verify effects are cleaned up after their short tween duration and after victory, defeat, forfeit, death, timeout and disconnect.
+- [ ] Verify no-synergy rosters show no aura, no activation toast and no coordinated synergy cues.
+- [ ] Verify both clients see the same world companion effects while each client only sees its own synergy activation toast.
+- [ ] Verify HUD toast, companion aura and cues at 320×480, 375×667, tablet and desktop.
+- [ ] Run a two-client Studio match with three companions per side and check frame rate, readability and Output for runtime errors.
