@@ -529,6 +529,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local targetIsSocial = false
             local toyPlayUntil = 0
             local socialPlayUntil = 0
+            local socialRewarded = false
             local partnerSlot = slot % 2 == 1 and slot + 1 or slot - 1
             local behavior = sleeping and "Sleeping"
                 or (hunger <= 20 and "Hungry")
@@ -581,7 +582,17 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         bob = math.sin(now * 1.2 + phase) * 0.025
                         yawOffset = math.sin(now * 0.35 + phase) * 0.025
                     else
-                        if socialPlayUntil > 0 and (now >= socialPlayUntil or not partnerModel or partnerSleeping) then
+                        if socialPlayUntil > 0 and now >= socialPlayUntil then
+                            if not socialRewarded then
+                                mood = math.clamp(mood + 2, 0, 100)
+                                profile.Nest.CompanionMood[instanceId] = mood
+                                model:SetAttribute("Mood", mood)
+                                socialRewarded = true
+                            end
+                            socialPlayUntil = 0
+                            targetIsSocial = false
+                            idleUntil = now + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
+                        elseif socialPlayUntil > 0 and (not partnerModel or partnerSleeping) then
                             socialPlayUntil = 0
                             targetIsSocial = false
                             idleUntil = now + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
@@ -607,6 +618,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 local partnerPosition = partnerModel and partnerModel:GetPivot().Position
                                 if partnerPosition and (partnerPosition - currentPosition).Magnitude <= 10 then
                                     socialPlayUntil = now + random:NextNumber(3.2, 4.6)
+                                    socialRewarded = false
                                     idleUntil = socialPlayUntil
                                 else
                                     idleUntil = now + 0.25
@@ -619,12 +631,13 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         if isAtTarget and now >= idleUntil and socialPlayUntil <= now then
                             local canSocialize = partnerModel and socialApproach and not partnerSleeping
                                 and mood >= 45 and energy >= 20
-                                and random:NextNumber() < personalityProfile.SocialChance
+                            local socialTrigger = partnerBehavior == "SeekingFriend"
+                                or random:NextNumber() < personalityProfile.SocialChance
                             local canPlay = toyPart and mood >= 35
                                 and energy >= math.max(0, math.floor(tonumber(toyDefinition.EnergyCost) or 0))
                             local favoriteToy = toyId ~= nil and toyId == petDefinition.FavoriteToy
                             local toyChance = personalityProfile.ToyChance + (favoriteToy and 0.2 or 0)
-                            if canSocialize and (partnerBehavior == "SeekingFriend" or random:NextNumber() < personalityProfile.SocialChance) then
+                            if canSocialize and socialTrigger then
                                 targetPosition = socialApproach
                                 targetIsSocial = true
                                 targetIsToy = false
@@ -703,6 +716,11 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         toyPart.CFrame = CFrame.new(toyPosition + Vector3.new(0, toyBob, 0)) * CFrame.Angles(0, spin, 0)
                     end
 
+                    moodLabel.Text = isSleeping and "Zzz"
+                        or (behavior == "Socializing" and "♥♥")
+                        or (behavior == "Greeting" and string.format("♥%d ✨", mood))
+                        or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
+                    model:SetAttribute("Mood", mood)
                     model:SetAttribute("Behavior", behavior)
                     local position = currentPosition + Vector3.new(0, bob, 0)
                     model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset, 0))
