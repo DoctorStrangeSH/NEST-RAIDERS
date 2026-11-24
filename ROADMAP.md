@@ -895,6 +895,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add 45-second challenge invitations with explicit accept/decline and cancellation.
 - [x] Create a short-lived, server-owned READY match record only after both players consent.
 - [x] Reject self-targets, protected players, players without assigned plots, visitors, duplicate pending invitations, and players already in a match.
+- [x] Prevent cross-invitations and overlapping outgoing/incoming challenges for the same player.
 - [x] Keep all raid consent and matchmaking state session-only; do not touch coins, eggs, companions, artifacts, or saved profiles.
 - [x] Add static regression coverage for remote registration, service wiring, consent gates, UI integration, expiry and loot isolation.
 - [ ] Roblox Studio: verify protected players cannot opt in, and level-5 players become eligible only after 15 minutes.

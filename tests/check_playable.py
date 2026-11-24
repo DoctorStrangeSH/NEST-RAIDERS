@@ -1083,6 +1083,8 @@ assert 'function RaidService:AcceptChallenge' in raid_service
 assert 'function RaidService:DeclineChallenge' in raid_service
 assert 'RaidAttackUntil' in raid_service and 'RaidDefenseUntil' in raid_service
 assert 'self:CanParticipate(target)' in raid_service
+assert 'self._pendingByAttacker[player] or self._pendingByTarget[player]' in raid_service
+assert 'not self._pendingByAttacker[target]' in raid_service
 assert 'PlotService:GetPlayerPlot(target)' in raid_service
 assert 'IslandVisitService._visitingPlot[player]' in raid_service
 assert 'participant:SetAttribute("RaidMatchState", "READY")' in raid_service
