@@ -685,7 +685,7 @@
 
 ## Sprint 4.47 — Raid consent and matchmaking
 - [ ] With a new profile, open **РЕЙДЫ НА ГНЁЗДА** and verify both opt-in controls are blocked by newcomer protection.
-- [ ] In Studio Play, use **ТЕСТ: ОТКРЫТЬ ДОСТУП К РЕЙДАМ** to bypass level/time gates for matchmaking tests; verify the saved profile level and profile data remain unchanged.
+- [ ] In Studio Play, use **ТЕСТ: ОТКРЫТЬ ДОСТУП К РЕЙДАМ** to bypass level/time gates for matchmaking tests; verify the saved profile level and profile data remain unchanged. Click the same control again to restore the protection state.
 - [ ] Set a test profile to level 4; verify raid participation remains locked. At level 5, verify the 15-minute join protection still applies.
 - [ ] After protection expires, enable **ГОТОВ К РЕЙДУ** and verify it expires after ten minutes or can be disabled manually.
 - [ ] Enable **ОТКРЫТЬ ГНЕЗДО** on a second player; verify the first player sees that nest only after enabling attack readiness.

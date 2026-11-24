@@ -250,6 +250,7 @@ function RaidService:GetSnapshot(player)
         Ok = true,
         Self = {
             Level = getLevel(player),
+            StudioAccessOverride = self._studioRaidLevelOverride[player] == true,
             Protected = protected,
             ProtectionReason = protectionReason,
             ProtectionSeconds = protectionSeconds,
@@ -405,7 +406,6 @@ function RaidService:HandleRequest(player, payload)
         end
         self._studioRaidLevelOverride[player] = nil
         self._joinedAt[player] = now()
-        self._studioRaidLevelOverride[player] = nil
         clearPlayerWindows(player)
         return { Ok = true, Message = "Тестовый доступ сброшен. Защита новичка снова активна." }
     end
@@ -446,6 +446,7 @@ function RaidService:Init()
 
     local function bindPlayer(player)
         self._joinedAt[player] = now()
+        self._studioRaidLevelOverride[player] = nil
         clearPlayerWindows(player)
         player:SetAttribute("RaidProtected", true)
         player:SetAttribute("RaidProtectionReason", "Защита новичка активна.")

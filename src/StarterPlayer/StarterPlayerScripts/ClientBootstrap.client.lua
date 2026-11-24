@@ -3557,6 +3557,7 @@ local function renderRaidBoard(response)
             .. "\nОкна добровольного участия действуют 10 минут."
     end
 
+    raidTestAccess.Text = state.StudioAccessOverride and "ТЕСТ: ВЕРНУТЬ ЗАЩИТУ" or "ТЕСТ: ОТКРЫТЬ ДОСТУП К РЕЙДАМ"
     local canToggle = not state.Protected and not response.Match
     raidAttackToggle.Active = canToggle
     raidDefenseToggle.Active = canToggle
@@ -3689,7 +3690,9 @@ end
 
 raidTestAccess.Activated:Connect(function()
     if not RunService:IsStudio() then return end
-    invokeRaid({ Action = "DevGrantAccess" })
+    local state = lastRaidSnapshot and lastRaidSnapshot.Self
+    local action = state and state.StudioAccessOverride and "DevResetAccess" or "DevGrantAccess"
+    invokeRaid({ Action = action })
     refreshRaidBoard(true)
 end)
 raidAttackToggle.Activated:Connect(function()
