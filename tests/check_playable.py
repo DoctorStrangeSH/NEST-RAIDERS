@@ -1373,3 +1373,25 @@ assert 'showRaidSynergyToast(synergyId, synergyName, synergyDescription)' in cli
 assert '"RaidArenaSynergyId", "RaidArenaSynergyName", "RaidArenaSynergyDescription"' in client
 assert '"RaidArenaSynergyPulse", "RaidArenaPetCooldown"' in client
 
+# Sprint 4.55 — server-replicated procedural companion combat motion.
+assert 'local function getRaidCompanionCombatMotion(match, player, entry, root, index, now)' in raid_service
+assert 'follower.CombatCue = {' in raid_service
+assert 'Kind = cueKind' in raid_service and 'StartedAt = timestamp + (index - 1) * 0.055' in raid_service
+assert 'if not synergy then return true end' in raid_service, "Combat motion must also work for teams without a synergy"
+assert 'local windup = math.max(0, 1 - math.abs(progress - 0.2) / 0.2)' in raid_service
+assert 'local strike = math.max(0, 1 - math.abs(progress - 0.57) / 0.25)' in raid_service
+assert 'local towardOpponent = opponentRoot and (opponentRoot.Position - root.Position)' in raid_service
+assert 'local reach = role == "HUNTER" and 3.25 or (role == "GUARDIAN" and 1.8 or 0.85)' in raid_service
+assert 'if role == "HUNTER" then' in raid_service and '3.9 * strike' in raid_service
+assert 'elseif role == "GUARDIAN" then' in raid_service and '0.72 * pulse' in raid_service
+assert 'offset += Vector3.new(0, 1.3 * pulse, 0)' in raid_service, "Healer ability should use a distinct rising motion"
+assert 'elseif cue.Kind == "DEFEND" then' in raid_service
+assert 'offset += towardOwner * (1.05 * pulse)' in raid_service
+assert 'local sideStep = root.CFrame.RightVector' in raid_service
+assert 'local idleBob = math.sin(now * 2.15 + index * 1.65) * 0.075' in raid_service
+assert 'local motionOffset, motionRotation = getRaidCompanionCombatMotion(' in raid_service
+assert 'model:PivotTo(model:GetPivot():Lerp(target, 0.42))' in raid_service
+assert 'pulseRaidCompanions(match, participant, "ACTIVATION", true)' in raid_service
+assert 'if synergy then\n            pulseRaidCompanions(match, participant' not in raid_service, "Raid start should animate teams without a synergy"
+assert 'entry.CombatCue = nil' in raid_service, "Completed motion cues must be cleared"
+
