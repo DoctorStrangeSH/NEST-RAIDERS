@@ -649,6 +649,13 @@ assert 'Id = "ThornBurst"' in ancient_boss and 'Phase = 2' in ancient_boss
 assert 'Damage = 22' in ancient_boss and 'Radius = 32' in ancient_boss and 'WindupSeconds = 2' in ancient_boss
 assert 'AncientTempleBossPhase' in ancient_boss and 'BOSS_MAX_HEALTH / 2' in ancient_boss
 assert 'grantGuardianTrophy' in ancient_boss and 'Category = "AncientTemple"' in ancient_boss
+assert 'EnvironmentDecorations' in plots
+assert 'GardenTree_NW' in plots and 'GardenTree_NE' in plots and 'GardenTree_SW' in plots and 'GardenTree_SE' in plots
+assert 'FlowerBed_W' in plots and 'FlowerBed_E' in plots and 'FlowerBed_S' in plots
+assert 'GardenPathStone_' in plots and 'part.CanCollide = false' in plots
+assert 'NestLanternPole' in plots and 'WarmGardenLight' in plots
+assert 'GardenCrystalGlow' in plots and 'LevelThreeFlower' in plots
+assert 'ApplyNestLevel(player, profile.Nest.Level or 1)' in plots
 assert 'PlotService:ApplyContestTrophies(player)' in ancient_boss
 assert 'AncientTemple = "СЕРДЦЕ ДРЕВА"' in plots and 'СЕРДЦЕ ДРЕВА' in plots
 assert 'TweenService' in client and 'playGuardianTelegraph' in client
