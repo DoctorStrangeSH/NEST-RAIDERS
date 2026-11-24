@@ -519,11 +519,13 @@ assert 'MAX_GATHER_BONUS = 0.50' in artifact_bonus
 assert 'definition.GatherBonus' in artifact_bonus and 'profile.EquippedArtifacts' in artifact_bonus
 assert 'RootHarvester' in artifact_catalog and 'MoonForager' in artifact_catalog and 'StarProspector' in artifact_catalog
 assert 'GatherBonus = 0.05' in artifact_catalog and 'GatherBonus = 0.10' in artifact_catalog and 'GatherBonus = 0.15' in artifact_catalog
-assert 'Weight = 42' in artifact_catalog and 'Weight = 21' in artifact_catalog and 'Weight = 7' in artifact_catalog
+assert 'Weight = 36' in artifact_catalog and 'Weight = 18' in artifact_catalog and 'Weight = 6' in artifact_catalog
 assert 'Weight = 12' in artifact_catalog and 'Weight = 6' in artifact_catalog and 'Weight = 2' in artifact_catalog
 assert 'FieldJournal' in artifact_catalog and 'MoonAtlas' in artifact_catalog and 'StarCompass' in artifact_catalog
 assert 'ResearchBonus = 0.05' in artifact_catalog and 'ResearchBonus = 0.10' in artifact_catalog and 'ResearchBonus = 0.15' in artifact_catalog
 assert 'Weight = 6' in artifact_catalog and 'Weight = 3' in artifact_catalog and 'Weight = 1' in artifact_catalog
+assert 'HunterTrophy' in artifact_catalog and 'MoonTracker' in artifact_catalog and 'HunterCrown' in artifact_catalog
+assert 'HatchBonus = 0.05' in artifact_catalog and 'HatchBonus = 0.10' in artifact_catalog and 'HatchBonus = 0.15' in artifact_catalog
 assert 'function ArtifactBonusService:GetResearchBonus(profile)' in artifact_bonus
 assert 'function ArtifactBonusService:ApplyResearchBonus(profile, baseAmount, rollValue)' in artifact_bonus
 assert 'MAX_RESEARCH_BONUS = 0.50' in artifact_bonus
@@ -757,6 +759,55 @@ assert sum(weight for _, weight in researcher_definitions.values()) == 10
 assert sum(weight for _, weight in gatherer_definitions.values()) == 20
 assert sum(weight for _, weight in researcher_definitions.values()) + sum(weight for _, weight in gatherer_definitions.values()) == 30
 assert 'local MAX_RESEARCH_BONUS = 0.50' in artifact_bonus
+
+hunter_definitions = {
+    "HunterTrophy": (0.05, 6),
+    "MoonTracker": (0.10, 3),
+    "HunterCrown": (0.15, 1),
+}
+for artifact_id, (base_bonus, weight) in hunter_definitions.items():
+    match = re.search(
+        rf'{artifact_id} = \{{.*?HatchBonus = ([0-9.]+), Weight = (\d+),',
+        artifact_catalog,
+        re.S,
+    )
+    assert match, f"Missing Hunter catalog entry: {artifact_id}"
+    assert float(match.group(1)) == base_bonus
+    assert int(match.group(2)) == weight
+assert sum(weight for _, weight in hunter_definitions.values()) == 10
+assert sum(weight for _, weight in gatherer_definitions.values()) == 20
+assert sum(weight for _, weight in researcher_definitions.values()) == 10
+assert sum(weight for _, weight in hunter_definitions.values()) + sum(weight for _, weight in researcher_definitions.values()) + sum(weight for _, weight in gatherer_definitions.values()) == 40
+assert 'local MAX_HATCH_BONUS = 0.30' in artifact_bonus
+assert 'function ArtifactBonusService:GetHatchBonus(profile)' in artifact_bonus
+assert 'function ArtifactBonusService:ChooseHatchSpecies(profile, speciesWeights, rollValue)' in artifact_bonus
+assert 'HATCH_RARITY_RANK' in artifact_bonus
+assert 'entry.Rank == highestRank' in artifact_bonus
+assert 'adjustedWeight *= (1 + bonus)' in artifact_bonus
+assert 'return entry.Id, bonus, baseChance, adjustedChance, entry.Rank == highestRank' in artifact_bonus
+
+egg_service = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
+assert 'ArtifactBonusService:ChooseHatchSpecies(profile, eggDefinition.SpeciesWeights, math.random())' in egg_service
+assert 'definition, hatchBonus, baseTopChance, boostedTopChance = chooseCompanion(egg.Id or "MeadowEgg", profile)' in egg_service
+assert 'local hunterMessage = hatchBonus > 0 and string.format(' in egg_service
+assert 'высшая редкость %.1f%% → %.1f%%' in egg_service
+hatch_selection = egg_service[egg_service.index('    local definition\n    local geneticTrait'):egg_service.index('    -- Validate everything needed for the pet')]
+assert hatch_selection.index('if egg.Origin == "Breeding" then') < hatch_selection.index('definition = chooseCompanion')
+assert 'definition = chooseCompanion(egg.Id or "MeadowEgg", profile)' in hatch_selection
+
+assert 'HatchBonus = math.min(0.30' in inventory_service
+assert 'EquippedHatchBonus' in inventory_service
+assert 'payload.Action == "DevSeedHunterArtifacts"' in inventory_service
+assert 'payload.Action == "DevSimulateHatchBonus"' in inventory_service
+assert 'local simulationRandom = Random.new(446)' in inventory_service
+assert 'local samplesPerEgg = 1000' in inventory_service
+assert 'ArtifactBonusService:ChooseHatchSpecies(profile, eggDefinition.SpeciesWeights, roll)' in inventory_service
+assert 'ArtifactBonusService:ChooseHatchSpecies(baselineProfile, eggDefinition.SpeciesWeights, roll)' in inventory_service
+assert 'HunterArtifactTestButton' in client
+assert 'Action = "DevSeedHunterArtifacts"' in client
+assert 'HunterSimulationButton' in client
+assert 'Action = "DevSimulateHatchBonus"' in client
+assert 'EquippedHatchBonus' in client and 'ОХОТА +%d%%' in client and 'Охота +%d%%' in client
 assert '1 + (level - 1) * 0.25' in artifact_bonus
 assert 'local expectedExtra = safeBase * bonus' in artifact_bonus
 assert 'if fraction > 0 then' in artifact_bonus
