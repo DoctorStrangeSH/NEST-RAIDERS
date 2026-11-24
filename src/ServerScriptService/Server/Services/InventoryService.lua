@@ -210,6 +210,13 @@ local function makeSnapshot(profile)
         Eggs = eggs,
         Artifacts = artifacts,
         EquippedArtifactCount = #profile.EquippedArtifacts,
+        EquippedIncomeBonus = (function()
+            local total = 0
+            for _, artifact in ipairs(artifacts) do
+                if artifact.Equipped then total += artifact.IncomeBonus or 0 end
+            end
+            return math.clamp(total, 0, 0.20)
+        end)(),
         EquippedGatherBonus = (function()
             local total = 0
             for _, artifact in ipairs(artifacts) do

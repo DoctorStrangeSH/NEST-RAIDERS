@@ -232,3 +232,4 @@ Boss attacks now have distinct warning colors, a smoothly animated health bar an
 - Natural hatch notices show the actual highest-rarity chance before and after the modifier.
 - Egg Shop and Collection Book display live normalized species odds and the original base chance when Hunter artifacts change the result; fixed world signs are labeled as base odds.
 - Roblox Studio includes a temporary Hunter fixture and a 7,000-hatch simulation across all seven biome egg tables; the simulation does not award or consume gameplay items.
+- The artifact collection summary displays the combined equipped bonuses for passive income, gathering, XP, and Hunter effects.

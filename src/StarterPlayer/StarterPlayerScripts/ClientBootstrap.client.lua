@@ -1605,8 +1605,9 @@ renderArtifacts = function(data)
         if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
     end
     local artifacts = data and data.Artifacts or {}
-    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d  ·  КОЛЛЕКЦИЯ: %d / 40\nДОБЫЧА +%d%%  ·  ОПЫТ +%d%%\nОХОТА +%d%%",
+    artifactsSlots.Text = string.format("СЛОТЫ: %d / %d  ·  КОЛЛЕКЦИЯ: %d / 40\nДОХОД +%d%%  ·  ДОБЫЧА +%d%%\nОПЫТ +%d%%  ·  ОХОТА +%d%%",
         data and data.EquippedArtifactCount or 0, data and data.MaxEquippedArtifacts or 2, #artifacts,
+        math.floor(((data and data.EquippedIncomeBonus) or 0) * 100 + 0.5),
         math.floor(((data and data.EquippedGatherBonus) or 0) * 100 + 0.5),
         math.floor(((data and data.EquippedResearchBonus) or 0) * 100 + 0.5),
         math.floor(((data and data.EquippedHatchBonus) or 0) * 100 + 0.5))

@@ -537,3 +537,4 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Shared world egg signs are static reference points and must be labeled as base odds without Hunter artifacts; player-specific live odds belong in the shop and Collection Book.
 - Craft weights are rebalanced to income 36/18/6 (60%), Gatherer 12/6/2 (20%), Researcher 6/3/1 (10%), Hunter 6/3/1 (10%); all weights total 100.
 - Roblox Studio exposes a server-guarded Hunter fixture and a deterministic 7,000-hatch simulation (1,000 per natural egg table). The simulation uses the production selection formula and does not consume eggs, grant companions, change XP, or mutate profile inventory.
+- The inventory snapshot and collection summary expose all four combined equipped effects: passive income (capped at +20%), gathering (capped at +50%), XP (capped at +50%), and Hunter hatch weighting (capped at +30%).

@@ -550,9 +550,11 @@ assert 'CurrentBiome") ~= "AncientHeights"' in ancient_harvest
 assert 'CurrentBiome") ~= "CrystalRealm"' in crystal_mining
 assert 'GatherBonus = math.min(0.50' in inventory
 assert 'ResearchBonus = math.min(0.50' in inventory
-assert 'EquippedGatherBonus' in inventory and 'EquippedResearchBonus' in inventory
-assert 'GatherBonus' in client and 'ResearchBonus' in client
-assert 'ДОБЫЧА +%d%%' in client and 'ОПЫТ +%d%%' in client and 'Добыча +%d%%' in client and 'Опыт +%d%%' in client
+assert 'EquippedIncomeBonus' in inventory and 'EquippedGatherBonus' in inventory and 'EquippedResearchBonus' in inventory
+assert 'return math.clamp(total, 0, 0.20)' in inventory
+assert 'EquippedIncomeBonus' in client and 'GatherBonus' in client and 'ResearchBonus' in client
+assert 'ДОХОД +%d%%' in client and 'ДОБЫЧА +%d%%' in client and 'ОПЫТ +%d%%' in client and 'ОХОТА +%d%%' in client
+assert 'Добыча +%d%%' in client and 'Опыт +%d%%' in client
 
 # Ancient Tree Temple: walkable side-island, ordered runes, personal treasure claim and objective HUD.
 ancient_temple = Path("src/ServerScriptService/Server/Services/AncientTempleService.lua").read_text()

@@ -871,6 +871,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Apply Hunter modifiers only to natural egg hatches; breeding eggs bypass the Hunter selection path.
 - [x] Scale Hunter bonuses by 25% per upgrade level and cap combined equipped modifier at +30%.
 - [x] Display per-artifact and combined Hunter bonuses in the Russian artifact collection UI.
+- [x] Show all four combined equipped effects (income, gathering, XP, and Hunter) together in the collection summary.
 - [x] Show the actual highest-tier probability before and after the modifier in natural hatch notices.
 - [x] Update Egg Shop and Collection Book to show live normalized species chances and the unmodified base chance when Hunter artifacts are equipped.
 - [x] Label shared world egg signs as base odds without Hunter artifacts so fixed world text cannot be mistaken for player-specific odds.
