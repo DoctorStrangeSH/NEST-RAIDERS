@@ -1615,7 +1615,7 @@ assert 'profile.Nest.CompanionBonds[bondKey] = bondScore' in companion_service
 assert 'if slot < partnerSlot then' in companion_service
 assert 'partnerModel:SetAttribute("FriendshipScore", bondScore)' in companion_service
 assert 'partnerModel:SetAttribute("FriendshipLevel", bondLevel)' in companion_service
-assert 'moodLabel.Size = UDim2.fromOffset(148, 28)' in companion_service
+assert 'moodBillboard.Size = UDim2.fromOffset(148, 28)' in companion_service
 assert 'string.format("♥♥  Дружба %d%%", bondScore)' in companion_service
 assert 'not socialRewarded and partnerModel and not partnerSleeping' in companion_service
 assert '(partnerModel:GetPivot().Position - currentPosition).Magnitude <= 10' in companion_service
