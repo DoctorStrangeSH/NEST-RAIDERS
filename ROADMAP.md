@@ -1235,3 +1235,18 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Test style cards and scrolling at 320×480, 375×667, tablet and desktop.
 
 **Acceptance:** server-backed style selection, saved profile field and UI are integrated; Studio visuals, exploit checks and reconnect acceptance remain open.
+
+### Sprint 4.64 — Living Island Companions
+- [x] Replace static display-pet bobbing with bounded autonomous wandering around each assigned display area.
+- [x] Add smooth movement, facing direction, walk bob, idle turns and natural pauses.
+- [x] Derive behavior from existing pet state: playful at high mood, slower movement at low energy, resting/hungry idle states, and sleep pose behavior.
+- [x] Expose behavior, mood, hunger, energy and personality as model attributes for future interaction/UI hooks.
+- [x] Keep pets inside their own small home radius so they do not roam across the island or overlap other display slots.
+- [x] Add static regression checks for movement bounds, state-driven behavior and existing toy/sleep interaction wiring.
+- [ ] Roblox Studio: verify pets roam smoothly, stop naturally, turn toward movement and remain inside their display area.
+- [ ] Test with 1–4 displayed pets and several simultaneous players; check server frame time and replication smoothness.
+- [ ] Verify sleeping pets remain resting, low-energy pets slow down, and high-mood pets move more playfully.
+- [ ] Rebuild the display by placing/removing pets and confirm old movement loops stop with the destroyed model folder.
+- [ ] Verify pets do not block character movement, decoration placement, building placement or toy interactions.
+
+**Acceptance:** autonomous movement and state-aware behavior are integrated in source; visual smoothness, multiplayer performance and physical interaction acceptance remain open in Roblox Studio.
