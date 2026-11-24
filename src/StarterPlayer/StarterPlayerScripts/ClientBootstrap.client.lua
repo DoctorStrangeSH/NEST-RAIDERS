@@ -3398,6 +3398,7 @@ hatchOverlay.Size = UDim2.fromScale(1, 1)
 hatchOverlay.BackgroundColor3 = Color3.fromRGB(8, 15, 21)
 hatchOverlay.BackgroundTransparency = 0.28
 hatchOverlay.BorderSizePixel = 0
+hatchOverlay.Active = true
 hatchOverlay.Visible = false
 hatchOverlay.ZIndex = 150
 hatchOverlay.Parent = gui
