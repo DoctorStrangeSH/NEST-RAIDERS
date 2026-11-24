@@ -1403,7 +1403,8 @@ assert 'bootCardSize.MinSize = Vector2.new(260, 132)' in client
 assert 'local cameraViewportConnection' in client
 assert 'local function bindHudCamera()' in client
 assert 'Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindHudCamera)' in client
-assert 'hudScale.Scale = math.clamp(scale, 0.72, 1)' in client
+assert 'local compactFit = math.min(viewport.X / 300, viewport.Y / 340, 1)' in client
+assert 'hudScale.Scale = math.clamp(scale, minimumScale, 1)' in client
 assert 'local function bindNavigationCamera()' in client
 assert 'Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(bindNavigationCamera)' in client
 assert 'materialsPanel, artifactsPanel, raidPanel, raidPanel' not in client, "Modal list must not register raid panel twice"
@@ -1428,3 +1429,26 @@ assert 'Order = 120' in client, "Collection section must have a unique position 
 assert 'navHeader.LayoutOrder = 0' in client
 assert 'iconText.Name = "MenuIconFallback"' not in client, "Old text-only placeholder badges should be removed"
 
+
+# Sprint 4.58 — companion inventory cards and compact-screen readability.
+assert 'inventoryPanel.Size = UDim2.new(0.94, 0, 0.82, 0)' in client
+assert 'sizeLimit.MinSize = Vector2.new(300, 340)' in client
+assert 'sizeLimit.MaxSize = Vector2.new(560, 660)' in client
+assert 'local inventorySummaryFrame = Instance.new("Frame")' in client
+assert 'local incubatorFrame = Instance.new("Frame")' in client
+assert 'local companionRarityColors = {' in client
+assert 'local function addPetPortraitShape(' in client
+assert 'local function drawCompanionPortrait(parent, companion, rarityColor)' in client
+assert 'drawCompanionPortrait(portrait, companion, rarityColor)' in client
+assert 'local cardHeight = 176 + (hasAbility and 32 or 0) + (canBreed and 32 or 0)' in client
+assert 'card.Name = "CompanionCard"' in client
+assert 'portrait.Name = "PetPortrait"' in client
+assert 'rarityPill.Name = "RarityPill"' in client
+assert 'xpTrack.Name = "GrowthXPTrack"' in client
+assert 'xpFill.Name = "GrowthXPFill"' in client
+assert 'action.Name = "EquipButton"' in client
+assert 'action.Text = companion.Equipped and "УБРАТЬ ИЗ КОМАНДЫ" or "ВЫСТАВИТЬ В КОМАНДУ"' in client
+assert 'abilityButton.Position = UDim2.fromOffset(12, 174)' in client
+assert 'breedButton.Position = UDim2.fromOffset(12, companion.Ability and 206 or 174)' in client
+assert 'emptyLabel.Text = "ПОКА НЕТ ПИТОМЦЕВ\\nНайди яйцо на острове и вылупи своего первого друга!"' in client
+assert 'inventorySummary.Text = string.format("В КОМАНДЕ · %d / %d     ВСЕГО · %d"' in client
