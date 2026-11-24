@@ -549,3 +549,14 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - This foundation does not move characters, start combat, or modify coins, eggs, companions, artifacts, or profile data. Those actions require a later, separately validated raid encounter.
 
 - Roblox Studio exposes a temporary **ТЕСТ: ОТКРЫТЬ ДОСТУП К РЕЙДАМ** control. It bypasses the level/time gates only in the current Studio session; it does not edit the profile, saved level, or published-server rules. A separate reset action restores newcomer protection.
+
+ 
+## Bounded raid arena — Sprint 4.48
+- A raid arena is created only after an eligible defender explicitly accepts an invitation. Each match receives its own isolated arena instance.
+- The attacker wins by reducing the Nest Core from 100 integrity to zero. The defender wins if the 150-second timer expires first.
+- The attacker can strike the core for 20 integrity every 2.2 seconds; the defender can restore 10 integrity every 8 seconds. Both actions require a living character within 16 studs of the core and are validated on the server.
+- The round does not allow player-versus-player damage, theft, or changes to nest ownership, eggs, companions, artifacts or materials.
+- Both players' original character pivots are stored before teleporting. Normal completion, voluntary exit, death and disconnect clean up the arena and restore the remaining participant; a respawning participant is returned to the saved position.
+- A win grants 150 coins and 100 XP; the other participant receives 50 coins. Each player's reward is independently throttled by a persistent ten-minute cooldown in QuestProgress.RaidRewardCooldownUntil.
+- A voluntary early exit, death or disconnect cancels the match without rewards. A timed-out match is a defender win.
+- The arena HUD exposes role, core integrity, remaining time, one role-specific action, and a no-reward forfeit control.
