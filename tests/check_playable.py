@@ -1130,3 +1130,42 @@ assert 'raidArenaAttack.Activated' in client and 'raidArenaRepair.Activated' in 
 assert 'raidArenaExit.Activated' in client
 assert 'Action = "AttackCore"' in client and 'Action = "ReinforceCore"' in client
 assert 'RaidArenaCoreHealth' in client and 'RaidArenaTimeRemaining' in client
+
+# Sprint 4.49 — role-neutral duel combat, short parry window and arena gear.
+assert 'function RaidService:StrikeOpponent(player)' in raid_service
+assert 'function RaidService:RaiseGuard(player)' in raid_service
+assert 'RAID_DUEL_STRIKE_DAMAGE = 24' in raid_service
+assert 'RAID_DUEL_STRIKE_COOLDOWN_SECONDS = 1.15' in raid_service
+assert 'RAID_DUEL_STRIKE_RANGE = 12' in raid_service
+assert 'RAID_PARRY_WINDOW_SECONDS = 0.9' in raid_service
+assert 'RAID_PARRY_COOLDOWN_SECONDS = 3.2' in raid_service
+assert 'RAID_PARRY_COUNTER_DAMAGE = 18' in raid_service
+assert 'match.CombatHealth = {' in raid_service
+assert 'match.LastStrikeAt = {}' in raid_service
+assert 'match.GuardUntil = {}' in raid_service and 'match.GuardCooldownUntil = {}' in raid_service
+assert 'if targetGuardUntil > timestamp then' in raid_service
+assert 'match.CombatHealth[opponent] = math.max(0' in raid_service
+assert 'match.CombatHealth[player] = math.max(0' in raid_service
+assert 'finishMatch(self, match, winnerRole, "Соперник выбыл! Победа в дуэли.", true)' in raid_service
+assert 'function RaidService:RaiseGuard(player)' in raid_service
+assert 'match.GuardUntil[player] = guardUntil' in raid_service
+assert 'match.GuardCooldownUntil[player] = timestamp + RAID_PARRY_COOLDOWN_SECONDS' in raid_service
+assert 'local function equipRaidGear(player, role)' in raid_service
+assert 'RaidCombatGear' in raid_service and 'RaidSwordBlade' in raid_service and 'RaidShield' in raid_service
+assert 'local function showRaidCombatHit(character, parried)' in raid_service
+assert 'RaidParryFlash' in raid_service and 'RaidHitFlash' in raid_service
+assert 'participant:SetAttribute("RaidArenaCombatHealth", nil)' in raid_service
+assert 'participant:SetAttribute("RaidArenaOpponentCombatHealth", nil)' in raid_service
+assert 'participant:SetAttribute("RaidArenaGuardActive", nil)' in raid_service
+assert 'participant:SetAttribute("RaidArenaGuardCooldown", nil)' in raid_service
+assert 'payload.Action == "StrikeOpponent"' in raid_service
+assert 'payload.Action == "RaiseGuard"' in raid_service
+assert 'self:StrikeOpponent(player)' in raid_service and 'self:RaiseGuard(player)' in raid_service
+assert 'raidArenaStrike.Name = "StrikeOpponent"' in client
+assert 'raidArenaGuard.Name = "RaiseGuard"' in client
+assert 'raidArenaCombatStatus.Name = "CombatStatus"' in client
+assert 'Action = "StrikeOpponent"' in client and 'Action = "RaiseGuard"' in client
+assert 'raidArenaStrike.Activated' in client and 'raidArenaGuard.Activated' in client
+assert 'RaidArenaCombatHealth' in client and 'RaidArenaOpponentCombatHealth' in client
+assert 'RaidArenaGuardActive' in client and 'RaidArenaGuardCooldown' in client
+
