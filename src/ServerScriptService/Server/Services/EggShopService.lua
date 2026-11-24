@@ -36,7 +36,8 @@ local function buildOdds(profile, eggId)
     local odds = {}
     for speciesId, weight in pairs(eggDefinition.SpeciesWeights or {}) do
         local companion = CompanionCatalog[speciesId]
-        if companion and tonumber(weight) and weight > 0 then
+        local safeWeight = tonumber(weight) or 0
+        if companion and safeWeight > 0 then
             local actualChance, baseChance = ArtifactBonusService:GetHatchSpeciesChance(
                 profile, eggDefinition.SpeciesWeights, speciesId)
             table.insert(odds, {
