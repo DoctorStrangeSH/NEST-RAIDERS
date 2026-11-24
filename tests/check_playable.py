@@ -796,6 +796,7 @@ assert 'return entry.AdjustedWeight / adjustedTotal, entry.Weight / baseTotal, b
 world_builder = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
 assert world_builder.count("БАЗА · БЕЗ ОХОТНИКА") >= 5
 assert 'HATCH_RARITY_RANK' in artifact_bonus
+assert 'HATCH_RARITY_RANK[definition.Rarity] or 1' in artifact_bonus
 assert 'entry.Rank == highestRank' in artifact_bonus
 assert 'adjustedWeight *= (1 + bonus)' in artifact_bonus
 assert 'return entry.Id, bonus, baseChance, adjustedChance, entry.Rank == highestRank' in artifact_bonus
