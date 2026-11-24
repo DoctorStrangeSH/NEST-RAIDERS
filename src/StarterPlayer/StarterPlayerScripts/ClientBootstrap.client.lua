@@ -4039,8 +4039,18 @@ local function renderCollectionBook(data)
         details.Font = Enum.Font.GothamMedium
         if entry.Discovered then
             local origin = entry.DiscoveredBiome and ("  ·  Найден: " .. tostring(entry.BiomeName)) or ""
-            details.Text = string.format("%s  ·  В коллекции: %d  ·  +%d монет / 10 сек.%s",
-                entry.Rarity, entry.OwnedCount, entry.Income, origin)
+            local oddsText = ""
+            if not entry.BossExclusive and not entry.HybridOnly and (entry.HatchChance or 0) > 0 then
+                local baseChance = tonumber(entry.BaseHatchChance)
+                if baseChance and baseChance ~= entry.HatchChance then
+                    oddsText = string.format("  ·  %s: %d%% (база %d%%)",
+                        entry.EggName or "Яйцо", entry.HatchChance, baseChance)
+                else
+                    oddsText = string.format("  ·  %s: %d%%", entry.EggName or "Яйцо", entry.HatchChance)
+                end
+            end
+            details.Text = string.format("%s  ·  В коллекции: %d  ·  +%d монет / 10 сек.%s%s",
+                entry.Rarity, entry.OwnedCount, entry.Income, origin, oddsText)
         elseif entry.BossExclusive then
             details.Text = string.format("%s  ·  %s", entry.Rarity,
                 entry.AcquisitionLabel or "Только за победу над боссом")
