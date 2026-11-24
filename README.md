@@ -215,3 +215,11 @@ Guardian strikes now trigger local hit reactions, core flashes and crystal spark
 
 ### Combat readability
 Boss attacks now have distinct warning colors, a smoothly animated health bar and floating damage numbers based on actual health changes.
+
+
+## Researcher artifact family — Sprint 4.45
+- Field Journal (+5% XP), Moon Atlas (+10% XP), and Star Compass (+15% XP) increase player experience rewards.
+- Bonuses scale with artifact upgrades, stack additively across the two equipped slots, and are capped at +50%.
+- XP bonuses are applied centrally by the server progression service; clients cannot choose the reward amount.
+- Craft odds: 70% income artifacts, 20% Gatherer artifacts, and 10% Researcher artifacts, with a 6:3:1 rarity ratio inside each family.
+- Roblox Studio includes temporary Researcher test artifacts and a 1000-award simulation that does not change player XP.
