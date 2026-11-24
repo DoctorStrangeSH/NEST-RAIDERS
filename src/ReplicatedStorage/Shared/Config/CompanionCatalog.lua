@@ -13,6 +13,7 @@ local CompanionCatalog = {
         PetMoodBonus = 0,
         PlayMoodBonus = 10,
         EggId = "MeadowEgg",
+        RaidAbility = { Id = "FoxPounce", Name = "Стремительный выпад", Role = "HUNTER", Description = "Наносит сопернику 14 боевого урона на расстоянии до 22 studs.", UnlockLevel = 5, CooldownSeconds = 18, Damage = 14, Range = 22 },
         Ability = {
             Id = "TrailFinder",
             Name = "Следопыт",
@@ -35,6 +36,7 @@ local CompanionCatalog = {
         PetMoodBonus = 10,
         PlayMoodBonus = 0,
         EggId = "MeadowEgg",
+        RaidAbility = { Id = "MossShell", Name = "Мшистый панцирь", Role = "GUARDIAN", Description = "Поглощает до 22 входящего боевого урона в течение 7 секунд.", UnlockLevel = 5, CooldownSeconds = 20, ShieldAmount = 22, ShieldDuration = 7 },
         Ability = {
             Id = "RootBlessing",
             Name = "Благословение корней",
@@ -57,6 +59,7 @@ local CompanionCatalog = {
         PetMoodBonus = 0,
         PlayMoodBonus = 10,
         EggId = "MeadowEgg",
+        RaidAbility = { Id = "VerdantMend", Name = "Живительная искра", Role = "HEALER", Description = "Восстанавливает 20 боевого здоровья.", UnlockLevel = 5, CooldownSeconds = 18, HealAmount = 20 },
         Ability = {
             Id = "VerdantSpark",
             Name = "Искра роста",
@@ -117,6 +120,7 @@ local CompanionCatalog = {
         Personality = "Любознательный", PersonalityDescription = "Обожает исследовать вулканические туннели.",
         FavoriteFood = "Жареные ягоды", FavoriteToy = "MeadowBall", PetMoodBonus = 8, PlayMoodBonus = 4,
         EggId = "EmberEgg",
+        RaidAbility = { Id = "PhoenixDive", Name = "Пикирование феникса", Role = "HUNTER", Description = "Наносит сопернику 22 боевого урона на расстоянии до 24 studs.", UnlockLevel = 5, CooldownSeconds = 24, Damage = 22, Range = 24 },
         Ability = { Id = "CinderHide", Name = "Угольная шёрстка", Description = "Снижает накопление жара рядом с лавой.", UnlockLevel = 7, CooldownSeconds = 300 },
     },
     MagmaWhelp = {
@@ -149,6 +153,7 @@ local CompanionCatalog = {
         PetMoodBonus = 8,
         PlayMoodBonus = 4,
         EggId = "FrostEgg",
+        RaidAbility = { Id = "AuroraMend", Name = "Исцеление авроры", Role = "HEALER", Description = "Восстанавливает 26 боевого здоровья.", UnlockLevel = 5, CooldownSeconds = 22, HealAmount = 26 },
         Ability = {
             Id = "FrostCache",
             Name = "Морозный тайник",
@@ -171,6 +176,7 @@ local CompanionCatalog = {
         PetMoodBonus = 4,
         PlayMoodBonus = 8,
         EggId = "FrostEgg",
+        RaidAbility = { Id = "GlacierBulwark", Name = "Ледниковый заслон", Role = "GUARDIAN", Description = "Поглощает до 32 входящего боевого урона в течение 8 секунд.", UnlockLevel = 5, CooldownSeconds = 24, ShieldAmount = 32, ShieldDuration = 8 },
         Ability = {
             Id = "AuroraGaze",
             Name = "Взгляд авроры",
@@ -218,6 +224,7 @@ local CompanionCatalog = {
         Personality = "Добрый", PersonalityDescription = "Любит спокойствие и мерцание северного сияния.",
         FavoriteFood = "Лунные груши", FavoriteToy = "CozyPlush",
         PetMoodBonus = 12, PlayMoodBonus = 2, EggId = "CrystalEgg",
+        RaidAbility = { Id = "CrystalBloom", Name = "Кристальное цветение", Role = "HEALER", Description = "Восстанавливает 30 боевого здоровья.", UnlockLevel = 5, CooldownSeconds = 24, HealAmount = 30 },
         Ability = { Id = "CrystalWard", Name = "Кристальный оберег", Description = "Временно увеличивает награду за добычу кристаллов.", UnlockLevel = 7, CooldownSeconds = 360 },
     },
     AuroraDragon = {
@@ -227,6 +234,7 @@ local CompanionCatalog = {
         Personality = "Гордый", PersonalityDescription = "Охраняет самые редкие сокровища королевства.",
         FavoriteFood = "Звёздный нектар", FavoriteToy = "WindSpinner",
         PetMoodBonus = 6, PlayMoodBonus = 10, EggId = "CrystalEgg",
+        RaidAbility = { Id = "AuroraBreath", Name = "Дыхание авроры", Role = "HUNTER", Description = "Наносит сопернику 26 боевого урона на расстоянии до 26 studs.", UnlockLevel = 5, CooldownSeconds = 28, Damage = 26, Range = 26 },
         Ability = { Id = "AuroraFortune", Name = "Удача авроры", Description = "Повышает шанс получить дополнительный кристалл.", UnlockLevel = 7, CooldownSeconds = 420 },
     },
 
@@ -277,6 +285,7 @@ local CompanionCatalog = {
         Income = 12,
         Weight = 0,
         Description = "Редкий лесной защитник с лисьей хитростью и крепким панцирем.",
+        RaidAbility = { Id = "BriarAegis", Name = "Терновая эгида", Role = "GUARDIAN", Description = "Поглощает до 28 входящего боевого урона в течение 8 секунд.", UnlockLevel = 5, CooldownSeconds = 22, ShieldAmount = 28, ShieldDuration = 8 },
         Personality = "Защитник",
         PersonalityDescription = "Предпочитает заботиться о своём гнезде.",
         FavoriteFood = "Сладкие ягоды",
