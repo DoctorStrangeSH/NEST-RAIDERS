@@ -2652,6 +2652,88 @@ end
 local selectedBreedingId = nil
 local selectedBreedingPartnerId = nil
 
+local companionRarityColors = {
+    ["Обычный"] = Color3.fromRGB(112, 151, 132),
+    ["Необычный"] = Color3.fromRGB(83, 163, 154),
+    ["Редкий"] = Color3.fromRGB(105, 145, 216),
+    ["Эпический"] = Color3.fromRGB(169, 116, 207),
+    ["Легендарный"] = Color3.fromRGB(220, 170, 87),
+    ["Мифический"] = Color3.fromRGB(216, 112, 139),
+}
+
+local function addPetPortraitShape(parent, name, x, y, width, height, color, rotation, radius)
+    local shape = Instance.new("Frame")
+    shape.Name = name
+    shape.AnchorPoint = Vector2.new(0.5, 0.5)
+    shape.Position = UDim2.fromOffset(x, y)
+    shape.Size = UDim2.fromOffset(width, height)
+    shape.Rotation = rotation or 0
+    shape.BackgroundColor3 = color
+    shape.BorderSizePixel = 0
+    shape.ZIndex = parent.ZIndex + 1
+    shape.Parent = parent
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = radius and UDim.new(0, radius) or UDim.new(1, 0)
+    corner.Parent = shape
+    return shape
+end
+
+local function drawCompanionPortrait(parent, companion, rarityColor)
+    local id = string.lower(tostring(companion.Id or ""))
+    local bodyColor = Color3.fromRGB(247, 231, 196)
+    local accentColor = Color3.fromRGB(255, 247, 224)
+    if string.find(id, "frost") or string.find(id, "snow") or string.find(id, "glacier") then
+        bodyColor = Color3.fromRGB(195, 229, 244)
+        accentColor = Color3.fromRGB(240, 251, 255)
+    elseif string.find(id, "cinder") or string.find(id, "magma") or string.find(id, "ash") then
+        bodyColor = Color3.fromRGB(238, 170, 112)
+        accentColor = Color3.fromRGB(255, 226, 173)
+    elseif string.find(id, "crystal") or string.find(id, "prism") or string.find(id, "heart") then
+        bodyColor = Color3.fromRGB(221, 202, 250)
+        accentColor = Color3.fromRGB(247, 237, 255)
+    elseif string.find(id, "ancient") or string.find(id, "root") or string.find(id, "moss") then
+        bodyColor = Color3.fromRGB(183, 218, 157)
+        accentColor = Color3.fromRGB(234, 247, 205)
+    end
+
+    local isTurtle = string.find(id, "turtle") or string.find(id, "shell")
+    local isWinged = string.find(id, "dragon") or string.find(id, "whelp")
+        or string.find(id, "owl") or string.find(id, "phoenix")
+        or string.find(id, "moth") or string.find(id, "bat")
+        or string.find(id, "bird") or string.find(id, "serpent")
+    local isDeer = string.find(id, "deer") or string.find(id, "stag")
+    if isTurtle then
+        addPetPortraitShape(parent, "PetShell", 34, 39, 39, 29, Color3.fromRGB(73, 128, 103), 0, 12)
+        addPetPortraitShape(parent, "PetShellMark", 34, 39, 24, 17, Color3.fromRGB(115, 174, 129), 45, 5)
+        addPetPortraitShape(parent, "PetHead", 52, 29, 17, 17, bodyColor)
+        addPetPortraitShape(parent, "PetLegA", 20, 53, 10, 8, bodyColor)
+        addPetPortraitShape(parent, "PetLegB", 46, 55, 10, 8, bodyColor)
+    elseif isWinged then
+        addPetPortraitShape(parent, "PetWingA", 16, 38, 15, 24, rarityColor, -28, 7)
+        addPetPortraitShape(parent, "PetWingB", 52, 38, 15, 24, rarityColor, 28, 7)
+        addPetPortraitShape(parent, "PetHead", 34, 37, 31, 29, bodyColor)
+        addPetPortraitShape(parent, "PetEarA", 23, 20, 10, 17, accentColor, -22, 4)
+        addPetPortraitShape(parent, "PetEarB", 45, 20, 10, 17, accentColor, 22, 4)
+    elseif isDeer then
+        addPetPortraitShape(parent, "PetAntlerA", 23, 20, 4, 20, accentColor, -25)
+        addPetPortraitShape(parent, "PetAntlerB", 45, 20, 4, 20, accentColor, 25)
+        addPetPortraitShape(parent, "PetHead", 34, 39, 30, 29, bodyColor)
+        addPetPortraitShape(parent, "PetEarA", 20, 33, 10, 7, accentColor, -25)
+        addPetPortraitShape(parent, "PetEarB", 48, 33, 10, 7, accentColor, 25)
+    else
+        addPetPortraitShape(parent, "PetEarA", 23, 25, 16, 18, bodyColor, -16, 4)
+        addPetPortraitShape(parent, "PetEarB", 45, 25, 16, 18, bodyColor, 16, 4)
+        addPetPortraitShape(parent, "PetEarInnerA", 23, 27, 7, 10, accentColor, -16, 3)
+        addPetPortraitShape(parent, "PetEarInnerB", 45, 27, 7, 10, accentColor, 16, 3)
+        addPetPortraitShape(parent, "PetHead", 34, 40, 35, 32, bodyColor)
+    end
+    addPetPortraitShape(parent, "PetEyeA", 28, 39, 4, 5, Color3.fromRGB(48, 54, 61))
+    addPetPortraitShape(parent, "PetEyeB", 41, 39, 4, 5, Color3.fromRGB(48, 54, 61))
+    addPetPortraitShape(parent, "PetMuzzle", 35, 49, 11, 7, accentColor)
+    addPetPortraitShape(parent, "PetNose", 35, 47, 4, 3, Color3.fromRGB(98, 75, 75))
+    addPetPortraitShape(parent, "PetSparkle", 55, 13, 6, 6, Color3.fromRGB(255, 247, 204), 45)
+end
+
 local function renderInventory(data)
     for _, child in ipairs(list:GetChildren()) do
         if child:IsA("Frame") or child == emptyLabel then
@@ -2660,7 +2742,9 @@ local function renderInventory(data)
     end
 
     if not data then return end
-    inventorySummary.Text = string.format("Активные питомцы: %d / %d", data.ActiveCount or 0, data.MaxActive or 3)
+    local companions = data.Companions or {}
+    inventorySummary.Text = string.format("В КОМАНДЕ · %d / %d     ВСЕГО · %d",
+        data.ActiveCount or 0, data.MaxActive or 3, #companions)
     local eggs = data.Eggs or {}
     local breedingEggs = {}
     local regularEggCount = 0
@@ -2685,76 +2769,144 @@ local function renderInventory(data)
     else
         incubatorSummary.Text = string.format("ИНКУБАТОР · Обычных яиц: %d · Яиц потомства: 0", regularEggCount)
     end
-    local companions = data.Companions or {}
     emptyLabel.Visible = #companions == 0
 
     for index, companion in ipairs(companions) do
+        local level = tonumber(companion.Level) or 1
+        local hasAbility = companion.Ability ~= nil
+        local canBreed = level >= 7
+        local cardHeight = 176 + (hasAbility and 32 or 0) + (canBreed and 32 or 0)
+        local rarityColor = companionRarityColors[companion.Rarity or "Обычный"] or companionRarityColors["Обычный"]
+
         local card = Instance.new("Frame")
         card.Name = "CompanionCard"
         card.LayoutOrder = index
-        card.Size = UDim2.new(1, -8, 0, 218)
-        card.BackgroundColor3 = Color3.fromRGB(43, 64, 72)
+        card.Size = UDim2.new(1, -8, 0, cardHeight)
+        card.BackgroundColor3 = Color3.fromRGB(39, 58, 66)
         card.BorderSizePixel = 0
         card.Parent = list
-        addCorner(card, 12)
+        addCorner(card, 15)
+        addStroke(card, rarityColor, 1.2)
+        local cardGradient = Instance.new("UIGradient")
+        cardGradient.Color = ColorSequence.new(
+            Color3.fromRGB(52, 76, 79),
+            Color3.fromRGB(32, 48, 60)
+        )
+        cardGradient.Rotation = 90
+        cardGradient.Parent = card
+
+        local portrait = Instance.new("Frame")
+        portrait.Name = "PetPortrait"
+        portrait.Position = UDim2.fromOffset(12, 12)
+        portrait.Size = UDim2.fromOffset(66, 66)
+        portrait.BackgroundColor3 = rarityColor
+        portrait.BorderSizePixel = 0
+        portrait.ZIndex = card.ZIndex + 1
+        portrait.Parent = card
+        addCorner(portrait, 15)
+        addStroke(portrait, Color3.fromRGB(239, 238, 218), 1)
+        local portraitGradient = Instance.new("UIGradient")
+        portraitGradient.Color = ColorSequence.new(rarityColor, Color3.fromRGB(37, 48, 65))
+        portraitGradient.Rotation = 90
+        portraitGradient.Parent = portrait
+        drawCompanionPortrait(portrait, companion, rarityColor)
 
         local name = Instance.new("TextLabel")
         name.BackgroundTransparency = 1
-        name.Position = UDim2.fromOffset(12, 8)
-        name.Size = UDim2.new(1, -130, 0, 22)
-        name.Font = Enum.Font.GothamBold
+        name.Position = UDim2.fromOffset(90, 10)
+        name.Size = UDim2.new(1, -102, 0, 22)
+        name.Font = Enum.Font.GothamBlack
         name.Text = companion.Name or companion.Id or "Питомец"
         name.TextColor3 = Color3.fromRGB(255, 239, 198)
-        name.TextSize = 15
+        name.TextSize = 14
         name.TextXAlignment = Enum.TextXAlignment.Left
+        name.TextTruncate = Enum.TextTruncate.AtEnd
         name.Parent = card
 
-        local details = Instance.new("TextLabel")
-        details.BackgroundTransparency = 1
-        details.Position = UDim2.fromOffset(12, 34)
-        details.Size = UDim2.new(1, -130, 0, 72)
-        details.Font = Enum.Font.GothamMedium
+        local rarityPill = Instance.new("Frame")
+        rarityPill.Name = "RarityPill"
+        rarityPill.Position = UDim2.fromOffset(90, 35)
+        rarityPill.Size = UDim2.fromOffset(124, 17)
+        rarityPill.BackgroundColor3 = rarityColor
+        rarityPill.BackgroundTransparency = 0.18
+        rarityPill.BorderSizePixel = 0
+        rarityPill.Parent = card
+        addCorner(rarityPill, 7)
+
+        local rarityLabel = Instance.new("TextLabel")
+        rarityLabel.BackgroundTransparency = 1
+        rarityLabel.Position = UDim2.fromOffset(6, 0)
+        rarityLabel.Size = UDim2.new(1, -12, 1, 0)
+        rarityLabel.Font = Enum.Font.GothamBold
+        rarityLabel.Text = string.upper(companion.Rarity or "ОБЫЧНЫЙ")
+            .. "  " .. string.rep("★", math.clamp(tonumber(companion.Stars) or 1, 1, 3))
+        rarityLabel.TextColor3 = Color3.fromRGB(255, 255, 250)
+        rarityLabel.TextSize = 8
+        rarityLabel.TextXAlignment = Enum.TextXAlignment.Left
+        rarityLabel.TextTruncate = Enum.TextTruncate.AtEnd
+        rarityLabel.Parent = rarityPill
+
         local trait = companion.GeneticTrait or { Name = "Естественный" }
         local traitBonus = math.floor((tonumber(trait.IncomeBonus) or 0) * 100 + 0.5)
-        details.Text = string.format("%s  ·  %s  ·  %s\n%s (%s) · +%d%% дохода\nОпыт %d/%d · +%d монет / 10 сек.",
-            companion.Rarity or "Обычный",
-            string.rep("★", companion.Stars or 1),
-            companion.GrowthStage or "Малыш",
-            trait.Name or "Естественный",
-            trait.Rarity or "Обычный",
-            traitBonus,
-            companion.GrowthXP or 0,
-            companion.GrowthXPToNext or 0,
-            companion.Income or 0)
+        local details = Instance.new("TextLabel")
+        details.Name = "PetDetails"
+        details.BackgroundTransparency = 1
+        details.Position = UDim2.fromOffset(90, 56)
+        details.Size = UDim2.new(1, -102, 0, 33)
+        details.Font = Enum.Font.GothamMedium
+        details.Text = string.format("УР. %d · %s\n%s +%d%% · %d мон./10 сек.",
+            level, companion.GrowthStage or "Малыш",
+            trait.Name or "Естественный", traitBonus, companion.Income or 0)
         if companion.Origin == "Breeding" then
             details.Text ..= "\nПотомство: " .. table.concat(companion.ParentNames or {}, " + ")
         end
-        details.TextColor3 = Color3.fromRGB(187, 211, 203)
-        details.TextSize = 12
+        details.TextColor3 = Color3.fromRGB(205, 220, 211)
+        details.TextSize = 9
         details.TextWrapped = true
         details.TextXAlignment = Enum.TextXAlignment.Left
         details.Parent = card
 
+        local xpTrack = Instance.new("Frame")
+        xpTrack.Name = "GrowthXPTrack"
+        xpTrack.Position = UDim2.fromOffset(90, 92)
+        xpTrack.Size = UDim2.new(1, -102, 0, 6)
+        xpTrack.BackgroundColor3 = Color3.fromRGB(24, 36, 43)
+        xpTrack.BorderSizePixel = 0
+        xpTrack.Parent = card
+        addCorner(xpTrack, 3)
+
+        local xpGoal = tonumber(companion.GrowthXPToNext) or 0
+        local xpCurrent = tonumber(companion.GrowthXP) or 0
+        local xpProgress = xpGoal > 0 and math.clamp(xpCurrent / xpGoal, 0, 1) or 1
+        local xpFill = Instance.new("Frame")
+        xpFill.Name = "GrowthXPFill"
+        xpFill.Size = UDim2.new(xpProgress, 0, 1, 0)
+        xpFill.BackgroundColor3 = Color3.fromRGB(129, 211, 151)
+        xpFill.BorderSizePixel = 0
+        xpFill.Parent = xpTrack
+        addCorner(xpFill, 3)
+
         local action = Instance.new("TextButton")
-        action.AnchorPoint = Vector2.new(1, 0)
-        action.Position = UDim2.new(1, -10, 0, 8)
-        action.Size = UDim2.fromOffset(96, 34)
-        action.BackgroundColor3 = companion.Equipped and Color3.fromRGB(115, 86, 65) or Color3.fromRGB(67, 139, 104)
-        action.Text = companion.Equipped and "СНЯТЬ" or "ВЗЯТЬ"
+        action.Name = "EquipButton"
+        action.Position = UDim2.fromOffset(12, 104)
+        action.Size = UDim2.new(1, -24, 0, 30)
+        action.BackgroundColor3 = companion.Equipped and Color3.fromRGB(125, 91, 70) or Color3.fromRGB(65, 143, 105)
+        action.Text = companion.Equipped and "УБРАТЬ ИЗ КОМАНДЫ" or "ВЫСТАВИТЬ В КОМАНДУ"
         action.TextColor3 = Color3.fromRGB(255, 255, 245)
-        action.TextSize = 13
+        action.TextSize = 10
         action.Font = Enum.Font.GothamBlack
         action.Parent = card
         addCorner(action, 9)
+        addStroke(action, companion.Equipped and Color3.fromRGB(227, 177, 132) or Color3.fromRGB(143, 222, 165), 1)
 
         local mergeButton = Instance.new("TextButton")
         mergeButton.Name = "MergeButton"
-        mergeButton.Position = UDim2.fromOffset(12, 96)
-        mergeButton.Size = UDim2.fromOffset(116, 27)
+        mergeButton.Position = UDim2.fromOffset(12, 140)
+        mergeButton.Size = UDim2.new(0.5, -18, 0, 28)
         mergeButton.BackgroundColor3 = Color3.fromRGB(127, 91, 174)
         mergeButton.Text = "СЛИЯТЬ ×3"
         mergeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        mergeButton.TextSize = 12
+        mergeButton.TextSize = 10
         mergeButton.Font = Enum.Font.GothamBlack
         mergeButton.Visible = (companion.MergeCount or 0) >= 3 and (companion.Stars or 1) < 3
         mergeButton.Parent = card
@@ -2786,18 +2938,20 @@ local function renderInventory(data)
 
         local trainButton = Instance.new("TextButton")
         trainButton.Name = "TrainButton"
-        trainButton.Position = UDim2.fromOffset(136, 96)
-        trainButton.Size = UDim2.fromOffset(116, 27)
+        trainButton.Position = UDim2.new(0.5, 2, 0, 140)
+        trainButton.Size = UDim2.new(0.5, -14, 0, 28)
         trainButton.BackgroundColor3 = Color3.fromRGB(66, 137, 151)
-        trainButton.Text = (companion.Level or 1) >= 10 and "МАКС. УРОВЕНЬ" or ("ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. "мон.")
+        trainButton.Text = (level >= 10 and "МАКС. УРОВЕНЬ")
+            or ("ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. " мон.")
         trainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        trainButton.TextSize = 9
+        trainButton.TextSize = 8
         trainButton.Font = Enum.Font.GothamBlack
+        trainButton.TextTruncate = Enum.TextTruncate.AtEnd
         trainButton.Parent = card
-        trainButton.Active = (companion.Level or 1) < 10
+        trainButton.Active = level < 10
         addCorner(trainButton, 8)
         trainButton.Activated:Connect(function()
-            if (companion.Level or 1) >= 10 then return end
+            if level >= 10 then return end
             trainButton.Active = false
             trainButton.Text = "ТРЕНИРОВКА..."
             local updated = invokeInventory({
@@ -2808,7 +2962,7 @@ local function renderInventory(data)
                 renderInventory(updated)
             else
                 trainButton.Active = true
-                trainButton.Text = "ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. "мон."
+                trainButton.Text = "ТРЕНИРОВКА · " .. tostring(companion.TrainCost or 0) .. " мон."
             end
         end)
 
@@ -2816,13 +2970,14 @@ local function renderInventory(data)
             local ability = companion.Ability
             local abilityButton = Instance.new("TextButton")
             abilityButton.Name = "AbilityButton"
-            abilityButton.Position = UDim2.fromOffset(12, 128)
+            abilityButton.Position = UDim2.fromOffset(12, 174)
             abilityButton.Size = UDim2.new(1, -24, 0, 26)
             abilityButton.BackgroundColor3 = ability.Unlocked and (ability.ReadyIn or 0) <= 0
                 and Color3.fromRGB(111, 133, 73) or Color3.fromRGB(75, 87, 96)
             abilityButton.TextColor3 = Color3.fromRGB(255, 255, 245)
-            abilityButton.TextSize = 10
+            abilityButton.TextSize = 9
             abilityButton.Font = Enum.Font.GothamBlack
+            abilityButton.TextTruncate = Enum.TextTruncate.AtEnd
             if not ability.Unlocked then
                 abilityButton.Text = (ability.Name or "СПОСОБНОСТЬ") .. " · УР. " .. tostring(ability.UnlockLevel or 7)
             elseif (ability.ReadyIn or 0) > 0 then
@@ -2853,13 +3008,14 @@ local function renderInventory(data)
         if (companion.Level or 1) >= 7 then
             local breedButton = Instance.new("TextButton")
             breedButton.Name = "BreedButton"
-            breedButton.Position = UDim2.fromOffset(12, 160)
+            breedButton.Position = UDim2.fromOffset(12, companion.Ability and 206 or 174)
             breedButton.Size = UDim2.new(1, -24, 0, 26)
             breedButton.BackgroundColor3 = selectedBreedingId == companion.InstanceId
                 and Color3.fromRGB(166, 104, 75) or Color3.fromRGB(111, 101, 151)
             breedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-            breedButton.TextSize = 10
+            breedButton.TextSize = 9
             breedButton.Font = Enum.Font.GothamBlack
+            breedButton.TextTruncate = Enum.TextTruncate.AtEnd
             if (companion.BreedReadyIn or 0) > 0 then
                 breedButton.Text = "РАЗВЕДЕНИЕ · " .. tostring(companion.BreedReadyIn) .. " СЕК."
                 breedButton.Active = false
