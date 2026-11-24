@@ -80,6 +80,10 @@ assert 'local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalo
 assert 'ArtifactBonusService:GetHatchSpeciesChance(' in shop_service and 'profile, weights, speciesId)' in shop_service
 assert 'Odds = buildOdds(profile, item.EggDefinition)' in shop_service and 'BaseChance = math.max(0, baseChance * 100)' in shop_service
 assert 'entry.DiscoveredBiome' in client and 'entry.EggName' in client
+assert 'CollectionSearch' in client and 'Поиск питомца или редкости...' in client
+assert 'bookFilterButtons' in client and 'Открытые' in client and 'Не найдены' in client
+assert 'string.find(searchable, query, 1, true)' in client
+assert 'rarityColors' in client and 'details.TextWrapped = true' in client
 assert 'база %d%%' in client
 assert 'local oddsText = ""' in client and 'entry.HatchChance' in client
 
