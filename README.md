@@ -306,3 +306,6 @@ Player plots now receive permanent non-collidable garden dressing: corner trees,
 
 ## Island Identity Styles — Sprint 4.63
 Players can choose a persistent island theme: Meadow (level 1), Arcane (level 2), Ancient Temple (level 3) or Royal Garden (level 5). Theme selection is validated on the server and stored in the nest profile. The existing nest decoration panel exposes the selector; each theme changes environmental colors and adds non-collidable signature details. Roblox Studio testing is still required for visuals, exploit resistance, placement compatibility and reconnect persistence.
+
+## Living Island Companions — Sprint 4.64
+Displayed companions now roam autonomously within a small bounded area around their assigned nest display point. They smoothly move, turn toward destinations, pause and idle. Existing mood, hunger, energy and sleep state influence their behavior; model attributes expose behavior and personality for future interactions. Studio testing is required for multiplayer replication, performance and movement compatibility.
