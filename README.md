@@ -262,3 +262,7 @@ The island build catalogue now includes three defensive structures: Stone Bastio
  
 ## Battle Companions — Sprint 4.51
 Your active companions now enter accepted raids with you. Up to three followers appear in the temporary arena; the first active companion with a raid specialization becomes your primary battle companion. Hunters strike the opposing player, Healers restore temporary raid combat health, and Guardians absorb incoming raid damage. Abilities unlock at level 5 and use server-enforced cooldowns. Companion effects are temporary and never alter saved ownership, active slots or normal character health.
+
+ 
+## Battle Companion Mastery — Sprint 4.52
+Companion growth now matters in raid combat. The selected battle companion's saved growth level (1–10) increases Hunter damage and Healer restoration by one point per two levels, and Guardian shield capacity by one point per 1.5 levels. Power remains server-clamped; healing cannot exceed missing raid health, while shield duration and species cooldown remain unchanged. The raid HUD and summoned companion nameplates display growth level and effective ability power. The species-role mapping is also corrected: Ash Phoenix is Hunter, Snow Owl is Healer, and Glacier Bear is Guardian.
