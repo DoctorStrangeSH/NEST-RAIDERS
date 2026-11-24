@@ -71,9 +71,13 @@ local visitRemote = waitRemote("IslandVisit")
 local contestRemote = waitRemote("IslandContest")
 local publicProfileRemote = waitRemote("PublicProfile")
 local raidRemote = waitRemote("RaidBoard")
+local hatchRevealRemote = remotes:WaitForChild("HatchReveal", 20)
 
 if not (inventoryRemote and shopRemote and collectionRemote and nestRemote and displayRemote
-    and decorRemote and buildRemote and visitRemote and contestRemote and publicProfileRemote and raidRemote) then
+    and decorRemote and buildRemote and visitRemote and contestRemote and publicProfileRemote and raidRemote
+    and hatchRevealRemote and hatchRevealRemote:IsA("RemoteEvent")) then
+    bootText.Text = "NEST RAIDERS\nНе запущена система вылупления питомцев. Проверь EggService в ServerScriptService."
+    warn("[NEST RAIDERS] Boot failed: missing HatchReveal RemoteEvent.")
     return
 end
 
