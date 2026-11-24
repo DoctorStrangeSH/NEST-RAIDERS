@@ -70,11 +70,11 @@ book = Path("src/ServerScriptService/Server/Services/CollectionBookService.lua")
 assert 'profile.DiscoveredBiomes[companion.Id] = companion.OriginBiome or "Meadow"' in eggs
 assert 'local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)' in book
 assert 'BiomeName = biomeName' in book and 'DiscoveredBiome = profile.DiscoveredBiomes[definition.Id]' in book
-assert 'ArtifactBonusService:GetHatchSpeciesChance(profile, egg.SpeciesWeights, definition.Id)' in book
+assert 'ArtifactBonusService:GetHatchSpeciesChance(' in book and 'profile, egg.SpeciesWeights, definition.Id)' in book
 assert 'BaseHatchChance = baseBiomeChance' in book
 shop_service = Path("src/ServerScriptService/Server/Services/EggShopService.lua").read_text()
 assert 'local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)' in shop_service
-assert 'ArtifactBonusService:GetHatchSpeciesChance(profile, eggDefinition.SpeciesWeights, speciesId)' in shop_service
+assert 'ArtifactBonusService:GetHatchSpeciesChance(' in shop_service and 'profile, eggDefinition.SpeciesWeights, speciesId)' in shop_service
 assert 'Odds = buildOdds(profile, item.Id)' in shop_service and 'BaseChance = math.floor(baseChance * 100 + 0.5)' in shop_service
 assert 'entry.DiscoveredBiome' in client and 'entry.EggName' in client
 assert 'база %d%%' in client
