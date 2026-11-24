@@ -1145,7 +1145,7 @@ assert 'match.CombatHealth = {' in raid_service
 assert 'match.LastStrikeAt = {}' in raid_service
 assert 'match.GuardUntil = {}' in raid_service and 'match.GuardCooldownUntil = {}' in raid_service
 assert 'if targetGuardUntil > timestamp then' in raid_service
-assert 'applyRaidCombatDamage(self, match, opponent, RAID_DUEL_STRIKE_DAMAGE' in raid_service
+assert 'applyRaidCombatDamage(self, match, opponent, strikeDamage, "Удар соперника")' in raid_service
 assert 'applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE' in raid_service
 assert 'finishMatch(self, match, target == match.Attacker and "DEFENDER" or "ATTACKER"' in raid_service
 assert 'function RaidService:RaiseGuard(player)' in raid_service
