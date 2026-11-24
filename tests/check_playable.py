@@ -808,6 +808,57 @@ assert 'Action = "DevSeedHunterArtifacts"' in client
 assert 'HunterSimulationButton' in client
 assert 'Action = "DevSimulateHatchBonus"' in client
 assert 'EquippedHatchBonus' in client and 'ОХОТА +%d%%' in client and 'Охота +%d%%' in client
+assert 'ТЕСТ: 7000 ВЫЛУПЛЕНИЙ БЕЗ НАГРАД' in client
+assert 'local hunterMessage = hatchBonus > 0 and string.format(' in egg_service
+
+biome_catalog = Path("src/ReplicatedStorage/Shared/Config/BiomeCatalog.lua").read_text()
+companion_catalog = Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+rarity_rank = {
+    "Обычный": 1,
+    "Необычный": 2,
+    "Редкий": 3,
+    "Эпический": 4,
+    "Легендарный": 5,
+    "Мифический": 6,
+}
+companion_rarities = dict(re.findall(
+    r'^\s{4}(\w+)\s*=\s*\{.*?\bRarity\s*=\s*"([^"]+)"',
+    companion_catalog,
+    re.M | re.S,
+))
+egg_tables = re.findall(
+    r'(\w+)\s*=\s*\{\s*Id\s*=\s*"[^"]+",\s*Name\s*=\s*"[^"]+",\s*Rarity\s*=\s*"[^"]+",\s*SpeciesWeights\s*=\s*\{(.*?)\},\s*\},',
+    biome_catalog,
+    re.S,
+)
+assert len(egg_tables) == 7, f"Expected seven natural biome egg tables, found {len(egg_tables)}"
+for egg_id, weight_source in egg_tables:
+    weights = {species: int(weight) for species, weight in re.findall(r'(\w+)\s*=\s*(\d+)', weight_source)}
+    assert weights, f"No species weights found for {egg_id}"
+    assert all(species in companion_rarities for species in weights), f"Unknown species in {egg_id}"
+    ranks = {species: rarity_rank[companion_rarities[species]] for species in weights}
+    highest_rank = max(ranks.values())
+    base_total = sum(weights.values())
+    base_top_weight = sum(weight for species, weight in weights.items() if ranks[species] == highest_rank)
+    base_chance = base_top_weight / base_total
+    for bonus in (0.05, 0.10, 0.15, 0.30):
+        adjusted_chance = base_top_weight * (1 + bonus) / (base_total + base_top_weight * bonus)
+        assert adjusted_chance > base_chance, f"Hunter bonus did not improve {egg_id} top-tier odds"
+        assert adjusted_chance < 1.0
+
+hunter_sim_start = inventory_service.index('if payload.Action == "DevSimulateHatchBonus" then')
+hunter_sim_end = inventory_service.index('if payload.Action == "Get" then', hunter_sim_start)
+hunter_simulation = inventory_service[hunter_sim_start:hunter_sim_end]
+assert hunter_simulation.index('if not RunService:IsStudio()') < hunter_simulation.index('Random.new(446)')
+assert 'local baselineProfile = { Artifacts = {}, EquippedArtifacts = {} }' in hunter_simulation
+assert 'local samplesPerEgg = 1000' in hunter_simulation
+assert 'totalSamples += 1' in hunter_simulation
+assert not any(token in hunter_simulation for token in (
+    'table.remove(profile.EggInventory', 'table.insert(profile.Companions',
+    'profile.XP', 'ProgressionService:AddXP', 'profile.Materials',
+))
+assert 'payload.Action == "DevSeedHunterArtifacts"' in inventory_service
+assert 'if not RunService:IsStudio() then' in inventory_service
 assert '1 + (level - 1) * 0.25' in artifact_bonus
 assert 'local expectedExtra = safeBase * bonus' in artifact_bonus
 assert 'if fraction > 0 then' in artifact_bonus
