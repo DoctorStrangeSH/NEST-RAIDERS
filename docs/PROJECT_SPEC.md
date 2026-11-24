@@ -487,7 +487,7 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Artifacts are persistent instances in `profile.Artifacts`; equipped instance IDs are stored separately in `profile.EquippedArtifacts`.
 - Maximum equipped artifacts: 2. The server validates ownership and slot capacity for every equip action.
 - The Ancient Heights workshop crafts one random artifact for 4 Moonpetals, 2 Starshards, 2 Crystal Shards, 1 Ash Crystal and 250 coins.
-- Current craft weights: Root Sigil 42% (+3% passive income), Moon Pendant 21% (+6%), Star Prism 7% (+10%), Root Harvester 12% (+5% gathering), Moon Forager 6% (+10% gathering), Star Prospector 2% (+15% gathering), Field Journal 6% (+5% XP), Moon Atlas 3% (+10% XP), Star Compass 1% (+15% XP). The full catalog totals 100: income 70%, Gatherer 20%, Researcher 10%; each family retains a 6:3:1 rarity ratio.
+- Initial Sprint 4.42 craft weights (before Researcher and Hunter families): Root Sigil 42% (+3% passive income), Moon Pendant 21% (+6%), Star Prism 7% (+10%), Root Harvester 12% (+5% gathering), Moon Forager 6% (+10% gathering), Star Prospector 2% (+15% gathering). These historical weights were later rebalanced as new artifact families were introduced; see Sprint 4.46 for the current 100-point catalog.
 - Bonuses stack additively and are capped at +20% to passive income from active companions.
 - The UI displays owned artifacts, rarity, effect and equipment state. All crafting, ownership and equipment changes are server-authoritative.
 
