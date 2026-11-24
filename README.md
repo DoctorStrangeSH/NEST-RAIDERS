@@ -286,3 +286,7 @@ The client UI now has a viewport-aware boot card, a camera-rebound global HUD sc
  
 ## Main Navigation — Sprint 4.57
 The island feature menu now has a dark teal visual theme, a title header, three feature groups, fourteen native vector-style icons, accent strokes, consistent button gradients and responsive text padding. Icons are composed from Roblox GUI primitives rather than image IDs or emoji fonts. Desktop hover feedback and an animated menu/close glyph are included. Roblox Studio/device visual acceptance remains open before the next panel redesign.
+
+ 
+## Companion Inventory — Sprint 4.58
+The pet inventory now has a responsive themed panel, team and owned-count summary, genetics and incubator status cards, rarity-colored native portrait silhouettes, level/trait/income details, growth XP bars, explicit team controls and dynamically stacked merge/training/ability/breeding actions. The existing server-authoritative gameplay actions are preserved. Studio/device visual acceptance remains open before the egg shop redesign.
