@@ -487,7 +487,7 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Artifacts are persistent instances in `profile.Artifacts`; equipped instance IDs are stored separately in `profile.EquippedArtifacts`.
 - Maximum equipped artifacts: 2. The server validates ownership and slot capacity for every equip action.
 - The Ancient Heights workshop crafts one random artifact for 4 Moonpetals, 2 Starshards, 2 Crystal Shards, 1 Ash Crystal and 250 coins.
-- Craft weights: Root Sigil 48% (+3% passive income), Moon Pendant 24% (+6%), Star Prism 8% (+10%), Root Harvester 12% (+5% gathering), Moon Forager 6% (+10% gathering), Star Prospector 2% (+15% gathering). The full catalog totals 100; Gatherer artifacts account for 20% of crafts.
+- Current craft weights: Root Sigil 42% (+3% passive income), Moon Pendant 21% (+6%), Star Prism 7% (+10%), Root Harvester 12% (+5% gathering), Moon Forager 6% (+10% gathering), Star Prospector 2% (+15% gathering), Field Journal 6% (+5% XP), Moon Atlas 3% (+10% XP), Star Compass 1% (+15% XP). The full catalog totals 100: income 70%, Gatherer 20%, Researcher 10%; each family retains a 6:3:1 rarity ratio.
 - Bonuses stack additively and are capped at +20% to passive income from active companions.
 - The UI displays owned artifacts, rarity, effect and equipment state. All crafting, ownership and equipment changes are server-authoritative.
 
@@ -507,9 +507,19 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - The server-only ArtifactBonusService calculates bonuses from owned artifact instances referenced by EquippedArtifacts. Client input cannot choose a bonus or resource amount.
 - Bonuses are applied to the successful base yield of Elderwood roots in Ancient Heights and crystal veins in Crystal Realm, after existing companion mining bonuses.
 - Fractional expected bonus yield is rolled once per successful node harvest. It does not bypass or shorten the existing per-node cooldown.
-- Crafting weights total 100: existing income artifacts retain their 6:3:1 relative ratio at 48/24/8; Gatherer artifacts use 12/6/2 (20% combined family chance).
+- After adding Researchers in Sprint 4.45, current weights total 100: income artifacts use 42/21/7 (70%), Gatherer artifacts use 12/6/2 (20%), and Researcher artifacts use 6/3/1 (10%). Each family retains a 6:3:1 relative rarity ratio.
 
 ### Studio QA fixture — Gatherer artifacts
 - The artifact collection exposes a temporary QA action only when the client is running in Roblox Studio.
 - The server independently enforces `RunService:IsStudio()`, fills each of the three Gatherer types to three level-I instances, and enforces the 40-item collection limit.
 - This fixture is for local gameplay verification only; it is unavailable in published servers and does not alter crafting odds or normal player progression. QA instances are tagged `DevOnly`, excluded from persistent save snapshots (including equipped IDs), and cannot be merged with normal crafted instances.
+
+
+## Researcher artifact family — Sprint 4.45
+- Three Researcher artifacts increase player XP rewards: Field Journal (+5%), Moon Atlas (+10%), Star Compass (+15%).
+- Research bonuses scale by 25% per artifact upgrade level; the combined equipped Researcher bonus is capped at +50%.
+- All positive XP awards pass through the server-authoritative `ProgressionService:AddXP` entry point. It applies the equipped Researcher bonus after validating the profile and base reward; clients cannot select an XP amount or bonus.
+- Fractional expected bonus XP is rolled once per XP award. A zero or invalid base reward awards no XP and does not trigger a bonus roll.
+- The artifact snapshot exposes each Researcher bonus and the combined equipped XP bonus. The collection UI displays the scaled effect and equipped XP total.
+- Current craft odds reserve 10% for the Researcher family (6/3/1), while preserving 70% income (42/21/7) and 20% gathering (12/6/2).
+- Roblox Studio exposes a temporary Researcher fixture and a deterministic 1000-award simulation. Both are server-guarded, use an isolated random stream, and the simulation never changes profile XP or player level.
