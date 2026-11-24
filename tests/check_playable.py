@@ -1275,3 +1275,37 @@ assert 'RaidArenaPetAbilityName' in client and 'RaidArenaPetCooldown' in client
 assert 'RaidArenaPetShield' in client and 'RaidArenaPetShieldSeconds' in client
 assert 'raidArenaHud.Size = UDim2.new(0.9, 0, 0, 270)' in client
 
+# Sprint 4.52 — companion species-role alignment and level-scaled raid abilities.
+cinder_fox_block = companion_catalog[companion_catalog.index("    CinderFox = {"):companion_catalog.index("    MagmaWhelp = {")]
+ash_phoenix_block = companion_catalog[companion_catalog.index("    AshPhoenix = {"):companion_catalog.index("    FrostFox = {")]
+frost_fox_block = companion_catalog[companion_catalog.index("    FrostFox = {"):companion_catalog.index("    SnowOwl = {")]
+snow_owl_block = companion_catalog[companion_catalog.index("    SnowOwl = {"):companion_catalog.index("    GlacierBear = {")]
+glacier_bear_block = companion_catalog[companion_catalog.index("    GlacierBear = {"):companion_catalog.index("    PrismFox = {")]
+assert 'RaidAbility' not in cinder_fox_block
+assert 'RaidAbility' not in frost_fox_block
+assert 'Id = "PhoenixDive"' in ash_phoenix_block and 'Role = "HUNTER"' in ash_phoenix_block
+assert 'Id = "AuroraMend"' in snow_owl_block and 'Role = "HEALER"' in snow_owl_block
+assert 'Id = "GlacierBulwark"' in glacier_bear_block and 'Role = "GUARDIAN"' in glacier_bear_block
+
+assert 'local function getRaidPetProgression(pet)' in raid_service
+assert 'local steps = math.floor((level - 1) / 2)' in raid_service
+assert 'power = math.clamp(math.floor(tonumber(ability.Damage) or 14) + steps, 8, 30)' in raid_service
+assert 'power = math.clamp(math.floor(tonumber(ability.HealAmount) or 20) + steps, 5, 35)' in raid_service
+assert 'local shieldBonus = math.floor((level - 1) * 2 / 3)' in raid_service
+assert 'power = math.clamp(math.floor(tonumber(ability.ShieldAmount) or 20) + shieldBonus, 10, 40)' in raid_service
+assert 'local petLevel, power = getRaidPetProgression(primary)' in raid_service
+assert 'local damage = power' in raid_service
+assert 'local heal = power' in raid_service
+assert 'local shieldAmount = power' in raid_service
+assert 'participant:SetAttribute("RaidArenaPetLevel", ability and petLevel or 0)' in raid_service
+assert 'participant:SetAttribute("RaidArenaPetPower", petPower)' in raid_service
+assert 'participant:SetAttribute("RaidArenaPetPowerLabel", petPowerLabel)' in raid_service
+assert 'participant:SetAttribute("RaidArenaPetLevel", nil)' in raid_service
+assert 'participant:SetAttribute("RaidArenaPetPowerLabel", nil)' in raid_service
+
+assert 'model:SetAttribute("RaidBattleLevel", petLevel)' in companion_service
+assert 'Level = petLevel' in companion_service
+assert '" · ур. " .. tostring(petLevel)' in companion_service
+assert 'RaidArenaPetLevel' in client and 'RaidArenaPetPowerLabel' in client
+assert 'СПУТНИК · %s · ур.%d · %s · %s%s' in client
+
