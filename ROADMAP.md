@@ -1190,3 +1190,18 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify the open book refreshes after hatching and does not issue overlapping server requests.
 
 **Acceptance:** source and CI coverage are integrated; device-specific visual and interaction acceptance remains open until tested in Roblox Studio.
+
+### Sprint 4.61 — Unified Nest Management Overview
+- [x] Replace the small upgrade-only window with a unified personal nest overview.
+- [x] Show live coin and owned-companion counts plus server-snapshot displayed-pet income per 10 seconds.
+- [x] Add direct shortcuts to displayed pets, nest decorations and island construction.
+- [x] Keep the upgrade action and server-authoritative cost/level validation intact.
+- [x] Refresh the income summary from the existing DisplayPets/Get snapshot; no client-side economy calculations or writes.
+- [x] Keep compact-screen spacing and touch-friendly two-column actions within the modal.
+- [x] Add regression checks for overview metrics, shortcut wiring and live balance updates.
+- [ ] Roblox Studio: verify all four actions, insufficient coins, max nest level and shortcut return/close flows.
+- [ ] Verify displayed income matches the display-pet panel and actual 10-second payouts.
+- [ ] Test 320×480, 375×667, tablet, 1366×768 and 1920×1080; confirm no overlap or clipped text.
+- [ ] Hatch a pet and upgrade the nest while overview is open; verify counts and level remain current.
+
+**Acceptance:** implementation and static regression coverage are integrated; live economy, device layout and touch acceptance remain open until Studio testing.
