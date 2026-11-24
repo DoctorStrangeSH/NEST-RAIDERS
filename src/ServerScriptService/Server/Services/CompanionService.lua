@@ -472,6 +472,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
     local giftCache = nil
     local giftCacheClaimed = false
     local treasureSearchOwner = nil
+    local worldFolder = Workspace:FindFirstChild("NestRaidersWorld")
 
     for rawSlot, instanceId in pairs(displayedIds or {}) do
         local slot = tonumber(rawSlot)
@@ -528,6 +529,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             profile.Nest.CompanionBonds = profile.Nest.CompanionBonds or {}
             local petDefinition = CompanionCatalog[companion.Id] or {}
             local activityPeriod = petDefinition.ActivityPeriod or "Any"
+            local weatherPreference = petDefinition.WeatherPreference or "Neutral"
             local nightGlow = nil
             if activityPeriod == "Night" and model.PrimaryPart then
                 nightGlow = Instance.new("PointLight")
@@ -569,6 +571,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local socialPlayUntil = 0
             local socialRewarded = false
             local targetIsTreasure = false
+            local targetIsShelter = false
+            local shelterUntil = 0
             local partnerSlot = slot % 2 == 1 and slot + 1 or slot - 1
             local behavior = sleeping and "Sleeping"
                 or (hunger <= 20 and "Hungry")
@@ -610,6 +614,11 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     local isSleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
                     local clockTime = Lighting.ClockTime
                     local isNight = clockTime >= 19 or clockTime < 6
+                    local weatherState = worldFolder and worldFolder:GetAttribute("WorldWeather") or "Clear"
+                    local isWetWeather = weatherState == "Rain" or weatherState == "Storm"
+                    local seeksShelter = weatherState == "Storm" and weatherPreference == "Shelter"
+                    local enjoysRain = isWetWeather and weatherPreference == "Rain"
+                    model:SetAttribute("WeatherState", weatherState)
                     local isPreferredTime = activityPeriod == "Any"
                         or (activityPeriod == "Night" and isNight)
                         or (activityPeriod == "Day" and not isNight)
@@ -629,6 +638,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         isAtTarget = true
                         targetIsToy = false
                         targetIsSocial = false
+                        targetIsShelter = false
+                        shelterUntil = 0
                         if targetIsTreasure and treasureSearchOwner == instanceId then treasureSearchOwner = nil end
                         targetIsTreasure = false
                         toyPlayUntil = 0
@@ -742,6 +753,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                     cache:Destroy()
                                 end)
                                 idleUntil = now + 2
+                            elseif targetIsShelter then
+                                targetIsShelter = false
+                                shelterUntil = now + random:NextNumber(4, 7)
+                                idleUntil = shelterUntil
                             elseif targetIsSocial then
                                 local partnerPosition = partnerModel and partnerModel:GetPivot().Position
                                 if partnerPosition and (partnerPosition - currentPosition).Magnitude <= 10 then
@@ -769,9 +784,16 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             if activityPeriod ~= "Any" then
                                 treasureChance *= isPreferredTime and 1.25 or 0.55
                             end
+                            if weatherState == "Storm" then treasureChance *= 0.35 end
                             local canSearch = not giftCache and not treasureSearchOwner
                                 and os.time() >= nextTreasureAt and energy >= 35 and hunger >= 25
-                            if canSearch and random:NextNumber() < treasureChance then
+                            if seeksShelter then
+                                targetPosition = home + Vector3.new(random:NextNumber(-1.2, 1.2), 0, random:NextNumber(-1.2, 1.2))
+                                targetIsShelter = true
+                                targetIsToy = false
+                                targetIsSocial = false
+                                targetIsTreasure = false
+                            elseif canSearch and random:NextNumber() < treasureChance then
                                 treasureSearchOwner = instanceId
                                 targetPosition = home + Vector3.new(random:NextNumber(-2.8, 2.8), 0, random:NextNumber(-2.8, 2.8))
                                 targetIsTreasure = true
@@ -789,6 +811,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 local angle = random:NextNumber(0, math.pi * 2)
                                 local preferredRadius = activityPeriod ~= "Any" and not isPreferredTime
                                     and wanderRadius * 0.72 or wanderRadius
+                                if weatherState == "Storm" then preferredRadius *= seeksShelter and 0.3 or 0.55 end
+                                if weatherState == "Rain" and not enjoysRain then preferredRadius *= 0.72 end
+                                if weatherState == "Fog" then preferredRadius *= 0.82 end
                                 local radius = math.sqrt(random:NextNumber()) * preferredRadius
                                 targetPosition = home + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)
                                 targetIsToy = false
@@ -801,6 +826,13 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         if moving then
                             local direction = targetPosition - currentPosition
                             local speed = energy <= 15 and 1.25 or (mood >= 80 and 3.4 or 2.5)
+                            if weatherState == "Storm" then
+                                speed *= seeksShelter and 0.82 or 0.68
+                            elseif weatherState == "Rain" then
+                                speed *= enjoysRain and 1.12 or 0.84
+                            elseif weatherState == "Fog" then
+                                speed *= 0.92
+                            end
                             if activityPeriod ~= "Any" then
                                 speed *= isPreferredTime and 1.18 or 0.72
                             end
@@ -836,6 +868,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 bob = math.abs(math.sin(now * 7 + phase)) * 0.13
                                 yawOffset = math.sin(now * 5 + phase) * 0.18
                                 toyPart:SetAttribute("ToyState", "InUse")
+                            elseif shelterUntil > now then
+                                behavior = "Sheltering"
+                                bob = math.sin(now * 1.8 + phase) * 0.025
+                                yawOffset = math.sin(now * 0.8 + phase) * 0.04
                             elseif giftCache and treasureSearchOwner == instanceId then
                                 behavior = "FoundGift"
                                 bob = math.abs(math.sin(now * 5 + phase)) * 0.07
@@ -874,6 +910,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     moodLabel.Text = isSleeping and "Zzz"
                         or (behavior == "Searching" and "Ищет сокровище")
                         or (behavior == "FoundGift" and "Нашёл подарок!")
+                        or (behavior == "Sheltering" and "Прячется от грозы")
+                        or (weatherPreference == "Rain" and isWetWeather and behavior == "Idle" and "Радуется дождю")
                         or (activityPeriod ~= "Any" and not isPreferredTime
                             and (behavior == "Idle" or behavior == "Resting") and "Отдыхает до своего времени")
                         or (behavior == "Socializing" and string.format("♥♥  Дружба %d%%", bondScore))
