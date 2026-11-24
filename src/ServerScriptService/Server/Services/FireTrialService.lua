@@ -141,10 +141,10 @@ function FireTrialService:Init()
                     profile.CompletedQuests.ember_trial = true
                     player:SetAttribute("EmberTrialCompleted", true)
                     player:SetAttribute("EmberTrialBossUnlocked", false)
-                    local _, awardedXP, _, extraXP = ProgressionService:AddXP(player, REWARD_XP)
+                    local _, awardedXP, researchBonus, extraXP = ProgressionService:AddXP(player, REWARD_XP)
                     ProgressionService:RefreshZoneUnlocks(player)
                     player:SetAttribute("LastNotice", "Огненный страж повержен! Испытание пройдено. "
-                        .. ProgressionService:FormatXPReward(awardedXP, extraXP)
+                        .. ProgressionService:FormatXPReward(awardedXP, researchBonus, extraXP)
                         .. ". Ты выполнил испытание для Хрустального королевства — осталось достичь 35 уровня!")
                     return
                 end
