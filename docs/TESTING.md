@@ -1,7 +1,11 @@
 # Testing Checklist
 
 ## Studio setup
-- [ ] Open the Rojo-synced place in Roblox Studio.
+- [ ] Open the downloaded `NEST-RAIDERS.rbxlx` or Rojo-synced place in Roblox Studio.
+- [ ] Press **Play** to start the server. The archipelago is built at runtime by `WorldBuilder`; an empty Workspace in Edit mode is expected.
+- [ ] Wait for the boot sequence, then confirm `Workspace/NestRaidersWorld` appears in Explorer.
+- [ ] In Explorer, inspect `ReplicatedStorage/NestRaidersRemotes`: `WorldHealth` should become `READY`; there should be no `WorldError` or `ServiceError_*` attributes.
+- [ ] Open **View → Output** and capture any `[NEST RAIDERS]` errors if the world or HUD does not load.
 - [ ] Enable API Services only in a separate test experience when testing DataStores.
 - [ ] Never test persistence against the live production experience.
 - [ ] Use Start Server with at least two clients for multiplayer checks.
