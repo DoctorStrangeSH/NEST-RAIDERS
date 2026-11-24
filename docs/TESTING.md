@@ -626,3 +626,24 @@
 - [ ] Ensure simulated samples never award real materials or bypass node cooldowns.
 - The 1000-sample Studio simulation uses its own seeded `Random` generator and passes rolls into the production bonus function. It does not consume the game's shared `math.random()` sequence, so QA sampling cannot perturb unrelated drops or gameplay randomness.
 - Static regression also verifies the Studio guard runs before sampling and the simulation handler contains no resource-balance or node-cooldown writes.
+
+
+## Sprint 4.45 — Researcher artifacts acceptance
+- [ ] Craft artifacts repeatedly and verify Researcher entries appear with a combined 10% family chance; verify all catalog weights total 100.
+- [ ] Equip Field Journal, Moon Atlas, and Star Compass separately; verify positive XP awards trend toward +5%, +10%, and +15%.
+- [ ] Verify XP from trials, secrets, and companion abilities all passes through the same Researcher bonus path.
+- [ ] Unequip Researcher artifacts and verify XP returns to the unmodified base reward.
+- [ ] Upgrade a Researcher artifact and verify its bonus scales by 25% per level.
+- [ ] Equip two upgraded Researchers and verify combined XP bonus is capped at +50%.
+- [ ] Verify invalid profiles, zero/negative XP, and rejected reward paths do not award bonus XP.
+- [ ] Rejoin and verify artifact levels, equipment and displayed XP bonus persist.
+- [ ] Check artifact names, effect text, summary and Studio-only controls at 375px mobile width.
+
+## Sprint 4.45 — Studio Researcher QA
+- In Roblox Studio only, open **АРТЕФАКТЫ** and use **ТЕСТ: ВЫДАТЬ ×3 ИССЛЕДОВАТЕЛЕЙ**.
+- Equip each Researcher and use **ТЕСТ: 1000 НАГРАД XP БЕЗ НАЧИСЛЕНИЯ** to sample the production formula.
+- [ ] Verify the fixture adds three level-I copies of each Researcher type, respects the 40-item collection cap, and tags each item as temporary.
+- [ ] Merge three matching QA copies and verify the next tier; verify QA copies cannot merge with normal crafted artifacts.
+- [ ] Confirm the simulation output is near the expected equipped bonus for no artifact and each Researcher tier.
+- [ ] Verify simulation does not change profile XP, player level, saved resources, or shared gameplay RNG.
+- [ ] Verify both QA actions are rejected by the server outside Roblox Studio.
