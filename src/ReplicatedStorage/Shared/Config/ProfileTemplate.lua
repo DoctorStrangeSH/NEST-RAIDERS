@@ -41,6 +41,7 @@ local ProfileTemplate = {
     CompanionIncomeRemainder = 0,
     Nest = {
         Level = 1,
+        IslandStyle = "Meadow",
         StoredIncomeRemainder = 0,
         PlotId = nil,
         DisplayedCompanions = {},
