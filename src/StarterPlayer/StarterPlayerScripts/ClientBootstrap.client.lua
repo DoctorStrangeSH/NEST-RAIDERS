@@ -1150,6 +1150,8 @@ navHeaderSubtitle.TextXAlignment = Enum.TextXAlignment.Left
 navHeaderSubtitle.TextTruncate = Enum.TextTruncate.AtEnd
 navHeaderSubtitle.Parent = navHeader
 
+local setNavigationOpen
+
 local menuIconStyles = {
     { Color = Color3.fromRGB(90, 166, 132), Kind = "paw" },
     { Color = Color3.fromRGB(205, 151, 74), Kind = "egg" },
@@ -1249,7 +1251,7 @@ end
 local sectionLabels = {
     { Text = "МОЙ ОСТРОВ", Order = 1 },
     { Text = "ПРИКЛЮЧЕНИЯ", Order = 55 },
-    { Text = "КОЛЛЕКЦИЯ И ПРОФИЛЬ", Order = 115 },
+    { Text = "КОЛЛЕКЦИЯ И ПРОФИЛЬ", Order = 120 },
 }
 for _, section in ipairs(sectionLabels) do
     local label = Instance.new("TextLabel")
@@ -1357,7 +1359,7 @@ for i = 1, 3 do
     addCorner(bar, 2)
 end
 
-local function setNavigationOpen(open)
+setNavigationOpen = function(open)
     navScroll.Visible = open
     navToggle.Text = open and "ЗАКРЫТЬ" or "МЕНЮ"
     local bars = {
