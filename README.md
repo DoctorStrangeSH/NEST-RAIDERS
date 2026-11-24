@@ -246,3 +246,7 @@ The Raid Board introduces voluntary participation before any combat is enabled:
 - No items, pets, eggs or coins can be lost in this foundation. Combat and bounded rewards are deliberately deferred to the next sprint.
 
 - Roblox Studio includes a temporary QA shortcut for testing matchmaking without grinding to level 5 or waiting 15 minutes. The server guards this action with `RunService:IsStudio()`; it changes only the in-memory raid eligibility override and join timestamp, never the saved profile or published-server behavior.
+
+ 
+## Raid Arena — Sprint 4.48
+Accepted challenges now move both players into a temporary floating arena. The attacker tries to destroy the Nest Core; the defender reinforces it and survives the 150-second round. The match has server-validated range and cooldown checks, a role-specific HUD, bounded rewards and a persistent reward cooldown. Early exit, death and disconnect cancel the round without rewards. This first arena does not include player damage or item theft.
