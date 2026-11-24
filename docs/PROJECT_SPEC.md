@@ -638,3 +638,16 @@ The first Frost Highlands vertical slice is integrated in the prototype:
 - Companion cues use short-lived Highlight and PointLight instances, fade via TweenService and are removed by Debris. A per-participant 0.32-second visual throttle prevents repeated effects from accumulating. There are no persistent ParticleEmitters.
 - The server controls aura assignment and all cue triggers. Client attributes only display the server-issued synergy state and one-time activation pulse; they never affect combat or grant a bonus.
 - Visual effects are cosmetic and do not modify combat damage, healing, shield amount/duration, cooldowns, rewards, companion levels, match state, or profile data. Teams without an active synergy retain the existing companion appearance and do not receive synergy cues.
+
+ 
+## Companion combat motion — Sprint 4.55
+- Raid companion movement is driven by the existing server-side follower loop (0.12-second update interval). The server computes each companion's target pivot and replicates the resulting movement to both participants.
+- Companions retain their normal formation positions, with a subtle idle hover while no action cue is active.
+- Validated attack cues use a short wind-up, target-directed lunge/impact pose and return to formation. Hunters lunge furthest, Guardians advance a shorter distance, and Healers provide a smaller supportive motion.
+- Ability cues are role-specific: Hunter dives toward the opponent, Guardian braces toward the owner, and Healer rises into a restoration hover.
+- Defensive cues are role-specific: Guardian steps toward the owner and lowers into a protective stance, Healer rises, and Hunter makes a short lateral dodge.
+- Activation cues create a staggered team bounce. Companions start 0.055 seconds apart so a three-pet roster reads as a coordinated team.
+- Combat cue state is stored on each server-created follower entry and expires automatically. The existing per-participant cue throttle remains in place.
+- Combat motions run for all raid companions, even if the roster has no synergy. Synergy continues to control only the existing role-color aura and highlight effects.
+- No new damage, healing, shields, cooldowns, target selection, autonomous AI, remote client combat authority, persistent animation loops or external AnimationId dependencies are introduced.
+- The current procedural companion models are animated by replicated Model:PivotTo movement. Authored rig animation tracks are a future extension, not a prerequisite for this sprint.
