@@ -33,7 +33,7 @@ end
 -- Applies a server-side expected-yield bonus without changing node cooldowns.
 -- Fractional yield is rolled once per successful harvest, so every collection
 -- receives a fair long-run bonus while preserving integer material counts.
-function ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)
+function ArtifactBonusService:ApplyGatherBonus(profile, baseAmount, rollValue)
     local safeBase = math.max(0, math.floor(tonumber(baseAmount) or 0))
     if safeBase == 0 then return 0, 0, 0 end
 
@@ -41,7 +41,8 @@ function ArtifactBonusService:ApplyGatherBonus(profile, baseAmount)
     local expectedExtra = safeBase * bonus
     local extra = math.floor(expectedExtra)
     local fraction = expectedExtra - extra
-    if fraction > 0 and math.random() < fraction then
+    local roll = type(rollValue) == "number" and math.clamp(rollValue, 0, 0.999999999) or math.random()
+    if fraction > 0 and roll < fraction then
         extra += 1
     end
 
