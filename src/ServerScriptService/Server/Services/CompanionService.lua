@@ -160,11 +160,28 @@ local function makeShape(model, name, size, offset, color, shape)
     return part
 end
 
+local function getBondKey(firstId, secondId)
+    local first = tostring(firstId or "")
+    local second = tostring(secondId or "")
+    if first == "" or second == "" or first == second then return nil end
+    if first > second then first, second = second, first end
+    return first .. "|" .. second
+end
+
+local function getBondLevel(score)
+    if score >= 90 then return "Неразлучные" end
+    if score >= 60 then return "Лучшие друзья" end
+    if score >= 30 then return "Друзья" end
+    if score >= 10 then return "Приятели" end
+    return "Знакомство"
+end
+
 local function buildPet(parent, companion, index)
     local definition = DEFINITIONS[companion.Id] or DEFINITIONS.MeadowFox
     local model = Instance.new("Model")
     model.Name = string.format("%s_%d", companion.Id, index)
     model:SetAttribute("CompanionId", companion.Id)
+    model:SetAttribute("CompanionInstanceId", companion.InstanceId or "")
     model:SetAttribute("Rarity", companion.Rarity or "Обычный")
     model:SetAttribute("Stars", companion.Stars or 1)
     model.Parent = parent
@@ -482,7 +499,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local moodBillboard = Instance.new("BillboardGui")
             moodBillboard.Name = "MoodBubble"
             moodBillboard.Adornee = model.PrimaryPart
-            moodBillboard.Size = UDim2.fromOffset(104, 28)
+            moodBillboard.Size = UDim2.fromOffset(148, 28)
             moodBillboard.StudsOffset = Vector3.new(0, 2.9, 0)
             moodBillboard.AlwaysOnTop = false
             moodBillboard.Parent = model
@@ -500,6 +517,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             bubbleCorner.CornerRadius = UDim.new(0, 8)
             bubbleCorner.Parent = moodLabel
 
+            profile.Nest.CompanionBonds = profile.Nest.CompanionBonds or {}
             local petDefinition = CompanionCatalog[companion.Id] or {}
             local personality = petDefinition.Personality or "Обычный"
             local personalityProfiles = {
@@ -586,8 +604,22 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         if socialPlayUntil > 0 and now >= socialPlayUntil then
                             if not socialRewarded then
                                 mood = math.clamp(mood + 2, 0, 100)
+                                profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
                                 profile.Nest.CompanionMood[instanceId] = mood
                                 model:SetAttribute("Mood", mood)
+                                if partnerModel and slot < partnerSlot then
+                                    local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                                    local bondKey = getBondKey(instanceId, partnerId)
+                                    if bondKey then
+                                        local bondScore = math.clamp(math.floor(tonumber(profile.Nest.CompanionBonds[bondKey]) or 0) + 1, 0, 100)
+                                        profile.Nest.CompanionBonds[bondKey] = bondScore
+                                        local bondLevel = getBondLevel(bondScore)
+                                        model:SetAttribute("FriendshipScore", bondScore)
+                                        model:SetAttribute("FriendshipLevel", bondLevel)
+                                        partnerModel:SetAttribute("FriendshipScore", bondScore)
+                                        partnerModel:SetAttribute("FriendshipLevel", bondLevel)
+                                    end
+                                end
                                 socialRewarded = true
                             end
                             socialPlayUntil = 0
@@ -718,8 +750,13 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         toyPart.CFrame = CFrame.new(toyPosition + Vector3.new(0, toyBob, 0)) * CFrame.Angles(0, spin, 0)
                     end
 
+                    local partnerId = partnerModel and partnerModel:GetAttribute("CompanionInstanceId")
+                    local bondKey = getBondKey(instanceId, partnerId)
+                    local bondScore = bondKey and math.clamp(math.floor(tonumber(profile.Nest.CompanionBonds[bondKey]) or 0), 0, 100) or 0
+                    model:SetAttribute("FriendshipScore", bondScore)
+                    model:SetAttribute("FriendshipLevel", getBondLevel(bondScore))
                     moodLabel.Text = isSleeping and "Zzz"
-                        or (behavior == "Socializing" and "♥♥")
+                        or (behavior == "Socializing" and string.format("♥♥  Дружба %d%%", bondScore))
                         or (behavior == "Greeting" and string.format("♥%d ✨", mood))
                         or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
                     model:SetAttribute("Mood", mood)
