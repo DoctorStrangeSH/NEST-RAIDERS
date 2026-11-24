@@ -3897,9 +3897,81 @@ local function renderDecor(data)
     local occupiedBySlot = {}
     for _, item in ipairs(data.Placed or {}) do occupiedBySlot[item.Slot] = item end
 
+    local styleHeading = Instance.new("TextLabel")
+    styleHeading.LayoutOrder = 0
+    styleHeading.Size = UDim2.new(1, -8, 0, 26)
+    styleHeading.BackgroundTransparency = 1
+    styleHeading.Text = "СТИЛЬ ТВОЕГО ОСТРОВА"
+    styleHeading.TextColor3 = Color3.fromRGB(255, 220, 177)
+    styleHeading.TextSize = 13
+    styleHeading.Font = Enum.Font.GothamBlack
+    styleHeading.TextXAlignment = Enum.TextXAlignment.Left
+    styleHeading.Parent = decorList
+
+    local styleColors = {
+        Meadow = Color3.fromRGB(81, 139, 91),
+        Arcane = Color3.fromRGB(75, 112, 158),
+        Ancient = Color3.fromRGB(135, 113, 79),
+        Royal = Color3.fromRGB(159, 126, 61),
+    }
+    for index, style in ipairs(data.Styles or {}) do
+        local styleCard = Instance.new("Frame")
+        styleCard.LayoutOrder = index
+        styleCard.Size = UDim2.new(1, -8, 0, 66)
+        styleCard.BackgroundColor3 = Color3.fromRGB(57, 54, 72)
+        styleCard.BorderSizePixel = 0
+        styleCard.Parent = decorList
+        addCorner(styleCard, 10)
+
+        local styleInfo = Instance.new("TextLabel")
+        styleInfo.BackgroundTransparency = 1
+        styleInfo.Position = UDim2.fromOffset(10, 6)
+        styleInfo.Size = UDim2.new(1, -126, 1, -12)
+        styleInfo.Text = string.format("%s\n%s", style.Name, style.Description or "")
+        styleInfo.TextColor3 = Color3.fromRGB(246, 237, 247)
+        styleInfo.TextSize = 10
+        styleInfo.TextWrapped = true
+        styleInfo.TextXAlignment = Enum.TextXAlignment.Left
+        styleInfo.Font = Enum.Font.GothamMedium
+        styleInfo.Parent = styleCard
+
+        local choose = Instance.new("TextButton")
+        choose.AnchorPoint = Vector2.new(1, 0.5)
+        choose.Position = UDim2.new(1, -7, 0.5, 0)
+        choose.Size = UDim2.fromOffset(104, 34)
+        choose.BackgroundColor3 = style.IsSelected and Color3.fromRGB(79, 94, 91)
+            or (style.Unlocked and (styleColors[style.Id] or Color3.fromRGB(83, 126, 111)) or Color3.fromRGB(76, 77, 86))
+        choose.Text = style.IsSelected and "ВЫБРАНО"
+            or (style.Unlocked and "ВЫБРАТЬ" or ("УРОВЕНЬ " .. tostring(style.UnlockLevel)))
+        choose.TextColor3 = Color3.new(1, 1, 1)
+        choose.TextSize = 9
+        choose.Font = Enum.Font.GothamBlack
+        choose.Active = style.Unlocked and not style.IsSelected
+        choose.AutoButtonColor = choose.Active
+        choose.Parent = styleCard
+        addCorner(choose, 8)
+        choose.Activated:Connect(function()
+            if not style.Unlocked or style.IsSelected then return end
+            choose.Active = false
+            local updated = invokeDecor({ Action = "SetStyle", StyleId = style.Id })
+            if updated then renderDecor(updated) else choose.Active = true end
+        end)
+    end
+
+    local catalogHeading = Instance.new("TextLabel")
+    catalogHeading.LayoutOrder = 9
+    catalogHeading.Size = UDim2.new(1, -8, 0, 26)
+    catalogHeading.BackgroundTransparency = 1
+    catalogHeading.Text = "КАТАЛОГ УКРАШЕНИЙ"
+    catalogHeading.TextColor3 = Color3.fromRGB(255, 220, 177)
+    catalogHeading.TextSize = 13
+    catalogHeading.Font = Enum.Font.GothamBlack
+    catalogHeading.TextXAlignment = Enum.TextXAlignment.Left
+    catalogHeading.Parent = decorList
+
     for index, item in ipairs(data.Catalog or {}) do
         local card = Instance.new("Frame")
-        card.LayoutOrder = index
+        card.LayoutOrder = 10 + index
         card.Size = UDim2.new(1, -8, 0, 76)
         card.BackgroundColor3 = Color3.fromRGB(66, 57, 78)
         card.BorderSizePixel = 0
