@@ -862,3 +862,17 @@
 - [ ] Verify close-all and Escape behavior remain unchanged.
 - [ ] Check Windows, Android and iOS font rendering for every native navigation badge.
 - [ ] Continue with individual modal constraints and gameplay HUD safe-area checks in the next UI sprint.
+
+ 
+## Sprint 4.57 — Main navigation visual acceptance
+- [ ] Open the feature menu at 320×480, 375×667, tablet, 1366×768 and 1920×1080.
+- [ ] Confirm the navigation header and all three section labels are visible in the correct order.
+- [ ] Confirm all 14 vector icons are drawn correctly, distinct from one another and not clipped by their 28×28 badge.
+- [ ] Confirm icons render without external asset loading, blank rectangles or unsupported glyphs.
+- [ ] Check that long Russian button labels truncate at the end and never overlap the icon.
+- [ ] Check button gradients, accent strokes, rounded corners and consistent vertical spacing.
+- [ ] Hover every action on desktop and confirm a subtle highlight; test touch taps on mobile without relying on hover.
+- [ ] Confirm the hamburger transforms into a close mark while the menu is open and resets after closing.
+- [ ] Activate all 14 feature actions; confirm the existing feature handler still runs and the menu closes afterward.
+- [ ] Scroll through the complete menu on phone portrait and landscape; verify the last three actions remain reachable.
+- [ ] Capture a Studio screenshot and tune any visual issues before starting the companion inventory panel.
