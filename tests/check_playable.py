@@ -2053,3 +2053,8 @@ assert 'partnerModel:GetPivot().Position - currentPosition).Magnitude <= 6' in c
 assert 'model:SetAttribute("LastDiscovery", "Открытие вместе: "' in companion_service
 assert 'showSharedHeartMoment(model, partnerModel)' in companion_service
 assert 'sharedDiscoveryCooldowns[sharedKey] = now + 90' in companion_service
+
+assert 'if careUntil > 0 and partnerModel' in companion_service
+assert 'partnerModel:GetAttribute("BeingComfortedBy") == instanceId' in companion_service
+assert 'model:GetAttribute("SharedDiscoveryArrived") ~= true and partnerModel' in companion_service
+assert 'partnerModel:SetAttribute("SharedDiscoveryArrived", nil)' in companion_service
