@@ -1418,7 +1418,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local habit = COMPANION_HABITS[personality]
                             local canShowHabit = habit and now >= nextHabitAt and mood >= 25 and energy >= 20
                                 and hunger >= 20 and not isSleeping and not targetIsRestingTogether
-                                and not targetIsChase and not reactionActive
+                                and not targetIsChase and (tonumber(model:GetAttribute("GiftReactionUntil")) or 0) <= now
                             if canShowHabit and random:NextNumber() < habit.Chance then
                                 activeHabit = habit.Id
                                 activeHabitUntil = now + random:NextNumber(2.2, 4.0)
@@ -1430,6 +1430,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             else
                                 nextHabitAt = math.max(nextHabitAt, now + 5)
                             end
+                            if not (activeHabit and now < activeHabitUntil) then
                             local cautiousCanApproach = not isCautious or pairBondScore >= 10
                                 or partnerPersonality == "Дружелюбный" or partnerPersonality == "Добродушный"
                                 or random:NextNumber() < 0.035
@@ -1526,6 +1527,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 targetIsInterest = false
                             end
                             isAtTarget = false
+                            end
                         end
 
                         if targetIsRestingTogether and (not partnerModel or not partnerSleeping) then
