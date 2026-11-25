@@ -1,0 +1,59 @@
+name: Build Roblox Studio project
+
+on:
+  push:
+    branches:
+      - feature/first-playable-loop
+    paths:
+      - "src/**"
+      - "default.project.json"
+      - "tests/**"
+      - ".github/workflows/build-studio-project.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Keep only the newest build for this development branch; older queued builds
+# are obsolete as soon as a newer source commit is pushed.
+concurrency:
+  group: nest-raiders-studio-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build NEST RAIDERS place file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Rojo CLI
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 \
+            "https://github.com/rojo-rbx/rojo/releases/download/v7.5.1/rojo-7.5.1-linux-x86_64.zip" \
+            --output /tmp/rojo.zip
+          unzip -o /tmp/rojo.zip -d /tmp/rojo
+          sudo install /tmp/rojo/rojo /usr/local/bin/rojo
+          rojo --version
+
+      - name: Validate project configuration
+        run: test -f default.project.json && python3 -m json.tool default.project.json >/dev/null
+
+      - name: Build Roblox Studio place
+        run: rojo build default.project.json --output "NEST-RAIDERS.rbxlx"
+
+      - name: Verify output
+        run: test -s "NEST-RAIDERS.rbxlx"
+
+      - name: Check playable-first regressions and package structure
+        run: python3 tests/check_playable.py
+
+      - name: Upload Studio project
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEST-RAIDERS-Studio-Project
+          path: NEST-RAIDERS.rbxlx
+          if-no-files-found: error
+          retention-days: 14

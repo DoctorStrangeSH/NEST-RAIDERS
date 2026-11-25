@@ -1,0 +1,505 @@
+local Players = game:GetService("Players")
+local ServerScriptService = game:GetService("ServerScriptService")
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+
+local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
+local PlotService = require(ServerScriptService.Server.Services.PlotService)
+local ProgressionService = require(ServerScriptService.Server.Services.ProgressionService)
+local CompanionService = require(ServerScriptService.Server.Services.CompanionService)
+local CompanionCatalog = require(ReplicatedStorage.Shared.Config.CompanionCatalog)
+local BiomeCatalog = require(ReplicatedStorage.Shared.Config.BiomeCatalog)
+local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
+
+local EggService = {}
+local hatchRevealRemote
+local EGG_RESPAWN_SECONDS = 20
+local EGG_CAPACITY = 20
+local ACTIVE_WORLD_EGGS = 3
+local EGG_SPAWN_POSITIONS = {
+    Meadow = {
+        Vector3.new(-24, 14, 20), Vector3.new(25, 14, 24), Vector3.new(0, 14, 65),
+        Vector3.new(-42, 14, -5), Vector3.new(42, 14, -5), Vector3.new(-42, 14, 40),
+        Vector3.new(42, 14, 40), Vector3.new(-35, 14, 75), Vector3.new(35, 14, 75),
+    },
+    EmeraldWilds = {
+        Vector3.new(-22, 20, 500), Vector3.new(22, 20, 500), Vector3.new(0, 20, 548),
+        Vector3.new(-38, 20, 480), Vector3.new(38, 20, 480), Vector3.new(-38, 20, 540),
+        Vector3.new(38, 20, 540), Vector3.new(-25, 20, 565), Vector3.new(25, 20, 565),
+    },
+    FrostHighlands = {
+        Vector3.new(-22, 20, 1020), Vector3.new(22, 20, 1020), Vector3.new(0, 20, 1068),
+        Vector3.new(-38, 20, 1000), Vector3.new(38, 20, 1000), Vector3.new(-38, 20, 1060),
+        Vector3.new(38, 20, 1060), Vector3.new(-25, 20, 1085), Vector3.new(25, 20, 1085),
+    },
+    CrystalRealm = {
+        Vector3.new(-25, 26, 2050), Vector3.new(25, 26, 2050), Vector3.new(0, 26, 2120),
+        Vector3.new(-48, 26, 2110), Vector3.new(48, 26, 2110), Vector3.new(-65, 26, 2040),
+        Vector3.new(65, 26, 2040), Vector3.new(-42, 26, 2160), Vector3.new(42, 26, 2160),
+    },
+    AncientHeights = {
+        Vector3.new(-22, 21, 2580), Vector3.new(22, 21, 2580), Vector3.new(0, 21, 2620),
+        Vector3.new(-30, 21, 2600), Vector3.new(30, 21, 2600), Vector3.new(-18, 21, 2630),
+        Vector3.new(18, 21, 2630), Vector3.new(-35, 21, 2588), Vector3.new(35, 21, 2588),
+    },
+    Emberlands = {
+        Vector3.new(-48, 16, 1520), Vector3.new(48, 16, 1520), Vector3.new(-48, 16, 1600),
+        Vector3.new(48, 16, 1600), Vector3.new(0, 16, 1630), Vector3.new(-65, 16, 1560),
+        Vector3.new(65, 16, 1560), Vector3.new(-25, 16, 1495), Vector3.new(25, 16, 1495),
+    },
+}
+EggService._hatching = {}
+local COMPANIONS = {}
+for _, definition in pairs(CompanionCatalog) do
+    if (tonumber(definition.Weight) or 0) > 0 then
+        table.insert(COMPANIONS, definition)
+    end
+end
+table.sort(COMPANIONS, function(a, b) return a.Id < b.Id end)
+
+local GENETIC_TRAITS = {
+    { Id = "Natural", Name = "Естественный", Rarity = "Обычный", Weight = 72, IncomeBonus = 0 },
+    { Id = "Verdant", Name = "Изумрудный", Rarity = "Необычный", Weight = 18, IncomeBonus = 0.02 },
+    { Id = "Luminous", Name = "Светящийся", Rarity = "Редкий", Weight = 8, IncomeBonus = 0.05 },
+    { Id = "Prismatic", Name = "Призматический", Rarity = "Эпический", Weight = 2, IncomeBonus = 0.08 },
+}
+
+local function chooseGeneticTrait()
+    local totalWeight = 0
+    for _, trait in ipairs(GENETIC_TRAITS) do totalWeight += trait.Weight end
+    local roll = math.random() * totalWeight
+    local cursor = 0
+    for _, trait in ipairs(GENETIC_TRAITS) do
+        cursor += trait.Weight
+        if roll <= cursor then
+            return {
+                Id = trait.Id,
+                Name = trait.Name,
+                Rarity = trait.Rarity,
+                IncomeBonus = trait.IncomeBonus,
+            }
+        end
+    end
+    return { Id = "Natural", Name = "Естественный", Rarity = "Обычный", IncomeBonus = 0 }
+end
+
+local function syncAttributes(player, profile)
+    player:SetAttribute("EggCount", #profile.EggInventory)
+    player:SetAttribute("BreedingEggCount", (function()
+        local count = 0
+        for _, egg in ipairs(profile.EggInventory) do
+            if egg.Origin == "Breeding" then count += 1 end
+        end
+        return count
+    end)())
+    player:SetAttribute("CompanionCount", #profile.Companions)
+    player:SetAttribute("Coins", profile.Coins)
+end
+
+local function chooseCompanion(eggId, profile)
+    local eggDefinition
+    for _, biome in pairs(BiomeCatalog) do
+        for _, egg in pairs(biome.Eggs or {}) do
+            if egg.Id == eggId then eggDefinition = egg break end
+        end
+        if eggDefinition then break end
+    end
+    if not eggDefinition then return COMPANIONS[1], 0, 0, 0 end
+
+    local speciesId, hatchBonus, baseTopChance, boostedTopChance =
+        ArtifactBonusService:ChooseHatchSpecies(profile, eggDefinition.SpeciesWeights, math.random())
+    return CompanionCatalog[speciesId] or COMPANIONS[1], hatchBonus, baseTopChance, boostedTopChance
+end
+
+function EggService:Collect(player, egg)
+    if not player:GetAttribute("ProfileLoaded") or not egg or not egg:IsDescendantOf(Workspace) then return end
+    if egg:GetAttribute("Collected") or not egg:GetAttribute("WorldEgg") then return end
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    if not root or (root.Position - egg.Position).Magnitude > 14 then return end
+
+    local biomeId = egg:GetAttribute("BiomeId") or "Meadow"
+    local requiredZone = biomeId == "Meadow" and "StarterIsland" or biomeId
+    if (player:GetAttribute("CurrentBiome") or "StarterIsland") ~= requiredZone then
+        player:SetAttribute("LastNotice", "Собирай яйца только в том биоме, где находишься.")
+        return
+    end
+    local allowed = ProgressionService:CanEnterZone(player, requiredZone)
+    if not allowed then
+        player:SetAttribute("LastNotice", "Сначала открой этот биом, чтобы собирать его яйца.")
+        return
+    end
+
+    local profile = PlayerDataService:GetProfile(player)
+    if not profile or #profile.EggInventory >= EGG_CAPACITY then
+        player:SetAttribute("LastNotice", "Сумка для яиц заполнена!")
+        return
+    end
+
+    egg:SetAttribute("Collected", true)
+    table.insert(profile.EggInventory, {
+        Id = egg:GetAttribute("EggId") or "MeadowEgg",
+        BiomeId = egg:GetAttribute("BiomeId") or "Meadow",
+        InstanceId = tostring(os.time()) .. "_" .. tostring(math.random(100000, 999999)),
+        CollectedAt = os.time(),
+    })
+    syncAttributes(player, profile)
+    local biome = BiomeCatalog[biomeId] or BiomeCatalog.Meadow
+    player:SetAttribute("LastNotice", "Ты подобрал: " .. (biome.Eggs[biome.DefaultEggId].Name or "яйцо") .. "!")
+
+    local originalSize = egg.Size
+    local detailStates = {}
+    for _, detail in ipairs(egg:GetChildren()) do
+        if detail:IsA("BasePart") then
+            detailStates[detail] = { Size = detail.Size, Transparency = detail.Transparency }
+        end
+    end
+    local eggGlow = egg:FindFirstChild("EggGlow")
+    local eggHighlight = egg:FindFirstChildOfClass("Highlight")
+    if eggGlow then eggGlow.Enabled = false end
+    if eggHighlight then eggHighlight.Enabled = false end
+    egg:SetAttribute("SpawnSlot", nil)
+    egg.CanCollide = false
+    local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
+    if prompt then prompt.Enabled = false end
+
+    -- The shell and its welded ornaments fly away as one collectible visual.
+    local collectInfo = TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    local collectTarget = root.CFrame * CFrame.new(0, 0.5, -1.5)
+    local collectTween = TweenService:Create(
+        egg,
+        collectInfo,
+        { CFrame = collectTarget, Size = Vector3.new(0.15, 0.15, 0.15), Transparency = 1 }
+    )
+    collectTween:Play()
+    for detail, state in pairs(detailStates) do
+        if detail.Parent then
+            TweenService:Create(detail, collectInfo, {
+                Size = Vector3.new(0.04, 0.04, 0.04),
+                Transparency = 1,
+            }):Play()
+        end
+    end
+
+    task.delay(EGG_RESPAWN_SECONDS, function()
+        if not egg or not egg.Parent then return end
+        local folder = egg.Parent
+        local occupied = {}
+        for _, other in ipairs(folder:GetChildren()) do
+            if other ~= egg and other:GetAttribute("WorldEgg") and not other:GetAttribute("Collected") then
+                local slot = other:GetAttribute("SpawnSlot")
+                if type(slot) == "number" then occupied[slot] = true end
+            end
+        end
+        local biomeId = egg:GetAttribute("BiomeId") or "Meadow"
+        local spawnPositions = EGG_SPAWN_POSITIONS[biomeId] or EGG_SPAWN_POSITIONS.Meadow
+        local available = {}
+        for slot = 1, #spawnPositions do
+            if not occupied[slot] then table.insert(available, slot) end
+        end
+        if #available == 0 then
+            warn("[NEST RAIDERS] No free egg spawn slot; using a fallback slot.")
+            for slot = 1, #spawnPositions do table.insert(available, slot) end
+        end
+        local slot = available[math.random(1, #available)]
+        egg.CFrame = CFrame.new(spawnPositions[slot])
+        egg:SetAttribute("SpawnSlot", slot)
+        local spawnDefinition = BiomeCatalog[biomeId] or BiomeCatalog.Meadow
+        egg:SetAttribute("BiomeId", spawnDefinition.Id)
+        egg:SetAttribute("EggId", spawnDefinition.DefaultEggId)
+        egg.Size = originalSize
+        egg.Transparency = 1
+        egg:SetAttribute("Collected", false)
+        egg.CanCollide = false
+        local respawnInfo = TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        local respawnTween = TweenService:Create(
+            egg,
+            respawnInfo,
+            { Transparency = 0, Size = originalSize }
+        )
+        respawnTween:Play()
+        for detail, state in pairs(detailStates) do
+            if detail.Parent == egg then
+                detail.Size = Vector3.new(0.04, 0.04, 0.04)
+                detail.Transparency = 1
+                TweenService:Create(detail, respawnInfo, {
+                    Transparency = state.Transparency,
+                    Size = state.Size,
+                }):Play()
+            end
+        end
+        if eggGlow then eggGlow.Enabled = true end
+        if eggHighlight then eggHighlight.Enabled = true end
+        if prompt then prompt.Enabled = true end
+    end)
+end
+
+function EggService:_HatchUnlocked(player, station)
+    if not player:GetAttribute("ProfileLoaded") then return end
+    local profile = PlayerDataService:GetProfile(player)
+    if not profile or #profile.EggInventory == 0 then
+        player:SetAttribute("LastNotice", "Сначала найди или купи яйцо!")
+        return
+    end
+
+    local plotId = station and station:GetAttribute("PlotId")
+    if not plotId or not PlotService:IsOwner(player, plotId) then
+        player:SetAttribute("LastNotice", "Это гнездо принадлежит другому игроку.")
+        return
+    end
+
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    if not root or (root.Position - station.Position).Magnitude > 14 then return end
+
+    -- Select the first hatchable egg without changing the order of inventory.
+    -- An incubating breeding egg must not block a ready meadow/shop egg behind it.
+    local now = os.time()
+    local hatchIndex, egg
+    local shortestWait
+    for index, candidate in ipairs(profile.EggInventory) do
+        if type(candidate) == "table" then
+            local remaining = candidate.Origin == "Breeding"
+                and math.max(0, (tonumber(candidate.IncubatesUntil) or 0) - now) or 0
+            if remaining <= 0 then
+                hatchIndex, egg = index, candidate
+                break
+            end
+            shortestWait = shortestWait and math.min(shortestWait, remaining) or remaining
+        end
+    end
+    if not egg then
+        if shortestWait then
+            local minutes = math.floor(shortestWait / 60)
+            local seconds = math.floor(shortestWait % 60)
+            player:SetAttribute("LastNotice", string.format(
+                "Все яйца ещё инкубируются. Ближайшее: %d мин. %d сек.", minutes, seconds))
+        else
+            player:SetAttribute("LastNotice", "Не удалось прочитать яйца в сумке. Обратись к поддержке.")
+        end
+        return
+    end
+
+    local definition
+    local geneticTrait
+    local hatchBonus, baseTopChance, boostedTopChance = 0, 0, 0
+    if egg.Origin == "Breeding" then
+        definition = CompanionCatalog[egg.OffspringSpeciesId]
+        if not definition or type(egg.GeneticTrait) ~= "table" then
+            player:SetAttribute("LastNotice", "Не удалось определить наследство яйца.")
+            return
+        end
+        geneticTrait = egg.GeneticTrait
+    else
+        definition, hatchBonus, baseTopChance, boostedTopChance = chooseCompanion(egg.Id or "MeadowEgg", profile)
+        geneticTrait = chooseGeneticTrait()
+    end
+
+    -- Validate everything needed for the pet and confirmation BEFORE removing
+    -- the egg. Malformed legacy breeding traits must not consume an egg and
+    -- leave a partially created companion behind.
+    if type(definition) ~= "table"
+        or type(definition.Id) ~= "string"
+        or type(definition.Name) ~= "string"
+        or type(definition.Rarity) ~= "string"
+        or type(definition.Income) ~= "number"
+        or type(geneticTrait) ~= "table"
+        or type(geneticTrait.Name) ~= "string" then
+        warn("[NEST RAIDERS] Invalid hatch companion/trait data; retaining egg.")
+        player:SetAttribute("LastNotice", "Данные яйца повреждены. Яйцо сохранено; обратись к поддержке.")
+        return
+    end
+    table.remove(profile.EggInventory, hatchIndex)
+    local companion = {
+        InstanceId = HttpService:GenerateGUID(false),
+        Id = definition.Id,
+        Name = definition.Name,
+        Rarity = definition.Rarity,
+        Income = definition.Income,
+        Level = 1,
+        GrowthXP = 0,
+        Stars = 1,
+        GeneticTrait = geneticTrait,
+        HatchedAt = now,
+        Origin = egg.Origin or "Hatch",
+        OriginBiome = egg.BiomeId or "Meadow",
+        ParentSpecies = type(egg.ParentSpecies) == "table" and egg.ParentSpecies or nil,
+    }
+    table.insert(profile.Companions, companion)
+    -- Register a discovery at the moment of hatching, regardless of whether
+    -- this individual pet is later merged, bred or removed.
+    profile.DiscoveredSpecies = type(profile.DiscoveredSpecies) == "table"
+        and profile.DiscoveredSpecies or {}
+    profile.DiscoveredSpecies[companion.Id] = true
+    profile.DiscoveredBiomes = type(profile.DiscoveredBiomes) == "table" and profile.DiscoveredBiomes or {}
+    profile.DiscoveredBiomes[companion.Id] = companion.OriginBiome or "Meadow"
+    profile.ActiveCompanions = profile.ActiveCompanions or {}
+    if #profile.ActiveCompanions < 3 then
+        table.insert(profile.ActiveCompanions, companion.InstanceId)
+    end
+
+    syncAttributes(player, profile)
+    player:SetAttribute("ActiveCompanionCount", #profile.ActiveCompanions)
+    -- Commit the pet and counters first; visual refresh is a secondary effect.
+    -- A broken model should not prevent the successful hatch notification.
+    local xpCallOk, xpResult = pcall(function()
+        return ProgressionService:AddXP(player, 15)
+    end)
+    local xpAwarded = xpCallOk and xpResult == true
+    if not xpAwarded then
+        warn("[NEST RAIDERS] Hatch XP update failed: " .. tostring(xpResult))
+    end
+    local visualOk, visualError = pcall(function()
+        CompanionService:RefreshPlayer(player)
+    end)
+    if not visualOk then
+        warn("[NEST RAIDERS] Hatch companion visual refresh failed: " .. tostring(visualError))
+    end
+    local originMessage = egg.Origin == "Breeding" and " · наследие родителей" or ""
+    local xpMessage = xpAwarded and " +15 опыта" or ""
+    local hunterMessage = hatchBonus > 0 and string.format(
+        " · Охота: высшая редкость %.1f%% → %.1f%%", baseTopChance * 100, boostedTopChance * 100) or ""
+    player:SetAttribute("LastNotice", "Вылупился питомец: " .. definition.Name .. " (" .. definition.Rarity .. ") · "
+        .. geneticTrait.Name .. originMessage .. hunterMessage .. "!" .. xpMessage)
+
+    -- The server decides the result and commits it before the client receives a
+    -- cosmetic reveal. A lost animation can never undo or duplicate the hatch.
+    if hatchRevealRemote then
+        hatchRevealRemote:FireClient(player, {
+            Id = definition.Id,
+            Name = definition.Name,
+            Rarity = definition.Rarity,
+            TraitName = geneticTrait.Name,
+            TraitRarity = geneticTrait.Rarity or "Обычный",
+            Origin = egg.Origin or "World",
+            Income = companion.Income,
+            HatchBonus = hatchBonus,
+            BaseTopChance = baseTopChance,
+            BoostedTopChance = boostedTopChance,
+        })
+    end
+end
+
+
+-- Serialize hatch requests per player. ProximityPrompt can fire more than once
+-- while a previous hatch is still refreshing the follower model.
+function EggService:Hatch(player, station)
+    if self._hatching[player] then return end
+    self._hatching[player] = true
+    local ok, err = pcall(function()
+        self:_HatchUnlocked(player, station)
+    end)
+    self._hatching[player] = nil
+    if not ok then
+        warn("[NEST RAIDERS] Hatch request failed safely: " .. tostring(err))
+        if player and player.Parent then
+            player:SetAttribute("LastNotice", "Произошла ошибка при вылуплении. Проверь коллекцию питомцев и попробуй ещё раз.")
+        end
+    end
+end
+
+function EggService:Init()
+    local remotes = ReplicatedStorage:FindFirstChild("NestRaidersRemotes")
+    if not remotes then
+        remotes = Instance.new("Folder")
+        remotes.Name = "NestRaidersRemotes"
+        remotes.Parent = ReplicatedStorage
+    end
+    hatchRevealRemote = remotes:FindFirstChild("HatchReveal")
+    if not hatchRevealRemote then
+        hatchRevealRemote = Instance.new("RemoteEvent")
+        hatchRevealRemote.Name = "HatchReveal"
+        hatchRevealRemote.Parent = remotes
+    elseif not hatchRevealRemote:IsA("RemoteEvent") then
+        warn("[NEST RAIDERS] HatchReveal exists but is not a RemoteEvent.")
+        hatchRevealRemote = nil
+    end
+
+    local world = Workspace:WaitForChild("NestRaidersWorld", 30)
+    if not world then
+        warn("[NEST RAIDERS] World was not built before EggService initialized.")
+        return
+    end
+
+    local biomeFolders = {}
+    for biomeId, spawnPositions in pairs(EGG_SPAWN_POSITIONS) do
+        local biomeFolder = world:FindFirstChild(biomeId)
+        local eggFolder = biomeFolder and biomeFolder:FindFirstChild("EggSpawnPoints")
+        if eggFolder then
+            local eggs = {}
+            for _, egg in ipairs(eggFolder:GetChildren()) do
+                if egg:GetAttribute("WorldEgg") then table.insert(eggs, egg) end
+            end
+            local shuffledSlots = {}
+            for slot = 1, #spawnPositions do table.insert(shuffledSlots, slot) end
+            for index = #shuffledSlots, 2, -1 do
+                local swap = math.random(1, index)
+                shuffledSlots[index], shuffledSlots[swap] = shuffledSlots[swap], shuffledSlots[index]
+            end
+            for index, egg in ipairs(eggs) do
+                if index <= ACTIVE_WORLD_EGGS then
+                    local slot = shuffledSlots[index]
+                    local spawnDefinition = BiomeCatalog[biomeId] or BiomeCatalog.Meadow
+                    egg.CFrame = CFrame.new(spawnPositions[slot])
+                    egg:SetAttribute("SpawnSlot", slot)
+                    egg:SetAttribute("BiomeId", spawnDefinition.Id)
+                    egg:SetAttribute("EggId", spawnDefinition.DefaultEggId)
+                    egg:SetAttribute("Collected", false)
+                    egg.Transparency = 0
+                    local prompt = egg:FindFirstChildOfClass("ProximityPrompt")
+                    if prompt then
+                        local eggDefinition = spawnDefinition.Eggs[spawnDefinition.DefaultEggId]
+                        prompt.ObjectText = eggDefinition and eggDefinition.Name or "Яйцо биома"
+                        prompt.Enabled = true
+                        prompt.Triggered:Connect(function(player) self:Collect(player, egg) end)
+                    end
+                else
+                    egg:Destroy()
+                end
+            end
+            if #eggs < ACTIVE_WORLD_EGGS then
+                warn(string.format("[NEST RAIDERS] %s has %d/%d world eggs.", biomeId, #eggs, ACTIVE_WORLD_EGGS))
+            end
+        else
+            warn("[NEST RAIDERS] Missing egg folder for biome: " .. biomeId)
+        end
+    end
+    local island = world:WaitForChild("StarterIsland")
+
+    local plotsFolder = island:WaitForChild("PlayerPlots")
+    for _, plot in ipairs(plotsFolder:GetChildren()) do
+        local station = plot:FindFirstChild("HatchStation")
+        local prompt = station and station:FindFirstChildOfClass("ProximityPrompt")
+        if prompt then
+            prompt.Triggered:Connect(function(player) self:Hatch(player, station) end)
+        end
+    end
+
+    -- The first player can join before EggService:Init is reached.
+    -- Bind the same load-complete signal for existing AND future players;
+    -- reading the profile only once misses an in-flight DataStore load.
+    local boundPlayers = {}
+    local function bindPlayer(player)
+        if boundPlayers[player] then return end
+        boundPlayers[player] = true
+        local function syncWhenReady()
+            if not player:GetAttribute("ProfileLoaded") then return end
+            local profile = PlayerDataService:GetProfile(player)
+            if profile then syncAttributes(player, profile) end
+        end
+        player:GetAttributeChangedSignal("ProfileLoaded"):Connect(syncWhenReady)
+        syncWhenReady()
+    end
+    Players.PlayerAdded:Connect(bindPlayer)
+    Players.PlayerRemoving:Connect(function(player)
+        boundPlayers[player] = nil
+        self._hatching[player] = nil
+    end)
+    for _, player in ipairs(Players:GetPlayers()) do
+        bindPlayer(player)
+    end
+end
+
+return EggService

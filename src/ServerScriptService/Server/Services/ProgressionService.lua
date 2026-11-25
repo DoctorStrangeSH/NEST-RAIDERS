@@ -4,6 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local GameConfig = require(ReplicatedStorage.Shared.Config.GameConfig)
 local PlayerDataService = require(ServerScriptService.Server.Services.PlayerDataService)
+local ArtifactBonusService = require(ServerScriptService.Server.Services.ArtifactBonusService)
 
 local ProgressionService = {}
 
@@ -60,7 +61,9 @@ function ProgressionService:AddXP(player, amount)
     end
 
     local safeAmount = math.floor(math.min(amount, 10000))
-    profile.XP += safeAmount
+    if safeAmount <= 0 then return false end
+    local awardedAmount, researchBonus, extraXP = ArtifactBonusService:ApplyResearchBonus(profile, safeAmount)
+    profile.XP += awardedAmount
 
     while profile.Level < GameConfig.Progression.MaxLevel do
         local required = math.floor(GameConfig.Progression.BaseXPToNextLevel
@@ -74,23 +77,208 @@ function ProgressionService:AddXP(player, amount)
     end
 
     player:SetAttribute("Level", profile.Level)
+    player:SetAttribute("XP", profile.XP)
+    player:SetAttribute("LastXPBaseAmount", safeAmount)
+    player:SetAttribute("LastXPBonusAmount", extraXP)
+    player:SetAttribute("LastXPBonusPercent", math.floor(researchBonus * 100 + 0.5))
     self:RefreshZoneUnlocks(player)
-    return true
+    return true, awardedAmount, researchBonus, extraXP
+end
+
+function ProgressionService:FormatXPReward(awardedAmount, researchBonus, extraXP)
+    local safeAwarded = math.max(0, math.floor(tonumber(awardedAmount) or 0))
+    local safeBonus = math.clamp(tonumber(researchBonus) or 0, 0, 0.50)
+    local safeExtra = math.max(0, math.floor(tonumber(extraXP) or 0))
+    if safeBonus > 0 then
+        return string.format("+%d опыта (артефакт +%d; бонус +%d%%)",
+            safeAwarded, safeExtra, math.floor(safeBonus * 100 + 0.5))
+    end
+    return string.format("+%d опыта", safeAwarded)
 end
 
 function ProgressionService:Init()
-    Players.PlayerAdded:Connect(function(player)
+    local world = workspace:WaitForChild("NestRaidersWorld", 30)
+    if world then
+        for _, descendant in ipairs(world:GetDescendants()) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "EmeraldRunePrompt" then
+                descendant.Triggered:Connect(function(player)
+                    if player:GetAttribute("CurrentBiome") ~= "EmeraldWilds" then
+                        player:SetAttribute("LastNotice", "Эти руны откликаются только в Изумрудном лесу.")
+                        return
+                    end
+                    local character = player.Character
+                    local root = character and character:FindFirstChild("HumanoidRootPart")
+                    if not root or (root.Position - descendant.Parent.Position).Magnitude > descendant.MaxActivationDistance + 2 then
+                        return
+                    end
+                    local profile = PlayerDataService:GetProfile(player)
+                    if not profile then
+                        player:SetAttribute("LastNotice", "Сохранение ещё загружается. Попробуй немного позже.")
+                        return
+                    end
+                    local runeId = descendant.Parent:GetAttribute("RuneId")
+                    if type(runeId) ~= "string"
+                        or (runeId ~= "Grove" and runeId ~= "River" and runeId ~= "Dawn") then
+                        warn("[NEST RAIDERS] Ignored invalid Emerald trial rune.")
+                        return
+                    end
+                    profile.QuestProgress = type(profile.QuestProgress) == "table" and profile.QuestProgress or {}
+                    profile.QuestProgress.EmeraldTrialRunes = type(profile.QuestProgress.EmeraldTrialRunes) == "table"
+                        and profile.QuestProgress.EmeraldTrialRunes or {}
+                    if profile.QuestProgress.EmeraldTrialRunes[runeId] then
+                        player:SetAttribute("LastNotice", "Эта древняя руна уже пробуждена.")
+                        return
+                    end
+                    profile.QuestProgress.EmeraldTrialRunes[runeId] = true
+                    local runes = profile.QuestProgress.EmeraldTrialRunes
+                    local count = (runes.Grove and 1 or 0) + (runes.River and 1 or 0) + (runes.Dawn and 1 or 0)
+                    player:SetAttribute("EmeraldTrialProgress", count)
+                    if count >= 3 and profile.CompletedQuests.emerald_trial ~= true then
+                        profile.CompletedQuests.emerald_trial = true
+                        player:SetAttribute("EmeraldTrialCompleted", true)
+                        local _, awardedXP, researchBonus, extraXP = self:AddXP(player, 100)
+                        self:RefreshZoneUnlocks(player)
+                        player:SetAttribute("LastNotice", "Испытание Изумрудной рощи пройдено! Все три руны пробуждены. "
+                            .. self:FormatXPReward(awardedXP, researchBonus, extraXP) .. ". Путь к Ледяным нагорьям откроется на 12 уровне.")
+                    else
+                        player:SetAttribute("LastNotice", string.format("Древняя руна пробуждена! Испытание: %d / 3", count))
+                    end
+                end)
+            end
+        end
+        for _, descendant in ipairs(world:GetDescendants()) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "FrostRunePrompt" then
+                descendant.Triggered:Connect(function(player)
+                    if player:GetAttribute("CurrentBiome") ~= "FrostHighlands" then
+                        player:SetAttribute("LastNotice", "Ледяные руны откликаются только в Ледяных нагорьях.")
+                        return
+                    end
+                    local zoneAllowed = self:CanEnterZone(player, "FrostHighlands")
+                    if not zoneAllowed then
+                        player:SetAttribute("LastNotice", "Сначала открой Ледяные нагорья.")
+                        return
+                    end
+                    local character = player.Character
+                    local root = character and character:FindFirstChild("HumanoidRootPart")
+                    if not root or (root.Position - descendant.Parent.Position).Magnitude > descendant.MaxActivationDistance + 2 then
+                        return
+                    end
+                    local profile = PlayerDataService:GetProfile(player)
+                    if not profile then
+                        player:SetAttribute("LastNotice", "Сохранение ещё загружается. Попробуй немного позже.")
+                        return
+                    end
+                    profile.QuestProgress = type(profile.QuestProgress) == "table" and profile.QuestProgress or {}
+                    profile.QuestProgress.FrostTrialRunes = type(profile.QuestProgress.FrostTrialRunes) == "table"
+                        and profile.QuestProgress.FrostTrialRunes or {}
+                    local runeId = descendant.Parent:GetAttribute("RuneId")
+                    if type(runeId) ~= "string"
+                        or (runeId ~= "Aurora" and runeId ~= "Glacier" and runeId ~= "Winter") then
+                        warn("[NEST RAIDERS] Ignored invalid Frost trial rune.")
+                        return
+                    end
+                    local runes = profile.QuestProgress.FrostTrialRunes
+                    if runes[runeId] then
+                        player:SetAttribute("LastNotice", "Эта ледяная руна уже пробуждена.")
+                        return
+                    end
+                    runes[runeId] = true
+                    local count = (runes.Aurora and 1 or 0) + (runes.Glacier and 1 or 0) + (runes.Winter and 1 or 0)
+                    player:SetAttribute("FrostTrialProgress", count)
+                    if count >= 3 and profile.CompletedQuests.frost_trial ~= true then
+                        profile.CompletedQuests.frost_trial = true
+                        player:SetAttribute("FrostTrialCompleted", true)
+                        local _, awardedXP, researchBonus, extraXP = self:AddXP(player, 180)
+                        self:RefreshZoneUnlocks(player)
+                        player:SetAttribute("LastNotice", "Испытание Сердца зимы пройдено! Все три руны пробуждены. "
+                            .. self:FormatXPReward(awardedXP, researchBonus, extraXP) .. ".")
+                    else
+                        player:SetAttribute("LastNotice", string.format("Ледяная руна пробуждена! Испытание: %d / 3", count))
+                    end
+                end)
+            end
+        end
+
+        for _, descendant in ipairs(world:GetDescendants()) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "ZoneTravelPrompt" then
+                descendant.Triggered:Connect(function(player)
+                    local zoneId = descendant.Parent:GetAttribute("ZoneId")
+                    local destination = descendant.Parent:GetAttribute("Destination")
+                    if type(zoneId) ~= "string" or typeof(destination) ~= "Vector3" then return end
+                    local allowed, reason = self:CanEnterZone(player, zoneId)
+                    if not allowed then
+                        local zone = self:GetZone(zoneId)
+                        local profile = PlayerDataService:GetProfile(player)
+                        if zone and profile and profile.Level >= zone.RequiredLevel and zone.RequiredQuest
+                            and profile.CompletedQuests[zone.RequiredQuest] ~= true then
+                            player:SetAttribute("LastNotice", "Сначала пройди испытание предыдущего биома, чтобы открыть эту область.")
+                        else
+                            local required = zone and zone.RequiredLevel or 1
+                            player:SetAttribute("LastNotice", string.format("Нужно достичь %d уровня, чтобы открыть эту область.", required))
+                        end
+                        return
+                    end
+                    local character = player.Character
+                    local root = character and character:FindFirstChild("HumanoidRootPart")
+                    if not root then
+                        player:SetAttribute("LastNotice", "Персонаж ещё загружается. Попробуй снова.")
+                        return
+                    end
+                    if (root.Position - descendant.Parent.Position).Magnitude > descendant.MaxActivationDistance + 2 then
+                        return
+                    end
+                    character:PivotTo(CFrame.new(destination + Vector3.new(0, 4, 0)))
+                    player:SetAttribute("CurrentBiome", zoneId)
+                    local arrivalMessages = {
+                        EmeraldWilds = "Добро пожаловать в Изумрудный лес!",
+                        FrostHighlands = "Добро пожаловать в Ледяные нагорья!",
+                        Emberlands = "Добро пожаловать в Пепельные земли! Берегись перегрева.",
+                        CrystalRealm = "Добро пожаловать в Хрустальное королевство! Ищи сияющие жилы и призматические яйца.",
+                        AncientHeights = "Добро пожаловать на Древние высоты! Это первая открытая площадка нового биома.",
+                        StarterIsland = "Ты вернулся на стартовый остров.",
+                    }
+                    player:SetAttribute("LastNotice", arrivalMessages[zoneId] or "Ты прибыл в новый биом.")
+                end)
+            end
+        end
+    else
+        warn("[NEST RAIDERS] World unavailable; biome portals were not connected.")
+    end
+
+    -- Players may join while Bootstrap is still initializing services.
+    -- Reconcile both existing and future players without duplicate workers.
+    local boundPlayers = {}
+    local function bindPlayer(player)
+        if boundPlayers[player] then return end
+        boundPlayers[player] = true
         player:SetAttribute("ProgressionReady", false)
         task.spawn(function()
             while player.Parent and not player:GetAttribute("ProfileLoaded") do
                 task.wait(0.1)
             end
-            if player.Parent then
-                self:RefreshZoneUnlocks(player)
-                player:SetAttribute("ProgressionReady", true)
-            end
+            if not player.Parent then return end
+            self:RefreshZoneUnlocks(player)
+            local profile = PlayerDataService:GetProfile(player)
+            local runes = profile and profile.QuestProgress and profile.QuestProgress.EmeraldTrialRunes or {}
+            local count = (runes.Grove and 1 or 0) + (runes.River and 1 or 0) + (runes.Dawn and 1 or 0)
+            player:SetAttribute("EmeraldTrialProgress", count)
+            player:SetAttribute("EmeraldTrialCompleted", profile and profile.CompletedQuests.emerald_trial == true or false)
+            local frostRunes = profile and profile.QuestProgress and profile.QuestProgress.FrostTrialRunes or {}
+            local frostCount = (frostRunes.Aurora and 1 or 0) + (frostRunes.Glacier and 1 or 0) + (frostRunes.Winter and 1 or 0)
+            player:SetAttribute("FrostTrialProgress", frostCount)
+            player:SetAttribute("FrostTrialCompleted", profile and profile.CompletedQuests.frost_trial == true or false)
+            player:SetAttribute("CurrentBiome", "StarterIsland")
+            player:SetAttribute("ProgressionReady", true)
         end)
+    end
+
+    Players.PlayerAdded:Connect(bindPlayer)
+    Players.PlayerRemoving:Connect(function(player)
+        boundPlayers[player] = nil
     end)
+    for _, player in ipairs(Players:GetPlayers()) do
+        bindPlayer(player)
+    end
 end
 
 return ProgressionService
