@@ -724,3 +724,12 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - Expired or claimed events must remove their visual links and temporary world objects.
 - Mood changes written by the adventure service must be read back by the companion behavior loop, so an independent system cannot overwrite a reward on the next update.
 - Owner disconnect cleanup must remove owned markers even if the companion folder is already being destroyed.
+
+
+### Friendship Milestone Celebrations — Sprint 4.73
+- Completed social sessions continue to award the existing pair friendship point. When the score reaches 10, 30, 60 or 90 for the first time, both companions receive a short shared celebration.
+- Milestone titles are respectively Первые друзья!, Крепкая дружба!, Неразлучная команда! and Друзья навсегда!.
+- The celebration uses a temporary color-coded Highlight on both companion models, a readable BillboardGui banner and one owner notification.
+- The milestone is cosmetic only: it does not grant currency, XP, combat power or extra friendship points. Ordinary social sessions do not produce milestone notifications.
+- Effects self-clean after 2.4 seconds. The milestone is derived from the persistent pair score, so no extra profile field or migration is needed.
+- Roblox Studio verification is required for readability, cleanup, threshold behavior, multiplayer isolation and persistence after rejoin.
