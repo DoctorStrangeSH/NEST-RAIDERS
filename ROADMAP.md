@@ -1508,7 +1508,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add biome-themed gift pools for Meadow, Emerald, Frost, Ember, Crystal, Ancient, Forgotten Cave and Lineage origins.
 - [x] Let either companion initiate a gift after a completed shared social session.
 - [x] Adjust gift likelihood using the giver's personality and the pair's saved friendship tier.
-- [x] Add a rarer special-gift variant whose chance also improves with friendship.
+- [x] Add a rarer special-gift variant whose chance improves with friendship and giver rarity.
 - [x] Show the gift above the receiver with a temporary glow and a readable Russian message.
 - [x] Persist discovered gifts and total gift count in the player nest profile.
 - [x] Give both pets a small mood response; do not grant coins, XP, materials or combat power.
