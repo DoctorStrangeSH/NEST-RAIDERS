@@ -1748,3 +1748,11 @@ assert 'profile.Nest.CompanionMood[secondId]' in adventure_service
 assert 'local beam = Instance.new("Beam")' in adventure_service
 assert 'firstAttachment:Destroy()' in adventure_service and 'secondAttachment:Destroy()' in adventure_service
 assert 'Debris:AddItem(marker, 90)' in adventure_service
+
+
+# Cross-system companion mood synchronization: adventure rewards must survive the
+# CompanionService follower loop and owner disconnect must always remove markers.
+assert 'local savedMood = profile.Nest and profile.Nest.CompanionMood' in companion_service
+assert 'mood = math.clamp(math.floor(tonumber(savedMood) or mood), 0, 100)' in companion_service
+assert 'for _, child in ipairs(Workspace:GetChildren()) do' in adventure_service
+assert 'child:GetAttribute("OwnerUserId") == player.UserId' in adventure_service
