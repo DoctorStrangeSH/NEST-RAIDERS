@@ -2028,3 +2028,28 @@ assert 'RequiredBond = 100, Id = "ForeverTogether"' in gift_journal
 assert 'local companionBonds = type(profile.Nest.CompanionBonds) == "table"' in gift_journal
 assert 'local key = "Pair:" .. tostring(bondKey) .. ":" .. memory.Id' in gift_journal
 assert 'local total = #MOMENTS + pairTotal + giftTotal' in gift_journal
+
+
+# Sprint 4.86 — bonded companions comfort friends and explore together.
+assert 'local companionCareCooldowns = {}' in companion_service
+assert 'local sharedDiscoveryCooldowns = {}' in companion_service
+assert 'local targetIsCaring = false' in companion_service
+assert 'local careUntil = 0' in companion_service
+assert 'partnerMood <= 35 and mood >= 45' in companion_service
+assert 'pairBondScore >= 10 and socialApproach' in companion_service
+assert 'personality == "Заботливый" and 0.72 or 0.28' in companion_service
+assert 'partnerModel:SetAttribute("BeingComfortedUntil", careUntil)' in companion_service
+assert 'profile.Nest.CompanionMood[partnerId] = updatedPartnerMood' in companion_service
+assert 'profile.Nest.CompanionMood[instanceId] = mood' in companion_service
+assert 'beingComforted and "Друг рядом, всё хорошо ♥"' in companion_service
+assert 'careUntil > now and "Утешает друга ♥"' in companion_service
+assert 'partnerModel:SetAttribute("SharedDiscoveryTargetPosition", point.Position)' in companion_service
+assert 'partnerModel:SetAttribute("SharedDiscoveryLeader", instanceId)' in companion_service
+assert 'local followingSharedDiscovery = typeof(sharedTarget) == "Vector3"' in companion_service
+assert 'if followingSharedDiscovery then' in companion_service
+assert 'model:SetAttribute("SharedDiscoveryArrived", true)' in companion_service
+assert 'partnerModel:GetAttribute("SharedDiscoveryArrived") == true' in companion_service
+assert 'partnerModel:GetPivot().Position - currentPosition).Magnitude <= 6' in companion_service
+assert 'model:SetAttribute("LastDiscovery", "Открытие вместе: "' in companion_service
+assert 'showSharedHeartMoment(model, partnerModel)' in companion_service
+assert 'sharedDiscoveryCooldowns[sharedKey] = now + 90' in companion_service
