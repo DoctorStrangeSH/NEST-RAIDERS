@@ -2101,3 +2101,18 @@ for token in (
     'for key in pairs(hideSeekCooldowns) do',
 ):
     assert token in companion_service, token
+
+
+# Sprint 4.87 — shared treasure hunt.
+for token in (
+    'local sharedTreasureCooldowns = {}',
+    'partnerModel:GetAttribute("PairTreasurePartner") == instanceId',
+    'pet:SetAttribute("PairTreasureUntil", now + 10)',
+    'sharedTreasureCooldowns[treasureKey] = now + 90',
+    'behavior = "SearchingTogether"',
+    'if slot < partnerSlot and (currentPosition - targetPosition).Magnitude <= 0.5',
+    'crystal.Name = "SharedTreasureDiscovery"',
+    'Debris:AddItem(crystal, 3)',
+    'for key in pairs(sharedTreasureCooldowns) do',
+):
+    assert token in companion_service, token
