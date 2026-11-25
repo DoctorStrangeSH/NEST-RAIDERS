@@ -1233,3 +1233,18 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify discovered pair memories reveal their title/icon and increase the completion count exactly once.
 - [ ] Leave/rejoin and verify all unlocked memories persist and are not re-announced.
 - [ ] Check banners/glows do not overlap gift/reaction billboards excessively on phone, tablet and desktop.
+
+
+## Sprint 4.86 — Cooperative companion life
+- [ ] Set one bonded pet's mood to 35 or lower while its awake partner has mood >= 45, energy >= 20 and hunger >= 20; verify the partner may approach and comfort it.
+- [ ] Verify Caring personality initiates more often than other personalities over repeated controlled trials.
+- [ ] Verify receiver gains 6 mood (9 for Caring initiator) and initiator gains 2 only after reaching the friend and completing the interaction.
+- [ ] Verify the receiver shows “Друг рядом, всё хорошо ♥” and the initiator shows “Утешает друга ♥” during the interaction.
+- [ ] Verify sleep, low energy, hunger, or a missing partner cancels/blocks comfort safely.
+- [ ] With a pair at 20+ bond, trigger cooperative exploration and verify the invited pet follows the exact same interest point.
+- [ ] Verify the discovery completes whether the leader or invited pet arrives first, but only once, and only when both are within 6 studs.
+- [ ] Verify both pets receive +3 mood and the player receives one shared-discovery notice.
+- [ ] Verify invitations expire after 18 seconds and do not grant rewards if one pet never arrives.
+- [ ] Verify 75-second comfort and 90-second discovery cooldowns prevent spam during the session.
+- [ ] Test with three active pets; unrelated third pet must not join or receive rewards.
+- [ ] Check captions, movement, billboards and performance on phone, tablet and desktop.
