@@ -1607,7 +1607,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify sleeping, busy, removed and distant companions never start or receive a ball game.
 - [ ] Verify cooldown isolation across pairs and players; test desktop, tablet and mobile camera distances.
 
-**Scope:** this is the first playable shared-game slice. Shared treasure hunts remain future work; hide-and-seek and cooperative toy play are tracked below; do not mark Sprint 4.87 complete until the Studio acceptance cases pass.
+**Scope:** this is the first playable shared-game slice. All four shared games are implemented in source and tracked below; Studio acceptance remains outstanding; do not mark Sprint 4.87 complete until the Studio acceptance cases pass.
 
 
 ### Sprint 4.87 — Hide and seek and cooperative toys
@@ -1616,4 +1616,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Cancel both activities on missing partner, sleep, insufficient needs or unsafe weather; do not add currency or XP rewards.
 - [x] Add source regression assertions for both games.
 - [ ] Roblox Studio: verify movement, arrival, captions, toy animation, cleanup and multiplayer isolation.
-- [ ] Complete shared treasure hunt and final Sprint 4.87 acceptance.
+- [x] Complete shared treasure hunt (see below).
+- [ ] Complete final Sprint 4.87 Studio acceptance.
+
+
+### Sprint 4.87 — Cooperative treasure hunt
+- [x] Add a shared landmark search for pairs at 30+ friendship with adequate needs.
+- [x] Require both pets to reach separate approach positions before the lower slot completes the event.
+- [x] Show a temporary golden discovery effect and a single owner notice; no inventory or economy reward.
+- [x] Add a 10-second deadline, 90-second pair cooldown and cleanup on cancellation.
+- [x] Add source regression checks.
+- [ ] Complete Roblox Studio acceptance of all four shared games before release.
