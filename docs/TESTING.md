@@ -1149,3 +1149,15 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Trigger repeated sessions inside 180 seconds; verify no repeated species moment for the same owner/pair/species. Verify a different pair has an independent cooldown.
 - [ ] Test both display pairs, multiple players, pet removal during the effect and mobile readability.
 - [ ] Confirm species moments grant no additional bond, mood, needs, currency or XP.
+
+
+## Sprint 4.80 — Friendship discovery journal
+- [ ] Open Дневник дружбы with no discoveries; verify 0/4 and 0% progress.
+- [ ] Verify all four locked entries show ??? and broad hints only; exact species combinations and titles remain hidden.
+- [ ] Discover one species moment, close/reopen the journal, and verify 1/4 and 25% with its correct title/icon/rarity.
+- [ ] Discover all four moments and verify 4/4 and 100%.
+- [ ] Leave and rejoin; verify discovered entries remain unlocked.
+- [ ] Open the journal before profile load completes; verify a friendly error notice and no client error.
+- [ ] Verify the close button works, cards scroll, the journal navigation icon is present, and the panel fits phone, tablet and desktop viewports.
+- [ ] Open the collector's book then the friendship journal; verify the journal takes focus without overlapping the previous panel.
+- [ ] Confirm the client cannot submit or alter discovery IDs; only server-side companion events write the saved discovery table.
