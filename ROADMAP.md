@@ -1550,3 +1550,16 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Roblox Studio: verify emotes read naturally with the current low-poly companion models.
 - [ ] Check that two companions do not clip into each other during hugs and that movement resumes smoothly afterwards.
 - [ ] Verify rare gift presentation is visually distinct and reaction text remains readable on mobile/tablet/desktop.
+
+
+### Sprint 4.84 — Autonomous personality habits
+- [x] Add 12 personality-specific idle habits: sniffing, inspecting, playful hopping, stretching, grooming, looking around, daydreaming, sky watching, swaying, waving, caring checks and proud poses.
+- [x] Give each habit its own short movement signature using the existing companion follower loop.
+- [x] Show a Russian overhead caption while a habit is active.
+- [x] Keep habits occasional with personality-specific trigger chances, an initial delay and a per-companion cooldown.
+- [x] Restrict habits to quiet idle moments with sufficient mood, energy and hunger; do not interrupt social play, sleep, chase, shared rest or gift reactions.
+- [x] Clear habit state automatically on expiry and immediately when the companion starts sleeping.
+- [x] Add static regression assertions for all 12 mappings, cooldowns, movement hooks and cleanup.
+- [ ] Roblox Studio: verify every habit is visibly distinct on the current low-poly models.
+- [ ] Verify habits do not interrupt pathing, social sessions, toy play, treasure searches or gift reactions.
+- [ ] Check captions and subtle movement at phone, tablet and desktop camera distances.
