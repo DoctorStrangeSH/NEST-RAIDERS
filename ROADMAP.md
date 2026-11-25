@@ -1441,3 +1441,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add static regression checks for trigger ownership, shared timing, movement target and cooldown cleanup.
 - [ ] Roblox Studio: verify both pets move visibly together, do not collide or jitter, and return to normal routines after 4.5 seconds.
 - [ ] Test bond thresholds, both display pairs, pet removal/sleep during play, multiplayer isolation and mobile readability.
+
+
+### Sprint 4.77 — Resting beside a friend
+- [x] Allow an awake companion with 30+ pair bond to occasionally approach a sleeping partner and rest nearby.
+- [x] Prefer the interaction at night or when the awake companion has low energy; require minimum mood and energy.
+- [x] Use a side offset so the awake pet settles beside, not directly on top of, its sleeping friend.
+- [x] Hold a calm 4.5–6.5 second rest pose and publish RestingWithFriend / RestingWithFriend attribute for presentation.
+- [x] Stop the shared-rest state if the partner wakes or the resting companion itself goes to sleep.
+- [x] Add a 55-second per-player/per-pair cooldown and clean it up on owner departure.
+- [x] Add static regression assertions and Studio acceptance checklist.
+- [ ] Roblox Studio: verify the pet visibly approaches and settles beside the sleeping friend without overlap, jitter or interrupting the sleeper.
+- [ ] Test day/night, energy thresholds, bond thresholds, both display pairs, wake-up interruption, multiplayer isolation and mobile readability.
