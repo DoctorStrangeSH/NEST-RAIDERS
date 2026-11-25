@@ -21,6 +21,7 @@ local socialChaseCooldowns = {}
 local sharedRestCooldowns = {}
 local speciesMomentCooldowns = {}
 local companionCareCooldowns = {}
+local sharedDiscoveryCooldowns = {}
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -1137,6 +1138,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local targetIsCaring = false
             local careUntil = 0
             local careRewarded = false
+            local isSharedDiscoveryFollower = false
             local targetIsChase = false
             local targetIsRestingTogether = false
             local restingTogetherUntil = 0
@@ -1249,6 +1251,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         targetIsSocial = false
                         targetIsCaring = false
                         careUntil = 0
+                        isSharedDiscoveryFollower = false
                         targetIsRestingTogether = false
                         restingTogetherUntil = 0
                         model:SetAttribute("RestingWithFriend", nil)
@@ -1271,7 +1274,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
                                 profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
                                 local savedPartnerMood = math.clamp(
-                                    math.floor(tonumber(profile.Nest.CompanionMood[partnerId]) or partnerMood), 0, 100
+                                    math.floor(tonumber(profile.Nest.CompanionMood[partnerId]) or tonumber(partnerModel:GetAttribute("Mood")) or 50), 0, 100
                                 )
                                 local comfortBoost = personality == "Заботливый" and 9 or 6
                                 local updatedPartnerMood = math.clamp(savedPartnerMood + comfortBoost, 0, 100)
@@ -1356,6 +1359,16 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             socialPlayUntil = 0
                             targetIsSocial = false
                             idleUntil = now + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
+                        end
+
+                        local sharedUntil = tonumber(model:GetAttribute("SharedDiscoveryTargetUntil")) or 0
+                        if sharedUntil > 0 and sharedUntil <= now then
+                            model:SetAttribute("SharedDiscoveryTargetPosition", nil)
+                            model:SetAttribute("SharedDiscoveryTargetUntil", nil)
+                            model:SetAttribute("SharedDiscoveryTargetLabel", nil)
+                            model:SetAttribute("SharedDiscoveryLeader", nil)
+                            model:SetAttribute("SharedDiscoveryArrived", nil)
+                            isSharedDiscoveryFollower = false
                         end
 
                         if partnerBehavior == "SeekingFriend" and socialApproach and not targetIsSocial
@@ -1454,6 +1467,37 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 lastInterestId = model:GetAttribute("InterestTargetId")
                                 interestUntil = now + random:NextNumber(2.4, 4.2)
                                 idleUntil = interestUntil
+                                if isSharedDiscoveryFollower then
+                                    model:SetAttribute("SharedDiscoveryArrived", true)
+                                    isSharedDiscoveryFollower = false
+                                elseif slot < partnerSlot and partnerModel and partnerModel:GetAttribute("SharedDiscoveryLeader") == instanceId then
+                                    local partnerPosition = partnerModel:GetPivot().Position
+                                    if (partnerPosition - currentPosition).Magnitude <= 6
+                                        and partnerModel:GetAttribute("SharedDiscoveryArrived") == true then
+                                        local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                                        profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
+                                        local selfMood = math.clamp(mood + 3, 0, 100)
+                                        local partnerCurrentMood = math.clamp(
+                                            math.floor(tonumber(profile.Nest.CompanionMood[partnerId])
+                                                or tonumber(partnerModel:GetAttribute("Mood")) or 50), 0, 100
+                                        )
+                                        local partnerMoodAfter = math.clamp(partnerCurrentMood + 3, 0, 100)
+                                        mood = selfMood
+                                        profile.Nest.CompanionMood[instanceId] = selfMood
+                                        profile.Nest.CompanionMood[partnerId] = partnerMoodAfter
+                                        model:SetAttribute("Mood", selfMood)
+                                        partnerModel:SetAttribute("Mood", partnerMoodAfter)
+                                        model:SetAttribute("LastDiscovery", "Открытие вместе: " .. tostring(interestLabel or "тайное место"))
+                                        partnerModel:SetAttribute("LastDiscovery", "Открытие вместе: " .. tostring(interestLabel or "тайное место"))
+                                        showSharedHeartMoment(model, partnerModel)
+                                        player:SetAttribute("LastNotice", "Вместе питомцы открыли: " .. tostring(interestLabel or "тайное место") .. "!")
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetPosition", nil)
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetUntil", nil)
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetLabel", nil)
+                                        partnerModel:SetAttribute("SharedDiscoveryLeader", nil)
+                                        partnerModel:SetAttribute("SharedDiscoveryArrived", nil)
+                                    end
+                                end
                                 if now >= nextDiscoveryAt and random:NextNumber() < 0.14 then
                                     nextDiscoveryAt = now + 90
                                     local discovery = interestLabel or "необычный след"
@@ -1523,6 +1567,22 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local canExplore = #interestPoints > 0 and energy >= 25 and hunger >= 25 and mood >= 30
                             local explorationChance = (personality == "Любопытный" or personality == "Любознательный") and 0.34 or 0.2
                             local restKey = pairBondKey and (tostring(player.UserId) .. ":" .. tostring(pairBondKey))
+                            local sharedTarget = model:GetAttribute("SharedDiscoveryTargetPosition")
+                            local sharedTargetUntil = tonumber(model:GetAttribute("SharedDiscoveryTargetUntil")) or 0
+                            if typeof(sharedTarget) == "Vector3" and sharedTargetUntil > now
+                                and partnerModel and model:GetAttribute("SharedDiscoveryLeader")
+                                    == partnerModel:GetAttribute("CompanionInstanceId") then
+                                targetPosition = sharedTarget
+                                interestLabel = tostring(model:GetAttribute("SharedDiscoveryTargetLabel") or "секретное место")
+                                targetIsInterest = true
+                                targetIsSocial = false
+                                targetIsToy = false
+                                targetIsTreasure = false
+                                targetIsShelter = false
+                                isSharedDiscoveryFollower = true
+                                model:SetAttribute("InterestTargetLabel", interestLabel)
+                                model:SetAttribute("InterestTargetId", "Shared:" .. interestLabel)
+                            end
                             local partnerMood = partnerModel and math.clamp(
                                 math.floor(tonumber(partnerModel:GetAttribute("Mood")) or 50), 0, 100
                             ) or 100
@@ -1582,6 +1642,19 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                     model:SetAttribute("InterestTargetId", point.Id)
                                     model:SetAttribute("InterestTargetLabel", point.Label)
                                     model:SetAttribute("FavoritePlace", favoritePlace)
+                                    local sharedKey = pairBondKey and (tostring(player.UserId) .. ":" .. tostring(pairBondKey))
+                                    local partnerCanJoin = slot < partnerSlot and partnerModel and not partnerSleeping
+                                        and pairBondScore >= 20 and partnerBehavior ~= "Searching"
+                                        and partnerBehavior ~= "PlayingWithToy" and sharedKey
+                                        and (sharedDiscoveryCooldowns[sharedKey] or 0) <= now
+                                    if partnerCanJoin and random:NextNumber() < 0.28 then
+                                        sharedDiscoveryCooldowns[sharedKey] = now + 90
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetPosition", point.Position)
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetUntil", now + 18)
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetLabel", point.Label)
+                                        partnerModel:SetAttribute("SharedDiscoveryLeader", instanceId)
+                                        partnerModel:SetAttribute("SharedDiscoveryArrived", false)
+                                    end
                                 else
                                     targetPosition = home
                                     targetIsInterest = false
