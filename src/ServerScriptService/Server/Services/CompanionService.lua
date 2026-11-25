@@ -1226,6 +1226,11 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     model:SetAttribute("IsSleeping", isSleeping)
 
                     if isSleeping then
+                        activeHabit = nil
+                        activeHabitUntil = 0
+                        model:SetAttribute("PersonalHabit", nil)
+                        model:SetAttribute("PersonalHabitText", nil)
+                        model:SetAttribute("PersonalHabitUntil", nil)
                         behavior = "Sleeping"
                         targetPosition = currentPosition
                         isAtTarget = true
@@ -1708,7 +1713,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     friendshipCardStroke.Color = bondColor
                     friendshipFill.BackgroundColor3 = bondColor
                     friendshipFill.Size = UDim2.new(bondScore / 100, 0, 1, 0)
-                    local habitActive = activeHabit ~= nil and now < activeHabitUntil and isAtTarget
+                    local habitActive = activeHabit ~= nil and now < activeHabitUntil and isAtTarget and not isSleeping
                     if activeHabit ~= nil and not habitActive then
                         activeHabit = nil
                         model:SetAttribute("PersonalHabit", nil)
