@@ -1418,3 +1418,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add static regression checks for the paired visual, trigger ownership and cooldown.
 - [ ] Roblox Studio: verify both pets show the heart together, the emote cleans up after 1.6 seconds and repeated play respects the cooldown.
 - [ ] Test both display pairs, four pets, multiple players, pet removal during the emote and mobile camera readability.
+
+
+### Sprint 4.75 — Personality-aware relationships
+- [x] Read the active pair's saved friendship score during companion behavior updates.
+- [x] Give cautious companions a gradual trust rule: they initiate/accept ordinary social approaches after reaching 10 bond, or sooner when approached by a friendly/good-natured companion.
+- [x] Make Friendly and Good-natured personalities more likely to initiate social contact.
+- [x] Let growing pair friendship increase the social approach chance for both companions.
+- [x] Publish a readable FriendshipStyle state for UI/animation layers: cautious pets show gradual trust, outgoing pets seek friends, playful pets enjoy shared games.
+- [x] Add static regression assertions for pair-bond gating and personality modifiers.
+- [ ] Roblox Studio: test cautious+cautious, cautious+friendly, friendly+friendly and playful pairs; verify approaches feel distinct and no pair becomes permanently isolated.
+- [ ] Verify bond growth changes social frequency without resetting needs, mood, or existing cooldowns.
+- [ ] Verify behavior labels remain correct after respawn/rejoin and across both display pairs.
