@@ -1453,3 +1453,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add static regression assertions and Studio acceptance checklist.
 - [ ] Roblox Studio: verify the pet visibly approaches and settles beside the sleeping friend without overlap, jitter or interrupting the sleeper.
 - [ ] Test day/night, energy thresholds, bond thresholds, both display pairs, wake-up interruption, multiplayer isolation and mobile readability.
+
+
+### Sprint 4.78 — Personality greetings and reunion moments
+- [x] Add distinct greeting styles for Friendly, Good-natured, Playful, Energetic, Cautious, Calm, Wise and Dreamy personalities.
+- [x] Show a short readable speech bubble above both companions when their social session begins.
+- [x] Track the last greeting per owner/pair and show a special reunion banner plus warm glow after 120 seconds without a greeting.
+- [x] Keep the existing shared heart emote and 18-second visual cooldown; reunion styling is presentation-only.
+- [x] Clear per-pair greeting timestamps when the owner leaves.
+- [x] Add static regression assertions for personality styles, paired presentation, reunion threshold and cleanup.
+- [ ] Roblox Studio: verify each personality's greeting text/icon, readability and cleanup on both pets.
+- [ ] Verify reunion styling appears only after 120 seconds, not during ordinary repeated greetings.
+- [ ] Test both display pairs, all personalities, pet removal during an effect, multiplayer isolation and mobile camera scaling.
