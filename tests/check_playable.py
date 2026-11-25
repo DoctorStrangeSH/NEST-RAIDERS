@@ -1895,7 +1895,7 @@ assert 'bondJournalButton.Activated:Connect(openBondJournal)' in client
 assert 'DiscoveredBondMoments = {},' in profile_template
 assert 'local function buildSnapshot(profile)' in bond_journal_service
 assert 'profile.Nest.DiscoveredBondMoments' in bond_journal_service
-assert 'CompletionPercent = math.floor(discoveredCount / #MOMENTS * 100 + 0.5)' in bond_journal_service
+assert 'CompletionPercent = math.floor(discoveredCount / total * 100 + 0.5)' in bond_journal_service
 assert 'Title = discovered and definition.Title or "???"' in bond_journal_service
 assert 'Hint = discovered and "Секрет уже открыт.' in bond_journal_service
 
