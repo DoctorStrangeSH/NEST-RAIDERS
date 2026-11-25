@@ -16,6 +16,7 @@ CompanionService._generations = {}
 local MAX_VISIBLE_COMPANIONS = 3
 local FOLLOW_INTERVAL = 0.1
 local socialMomentCooldowns = {}
+local socialChaseCooldowns = {}
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -743,6 +744,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local toyPlayUntil = 0
             local socialPlayUntil = 0
             local socialRewarded = false
+            local targetIsChase = false
             local targetIsTreasure = false
             local targetIsShelter = false
             local shelterUntil = 0
@@ -883,6 +885,19 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             socialRewarded = true
                             socialPlayUntil = 0
                             targetIsSocial = false
+                            -- Established friends sometimes turn a finished greeting into a short chase.
+                            if slot < partnerSlot and partnerModel and pairBondScore >= 30
+                                and mood >= 55 and energy >= 30 then
+                                local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                                local pairId = getBondKey(instanceId, partnerId)
+                                local chaseKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                if pairId and (socialChaseCooldowns[chaseKey] or 0) <= now then
+                                    socialChaseCooldowns[chaseKey] = now + 35
+                                    local chaseUntil = now + 4.5
+                                    model:SetAttribute("CompanionChaseUntil", chaseUntil)
+                                    partnerModel:SetAttribute("CompanionChaseUntil", chaseUntil)
+                                end
+                            end
                             idleUntil = now + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
                         elseif socialPlayUntil > 0 and (not partnerModel or partnerSleeping) then
                             socialPlayUntil = 0
@@ -1074,6 +1089,28 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             isAtTarget = false
                         end
 
+                        local chaseUntil = tonumber(model:GetAttribute("CompanionChaseUntil")) or 0
+                        local partnerChaseUntil = partnerModel and (tonumber(partnerModel:GetAttribute("CompanionChaseUntil")) or 0) or 0
+                        local partnerPositionForChase = partnerModel and partnerModel:GetPivot().Position
+                        if chaseUntil > now and partnerChaseUntil > now and partnerPositionForChase
+                            and not isSleeping and mood >= 25 and energy >= 15 then
+                            local orbitAngle = now * 2.8 + phase
+                            local chaseRadius = 2.4
+                            targetPosition = partnerPositionForChase
+                                + Vector3.new(math.cos(orbitAngle) * chaseRadius, 0, math.sin(orbitAngle) * chaseRadius)
+                            targetIsChase = true
+                            targetIsSocial = false
+                            targetIsToy = false
+                            targetIsInterest = false
+                            targetIsTreasure = false
+                            targetIsShelter = false
+                            isAtTarget = false
+                        else
+                            targetIsChase = false
+                            if model:GetAttribute("CompanionChaseUntil") ~= nil and chaseUntil <= now then
+                                model:SetAttribute("CompanionChaseUntil", nil)
+                            end
+                        end
                         local moving = not isAtTarget and (targetPosition - currentPosition).Magnitude >= 0.2
                         if moving then
                             local direction = targetPosition - currentPosition
@@ -1093,7 +1130,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local step = math.min(direction.Magnitude, speed * delta)
                             currentPosition += direction.Unit * step
                             facing = math.atan2(direction.X, direction.Z)
-                            behavior = targetIsTreasure and "Searching" or (targetIsShelter and "SeekingShelter" or (targetIsInterest and "Exploring" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering"))))
+                            behavior = targetIsChase and "ChasingFriend" or (targetIsTreasure and "Searching" or (targetIsShelter and "SeekingShelter" or (targetIsInterest and "Exploring" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering")))))
                             bob = math.abs(math.sin(now * 9 + phase)) * 0.1
                         else
                             local nearToy = toyPart and (currentPosition - toyApproach).Magnitude < 0.55
@@ -1409,6 +1446,11 @@ function CompanionService:Init()
         for key in pairs(socialMomentCooldowns) do
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
                 socialMomentCooldowns[key] = nil
+            end
+        end
+        for key in pairs(socialChaseCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                socialChaseCooldowns[key] = nil
             end
         end
         self._generations[player] = nil
