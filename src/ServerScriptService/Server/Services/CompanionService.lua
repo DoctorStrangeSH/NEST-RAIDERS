@@ -1200,10 +1200,18 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                         if milestone then
                                             showBondMilestone(player, model, partnerModel, milestone)
                                         end
-                                        tryGiveCompanionGift(
-                                            player, profile, model, partnerModel, petDefinition,
-                                            bondKey, bondScore, now, random
-                                        )
+                                        local partnerDefinition = CompanionCatalog[partnerModel:GetAttribute("CompanionId")] or {}
+                                        if random:NextNumber() < 0.5 then
+                                            tryGiveCompanionGift(
+                                                player, profile, model, partnerModel, petDefinition,
+                                                bondKey, bondScore, now, random
+                                            )
+                                        else
+                                            tryGiveCompanionGift(
+                                                player, profile, partnerModel, model, partnerDefinition,
+                                                bondKey, bondScore, now, random
+                                            )
+                                        end
                                     end
                                 end
                             end
