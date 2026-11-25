@@ -1072,5 +1072,6 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Attempt to claim outside prompt range and verify no profile changes.
 - [ ] Verify per-pair cooldown prevents immediate repeat events and persists after reconnect.
 - [ ] Verify claim, timeout, respawn, and disconnect clean up the marker, beam, and attachments.
+- [ ] After claiming, watch both pets for at least 10 seconds; rewarded mood must remain visible and must not snap back on the next follower update.
 - [ ] Test with two players in the same server; ensure events and rewards remain isolated by owner.
 - [ ] Test prompt readability and interaction on desktop and mobile.
