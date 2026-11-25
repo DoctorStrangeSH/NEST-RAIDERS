@@ -745,7 +745,7 @@ Displayed companions can discover destinations in their owner's personal nest. T
 
 ### Personality-aware Relationships — Sprint 4.75
 - Companion social behavior is influenced by the pet's existing Personality and the saved bond score with its displayed partner.
-- Cautious (Осторожный) companions need at least 10 pair-bond points before ordinary social approaches, but may accept an approach earlier from a Friendly (Дружелюбный) or Good-natured (Добродушный) partner. This gives cautious pairs a path into friendship without forcing instant trust.
+- Cautious (Осторожный) companions need at least 10 pair-bond points before ordinary social approaches, but may accept an approach earlier from a Friendly (Дружелюбный) or Good-natured (Добродушный) partner. A small 3.5% first-contact chance remains even for two cautious companions, preventing a deadlock where neither can ever earn the first bond point. This gives cautious pairs a path into friendship without forcing instant trust.
 - Friendly and Good-natured companions receive a higher social-initiation chance. Increasing pair bond gradually raises the social approach chance for both pets, capped to prevent constant interruptions.
 - The server publishes FriendshipStyle for presentation: Привыкает постепенно / Доверяет другу, Сам ищет друзей, Любит совместные игры, or Спокойное общение.
 - This sprint changes behavior selection only; it adds no currency, XP, mood or friendship rewards. Existing social-session rewards and cooldowns remain authoritative.
