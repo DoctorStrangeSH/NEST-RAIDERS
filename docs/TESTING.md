@@ -1171,3 +1171,16 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify the saved relationship score survives leave/rejoin and the badge reconstructs from saved profile data.
 - [ ] Verify tiers affect only rare paired-adventure variant odds (8/12/16/20%); base spawn cadence and five-minute pair cooldown remain unchanged.
 - [ ] Test with one, two and three active pets on narrow phone, tablet and desktop viewports; confirm overhead labels do not obscure names or needs.
+
+
+## Sprint 4.82 — Companion gifts
+- [ ] Start a shared social session with two active pets; verify a gift can be initiated by either pet over repeated sessions.
+- [ ] Verify each of the eight origin egg pools selects only its own biome gift set.
+- [ ] Compare personality types; confirm caring/friendly personalities receive their configured chance modifier and independent/proud personalities their reduction.
+- [ ] Check friendship chance bands at 9/10, 29/30, 59/60 and 89/90; confirm final chance stays within 2–40%.
+- [ ] Confirm special gift roll follows the tier values (4%, 9%, 14%, 20%) and does not create currency, XP, materials or combat power.
+- [ ] Verify receiver mood increases by 5 and giver mood by 2, both capped at 100 and retained by the companion simulation.
+- [ ] Verify the same pair cannot trigger another gift within 90 seconds; another pair remains eligible.
+- [ ] Verify first-time discoveries persist after leave/rejoin and only discovered gift titles/icons are revealed in the friendship journal.
+- [ ] Verify gift cards/glows clean up after 2.8 seconds and do not accumulate in the world.
+- [ ] Check the 52-entry friendship journal scrolls smoothly and remains usable on phone, tablet and desktop.
