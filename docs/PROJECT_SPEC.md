@@ -830,3 +830,13 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - A successful gift has a 90-second per-pair runtime cooldown. It produces a short overhead gift card and glow on the receiver. The event is cosmetic and emotional: receiver mood +5 and giver mood +2, capped at 100. It grants no currency, XP, materials, progression or combat power.
 - Gift discoveries and total gift count are persisted under Nest.DiscoveredCompanionGifts and Nest.CompanionGiftCount.
 - The friendship memory journal includes the four species moments and 48 biome gift variants (24 normal, 24 special). Undiscovered titles remain hidden and show only a biome-level hint.
+
+
+### Gift Emotion Reactions — Sprint 4.83
+- A successful gift triggers a reaction on both active companions. The receiver reaction is selected from the receiver's personality; the giver independently reacts based on the giver's personality.
+- Receiver reactions include playful spin, energetic jump, friendly/caring hug, cautious shy sway, calm sway, dreamy sway, curious spin and proud pose. Unknown personalities use a friendly jump fallback.
+- Giver reactions include playful bounce, energetic jump, caring proud pose, friendly/calm sway, cautious shy sway and dreamy sway. Unknown personalities use a proud fallback.
+- Rare/special gifts override the receiver reaction with Amazed and the giver reaction with Proud, use a gold-themed gift presentation and last longer than ordinary gift reactions.
+- The current anchored low-poly companion models are animated by the existing server follower loop using small vertical, yaw and roll offsets. Hug reactions gently move both companions 0.38 studs toward one another and orient them face-to-face.
+- Reaction phrases appear in the existing overhead mood label. Reaction state is server-authored through GiftReaction, GiftReactionText, GiftReactionUntil and GiftReactionRare attributes, then cleared automatically on expiry.
+- Reactions are cosmetic/emotional only and do not add currency, XP, items, bond points or combat power. Sleeping companions do not play active emotes.
