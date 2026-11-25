@@ -1853,3 +1853,23 @@ assert 'local isReunion = lastGreeting > 0 and (now - lastGreeting) >= 120' in c
 assert 'showPersonalityGreeting(' in companion_service
 assert 'glow.Name = "FriendshipReunionGlow"' in companion_service
 assert 'for key in pairs(pairGreetingLastAt) do' in companion_service
+
+
+# Sprint 4.79 — species-specific friendship moments and persistent discoveries.
+assert 'local speciesMomentCooldowns = {}' in companion_service
+assert 'local SPECIES_BOND_MOMENTS = {' in companion_service
+assert '["Fox|Turtle"] = { Title = "Лесные хранители"' in companion_service
+assert '["Dragon|Owl"] = { Title = "Искра мудрости"' in companion_service
+assert '["EmberFox|MagmaDragon"] = { Title = "Тёплое пламя"' in companion_service
+assert '["AncientStag|RootSprite"] = { Title = "Древний союз"' in companion_service
+assert 'model:SetAttribute("CompanionKind", definition.Kind or companion.Id)' in companion_service
+assert 'local function getSpeciesMomentKey(firstKind, secondKind)' in companion_service
+assert 'local function showSpeciesBondMoment(firstModel, secondModel, moment)' in companion_service
+assert 'local speciesMoment = speciesKey and SPECIES_BOND_MOMENTS[speciesKey]' in companion_service
+assert 'if speciesMoment and pairBondScore >= 30 then' in companion_service
+assert 'and random:NextNumber() < 0.35 then' in companion_service
+assert 'profile.Nest.DiscoveredBondMoments = profile.Nest.DiscoveredBondMoments or {}' in companion_service
+assert 'profile.Nest.DiscoveredBondMoments[speciesKey] = true' in companion_service
+assert 'model:SetAttribute("SpeciesBondMoment", moment.Title)' in companion_service
+assert 'model:SetAttribute("SpeciesBondMomentUntil", os.clock() + 3.4)' in companion_service
+assert 'for key in pairs(speciesMomentCooldowns) do' in companion_service
