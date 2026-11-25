@@ -1694,3 +1694,32 @@ assert 'profile.Nest.CompanionGiftReadyAt = os.time() + 180' in companion_servic
 assert 'finder.Name .. " принёс подарок: +" .. reward .. " монет!"' in companion_service
 assert 'targetIsTreasure = false' in companion_service
 assert 'behavior == "FoundGift" and "Нашёл подарок!"' in companion_service
+
+
+# Sprint 4.71 — favorite places, autonomous nest exploration and discoveries.
+for species_id, favorite_place in (
+    ("MeadowFox", "Flowers"),
+    ("MossTurtle", "Water"),
+    ("SproutDragon", "Trees"),
+    ("GlowMoth", "Lanterns"),
+    ("SnowOwl", "HighGround"),
+    ("CaveGlimmerbat", "Crystals"),
+    ("HeartWisp", "Crystals"),
+):
+    species_start = companion_catalog.index(f"    {species_id} = {{")
+    species_end = companion_catalog.find("\n    },", species_start)
+    assert species_end > species_start
+    assert f'FavoritePlace = "{favorite_place}"' in companion_catalog[species_start:species_end]
+assert 'local BUILD_INTERESTS = {' in companion_service
+assert 'local DECOR_INTERESTS = {' in companion_service
+assert 'local function collectInterestPoints(plotModel, home)' in companion_service
+assert 'local function chooseInterestPoint(points, favoritePlace, random, previousId)' in companion_service
+assert 'local interestPoints = collectInterestPoints(plot.Model, home)' in companion_service
+assert 'local canExplore = #interestPoints > 0 and energy >= 25 and hunger >= 25 and mood >= 30' in companion_service
+assert 'local explorationChance = (personality == "Любопытный" or personality == "Любознательный") and 0.34 or 0.2' in companion_service
+assert 'targetIsInterest = true' in companion_service
+assert 'model:SetAttribute("InterestTargetLabel", point.Label)' in companion_service
+assert 'behavior = targetIsInterest and "Exploring"' in companion_service
+assert 'behavior = "VisitingInterest"' in companion_service
+assert 'model:SetAttribute("LastDiscovery", discovery)' in companion_service
+assert 'player:SetAttribute("LastNotice", companion.Name .. " заметил кое-что интересное: "' in companion_service
