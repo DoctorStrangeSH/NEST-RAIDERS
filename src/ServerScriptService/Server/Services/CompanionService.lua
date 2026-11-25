@@ -1399,6 +1399,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             idleUntil = now + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
                         end
 
+                        if sharedDiscoveryLeaderUntil > 0 and sharedDiscoveryLeaderUntil <= now then
+                            sharedDiscoveryLeaderUntil = 0
+                            sharedDiscoveryLeaderTarget = nil
+                        end
                         local sharedUntil = tonumber(model:GetAttribute("SharedDiscoveryTargetUntil")) or 0
                         if sharedUntil > 0 and sharedUntil <= now then
                             model:SetAttribute("SharedDiscoveryTargetPosition", nil)
@@ -1536,6 +1540,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                         partnerModel:SetAttribute("SharedDiscoveryTargetLabel", nil)
                                         partnerModel:SetAttribute("SharedDiscoveryLeader", nil)
                                         partnerModel:SetAttribute("SharedDiscoveryArrived", nil)
+                                        sharedDiscoveryLeaderUntil = 0
+                                        sharedDiscoveryLeaderTarget = nil
                                     end
                                 end
                                 if now >= nextDiscoveryAt and random:NextNumber() < 0.14 then
