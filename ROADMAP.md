@@ -1422,7 +1422,7 @@ Source and automated packaging checks do not substitute for actual gameplay test
 
 ### Sprint 4.75 — Personality-aware relationships
 - [x] Read the active pair's saved friendship score during companion behavior updates.
-- [x] Give cautious companions a gradual trust rule: they initiate/accept ordinary social approaches after reaching 10 bond, or sooner when approached by a friendly/good-natured companion.
+- [x] Give cautious companions a gradual trust rule: they initiate/accept ordinary social approaches after reaching 10 bond, or sooner when approached by a friendly/good-natured companion; two cautious pets retain a small 3.5% first-contact chance so they cannot become permanently isolated.
 - [x] Make Friendly and Good-natured personalities more likely to initiate social contact.
 - [x] Let growing pair friendship increase the social approach chance for both companions.
 - [x] Publish a readable FriendshipStyle state for UI/animation layers: cautious pets show gradual trust, outgoing pets seek friends, playful pets enjoy shared games.
