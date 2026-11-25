@@ -1625,7 +1625,7 @@ assert 'while model.Parent == folder and folder.Parent do' in companion_service
 assert 'behavior = targetIsChase and "ChasingFriend" or (targetIsTreasure and "Searching"' in companion_service
 assert 'model:SetAttribute("Behavior", behavior)' in companion_service
 assert 'model:SetAttribute("Personality"' in companion_service
-assert 'model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset, 0))' in companion_service
+assert 'model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset + reactionYaw + habitYaw, reactionRoll + habitRoll))' in companion_service
 assert 'while model.Parent == folder and folder.Parent do' in companion_service
 assert 'function DisplayPetService:RefreshPlayer(player)' in display_pet_service
 assert 'CompanionService:RefreshDisplayedPets(player, plot' in display_pet_service
