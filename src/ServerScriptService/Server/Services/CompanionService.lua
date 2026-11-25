@@ -199,6 +199,20 @@ local RARITY_SPECIAL_GIFT_BONUS = {
     ["Легендарный"] = 0.10,
     ["Мифический"] = 0.14,
 }
+local COMPANION_HABITS = {
+    ["Любопытный"] = { Id = "SniffAround", Text = "Обнюхивает всё вокруг", Chance = 0.22 },
+    ["Любознательный"] = { Id = "Inspect", Text = "Изучает интересную находку", Chance = 0.24 },
+    ["Игривый"] = { Id = "PlayfulHop", Text = "Придумывает себе игру", Chance = 0.24 },
+    ["Энергичный"] = { Id = "Stretch", Text = "Разминается перед приключением", Chance = 0.20 },
+    ["Спокойный"] = { Id = "Groom", Text = "Умывается и приводит себя в порядок", Chance = 0.20 },
+    ["Осторожный"] = { Id = "LookAround", Text = "Осторожно осматривается", Chance = 0.22 },
+    ["Мечтательный"] = { Id = "Daydream", Text = "Мечтает о дальних островах", Chance = 0.22 },
+    ["Наблюдательный"] = { Id = "WatchSky", Text = "Наблюдает за небом", Chance = 0.20 },
+    ["Добродушный"] = { Id = "Sway", Text = "Довольно покачивается", Chance = 0.18 },
+    ["Дружелюбный"] = { Id = "Wave", Text = "Ищет взглядом друзей", Chance = 0.20 },
+    ["Заботливый"] = { Id = "Care", Text = "Проверяет, всё ли в порядке", Chance = 0.18 },
+    ["Гордый"] = { Id = "Proud", Text = "Демонстрирует свою осанку", Chance = 0.18 },
+}
 
 local GIFT_RECEIVER_REACTIONS = {
     ["Игривый"] = { Animation = "Spin", Text = "Ура! Спасибо!" },
@@ -1123,6 +1137,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local lastInterestId = nil
             local nextDiscoveryAt = 0
             local interestLabel = nil
+            local activeHabit = nil
+            local activeHabitUntil = 0
+            local nextHabitAt = os.clock() + random:NextNumber(8, 16)
             local partnerSlot = slot % 2 == 1 and slot + 1 or slot - 1
             local behavior = sleeping and "Sleeping"
                 or (hunger <= 20 and "Hungry")
@@ -1398,6 +1415,21 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         end
 
                         if isAtTarget and now >= idleUntil and socialPlayUntil <= now and not targetIsSocial then
+                            local habit = COMPANION_HABITS[personality]
+                            local canShowHabit = habit and now >= nextHabitAt and mood >= 25 and energy >= 20
+                                and hunger >= 20 and not isSleeping and not targetIsRestingTogether
+                                and not targetIsChase and not reactionActive
+                            if canShowHabit and random:NextNumber() < habit.Chance then
+                                activeHabit = habit.Id
+                                activeHabitUntil = now + random:NextNumber(2.2, 4.0)
+                                nextHabitAt = now + random:NextNumber(28, 52)
+                                idleUntil = activeHabitUntil
+                                model:SetAttribute("PersonalHabit", habit.Id)
+                                model:SetAttribute("PersonalHabitText", habit.Text)
+                                model:SetAttribute("PersonalHabitUntil", activeHabitUntil)
+                            else
+                                nextHabitAt = math.max(nextHabitAt, now + 5)
+                            end
                             local cautiousCanApproach = not isCautious or pairBondScore >= 10
                                 or partnerPersonality == "Дружелюбный" or partnerPersonality == "Добродушный"
                                 or random:NextNumber() < 0.035
@@ -1674,10 +1706,46 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     friendshipCardStroke.Color = bondColor
                     friendshipFill.BackgroundColor3 = bondColor
                     friendshipFill.Size = UDim2.new(bondScore / 100, 0, 1, 0)
+                    local habitActive = activeHabit ~= nil and now < activeHabitUntil and isAtTarget
+                    if activeHabit ~= nil and not habitActive then
+                        activeHabit = nil
+                        model:SetAttribute("PersonalHabit", nil)
+                        model:SetAttribute("PersonalHabitText", nil)
+                        model:SetAttribute("PersonalHabitUntil", nil)
+                    end
                     local reactionUntil = tonumber(model:GetAttribute("GiftReactionUntil")) or 0
                     local giftReaction = model:GetAttribute("GiftReaction")
                     local reactionActive = giftReaction ~= nil and now < reactionUntil and not isSleeping
                     local reactionBob, reactionYaw, reactionRoll = 0, 0, 0
+                    local habitBob, habitYaw, habitRoll = 0, 0, 0
+                    if habitActive and not reactionActive then
+                        local habitPhase = now * 2.4 + phase
+                        if activeHabit == "PlayfulHop" then
+                            habitBob = math.abs(math.sin(now * 4.8 + phase)) * 0.22
+                        elseif activeHabit == "Stretch" then
+                            habitBob = math.abs(math.sin(habitPhase)) * 0.08
+                            habitRoll = math.sin(habitPhase * 0.5) * 0.12
+                        elseif activeHabit == "Groom" or activeHabit == "Care" then
+                            habitBob = math.sin(habitPhase * 0.8) * 0.035
+                            habitRoll = math.sin(habitPhase) * 0.13
+                        elseif activeHabit == "LookAround" or activeHabit == "WatchSky" or activeHabit == "Inspect" then
+                            habitYaw = math.sin(habitPhase * 0.65) * 0.32
+                            habitBob = math.sin(habitPhase) * 0.025
+                        elseif activeHabit == "Daydream" or activeHabit == "Sway" then
+                            habitBob = math.sin(habitPhase * 0.7) * 0.07
+                            habitRoll = math.sin(habitPhase * 0.45) * 0.08
+                        elseif activeHabit == "Wave" then
+                            habitYaw = math.sin(habitPhase * 1.4) * 0.22
+                            habitBob = math.abs(math.sin(habitPhase)) * 0.05
+                        elseif activeHabit == "Proud" then
+                            habitBob = math.abs(math.sin(habitPhase * 0.7)) * 0.08
+                            habitRoll = math.sin(habitPhase * 0.5) * 0.035
+                        elseif activeHabit == "SniffAround" then
+                            habitBob = math.sin(habitPhase * 1.8) * 0.035
+                            habitYaw = math.sin(habitPhase * 1.2) * 0.24
+                        end
+                        behavior = "PersonalHabit"
+                    end
                     if reactionActive then
                         local reactionPhase = now * 8 + phase
                         if giftReaction == "Jump" or giftReaction == "Bounce" then
@@ -1710,6 +1778,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         model:SetAttribute("GiftReactionRare", nil)
                     end
                     moodLabel.Text = (reactionActive and model:GetAttribute("GiftReactionText"))
+                        or (habitActive and model:GetAttribute("PersonalHabitText"))
                         or (isSleeping and "Zzz")
                         or (behavior == "Searching" and "Ищет сокровище")
                         or (behavior == "FoundGift" and "Нашёл подарок!")
@@ -1734,8 +1803,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             facing = math.atan2(towardFriend.X, towardFriend.Z)
                         end
                     end
-                    local position = currentPosition + hugOffset + Vector3.new(0, bob + reactionBob, 0)
-                    model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset + reactionYaw, reactionRoll))
+                    local position = currentPosition + hugOffset + Vector3.new(0, bob + reactionBob + habitBob, 0)
+                    model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset + reactionYaw + habitYaw, reactionRoll + habitRoll))
                     task.wait(0.12)
                 end
             end)
