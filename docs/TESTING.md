@@ -1210,3 +1210,14 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify a sleeping pet does not perform active movement; reaction resumes/clears safely after the timer.
 - [ ] Test with three active pets to ensure one pair's gift reaction does not animate the unrelated third pet.
 - [ ] Check readability and movement on phone, tablet and desktop camera distances.
+
+
+## Sprint 4.84 — Autonomous personality habits
+- [ ] Observe all 12 supported personalities and verify their intended idle habit appears.
+- [ ] Verify habits last 2.2–4.0 seconds and repeat no more often than the 28–52 second cooldown permits.
+- [ ] Verify habits require sufficient mood, energy and hunger; exhausted or hungry pets should prioritize needs.
+- [ ] Verify habits do not interrupt sleep, shared rest, social play, chasing, toy use, exploration, treasure searches or gift reactions.
+- [ ] Trigger sleep during a habit and verify the habit state clears immediately.
+- [ ] Verify overhead Russian captions fit on screen and do not collide with friendship/gift billboards.
+- [ ] Verify the third displayed pet can perform its own habit independently of the paired pets.
+- [ ] Check movement readability and performance on phone, tablet and desktop.
