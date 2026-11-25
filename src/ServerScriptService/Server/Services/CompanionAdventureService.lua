@@ -160,6 +160,10 @@ local function createAdventureMarker(player, firstModel, secondModel, pairKey, r
         marker:Destroy()
     end)
 
+    marker.Destroying:Connect(function()
+        if firstAttachment.Parent then firstAttachment:Destroy() end
+        if secondAttachment.Parent then secondAttachment:Destroy() end
+    end)
     Debris:AddItem(marker, 90)
     return marker
 end
