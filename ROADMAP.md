@@ -1376,6 +1376,8 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add rare discovery moments that notify the owner without granting unbalanced rewards.
 - [x] Keep exploration inside the owner's nest and preserve sleep, shelter, treasure, toys and social behavior priorities.
 - [x] Add regression checks for species preferences, landmark discovery, weighted selection and discovery notices.
+- [x] GitHub Actions: Rojo build, output verification, all regression checks and Studio artifact upload passed (workflow run 45576397579).
+- [x] Downloaded and extracted the Studio artifact; `.rbxlx` parsed successfully as XML (artifact expires 2026-12-09).
 - [ ] Roblox Studio: confirm all four display slots find nearby destinations without leaving the nest boundary.
 - [ ] Place each decor/build category and confirm pets select the matching favorite destination more often.
 - [ ] Verify exploration does not overlap the hatch station, toys, nest, building placement or other pets.
