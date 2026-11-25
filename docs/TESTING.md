@@ -1114,3 +1114,15 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify the same pair cannot trigger another chase inside the 35-second cooldown, and another pair/player has an independent cooldown.
 - [ ] Test display pairs 1–2 and 3–4, multiple players, low-end graphics and mobile camera readability.
 - [ ] Confirm chase behavior grants no extra mood, bond, currency or XP.
+
+
+## Sprint 4.77 — Resting beside a friend
+- [ ] With bond below 30, put one companion to sleep; verify its partner does not trigger shared rest.
+- [ ] With bond 30+, put one companion to sleep at night; verify the awake partner may approach and settle beside it.
+- [ ] Repeat during daytime with awake companion energy at 35 or below; verify eligibility.
+- [ ] Verify the awake pet stops about 1.8 studs to the side, does not overlap or move the sleeping pet, and holds the calm state for approximately 4.5–6.5 seconds.
+- [ ] Verify Behavior and RestingWithFriend attribute appear during the rest and clear afterwards.
+- [ ] Wake the sleeping pet during the interaction; verify the shared-rest state ends safely.
+- [ ] Let the resting pet fall asleep; verify its own sleep state takes priority and the shared-rest marker clears.
+- [ ] Verify the same pair respects its 55-second cooldown, while another pair/player has an independent cooldown.
+- [ ] Test both display pairs, multiplayer, low-end graphics and mobile camera readability; confirm no needs or rewards are changed.
