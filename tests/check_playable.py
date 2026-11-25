@@ -1911,3 +1911,32 @@ assert 'or choice.Bond >= 30 and 0.12' in adventure_service
 assert 'or 0.08' in adventure_service
 assert 'firstModel:SetAttribute("FriendshipLevel", bondLevel)' in adventure_service
 assert 'secondModel:SetAttribute("FriendshipLevel", bondLevel)' in adventure_service
+
+
+# Sprint 4.82 — companion gifts, personality odds and memory collection.
+companion_service = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+gift_journal = Path("src/ServerScriptService/Server/Services/BondJournalService.lua").read_text()
+profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+assert 'local BIOME_GIFTS = {' in companion_service
+for egg_id in ("MeadowEgg", "EmeraldEgg", "FrostEgg", "EmberEgg", "CrystalEgg", "AncientEgg", "ForgottenCaveEgg", "LineageEgg"):
+    assert egg_id + ' = {' in companion_service
+assert 'local PERSONALITY_GIFT_BONUS = {' in companion_service
+assert 'local function tryGiveCompanionGift(' in companion_service
+assert 'local chance = bondScore >= 90 and 0.30' in companion_service
+assert 'or bondScore >= 60 and 0.22' in companion_service
+assert 'or bondScore >= 30 and 0.14' in companion_service
+assert 'or bondScore >= 10 and 0.08' in companion_service
+assert 'GIFT_COOLDOWNS[cooldownKey] = now + 90' in companion_service
+assert 'profile.Nest.DiscoveredCompanionGifts[giftKey] = true' in companion_service
+assert 'profile.Nest.CompanionGiftCount' in companion_service
+assert 'receiverModel:SetAttribute("Mood", receiverMood)' in companion_service
+assert 'giverModel:SetAttribute("Mood", giverMood)' in companion_service
+assert 'showCompanionGift(giverModel, receiverModel, gift, isRare)' in companion_service
+assert 'tryGiveCompanionGift(' in companion_service
+assert 'DiscoveredCompanionGifts = {},' in profile_template
+assert 'CompanionGiftCount = 0,' in profile_template
+assert 'local GIFT_COLLECTION = {' in gift_journal
+assert 'profile.Nest.DiscoveredCompanionGifts' in gift_journal
+assert 'local giftTotal = 0' in gift_journal
+assert 'Id = "gift:" .. key' in gift_journal
+assert 'local total = #MOMENTS + giftTotal' in gift_journal
