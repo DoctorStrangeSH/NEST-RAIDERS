@@ -995,6 +995,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         if isAtTarget and now >= idleUntil and socialPlayUntil <= now and not targetIsSocial then
                             local cautiousCanApproach = not isCautious or pairBondScore >= 10
                                 or partnerPersonality == "Дружелюбный" or partnerPersonality == "Добродушный"
+                                or random:NextNumber() < 0.035
                             local canSocialize = partnerModel and socialApproach and not partnerSleeping
                                 and mood >= 45 and energy >= 20 and cautiousCanApproach
                             -- Familiarity makes cautious pets more willing to socialize,
