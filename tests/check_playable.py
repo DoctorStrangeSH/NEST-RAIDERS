@@ -1824,3 +1824,17 @@ assert 'local chaseRadius = 2.4' in companion_service
 assert 'targetIsChase and "ChasingFriend"' in companion_service
 assert 'and not isSleeping and not partnerSleeping and mood >= 25 and energy >= 15 then' in companion_service
 assert 'for key in pairs(socialChaseCooldowns) do' in companion_service
+
+
+# Sprint 4.77 — bonded companion can quietly rest beside a sleeping friend.
+assert 'local sharedRestCooldowns = {}' in companion_service
+assert 'local targetIsRestingTogether = false' in companion_service
+assert 'local restingTogetherUntil = 0' in companion_service
+assert 'local canRestTogether = partnerModel and partnerSleeping and not isSleeping' in companion_service
+assert 'and pairBondScore >= 30 and (isNight or energy <= 35)' in companion_service
+assert 'targetIsRestingTogether = true' in companion_service
+assert 'restingTogetherUntil = now + random:NextNumber(4.5, 6.5)' in companion_service
+assert 'model:SetAttribute("RestingWithFriend", true)' in companion_service
+assert 'behavior = "RestingWithFriend"' in companion_service
+assert 'model:SetAttribute("RestingWithFriend", nil)' in companion_service
+assert 'for key in pairs(sharedRestCooldowns) do' in companion_service
