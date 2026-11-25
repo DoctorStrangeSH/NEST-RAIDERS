@@ -849,3 +849,12 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - Habits require mood >= 25, energy >= 20 and hunger >= 20. They do not interrupt sleeping, shared resting, chase, social play, gift reactions or active travel.
 - Habits use small bob/yaw/roll offsets in the existing companion follower loop and display a short Russian caption in the overhead mood label.
 - Habit state is transient presentation, not a progression reward or saved collectible. It clears on expiry and immediately when sleep begins.
+
+
+### Special Friendship Memories — Sprint 4.85
+- Pair friendship has additional milestone celebrations at 60, 80 and 100 bond. Existing 10/30/90 milestones remain intact.
+- At 60, a pair discovers **Тайный знак дружбы** (Trusted Pact); at 80, **Обещание неразлучности** (Unbreakable Promise); at 100, **Друзья навеки** (Friends Forever).
+- Each memory is pair-specific. Its persistent key is `Pair:<bondKey>:<memoryId>` in `Nest.DiscoveredBondMoments`, so one pair's progress never unlocks another pair's record.
+- The first unlock displays a shared banner/glow on both companions and a player notification. Repeated social sessions do not repeat the first-discovery notification.
+- The friendship journal adds three entries for each pair with a bond score above zero. Undiscovered titles remain hidden and show the required bond threshold; discovered entries show the memory title and icon.
+- Pair memories contribute to journal completion percentage and are persistent profile discoveries, not a currency/XP reward.
