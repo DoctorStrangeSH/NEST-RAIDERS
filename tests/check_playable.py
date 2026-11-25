@@ -2018,7 +2018,8 @@ assert '[80] = { Id = "UnbreakablePromise"' in companion_service
 assert '[100] = { Id = "ForeverTogether"' in companion_service
 assert 'local memoryKey = "Pair:" .. bondKey .. ":" .. pairMemory.Id' in companion_service
 assert 'profile.Nest.DiscoveredBondMoments[memoryKey] = true' in companion_service
-assert 'showSpeciesBondMoment(model, partnerModel, pairMemory)' in companion_service
+assert 'showSharedHeartMoment(model, partnerModel)' in companion_service
+assert 'Новое воспоминание дружбы:' in companion_service
 assert 'Новое воспоминание дружбы:' in companion_service
 assert 'local PAIR_MEMORIES = {' in gift_journal
 assert 'RequiredBond = 60, Id = "TrustedPact"' in gift_journal
