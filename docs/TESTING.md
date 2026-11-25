@@ -1161,3 +1161,13 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify the close button works, cards scroll, the journal navigation icon is present, and the panel fits phone, tablet and desktop viewports.
 - [ ] Open the collector's book then the friendship journal; verify the journal takes focus without overlapping the previous panel.
 - [ ] Confirm the client cannot submit or alter discovery IDs; only server-side companion events write the saved discovery table.
+
+
+## Sprint 4.81 — Visible friendship tiers
+- [ ] Pair two active companions and complete a social interaction; verify both show the correct tier, score and progress bar.
+- [ ] Verify badge is absent before the first friendship point and appears after the first successful interaction.
+- [ ] Check thresholds at 9/10, 29/30, 59/60 and 89/90 points; confirm label, color and progress width.
+- [ ] Claim a paired adventure; verify both models update without requiring a re-equip or respawn.
+- [ ] Verify the saved relationship score survives leave/rejoin and the badge reconstructs from saved profile data.
+- [ ] Verify tiers affect only rare paired-adventure variant odds (8/12/16/20%); base spawn cadence and five-minute pair cooldown remain unchanged.
+- [ ] Test with one, two and three active pets on narrow phone, tablet and desktop viewports; confirm overhead labels do not obscure names or needs.
