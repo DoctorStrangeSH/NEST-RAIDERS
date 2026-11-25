@@ -1873,3 +1873,25 @@ assert 'profile.Nest.DiscoveredBondMoments[speciesKey] = true' in companion_serv
 assert 'model:SetAttribute("SpeciesBondMoment", moment.Title)' in companion_service
 assert 'model:SetAttribute("SpeciesBondMomentUntil", os.clock() + 3.4)' in companion_service
 assert 'for key in pairs(speciesMomentCooldowns) do' in companion_service
+
+
+# Sprint 4.80 — persistent friendship discovery journal.
+bond_journal_service = Path("src/ServerScriptService/Server/Services/BondJournalService.lua").read_text()
+profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+assert '"BondJournal"' in server
+assert '"BondJournalService"' in server
+assert 'local bondJournalRemote = waitRemote("BondJournal")' in client
+assert 'bondJournalRemote and nestRemote' in client
+assert 'local bondJournalButton = Instance.new("TextButton")' in client
+assert 'bondJournalButton, nestButton' in client
+assert 'Kind = "heart"' in client and 'kind == "heart"' in client
+assert 'local bondJournalPanel = Instance.new("Frame")' in client
+assert 'local function invokeBondJournal()' in client
+assert 'local function renderBondJournal(data)' in client
+assert 'bondJournalButton.Activated:Connect(openBondJournal)' in client
+assert 'DiscoveredBondMoments = {},' in profile_template
+assert 'local function buildSnapshot(profile)' in bond_journal_service
+assert 'profile.Nest.DiscoveredBondMoments' in bond_journal_service
+assert 'CompletionPercent = math.floor(discoveredCount / #MOMENTS * 100 + 0.5)' in bond_journal_service
+assert 'Title = discovered and definition.Title or "???"' in bond_journal_service
+assert 'Hint = discovered and "Секрет уже открыт.' in bond_journal_service
