@@ -17,6 +17,7 @@ local MAX_VISIBLE_COMPANIONS = 3
 local FOLLOW_INTERVAL = 0.1
 local socialMomentCooldowns = {}
 local socialChaseCooldowns = {}
+local sharedRestCooldowns = {}
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -745,6 +746,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local socialPlayUntil = 0
             local socialRewarded = false
             local targetIsChase = false
+            local targetIsRestingTogether = false
+            local restingTogetherUntil = 0
             local targetIsTreasure = false
             local targetIsShelter = false
             local shelterUntil = 0
@@ -844,6 +847,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         isAtTarget = true
                         targetIsToy = false
                         targetIsSocial = false
+                        targetIsRestingTogether = false
+                        restingTogetherUntil = 0
+                        model:SetAttribute("RestingWithFriend", nil)
                         targetIsShelter = false
                         shelterUntil = 0
                         targetIsInterest = false
@@ -917,7 +923,12 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         if not isAtTarget and (targetPosition - currentPosition).Magnitude < 0.2 then
                             currentPosition = targetPosition
                             isAtTarget = true
-                            if targetIsToy then
+                            if targetIsRestingTogether then
+                                targetIsRestingTogether = false
+                                restingTogetherUntil = now + random:NextNumber(4.5, 6.5)
+                                idleUntil = restingTogetherUntil
+                                model:SetAttribute("RestingWithFriend", true)
+                            elseif targetIsToy then
                                 targetIsToy = false
                                 toyPlayUntil = now + random:NextNumber(2.8, 4.2)
                                 idleUntil = toyPlayUntil
@@ -1023,6 +1034,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             )
                             local socialTrigger = partnerBehavior == "SeekingFriend"
                                 or random:NextNumber() < effectiveSocialChance
+                            local canRestTogether = partnerModel and partnerSleeping and not isSleeping
+                                and pairBondScore >= 30 and (isNight or energy <= 35)
+                                and mood >= 20 and energy >= 10
                             local canPlay = toyPart and mood >= 35
                                 and energy >= math.max(0, math.floor(tonumber(toyDefinition.EnergyCost) or 0))
                             local favoriteToy = toyId ~= nil and toyId == petDefinition.FavoriteToy
@@ -1036,7 +1050,21 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 and os.time() >= nextTreasureAt and energy >= 35 and hunger >= 25
                             local canExplore = #interestPoints > 0 and energy >= 25 and hunger >= 25 and mood >= 30
                             local explorationChance = (personality == "Любопытный" or personality == "Любознательный") and 0.34 or 0.2
-                            if seeksShelter then
+                            local restKey = pairBondKey and (tostring(player.UserId) .. ":" .. tostring(pairBondKey))
+                            if canRestTogether and restKey and (sharedRestCooldowns[restKey] or 0) <= now
+                                and random:NextNumber() < 0.32 then
+                                local sleepingPosition = partnerModel:GetPivot().Position
+                                local towardHome = home - sleepingPosition
+                                local side = towardHome.Magnitude > 0.1 and towardHome.Unit or Vector3.new(1, 0, 0)
+                                targetPosition = sleepingPosition + side * 1.8
+                                targetIsRestingTogether = true
+                                targetIsToy = false
+                                targetIsSocial = false
+                                targetIsTreasure = false
+                                targetIsInterest = false
+                                targetIsShelter = false
+                                sharedRestCooldowns[restKey] = now + 55
+                            elseif seeksShelter then
                                 targetPosition = home + Vector3.new(random:NextNumber(-1.2, 1.2), 0, random:NextNumber(-1.2, 1.2))
                                 targetIsShelter = true
                                 targetIsToy = false
@@ -1136,7 +1164,19 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local nearToy = toyPart and (currentPosition - toyApproach).Magnitude < 0.55
                             local partnerPosition = partnerModel and partnerModel:GetPivot().Position
                             local nearPartner = partnerPosition and (partnerPosition - currentPosition).Magnitude <= 10
-                            if socialPlayUntil > now and nearPartner then
+                            if restingTogetherUntil > now and partnerSleeping and pairBondScore >= 30 then
+                                behavior = "RestingWithFriend"
+                                model:SetAttribute("RestingWithFriend", true)
+                                local towardFriend = partnerPosition - currentPosition
+                                if towardFriend.Magnitude > 0.05 then
+                                    facing = math.atan2(towardFriend.X, towardFriend.Z)
+                                end
+                                bob = math.abs(math.sin(now * 1.5 + phase)) * 0.025
+                            elseif restingTogetherUntil > 0 then
+                                restingTogetherUntil = 0
+                                model:SetAttribute("RestingWithFriend", nil)
+                                idleUntil = now + 0.2
+                            elseif socialPlayUntil > now and nearPartner then
                                 behavior = "Socializing"
                                 local towardFriend = partnerPosition - currentPosition
                                 facing = math.atan2(towardFriend.X, towardFriend.Z)
@@ -1451,6 +1491,11 @@ function CompanionService:Init()
         for key in pairs(socialChaseCooldowns) do
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
                 socialChaseCooldowns[key] = nil
+            end
+        end
+        for key in pairs(sharedRestCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                sharedRestCooldowns[key] = nil
             end
         end
         self._generations[player] = nil
