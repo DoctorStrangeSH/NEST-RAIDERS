@@ -2081,3 +2081,23 @@ assert 'if pairBondScore >= 10 then' in companion_service
 assert 'local ballChance = (personality == "Игривый" or personality == "Энергичный"' in companion_service
 assert 'pairedBallCooldowns[ballGameKey] = now + 45' in companion_service
 assert 'for key in pairs(pairedBallCooldowns) do' in companion_service
+
+
+# Sprint 4.87 — hide and seek and cooperative toy play.
+for token in (
+    'local hideSeekCooldowns = {}',
+    'local function clearHideSeek(model)',
+    'partnerModel:GetAttribute("HideSeekPartner") == instanceId',
+    'pet:SetAttribute("HideSeekUntil", now + 12)',
+    'hideSeekCooldowns[hideKey] = now + 60',
+    'behavior = hideRole == "Hider" and "HidingFromFriend"',
+    'local sharedToyCooldowns = {}',
+    'partnerModel:GetAttribute("SharedToyPartner") == instanceId',
+    'pet:SetAttribute("SharedToyUntil", now + 10)',
+    'sharedToyCooldowns[sharedToyKey] = now + 60',
+    'behavior = "PlayingSharedToy"',
+    'sharedToy:SetAttribute("ToyState", "InUse")',
+    'for key in pairs(sharedToyCooldowns) do',
+    'for key in pairs(hideSeekCooldowns) do',
+):
+    assert token in companion_service, token
