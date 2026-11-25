@@ -1735,7 +1735,8 @@ assert 'local function findCompanionModels(player)' in adventure_service
 assert 'local function createAdventureMarker(player, firstModel, secondModel, pairKey, rare)' in adventure_service
 assert 'local function tryStartAdventure(player)' in adventure_service
 assert 'local PAIR_COOLDOWN = 300' in adventure_service
-assert 'local MIN_BOND = 10' in adventure_service or 'local MIN_BOND' not in adventure_service
+assert 'local MIN_BOND = 10' in adventure_service
+assert 'bond >= MIN_BOND' in adventure_service
 assert 'local rare = random:NextNumber() <= 0.12' in adventure_service
 assert 'prompt.Triggered:Connect(function(collector)' in adventure_service
 assert 'if claimed or collector ~= player or not player.Parent then return end' in adventure_service
