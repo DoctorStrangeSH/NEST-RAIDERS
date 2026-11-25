@@ -64,6 +64,7 @@ end
 local inventoryRemote = waitRemote("CompanionInventory")
 local shopRemote = waitRemote("EggShop")
 local collectionRemote = waitRemote("CollectionBook")
+local bondJournalRemote = waitRemote("BondJournal")
 local nestRemote = waitRemote("NestUpgrade")
 local displayRemote = waitRemote("DisplayPets")
 local decorRemote = waitRemote("NestDecor")
@@ -74,7 +75,7 @@ local publicProfileRemote = waitRemote("PublicProfile")
 local raidRemote = waitRemote("RaidBoard")
 local hatchRevealRemote = remotes:WaitForChild("HatchReveal", 20)
 
-if not (inventoryRemote and shopRemote and collectionRemote and nestRemote and displayRemote
+if not (inventoryRemote and shopRemote and collectionRemote and bondJournalRemote and nestRemote and displayRemote
     and decorRemote and buildRemote and visitRemote and contestRemote and publicProfileRemote and raidRemote
     and hatchRevealRemote and hatchRevealRemote:IsA("RemoteEvent")) then
     bootText.Text = "NEST RAIDERS\nНе запущена система вылупления питомцев. Проверь EggService в ServerScriptService."
@@ -362,6 +363,19 @@ collectionButton.Font = Enum.Font.GothamBlack
 collectionButton.Parent = gui
 addCorner(collectionButton, 12)
 addStroke(collectionButton, Color3.fromRGB(167, 190, 238), 1.5)
+
+local bondJournalButton = Instance.new("TextButton")
+bondJournalButton.Name = "BondJournalButton"
+bondJournalButton.Position = UDim2.fromOffset(18, 324)
+bondJournalButton.Size = UDim2.fromOffset(250, 46)
+bondJournalButton.BackgroundColor3 = Color3.fromRGB(92, 116, 91)
+bondJournalButton.Text = "ДНЕВНИК ДРУЖБЫ"
+bondJournalButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+bondJournalButton.TextSize = 14
+bondJournalButton.Font = Enum.Font.GothamBlack
+bondJournalButton.Parent = gui
+addCorner(bondJournalButton, 12)
+addStroke(bondJournalButton, Color3.fromRGB(178, 211, 145), 1.5)
 
 local nestButton = Instance.new("TextButton")
 nestButton.Name = "NestUpgradeButton"
@@ -1259,7 +1273,7 @@ addStroke(profileButton, Color3.fromRGB(160, 220, 192), 1.5)
 -- Compact responsive navigation: keep every feature reachable on desktop and mobile.
 -- Previously the last buttons were fixed at Y=692 and disappeared off small screens.
 local menuButtons = {
-    inventoryButton, shopButton, collectionButton, nestButton, displayButton,
+    inventoryButton, shopButton, collectionButton, bondJournalButton, nestButton, displayButton,
     decorButton, buildButton, visitButton, raidButton, contestButton, hallButton, materialsButton, artifactsButton, profileButton,
 }
 local navToggle = Instance.new("TextButton")
