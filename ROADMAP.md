@@ -1563,3 +1563,18 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Roblox Studio: verify every habit is visibly distinct on the current low-poly models.
 - [ ] Verify habits do not interrupt pathing, social sessions, toy play, treasure searches or gift reactions.
 - [ ] Check captions and subtle movement at phone, tablet and desktop camera distances.
+
+
+### Sprint 4.85 — Special friendship memories
+- [x] Add distinct friendship milestone celebrations at 60, 80 and 100 bond.
+- [x] Create pair-specific memories: Trusted Pact, Unbreakable Promise and Friends Forever.
+- [x] Unlock each memory exactly once when its pair reaches the corresponding bond threshold.
+- [x] Persist discoveries under the existing DiscoveredBondMoments profile collection using a stable pair key.
+- [x] Show a shared species-style banner/glow on both companions and notify the player on first discovery.
+- [x] Extend the friendship journal with three milestone records for every pair that has established a bond; undiscovered entries remain hidden with threshold hints.
+- [x] Include pair memories in the journal's completion count.
+- [x] Add static regression assertions for threshold unlocks, pair-specific keys and journal wiring.
+- [ ] Roblox Studio: raise a pair through 60, 80 and 100 bond and verify each celebration happens once.
+- [ ] Verify two different pairs unlock separate memories and do not overwrite each other.
+- [ ] Verify all three memories remain discovered after leaving and rejoining.
+- [ ] Verify journal entries update after each milestone and layout remains readable on mobile/tablet/desktop.
