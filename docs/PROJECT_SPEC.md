@@ -858,3 +858,12 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - The first unlock displays a shared banner/glow on both companions and a player notification. Repeated social sessions do not repeat the first-discovery notification.
 - The friendship journal adds three entries for each pair with a bond score above zero. Undiscovered titles remain hidden and show the required bond threshold; discovered entries show the memory title and icon.
 - Pair memories contribute to journal completion percentage and are persistent profile discoveries, not a currency/XP reward.
+
+
+### Cooperative Companion Life — Sprint 4.86
+- **Comforting a friend:** during a safe idle window, the lower-slot companion may approach its paired friend when the friend's mood is 35 or lower, its own mood is at least 45, energy and hunger are at least 20, and pair bond is at least 10. A caring personality has a higher initiation chance (72% vs 28%). The friend must be awake.
+- The comfort interaction lasts approximately 2.8–3.8 seconds. On completion within 8 studs, the receiver gains 6 mood (9 when the initiator is Caring), and the initiator gains 2 mood. Both values are written to the profile mood map. The pair has a 75-second server-session cooldown.
+- The receiver displays “Друг рядом, всё хорошо ♥”; the initiator displays “Утешает друга ♥”. Both companions use a gentle sway while the interaction is active.
+- **Cooperative discovery:** when a pair has at least 20 bond and one companion selects an exploration point, the leader may invite its paired companion to the same point. The invitation is transient server-authored model attributes and expires after 18 seconds.
+- The invited companion prioritizes the shared target over solo activities. A shared discovery completes only when both companions have arrived within 6 studs. Both gain 3 mood, both receive a discovery label, a shared-heart effect is shown, and the player receives a notice. The pair has a 90-second session cooldown.
+- An abandoned invitation expires and is cleared without a reward. These are cosmetic/social world events and do not grant currency, items, XP or permanent collection unlocks.
