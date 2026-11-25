@@ -447,6 +447,85 @@ local function buildPet(parent, companion, index)
     return model
 end
 
+local BUILD_INTERESTS = {
+    AppleTree = { Category = "Trees", Label = "Яблонька" },
+    CloverBush = { Category = "Flowers", Label = "Клеверная полянка" },
+    FlowerArch = { Category = "Flowers", Label = "Цветочная арка" },
+    CrystalPond = { Category = "Water", Label = "Кристальный пруд" },
+    MoonFountain = { Category = "Water", Label = "Лунный фонтан" },
+    CozyCottage = { Category = "Shelter", Label = "Уютный домик" },
+    Watchtower = { Category = "HighGround", Label = "Сторожевая башня" },
+}
+local DECOR_INTERESTS = {
+    FlowerPot = { Category = "Flowers", Label = "Цветочный уголок" },
+    WarmLantern = { Category = "Lanterns", Label = "Тёплый фонарь" },
+    MeadowCrystal = { Category = "Crystals", Label = "Луговой кристалл" },
+    MushroomSeat = { Category = "Resting", Label = "Грибная скамейка" },
+}
+
+local function collectInterestPoints(plotModel, home)
+    local points = {}
+    local seen = {}
+    local function addPoint(key, position, category, label)
+        if seen[key] then return end
+        local target = Vector3.new(position.X, home.Y, position.Z)
+        local distance = (target - home).Magnitude
+        if distance < 2.2 or distance > 13 then return end
+        seen[key] = true
+        table.insert(points, {
+            Id = key,
+            Position = target,
+            Category = category,
+            Label = label,
+            Distance = distance,
+        })
+    end
+
+    for _, descendant in ipairs(plotModel:GetDescendants()) do
+        if descendant:IsA("Model") then
+            local buildId = descendant:GetAttribute("BuildId")
+            local decorId = descendant:GetAttribute("DecorId")
+            local interest = (type(buildId) == "string" and BUILD_INTERESTS[buildId])
+                or (type(decorId) == "string" and DECOR_INTERESTS[decorId])
+            if interest then
+                addPoint(tostring(buildId or decorId) .. ":" .. descendant.Name,
+                    descendant:GetPivot().Position, interest.Category, interest.Label)
+            end
+        elseif descendant:IsA("BasePart") and descendant.Parent
+            and descendant.Parent.Name == "EnvironmentDecorations" then
+            local name = descendant.Name
+            if string.find(name, "^GardenTree_.+_Trunk$") then
+                addPoint(name, descendant.Position, "Trees", "Старое дерево")
+            elseif string.find(name, "^FlowerBed_.+_Soil$") then
+                addPoint(name, descendant.Position, "Flowers", "Цветочная клумба")
+            elseif string.find(name, "^GardenPathStone_") then
+                addPoint(name, descendant.Position, "Paths", "Каменная дорожка")
+            end
+        end
+    end
+    table.sort(points, function(a, b) return a.Id < b.Id end)
+    return points
+end
+
+local function chooseInterestPoint(points, favoritePlace, random, previousId)
+    local totalWeight = 0
+    local weighted = {}
+    for _, point in ipairs(points) do
+        local weight = point.Category == favoritePlace and 3.5 or 1
+        if point.Id == previousId and #points > 1 then weight *= 0.12 end
+        weight /= math.max(1, point.Distance * 0.35)
+        totalWeight += weight
+        table.insert(weighted, { Point = point, Weight = weight })
+    end
+    if totalWeight <= 0 then return nil end
+    local roll = random:NextNumber(0, totalWeight)
+    for _, entry in ipairs(weighted) do
+        roll -= entry.Weight
+        if roll <= 0 then return entry.Point end
+    end
+    return weighted[#weighted] and weighted[#weighted].Point or nil
+end
+
 function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotOffsets)
     local previous = self._displayFolders[player]
     if previous then previous:Destroy() end
@@ -490,6 +569,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local energy = math.clamp(math.floor(tonumber(needs.Energy) or 100), 0, 100)
             local sleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
             local home = basePivot.Position
+            local interestPoints = collectInterestPoints(plot.Model, home)
             model:SetAttribute("DisplaySlot", slot)
             model:SetAttribute("NestHomePosition", home)
             local toyId = profile.Nest and profile.Nest.CompanionToys and profile.Nest.CompanionToys[instanceId]
@@ -529,6 +609,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             profile.Nest.CompanionBonds = profile.Nest.CompanionBonds or {}
             local petDefinition = CompanionCatalog[companion.Id] or {}
             local activityPeriod = petDefinition.ActivityPeriod or "Any"
+            local favoritePlace = petDefinition.FavoritePlace or "Any"
             local weatherPreference = petDefinition.WeatherPreference or "Neutral"
             local nightGlow = nil
             if activityPeriod == "Night" and model.PrimaryPart then
@@ -573,6 +654,11 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local targetIsTreasure = false
             local targetIsShelter = false
             local shelterUntil = 0
+            local targetIsInterest = false
+            local interestUntil = 0
+            local lastInterestId = nil
+            local nextDiscoveryAt = 0
+            local interestLabel = nil
             local partnerSlot = slot % 2 == 1 and slot + 1 or slot - 1
             local behavior = sleeping and "Sleeping"
                 or (hunger <= 20 and "Hungry")
@@ -642,6 +728,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         targetIsSocial = false
                         targetIsShelter = false
                         shelterUntil = 0
+                        targetIsInterest = false
+                        interestUntil = 0
                         if targetIsTreasure and treasureSearchOwner == instanceId then treasureSearchOwner = nil end
                         targetIsTreasure = false
                         toyPlayUntil = 0
@@ -759,6 +847,17 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 targetIsShelter = false
                                 shelterUntil = now + random:NextNumber(4, 7)
                                 idleUntil = shelterUntil
+                            elseif targetIsInterest then
+                                targetIsInterest = false
+                                lastInterestId = model:GetAttribute("InterestTargetId")
+                                interestUntil = now + random:NextNumber(2.4, 4.2)
+                                idleUntil = interestUntil
+                                if now >= nextDiscoveryAt and random:NextNumber() < 0.14 then
+                                    nextDiscoveryAt = now + 90
+                                    local discovery = interestLabel or "необычный след"
+                                    model:SetAttribute("LastDiscovery", discovery)
+                                    player:SetAttribute("LastNotice", companion.Name .. " заметил кое-что интересное: " .. discovery .. "!")
+                                end
                             elseif targetIsSocial then
                                 local partnerPosition = partnerModel and partnerModel:GetPivot().Position
                                 if partnerPosition and (partnerPosition - currentPosition).Magnitude <= 10 then
@@ -789,6 +888,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             if weatherState == "Storm" then treasureChance *= 0.35 end
                             local canSearch = not giftCache and not treasureSearchOwner
                                 and os.time() >= nextTreasureAt and energy >= 35 and hunger >= 25
+                            local canExplore = #interestPoints > 0 and energy >= 25 and hunger >= 25 and mood >= 30
+                            local explorationChance = (personality == "Любопытный" or personality == "Любознательный") and 0.34 or 0.2
                             if seeksShelter then
                                 targetPosition = home + Vector3.new(random:NextNumber(-1.2, 1.2), 0, random:NextNumber(-1.2, 1.2))
                                 targetIsShelter = true
@@ -805,6 +906,23 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 targetPosition = socialApproach
                                 targetIsSocial = true
                                 targetIsToy = false
+                                targetIsInterest = false
+                            elseif canExplore and random:NextNumber() < explorationChance then
+                                local point = chooseInterestPoint(interestPoints, favoritePlace, random, lastInterestId)
+                                if point then
+                                    targetPosition = point.Position
+                                    interestLabel = point.Label
+                                    targetIsInterest = true
+                                    targetIsToy = false
+                                    targetIsSocial = false
+                                    targetIsTreasure = false
+                                    model:SetAttribute("InterestTargetId", point.Id)
+                                    model:SetAttribute("InterestTargetLabel", point.Label)
+                                    model:SetAttribute("FavoritePlace", favoritePlace)
+                                else
+                                    targetPosition = home
+                                    targetIsInterest = false
+                                end
                             elseif canPlay and random:NextNumber() < math.min(toyChance, 0.85) then
                                 targetPosition = toyApproach
                                 targetIsToy = true
@@ -820,6 +938,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 targetPosition = home + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)
                                 targetIsToy = false
                                 targetIsSocial = false
+                                targetIsInterest = false
                             end
                             isAtTarget = false
                         end
@@ -843,7 +962,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local step = math.min(direction.Magnitude, speed * delta)
                             currentPosition += direction.Unit * step
                             facing = math.atan2(direction.X, direction.Z)
-                            behavior = targetIsTreasure and "Searching" or (targetIsShelter and "SeekingShelter" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering")))
+                            behavior = targetIsTreasure and "Searching" or (targetIsShelter and "SeekingShelter" or (targetIsInterest and "Exploring" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering"))))
                             bob = math.abs(math.sin(now * 9 + phase)) * 0.1
                         else
                             local nearToy = toyPart and (currentPosition - toyApproach).Magnitude < 0.55
@@ -870,6 +989,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 bob = math.abs(math.sin(now * 7 + phase)) * 0.13
                                 yawOffset = math.sin(now * 5 + phase) * 0.18
                                 toyPart:SetAttribute("ToyState", "InUse")
+                            elseif interestUntil > now then
+                                behavior = "VisitingInterest"
+                                bob = math.abs(math.sin(now * 2.8 + phase)) * 0.075
+                                yawOffset = math.sin(now * 1.8 + phase) * 0.08
                             elseif shelterUntil > now then
                                 behavior = "Sheltering"
                                 bob = math.sin(now * 1.8 + phase) * 0.025
@@ -912,6 +1035,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     moodLabel.Text = isSleeping and "Zzz"
                         or (behavior == "Searching" and "Ищет сокровище")
                         or (behavior == "FoundGift" and "Нашёл подарок!")
+                        or (behavior == "Exploring" and ("Исследует: " .. tostring(interestLabel or "остров")))
+                        or (behavior == "VisitingInterest" and ("Любимое место: " .. tostring(interestLabel or "гнездо")))
                         or (behavior == "SeekingShelter" and "Ищет укрытие")
                         or (behavior == "Sheltering" and "Прячется от грозы")
                         or (weatherPreference == "Rain" and isWetWeather and behavior == "Idle" and "Радуется дождю")
