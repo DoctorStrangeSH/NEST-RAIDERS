@@ -1093,7 +1093,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         local partnerChaseUntil = partnerModel and (tonumber(partnerModel:GetAttribute("CompanionChaseUntil")) or 0) or 0
                         local partnerPositionForChase = partnerModel and partnerModel:GetPivot().Position
                         if chaseUntil > now and partnerChaseUntil > now and partnerPositionForChase
-                            and not isSleeping and mood >= 25 and energy >= 15 then
+                            and not isSleeping and not partnerSleeping and mood >= 25 and energy >= 15 then
                             local orbitAngle = now * 2.8 + phase
                             local chaseRadius = 2.4
                             targetPosition = partnerPositionForChase
