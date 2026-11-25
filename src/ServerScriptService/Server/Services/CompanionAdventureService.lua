@@ -15,6 +15,14 @@ local MAX_DISTANCE = 42
 local random = Random.new()
 local activeEvents = {}
 
+local function getBondLevel(score)
+    if score >= 90 then return "Неразлучные" end
+    if score >= 60 then return "Лучшие друзья" end
+    if score >= 30 then return "Друзья" end
+    if score >= 10 then return "Приятели" end
+    return "Знакомство"
+end
+
 local function getPairKey(firstId, secondId)
     firstId, secondId = tostring(firstId or ""), tostring(secondId or "")
     if firstId == "" or secondId == "" or firstId == secondId then return nil end
@@ -151,6 +159,11 @@ local function createAdventureMarker(player, firstModel, secondModel, pairKey, r
         profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
         local score = math.clamp(math.floor(tonumber(profile.Nest.CompanionBonds[pairKey]) or 0) + (rare and 3 or 2), 0, 100)
         profile.Nest.CompanionBonds[pairKey] = score
+        local bondLevel = getBondLevel(score)
+        firstModel:SetAttribute("FriendshipScore", score)
+        firstModel:SetAttribute("FriendshipLevel", bondLevel)
+        secondModel:SetAttribute("FriendshipScore", score)
+        secondModel:SetAttribute("FriendshipLevel", bondLevel)
 
         local firstId = firstModel:GetAttribute("CompanionInstanceId")
         local secondId = secondModel:GetAttribute("CompanionInstanceId")
@@ -208,13 +221,18 @@ local function tryStartAdventure(player)
             if key and awake and mood >= 25 and bond >= MIN_BOND and (firstPosition - secondPosition).Magnitude <= MAX_DISTANCE
                 and (tonumber(profile.Nest.CompanionAdventureCooldowns[key]) or 0) <= os.time()
                 and not activeEvents[key] then
-                table.insert(candidates, { First = first, Second = second, Key = key })
+                table.insert(candidates, { First = first, Second = second, Key = key, Bond = bond })
             end
         end
     end
     if #candidates == 0 then return end
     local choice = candidates[random:NextInteger(1, #candidates)]
-    local rare = random:NextNumber() <= 0.12
+    -- Higher friendship tiers make rare shared discoveries more likely.
+    local rareChance = choice.Bond >= 90 and 0.20
+        or choice.Bond >= 60 and 0.16
+        or choice.Bond >= 30 and 0.12
+        or 0.08
+    local rare = random:NextNumber() <= rareChance
     local marker = createAdventureMarker(player, choice.First, choice.Second, choice.Key, rare)
     if not marker then return end
 
