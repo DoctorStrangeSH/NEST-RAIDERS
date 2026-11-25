@@ -1837,4 +1837,5 @@ assert 'restingTogetherUntil = now + random:NextNumber(4.5, 6.5)' in companion_s
 assert 'model:SetAttribute("RestingWithFriend", true)' in companion_service
 assert 'behavior = "RestingWithFriend"' in companion_service
 assert 'model:SetAttribute("RestingWithFriend", nil)' in companion_service
+assert 'if targetIsRestingTogether and (not partnerModel or not partnerSleeping) then' in companion_service
 assert 'for key in pairs(sharedRestCooldowns) do' in companion_service
