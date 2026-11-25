@@ -790,3 +790,13 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - First-time combinations are stored in profile.Nest.DiscoveredBondMoments and notify the owner once. The discovery is account/profile progress; subsequent activations remain possible after cooldown.
 - Unknown combinations continue using ordinary personality greetings and social play. No additional bond, mood, needs, currency or XP is granted.
 - Studio acceptance must verify order-independent matching, all four interactions, save/rejoin persistence, notification deduplication, visual cleanup, multiplayer isolation and mobile readability.
+
+
+### Friendship Discovery Journal — Sprint 4.80
+- The player can open a dedicated Дневник дружбы panel from the main navigation.
+- The server returns the four supported species-specific bond moments and whether each ID exists in Nest.DiscoveredBondMoments.
+- Undiscovered entries show a locked icon, hidden title and broad non-spoiler hint. They must not expose the exact species pair. Discovered entries show their title, rarity, icon and a confirmation hint.
+- The panel displays discovered count, total count and percentage completion. It is read-only; discoveries are earned only through in-world companion interactions.
+- BondJournalService handles the RemoteFunction request and checks ProfileLoaded. Discovery IDs are persisted in the profile template under Nest.DiscoveredBondMoments.
+- The UI uses the existing responsive HUD scaling, scrollable card list, dedicated menu entry and close button.
+- Studio acceptance must verify discovery refresh/rejoin persistence, hidden-data privacy, completion math, viewport scaling and safe handling while profile data loads.
