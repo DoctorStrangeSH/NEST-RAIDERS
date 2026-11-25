@@ -712,3 +712,13 @@ The Starter Island now rotates through Clear, Rain, Fog and Storm weather states
 
 ### Favorite Places and Autonomous Exploration — Sprint 4.71
 Displayed companions can discover destinations in their owner's personal nest. The destination list is built from nearby permanent garden landmarks (trees, flower beds and path stones), player-built structures and placed decorations. Each species may define a `FavoritePlace` category; matching destinations receive a higher selection weight, and the last visited point is temporarily discouraged to reduce repetitive loops. When mood, hunger and energy permit, pets autonomously explore a nearby point, pause there, and display a short Russian activity label above their model. Rarely, a pet notices something unusual and sends an owner notification. This is a discovery event only and does not grant an economy reward. Exploration is local to the personal nest and remains lower priority than urgent needs, sleep, storm shelter, treasure, socializing and toy play. Roblox Studio acceptance is required for movement boundaries, object overlap, placed-decoration refresh and notification cadence.
+
+
+## 12. Paired companion adventures — Sprint 4.72
+- Two active companions may autonomously discover a shared secret when both are awake, close enough, and have sufficient mood.
+- The server owns pair selection, cooldowns, secret creation, interaction validation, and rewards.
+- The shared discovery is represented by a visible world marker and a temporary beam linking the two companions.
+- The rare variant uses a golden presentation and a distinct notification; it does not grant currency or competitive power.
+- Claiming a discovery increases persistent pair friendship and restores mood for both companions. The companion with lower mood receives the larger assistance bonus.
+- Per-pair cooldowns are stored in the player's nest profile. Only the owner may claim the marker, and server-side range and pair-identity checks are mandatory.
+- Expired or claimed events must remove their visual links and temporary world objects.
