@@ -200,6 +200,37 @@ local RARITY_SPECIAL_GIFT_BONUS = {
     ["Мифический"] = 0.14,
 }
 
+local GIFT_RECEIVER_REACTIONS = {
+    ["Игривый"] = { Animation = "Spin", Text = "Ура! Спасибо!" },
+    ["Энергичный"] = { Animation = "Jump", Text = "Вау! Как здорово!" },
+    ["Дружелюбный"] = { Animation = "Hug", Text = "Как мило! Спасибо!" },
+    ["Добродушный"] = { Animation = "Hug", Text = "Ты такой хороший друг!" },
+    ["Заботливый"] = { Animation = "Hug", Text = "Обнимашки!" },
+    ["Осторожный"] = { Animation = "Shy", Text = "Ой… это мне?" },
+    ["Спокойный"] = { Animation = "Sway", Text = "Как приятно…" },
+    ["Мечтательный"] = { Animation = "Dream", Text = "Настоящее чудо!" },
+    ["Гордый"] = { Animation = "Proud", Text = "Хм… мне нравится!" },
+    ["Независимый"] = { Animation = "Shy", Text = "Спасибо, друг." },
+    ["Любопытный"] = { Animation = "Spin", Text = "Что же это?" },
+    ["Любознательный"] = { Animation = "Spin", Text = "Надо рассмотреть!" },
+}
+local GIFT_GIVER_REACTIONS = {
+    ["Игривый"] = { Animation = "Bounce", Text = "Сюрприз!" },
+    ["Энергичный"] = { Animation = "Jump", Text = "Я нашёл это для тебя!" },
+    ["Заботливый"] = { Animation = "Proud", Text = "Я хотел тебя порадовать." },
+    ["Дружелюбный"] = { Animation = "Sway", Text = "Рад поделиться!" },
+    ["Добродушный"] = { Animation = "Sway", Text = "Это тебе, дружок!" },
+    ["Осторожный"] = { Animation = "Shy", Text = "Я… приготовил кое-что." },
+    ["Мечтательный"] = { Animation = "Dream", Text = "Маленькое чудо для тебя." },
+}
+local function setGiftReaction(model, reaction, duration, rare)
+    if not model or not model.Parent then return end
+    model:SetAttribute("GiftReaction", reaction.Animation)
+    model:SetAttribute("GiftReactionText", rare and "Невероятно!" or reaction.Text)
+    model:SetAttribute("GiftReactionUntil", os.clock() + duration)
+    model:SetAttribute("GiftReactionRare", rare == true)
+end
+
 local function showCompanionGift(giverModel, receiverModel, gift, isRare)
     if not giverModel or not giverModel.Parent or not receiverModel or not receiverModel.Parent then return end
     receiverModel:SetAttribute("LastGiftReceived", gift.Name)
@@ -292,6 +323,19 @@ local function tryGiveCompanionGift(player, profile, giverModel, receiverModel, 
     giverModel:SetAttribute("Mood", giverMood)
 
     showCompanionGift(giverModel, receiverModel, gift, isRare)
+    local duration = isRare and 3.6 or 2.8
+    local receiverPersonality = receiverModel:GetAttribute("Personality") or ""
+    local giverPersonality = giverModel:GetAttribute("Personality") or ""
+    local receiverReaction = GIFT_RECEIVER_REACTIONS[receiverPersonality]
+        or { Animation = "Jump", Text = "Спасибо за подарок!" }
+    local giverReaction = GIFT_GIVER_REACTIONS[giverPersonality]
+        or { Animation = "Proud", Text = "Это для тебя!" }
+    if isRare then
+        receiverReaction = { Animation = "Amazed", Text = "Невероятный подарок!" }
+        giverReaction = { Animation = "Proud", Text = "Я нашёл нечто особенное!" }
+    end
+    setGiftReaction(receiverModel, receiverReaction, duration, isRare)
+    setGiftReaction(giverModel, giverReaction, duration * 0.9, isRare)
     player:SetAttribute("LastNotice", isNewDiscovery and ("Новое воспоминание: " .. gift.Name)
         or ("Питомец подарил другу: " .. gift.Name))
 end
@@ -1630,7 +1674,43 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     friendshipCardStroke.Color = bondColor
                     friendshipFill.BackgroundColor3 = bondColor
                     friendshipFill.Size = UDim2.new(bondScore / 100, 0, 1, 0)
-                    moodLabel.Text = isSleeping and "Zzz"
+                    local reactionUntil = tonumber(model:GetAttribute("GiftReactionUntil")) or 0
+                    local giftReaction = model:GetAttribute("GiftReaction")
+                    local reactionActive = giftReaction ~= nil and now < reactionUntil and not isSleeping
+                    local reactionBob, reactionYaw, reactionRoll = 0, 0, 0
+                    if reactionActive then
+                        local reactionPhase = now * 8 + phase
+                        if giftReaction == "Jump" or giftReaction == "Bounce" then
+                            reactionBob = math.abs(math.sin(reactionPhase)) * (giftReaction == "Jump" and 0.58 or 0.34)
+                        elseif giftReaction == "Spin" then
+                            reactionBob = math.abs(math.sin(reactionPhase)) * 0.2
+                            reactionYaw = math.sin(reactionPhase * 0.55) * 0.75
+                        elseif giftReaction == "Hug" then
+                            reactionBob = math.sin(reactionPhase * 0.55) * 0.07
+                            reactionRoll = math.sin(reactionPhase * 0.55) * 0.11
+                        elseif giftReaction == "Shy" then
+                            reactionBob = math.sin(reactionPhase * 0.7) * 0.035
+                            reactionRoll = math.sin(reactionPhase * 0.6) * 0.16
+                            reactionYaw = math.sin(reactionPhase * 0.45) * 0.12
+                        elseif giftReaction == "Sway" or giftReaction == "Dream" then
+                            reactionBob = math.sin(reactionPhase * 0.65) * 0.09
+                            reactionRoll = math.sin(reactionPhase * 0.5) * 0.09
+                        elseif giftReaction == "Proud" then
+                            reactionBob = math.abs(math.sin(reactionPhase * 0.8)) * 0.12
+                            reactionRoll = math.sin(reactionPhase * 0.5) * 0.06
+                        elseif giftReaction == "Amazed" then
+                            reactionBob = math.abs(math.sin(reactionPhase * 1.25)) * 0.62
+                            reactionYaw = math.sin(reactionPhase * 0.35) * 0.3
+                        end
+                        behavior = giftReaction == "Hug" and "HuggingFriend" or "CelebratingGift"
+                    elseif giftReaction ~= nil then
+                        model:SetAttribute("GiftReaction", nil)
+                        model:SetAttribute("GiftReactionText", nil)
+                        model:SetAttribute("GiftReactionUntil", nil)
+                        model:SetAttribute("GiftReactionRare", nil)
+                    end
+                    moodLabel.Text = (reactionActive and model:GetAttribute("GiftReactionText"))
+                        or (isSleeping and "Zzz")
                         or (behavior == "Searching" and "Ищет сокровище")
                         or (behavior == "FoundGift" and "Нашёл подарок!")
                         or (behavior == "Exploring" and ("Исследует: " .. tostring(interestLabel or "остров")))
@@ -1645,8 +1725,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
                     model:SetAttribute("Mood", mood)
                     model:SetAttribute("Behavior", behavior)
-                    local position = currentPosition + Vector3.new(0, bob, 0)
-                    model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset, 0))
+                    local position = currentPosition + Vector3.new(0, bob + reactionBob, 0)
+                    model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset + reactionYaw, reactionRoll))
                     task.wait(0.12)
                 end
             end)
