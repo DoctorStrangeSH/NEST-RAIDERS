@@ -1724,3 +1724,26 @@ assert 'targetIsInterest and "Exploring"' in companion_service
 assert 'behavior = "VisitingInterest"' in companion_service
 assert 'model:SetAttribute("LastDiscovery", discovery)' in companion_service
 assert 'player:SetAttribute("LastNotice", companion.Name .. " заметил кое-что интересное: "' in companion_service
+
+
+# Sprint 4.72 — paired companion adventures and mutual aid.
+adventure_service = Path("src/ServerScriptService/Server/Services/CompanionAdventureService.lua").read_text()
+assert '"CompanionAdventureService"' in server
+assert 'CompanionAdventureCooldowns = {}' in profile_template
+assert 'local function getPairKey(firstId, secondId)' in adventure_service
+assert 'local function findCompanionModels(player)' in adventure_service
+assert 'local function createAdventureMarker(player, firstModel, secondModel, pairKey, rare)' in adventure_service
+assert 'local function tryStartAdventure(player)' in adventure_service
+assert 'local PAIR_COOLDOWN = 300' in adventure_service
+assert 'local MIN_BOND = 10' in adventure_service or 'local MIN_BOND' not in adventure_service
+assert 'local rare = random:NextNumber() <= 0.12' in adventure_service
+assert 'prompt.Triggered:Connect(function(collector)' in adventure_service
+assert 'if claimed or collector ~= player or not player.Parent then return end' in adventure_service
+assert '(root.Position - marker.Position).Magnitude > 13' in adventure_service
+assert 'profile.Nest.CompanionAdventureCooldowns[choice.Key] = os.time() + PAIR_COOLDOWN' in adventure_service
+assert 'profile.Nest.CompanionBonds[pairKey] = score' in adventure_service
+assert 'profile.Nest.CompanionMood[firstId]' in adventure_service
+assert 'profile.Nest.CompanionMood[secondId]' in adventure_service
+assert 'local beam = Instance.new("Beam")' in adventure_service
+assert 'firstAttachment:Destroy()' in adventure_service and 'secondAttachment:Destroy()' in adventure_service
+assert 'Debris:AddItem(marker, 90)' in adventure_service
