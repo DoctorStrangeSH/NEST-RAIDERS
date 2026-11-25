@@ -1061,3 +1061,16 @@ Static checks verify weather configuration, environmental objects, state attribu
 11. Run with two players and compare notices, pets and destination attributes. Each player must only receive discoveries from their own companions.
 
 Static regression checks cover species preferences, destination collection, weighted selection, exploration states and owner notices. Visual, multiplayer, placement and behavior-priority checks remain required in Roblox Studio.
+
+
+## Sprint 4.72 — Paired companion adventures
+- [ ] Equip at least two companions and verify an eligible pair can start an adventure only while both are awake, sufficiently happy, and nearby.
+- [ ] Confirm the paired secret appears near the two companions with a visible connecting beam and readable Russian label.
+- [ ] Confirm the rare golden-secret variant is visually distinct and sends the correct owner notification.
+- [ ] Claim the secret as the owner; verify both companions receive mood, the lower-mood companion receives the larger assistance bonus, and pair friendship increases.
+- [ ] Attempt to claim another player's marker and verify rejection.
+- [ ] Attempt to claim outside prompt range and verify no profile changes.
+- [ ] Verify per-pair cooldown prevents immediate repeat events and persists after reconnect.
+- [ ] Verify claim, timeout, respawn, and disconnect clean up the marker, beam, and attachments.
+- [ ] Test with two players in the same server; ensure events and rewards remain isolated by owner.
+- [ ] Test prompt readability and interaction on desktop and mobile.
