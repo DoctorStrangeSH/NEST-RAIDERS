@@ -1947,3 +1947,10 @@ assert 'player, profile, partnerModel, model, partnerDefinition' in companion_se
 assert 'local giftKey = tostring(giverDefinition.EggId or "MeadowEgg") .. ":" .. gift.Name' in companion_service
 assert 'giftDiscoveries[key] == true' in gift_journal
 assert 'Открыто воспоминаний: %d / %d  ·  %d%%' in client
+
+assert 'local RARITY_SPECIAL_GIFT_BONUS = {' in companion_service
+assert '["Редкий"] = 0.04' in companion_service
+assert '["Эпический"] = 0.07' in companion_service
+assert '["Легендарный"] = 0.10' in companion_service
+assert '["Мифический"] = 0.14' in companion_service
+assert 'rareChance = math.clamp(rareChance + (RARITY_SPECIAL_GIFT_BONUS[giverDefinition.Rarity or ""] or 0), 0.02, 0.35)' in companion_service
