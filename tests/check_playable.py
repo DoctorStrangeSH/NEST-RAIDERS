@@ -1782,3 +1782,14 @@ assert 'glow.Name = "FriendshipMilestoneGlow"' in companion_service
 assert 'banner.Name = "FriendshipMilestoneBanner"' in companion_service
 assert 'local milestone = BOND_MILESTONES[bondScore]' in companion_service
 assert 'if milestone then' in companion_service
+
+
+# Sprint 4.74 — visible shared heart emote during completed-pair social play.
+assert 'local socialMomentCooldowns = {}' in companion_service
+assert 'local function showSharedHeartMoment(firstModel, secondModel)' in companion_service
+assert 'bubble.Name = "SharedFriendshipHeart"' in companion_service
+assert 'heart.Text = "♥"' in companion_service
+assert 'task.delay(1.6, function()' in companion_service
+assert 'if slot < partnerSlot and partnerModel then' in companion_service
+assert 'socialMomentCooldowns[momentKey] = now + 18' in companion_service
+assert 'showSharedHeartMoment(model, partnerModel)' in companion_service
