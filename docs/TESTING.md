@@ -1096,7 +1096,7 @@ Static regression checks cover species preferences, destination collection, weig
 
 
 ## Sprint 4.75 — Personality-aware relationships
-- [ ] Test Осторожный + Осторожный at bond 0–9; verify they do not force social approaches before trust is built, while still allowing the pair to gain bond through an allowed route.
+- [ ] Test Осторожный + Осторожный at bond 0–9; verify approaches are rare but possible at zero bond, so the pair can gradually earn its first bond points without becoming permanently isolated.
 - [ ] Test Осторожный + Дружелюбный and Осторожный + Добродушный at bond 0; verify the outgoing pet can initiate and the cautious pet can accept.
 - [ ] Raise a cautious pair to 10 bond; verify social approaches become possible without a personality change.
 - [ ] Compare Дружелюбный / Добродушный against Спокойный / Мудрый; verify outgoing pets initiate more often over a comparable observation window.
