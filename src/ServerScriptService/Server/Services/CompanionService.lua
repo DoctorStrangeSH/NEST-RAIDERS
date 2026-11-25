@@ -674,6 +674,13 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             task.spawn(function()
                 local previousTime = os.clock()
                 while model.Parent == folder and folder.Parent do
+                    -- Read back profile-side mood changes made by other server systems
+                    -- (for example paired adventures) before publishing the pet state.
+                    local savedMood = profile.Nest and profile.Nest.CompanionMood
+                        and profile.Nest.CompanionMood[instanceId]
+                    if savedMood ~= nil then
+                        mood = math.clamp(math.floor(tonumber(savedMood) or mood), 0, 100)
+                    end
                     local now = os.clock()
                     local delta = math.clamp(now - previousTime, 0, 0.25)
                     if now - interestPointsUpdatedAt >= 5 and plot.Model and plot.Model.Parent then
