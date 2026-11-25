@@ -1895,3 +1895,19 @@ assert 'profile.Nest.DiscoveredBondMoments' in bond_journal_service
 assert 'CompletionPercent = math.floor(discoveredCount / #MOMENTS * 100 + 0.5)' in bond_journal_service
 assert 'Title = discovered and definition.Title or "???"' in bond_journal_service
 assert 'Hint = discovered and "Секрет уже открыт.' in bond_journal_service
+
+
+# Sprint 4.81 — visible friendship tiers and tier-based adventure rewards.
+adventure_service = Path("src/ServerScriptService/Server/Services/CompanionAdventureService.lua").read_text()
+assert 'local friendshipBillboard = Instance.new("BillboardGui")' in companion_service
+assert 'friendshipBillboard.Enabled = bondKey ~= nil and bondScore > 0' in companion_service
+assert 'friendshipText.Text = string.format("♥ %s  ·  %d/100", bondLevel, bondScore)' in companion_service
+assert 'friendshipFill.Size = UDim2.new(bondScore / 100, 0, 1, 0)' in companion_service
+assert 'local bondLevel = getBondLevel(score)' in adventure_service
+assert 'Bond = bond' in adventure_service
+assert 'local rareChance = choice.Bond >= 90 and 0.20' in adventure_service
+assert 'or choice.Bond >= 60 and 0.16' in adventure_service
+assert 'or choice.Bond >= 30 and 0.12' in adventure_service
+assert 'or 0.08' in adventure_service
+assert 'firstModel:SetAttribute("FriendshipLevel", bondLevel)' in adventure_service
+assert 'secondModel:SetAttribute("FriendshipLevel", bondLevel)' in adventure_service
