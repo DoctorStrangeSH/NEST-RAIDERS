@@ -759,3 +759,12 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - A 35-second per-player/per-pair cooldown prevents repeated interruptions. The cooldown is runtime-only and cleared on player departure.
 - The interaction is cosmetic and grants no extra mood, friendship, currency or XP. Existing social-session rewards remain unchanged.
 - Studio acceptance must verify visible movement, no jitter/collision, clean return to routine, both display pairs, interruptions, multiplayer isolation and mobile readability.
+
+
+### Resting Beside a Friend — Sprint 4.77
+- An awake companion may seek a quiet rest spot beside its sleeping partner when their saved bond is at least 30.
+- The interaction is more likely to be eligible at night or when the awake pet has 35 energy or less; minimum mood 20 and energy 10 prevent exhausted/low-mood edge cases from being treated as social play.
+- The awake companion moves to a side-offset position 1.8 studs from the sleeping pet, then rests calmly for 4.5–6.5 seconds. The sleeper is not moved or woken.
+- During the rest the server publishes Behavior = RestingWithFriend and the RestingWithFriend model attribute. The state clears when the rest ends, the partner wakes, or the resting pet itself falls asleep.
+- A 55-second per-player/per-pair runtime cooldown prevents repeated approaches. It is cleared when the owner leaves.
+- This is a cosmetic interaction only: it does not change sleep timers, energy, mood, bond, currency or XP. Studio acceptance must verify position, no overlap, wake interruption, thresholds, both pairs and multiplayer isolation.
