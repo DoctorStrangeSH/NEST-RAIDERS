@@ -367,6 +367,8 @@ end
 local function showSpeciesBondMoment(firstModel, secondModel, moment)
     for _, model in ipairs({ firstModel, secondModel }) do
         if model and model.Parent then
+            model:SetAttribute("SpeciesBondMoment", moment.Title)
+            model:SetAttribute("SpeciesBondMomentUntil", os.clock() + 3.4)
             local adornee = model:FindFirstChild("Head") or model.PrimaryPart
             if adornee then
                 local bubble = Instance.new("BillboardGui")
@@ -410,6 +412,10 @@ local function showSpeciesBondMoment(firstModel, secondModel, moment)
             glow.Parent = model
             task.delay(3.4, function()
                 if glow.Parent then glow:Destroy() end
+                if model.Parent and model:GetAttribute("SpeciesBondMoment") == moment.Title then
+                    model:SetAttribute("SpeciesBondMoment", nil)
+                    model:SetAttribute("SpeciesBondMomentUntil", nil)
+                end
             end)
         end
     end
