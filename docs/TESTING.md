@@ -1045,3 +1045,19 @@ Static checks verify cycle settings, phase replication, activity traits and beha
 11. Run multiple weather rotations with two or more clients and inspect server Output for errors or accumulated effects.
 
 Static checks verify weather configuration, environmental objects, state attributes, species reactions and HUD subscriptions. Roblox Studio visual, multiplayer, low-end performance and gameplay tests remain required.
+
+
+## Sprint 4.71 — Favorite Places and Autonomous Nest Exploration
+1. Start a Studio server and display companions in each unlocked nest slot. Confirm pets remain within their own plot and choose nearby garden landmarks.
+2. Observe MeadowFox and SproutDragon over several minutes. Confirm they prefer flower beds and trees respectively, while still occasionally visiting other nearby points.
+3. Place a CrystalPond or MoonFountain and a WarmLantern or MeadowCrystal. Confirm MossTurtle prefers water features, GlowMoth prefers lanterns, and CaveGlimmerbat/HeartWisp prefer crystals when those destinations are in range.
+4. Place an AppleTree, FlowerArch, CozyCottage and Watchtower. Confirm each object is recognized as a destination of the expected category.
+5. Watch the overhead pet label while moving and while visiting a point. Confirm labels fit and do not obscure nearby pets or prompts.
+6. Observe rare discovery notices. Confirm they are occasional, identify the pet and landmark, and do not grant unintended coins or items.
+7. Let energy and hunger fall, trigger sleep and storm shelter, and confirm urgent needs take priority over exploration.
+8. Use toys, socialize paired pets, collect a treasure cache and build/remove decorations during the same session. Confirm exploration does not cancel or duplicate existing actions.
+9. Remove and replace a decoration, then refresh the displayed pets. Confirm old destinations are not retained and newly placed landmarks can be selected.
+10. Test all four display slots on every plot position, including the two rear slots. Confirm target points remain on the plot and pets do not clip through the plot edge or nest station.
+11. Run with two players and compare notices, pets and destination attributes. Each player must only receive discoveries from their own companions.
+
+Static regression checks cover species preferences, destination collection, weighted selection, exploration states and owner notices. Visual, multiplayer, placement and behavior-priority checks remain required in Roblox Studio.
