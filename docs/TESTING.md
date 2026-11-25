@@ -1268,3 +1268,11 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify both games cancel when a pet sleeps, is removed, has low needs or seeks storm shelter.
 - [ ] Verify separate 60-second cooldowns, no additional currency/XP and no simultaneous ball game.
 - [ ] Verify normal pet behavior and toy state resume after expiry; test multiple owners and mobile readability.
+
+
+## Sprint 4.87 — Shared treasure hunt
+- [ ] Observe a 30+ friendship pair searching a nearby landmark and reaching separate positions.
+- [ ] Confirm discovery requires both pets to arrive and produces exactly one notice and golden visual, removed after three seconds.
+- [ ] Remove one pet, lower its needs, start sleep or change weather to storm during the event; verify cancellation without discovery.
+- [ ] Check 10-second timeout and 90-second cooldown, no additional currency or items, and no overlap with ball, toy or hide-and-seek.
+- [ ] Check multiple owners, display refresh, mobile readability and performance.
