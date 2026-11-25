@@ -1477,3 +1477,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Clear runtime cooldown entries when the owner leaves; add static regression checks.
 - [ ] Roblox Studio: verify all four pair combinations, visual readability, discovery notification exactly once, persistence after rejoin and no repeat spam.
 - [ ] Test pair order reversal, both display pairs, multiple players, pet removal during effect and mobile scaling.
+
+
+### Sprint 4.80 — Friendship discovery journal
+- [x] Add BondJournalService with a read-only server snapshot of the four known species moments.
+- [x] Persist discovered moment IDs under Nest.DiscoveredBondMoments in ProfileTemplate.
+- [x] Keep undiscovered titles hidden and provide non-spoiler hints; reveal title/icon and completion status only after discovery.
+- [x] Register the BondJournal RemoteFunction and service in server bootstrap.
+- [x] Add a responsive in-game journal panel, progress count, four discovery cards, close control and dedicated navigation icon.
+- [x] Add static regression assertions for server endpoint, profile persistence and UI wiring.
+- [ ] Roblox Studio: verify first-time discovery appears after refresh/reopen and remains after leave/rejoin.
+- [ ] Verify locked entries never leak species names, all four discovered entries display correctly, and 0/4–4/4 progress is accurate.
+- [ ] Test mobile/tablet/desktop scaling, scrolling, close behavior, simultaneous panels, and profile-not-loaded handling.
