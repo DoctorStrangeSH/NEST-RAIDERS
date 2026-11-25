@@ -117,6 +117,22 @@ local function createAdventureMarker(player, firstModel, secondModel, pairKey, r
     })
     pulse:Play()
 
+    local firstHighlight = Instance.new("Highlight")
+    firstHighlight.Name = "PairedAdventureGlow"
+    firstHighlight.Adornee = firstModel
+    firstHighlight.FillColor = marker.Color
+    firstHighlight.OutlineColor = marker.Color
+    firstHighlight.FillTransparency = 0.72
+    firstHighlight.OutlineTransparency = 0.18
+    firstHighlight.DepthMode = Enum.HighlightDepthMode.Occluded
+    firstHighlight.Parent = firstModel
+    local secondHighlight = firstHighlight:Clone()
+    secondHighlight.Adornee = secondModel
+    secondHighlight.Parent = secondModel
+    local glowPulse = TweenInfo.new(0.65, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+    TweenService:Create(firstHighlight, glowPulse, { FillTransparency = 0.38 }):Play()
+    TweenService:Create(secondHighlight, glowPulse, { FillTransparency = 0.38 }):Play()
+
     local claimed = false
     local connection
     connection = prompt.Triggered:Connect(function(collector)
@@ -163,6 +179,8 @@ local function createAdventureMarker(player, firstModel, secondModel, pairKey, r
     marker.Destroying:Connect(function()
         if firstAttachment.Parent then firstAttachment:Destroy() end
         if secondAttachment.Parent then secondAttachment:Destroy() end
+        if firstHighlight.Parent then firstHighlight:Destroy() end
+        if secondHighlight.Parent then secondHighlight:Destroy() end
     end)
     Debris:AddItem(marker, 90)
     return marker
