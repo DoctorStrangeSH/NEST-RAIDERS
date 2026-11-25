@@ -16,6 +16,7 @@ CompanionService._generations = {}
 local MAX_VISIBLE_COMPANIONS = 3
 local FOLLOW_INTERVAL = 0.1
 local socialMomentCooldowns = {}
+local pairGreetingLastAt = {}
 local socialChaseCooldowns = {}
 local sharedRestCooldowns = {}
 
@@ -271,6 +272,84 @@ local function showSharedHeartMoment(firstModel, secondModel)
         end
     end
 end
+local GREETING_STYLES = {
+    ["Дружелюбный"] = { Icon = "♥", Color = Color3.fromRGB(255, 125, 166), Text = "Рад тебя видеть!" },
+    ["Добродушный"] = { Icon = "♥", Color = Color3.fromRGB(255, 174, 120), Text = "Привет, друг!" },
+    ["Игривый"] = { Icon = "✦", Color = Color3.fromRGB(255, 218, 112), Text = "Поиграем?" },
+    ["Энергичный"] = { Icon = "★", Color = Color3.fromRGB(255, 205, 105), Text = "Ура, ты здесь!" },
+    ["Осторожный"] = { Icon = "…", Color = Color3.fromRGB(153, 205, 224), Text = "Привет…" },
+    ["Спокойный"] = { Icon = "❀", Color = Color3.fromRGB(155, 213, 175), Text = "Рад встрече" },
+    ["Мудрый"] = { Icon = "✧", Color = Color3.fromRGB(183, 177, 235), Text = "Снова вместе" },
+    ["Мечтательный"] = { Icon = "☾", Color = Color3.fromRGB(173, 180, 255), Text = "Как хорошо…" },
+}
+
+local function showPersonalityGreeting(firstModel, secondModel, firstPersonality, secondPersonality, reunion)
+    local models = {
+        { Model = firstModel, Personality = firstPersonality },
+        { Model = secondModel, Personality = secondPersonality },
+    }
+    for _, entry in ipairs(models) do
+        local model = entry.Model
+        if model and model.Parent then
+            local style = GREETING_STYLES[entry.Personality] or {
+                Icon = "♥", Color = Color3.fromRGB(255, 150, 175), Text = "Привет!"
+            }
+            local adornee = model:FindFirstChild("Head") or model.PrimaryPart
+            if adornee then
+                local bubble = Instance.new("BillboardGui")
+                bubble.Name = reunion and "FriendshipReunionGreeting" or "PersonalityGreeting"
+                bubble.Adornee = adornee
+                bubble.Size = UDim2.fromOffset(154, reunion and 48 or 40)
+                bubble.StudsOffset = Vector3.new(0, reunion and 1.45 or 1.15, 0)
+                bubble.AlwaysOnTop = false
+                bubble.Parent = model
+
+                local label = Instance.new("TextLabel")
+                label.Size = UDim2.fromScale(1, 1)
+                label.BackgroundColor3 = Color3.fromRGB(28, 37, 49)
+                label.BackgroundTransparency = 0.12
+                label.BorderSizePixel = 0
+                label.Font = Enum.Font.GothamBold
+                label.TextScaled = true
+                label.TextWrapped = true
+                label.TextColor3 = style.Color
+                label.Text = reunion and ("✦ " .. style.Text .. " ✦") or (style.Icon .. " " .. style.Text)
+                label.Parent = bubble
+                local corner = Instance.new("UICorner")
+                corner.CornerRadius = UDim.new(0, 10)
+                corner.Parent = label
+                local stroke = Instance.new("UIStroke")
+                stroke.Color = style.Color
+                stroke.Transparency = 0.35
+                stroke.Thickness = 1.2
+                stroke.Parent = label
+                task.delay(reunion and 3.2 or 2.1, function()
+                    if bubble.Parent then bubble:Destroy() end
+                end)
+            end
+        end
+    end
+
+    if reunion then
+        for _, model in ipairs({ firstModel, secondModel }) do
+            if model and model.Parent then
+                local glow = Instance.new("Highlight")
+                glow.Name = "FriendshipReunionGlow"
+                glow.Adornee = model
+                glow.FillColor = Color3.fromRGB(255, 211, 137)
+                glow.OutlineColor = Color3.fromRGB(255, 230, 175)
+                glow.FillTransparency = 0.72
+                glow.OutlineTransparency = 0.12
+                glow.DepthMode = Enum.HighlightDepthMode.Occluded
+                glow.Parent = model
+                task.delay(3.2, function()
+                    if glow.Parent then glow:Destroy() end
+                end)
+            end
+        end
+    end
+end
+
 local function buildPet(parent, companion, index)
     local definition = DEFINITIONS[companion.Id] or DEFINITIONS.MeadowFox
     local model = Instance.new("Model")
@@ -1202,7 +1281,17 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                         local momentKey = tostring(player.UserId) .. ":" .. tostring(pairId)
                                         if pairId and (socialMomentCooldowns[momentKey] or 0) <= now then
                                             socialMomentCooldowns[momentKey] = now + 18
+                                            local lastGreeting = pairGreetingLastAt[momentKey] or 0
+                                            local isReunion = lastGreeting > 0 and (now - lastGreeting) >= 120
+                                            pairGreetingLastAt[momentKey] = now
                                             showSharedHeartMoment(model, partnerModel)
+                                            showPersonalityGreeting(
+                                                model,
+                                                partnerModel,
+                                                personality,
+                                                partnerPersonality,
+                                                isReunion
+                                            )
                                         end
                                     end
                                 end
@@ -1492,6 +1581,11 @@ function CompanionService:Init()
         for key in pairs(socialMomentCooldowns) do
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
                 socialMomentCooldowns[key] = nil
+            end
+        end
+        for key in pairs(pairGreetingLastAt) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                pairGreetingLastAt[key] = nil
             end
         end
         for key in pairs(socialChaseCooldowns) do
