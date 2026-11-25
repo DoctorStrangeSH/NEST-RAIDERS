@@ -816,7 +816,7 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - A completed social session may trigger one gift moment for the pair. Either companion may be the giver; the receiver is the other active companion.
 - Gift pools are associated with the giver's origin egg/biome: MeadowEgg, EmeraldEgg, FrostEgg, EmberEgg, CrystalEgg, AncientEgg, ForgottenCaveEgg and LineageEgg. Each pool contains three named gifts.
 - The giver's personality adjusts the gift roll. Pair friendship tiers also increase the chance: 3% below 10 bond, 8% at 10–29, 14% at 30–59, 22% at 60–89, and 30% at 90–100, before personality adjustment. The final chance is clamped to 2–40%.
-- Special gift variants have a separate 4%, 9%, 14% or 20% roll by friendship tier (10+, 30+, 60+, 90+).
+- Special gift variants start at 4%, 9%, 14% or 20% by friendship tier (below 30, 30+, 60+, 90+), then receive a giver-rarity bonus: +2% Uncommon, +4% Rare, +7% Epic, +10% Legendary or +14% Mythic. The final chance is clamped to 2–35%.
 - A successful gift has a 90-second per-pair runtime cooldown. It produces a short overhead gift card and glow on the receiver. The event is cosmetic and emotional: receiver mood +5 and giver mood +2, capped at 100. It grants no currency, XP, materials, progression or combat power.
 - Gift discoveries and total received-gift count are persisted under Nest.DiscoveredCompanionGifts and Nest.CompanionGiftCount.
 - The friendship memory journal includes the four species moments and 48 biome gift variants (24 normal, 24 special). Undiscovered titles remain hidden and show only a biome-level hint.
