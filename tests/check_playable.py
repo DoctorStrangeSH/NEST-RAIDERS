@@ -1793,3 +1793,5 @@ assert 'task.delay(1.6, function()' in companion_service
 assert 'if slot < partnerSlot and partnerModel then' in companion_service
 assert 'socialMomentCooldowns[momentKey] = now + 18' in companion_service
 assert 'showSharedHeartMoment(model, partnerModel)' in companion_service
+assert 'local cooldownPrefix = tostring(player.UserId) .. ":"' in companion_service
+assert 'if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then' in companion_service
