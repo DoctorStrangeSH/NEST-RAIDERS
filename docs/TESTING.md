@@ -1075,3 +1075,13 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] After claiming, watch both pets for at least 10 seconds; rewarded mood must remain visible and must not snap back on the next follower update.
 - [ ] Test with two players in the same server; ensure events and rewards remain isolated by owner.
 - [ ] Test prompt readability and interaction on desktop and mobile.
+
+
+## Sprint 4.73 — Friendship milestone celebrations
+- [ ] Raise a display pair from 9 to 10 friendship; verify both pets glow and the banner says "Первые друзья!".
+- [ ] Repeat for 30, 60 and 90; verify each milestone has its own color and title.
+- [ ] Continue social sessions between milestones; verify no milestone banner or owner notification appears.
+- [ ] Verify glow and banner clean up after approximately 2.4 seconds, including if a pet is removed during the effect.
+- [ ] Verify milestone score/title remains after rejoin and no celebration replays just for loading the profile.
+- [ ] Test both display pairs and two players in one server; verify visual effects and notices stay owner/pair scoped.
+- [ ] Check banner readability on desktop and mobile at minimum and maximum camera zoom.
