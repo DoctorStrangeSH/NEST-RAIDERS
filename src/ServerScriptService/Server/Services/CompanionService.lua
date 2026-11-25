@@ -1267,6 +1267,11 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     model:SetAttribute("IsSleeping", isSleeping)
 
                     if isSleeping then
+                        if careUntil > 0 and partnerModel
+                            and partnerModel:GetAttribute("BeingComfortedBy") == instanceId then
+                            partnerModel:SetAttribute("BeingComfortedUntil", nil)
+                            partnerModel:SetAttribute("BeingComfortedBy", nil)
+                        end
                         activeHabit = nil
                         activeHabitUntil = 0
                         model:SetAttribute("PersonalHabit", nil)
