@@ -175,6 +175,120 @@ local function getBondKey(firstId, secondId)
     return first .. "|" .. second
 end
 
+local GIFT_COOLDOWNS = {}
+
+local BIOME_GIFTS = {
+    MeadowEgg = { { Name = "Букет луговых цветов", Icon = "🌼" }, { Name = "Корзинка сладких ягод", Icon = "🫐" }, { Name = "Резной желудь", Icon = "🌰" } },
+    EmeraldEgg = { { Name = "Светящийся лист", Icon = "🍃" }, { Name = "Лесной кристалл", Icon = "💎" }, { Name = "Живой росток", Icon = "🌱" } },
+    FrostEgg = { { Name = "Снежная брошь", Icon = "❄️" }, { Name = "Ледяная звезда", Icon = "⭐" }, { Name = "Морозная ракушка", Icon = "🐚" } },
+    EmberEgg = { { Name = "Тёплый уголь-сердечко", Icon = "🔥" }, { Name = "Солнечная бусина", Icon = "☀️" }, { Name = "Янтарный осколок", Icon = "🟠" } },
+    CrystalEgg = { { Name = "Призматический осколок", Icon = "💠" }, { Name = "Лунная груша", Icon = "🍐" }, { Name = "Звёздный нектар", Icon = "✨" } },
+    AncientEgg = { { Name = "Золотой желудь", Icon = "🌰" }, { Name = "Семя древнего дерева", Icon = "🌳" }, { Name = "Лепесток вечности", Icon = "🌸" } },
+    ForgottenCaveEgg = { { Name = "Светящийся гриб", Icon = "🍄" }, { Name = "Камень эха", Icon = "🔮" }, { Name = "Осколок сердца пещеры", Icon = "💜" } },
+    LineageEgg = { { Name = "Реликвия рода", Icon = "🏵️" }, { Name = "Семя предков", Icon = "🌿" }, { Name = "Семейный талисман", Icon = "🧿" } },
+}
+local PERSONALITY_GIFT_BONUS = {
+    ["Заботливый"] = 0.10, ["Добродушный"] = 0.08, ["Дружелюбный"] = 0.08,
+    ["Мечтательный"] = 0.05, ["Гордый"] = -0.04, ["Независимый"] = -0.05,
+    ["Осторожный"] = -0.03,
+}
+
+local function showCompanionGift(giverModel, receiverModel, gift, isRare)
+    if not giverModel or not giverModel.Parent or not receiverModel or not receiverModel.Parent then return end
+    receiverModel:SetAttribute("LastGiftReceived", gift.Name)
+    receiverModel:SetAttribute("GiftReceivedAt", os.time())
+    local adornee = receiverModel:FindFirstChild("Head") or receiverModel.PrimaryPart
+    if not adornee then return end
+
+    local bubble = Instance.new("BillboardGui")
+    bubble.Name = "CompanionGiftMoment"
+    bubble.Adornee = adornee
+    bubble.Size = UDim2.fromOffset(204, 54)
+    bubble.StudsOffset = Vector3.new(0, 1.8, 0)
+    bubble.AlwaysOnTop = false
+    bubble.Parent = receiverModel
+
+    local card = Instance.new("TextLabel")
+    card.Size = UDim2.fromScale(1, 1)
+    card.BackgroundColor3 = Color3.fromRGB(35, 43, 55)
+    card.BackgroundTransparency = 0.08
+    card.BorderSizePixel = 0
+    card.Font = Enum.Font.GothamBold
+    card.TextSize = 12
+    card.TextWrapped = true
+    card.TextColor3 = isRare and Color3.fromRGB(255, 211, 125) or Color3.fromRGB(222, 245, 225)
+    card.Text = gift.Icon .. " " .. (isRare and "Особенный подарок! " or "Подарок другу! ") .. gift.Name
+    card.Parent = bubble
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = card
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = card.TextColor3
+    stroke.Transparency = 0.25
+    stroke.Thickness = 1.3
+    stroke.Parent = card
+
+    local light = Instance.new("PointLight")
+    light.Name = "GiftMomentGlow"
+    light.Color = isRare and Color3.fromRGB(255, 205, 112) or Color3.fromRGB(142, 226, 173)
+    light.Range = 5
+    light.Brightness = 0.8
+    light.Parent = adornee
+    task.delay(2.8, function()
+        if bubble.Parent then bubble:Destroy() end
+        if light.Parent then light:Destroy() end
+    end)
+end
+
+local function tryGiveCompanionGift(player, profile, giverModel, receiverModel, giverDefinition, pairKey, bondScore, now, random)
+    if not pairKey or not giverDefinition or not receiverModel then return end
+    local cooldownKey = tostring(player.UserId) .. ":" .. pairKey
+    if (GIFT_COOLDOWNS[cooldownKey] or 0) > now then return end
+
+    local chance = bondScore >= 90 and 0.30
+        or bondScore >= 60 and 0.22
+        or bondScore >= 30 and 0.14
+        or bondScore >= 10 and 0.08
+        or 0.03
+    chance = math.clamp(chance + (PERSONALITY_GIFT_BONUS[giverDefinition.Personality or ""] or 0), 0.02, 0.40)
+    if random:NextNumber() > chance then return end
+
+    local gifts = BIOME_GIFTS[giverDefinition.EggId] or BIOME_GIFTS.MeadowEgg
+    local gift = gifts[random:NextInteger(1, #gifts)]
+    local rareChance = bondScore >= 90 and 0.20
+        or bondScore >= 60 and 0.14
+        or bondScore >= 30 and 0.09
+        or 0.04
+    local isRare = random:NextNumber() <= rareChance
+    if isRare then
+        gift = { Name = "Особенный дар: " .. gift.Name, Icon = "💖" }
+    end
+
+    GIFT_COOLDOWNS[cooldownKey] = now + 90
+    profile.Nest.DiscoveredCompanionGifts = profile.Nest.DiscoveredCompanionGifts or {}
+    profile.Nest.CompanionGiftCount = math.max(0, math.floor(tonumber(profile.Nest.CompanionGiftCount) or 0)) + 1
+    local giftKey = tostring(giverDefinition.EggId or "MeadowEgg") .. ":" ..
+        tostring(giverDefinition.Personality or "Обычный") .. ":" .. gift.Name
+    local isNewDiscovery = profile.Nest.DiscoveredCompanionGifts[giftKey] ~= true
+    profile.Nest.DiscoveredCompanionGifts[giftKey] = true
+
+    local receiverId = receiverModel:GetAttribute("CompanionInstanceId")
+    local giverId = giverModel:GetAttribute("CompanionInstanceId")
+    profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
+    local receiverMood = math.clamp(math.floor(tonumber(profile.Nest.CompanionMood[receiverId])
+        or tonumber(receiverModel:GetAttribute("Mood")) or 50) + 5, 0, 100)
+    local giverMood = math.clamp(math.floor(tonumber(profile.Nest.CompanionMood[giverId])
+        or tonumber(giverModel:GetAttribute("Mood")) or 50) + 2, 0, 100)
+    profile.Nest.CompanionMood[receiverId] = receiverMood
+    profile.Nest.CompanionMood[giverId] = giverMood
+    receiverModel:SetAttribute("Mood", receiverMood)
+    giverModel:SetAttribute("Mood", giverMood)
+
+    showCompanionGift(giverModel, receiverModel, gift, isRare)
+    player:SetAttribute("LastNotice", isNewDiscovery and ("Новое воспоминание: " .. gift.Name)
+        or ("Питомец подарил другу: " .. gift.Name))
+end
+
 local function getBondLevel(score)
     if score >= 90 then return "Неразлучные" end
     if score >= 60 then return "Лучшие друзья" end
@@ -1087,6 +1201,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                         if milestone then
                                             showBondMilestone(player, model, partnerModel, milestone)
                                         end
+                                        tryGiveCompanionGift(
+                                            player, profile, model, partnerModel, petDefinition,
+                                            bondKey, bondScore, now, random
+                                        )
                                     end
                                 end
                             end
@@ -1743,6 +1861,11 @@ function CompanionService:Init()
         end        for key in pairs(speciesMomentCooldowns) do
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
                 speciesMomentCooldowns[key] = nil
+            end
+        end
+        for key in pairs(GIFT_COOLDOWNS) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                GIFT_COOLDOWNS[key] = nil
             end
         end
         for key in pairs(socialChaseCooldowns) do
