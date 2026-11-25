@@ -570,6 +570,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local sleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
             local home = basePivot.Position
             local interestPoints = collectInterestPoints(plot.Model, home)
+            local interestPointsUpdatedAt = os.clock()
             model:SetAttribute("DisplaySlot", slot)
             model:SetAttribute("NestHomePosition", home)
             local toyId = profile.Nest and profile.Nest.CompanionToys and profile.Nest.CompanionToys[instanceId]
@@ -675,6 +676,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                 while model.Parent == folder and folder.Parent do
                     local now = os.clock()
                     local delta = math.clamp(now - previousTime, 0, 0.25)
+                    if now - interestPointsUpdatedAt >= 5 and plot.Model and plot.Model.Parent then
+                        interestPoints = collectInterestPoints(plot.Model, home)
+                        interestPointsUpdatedAt = now
+                    end
                     previousTime = now
                     local bob = 0
                     local yawOffset = 0
