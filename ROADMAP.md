@@ -1408,3 +1408,13 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Roblox Studio: verify milestone effects appear on both pets, remain readable at different camera zoom levels and clean up after 2.4 seconds.
 - [ ] Verify milestones trigger exactly once at each threshold and persist correctly after rejoin.
 - [ ] Verify multiple display pairs and multiple players do not share banners, highlights or notifications.
+
+
+### Sprint 4.74 — Shared friendship emotes
+- [x] Add a synchronized heart emote above both companions when a pair begins a completed social-play session.
+- [x] Trigger the visual once from the lower display slot so the two independent behavior loops do not duplicate it.
+- [x] Add an 18-second per-player/per-pair visual cooldown to keep the nest readable.
+- [x] Keep the emote cosmetic: no extra mood, friendship, currency or XP reward is added.
+- [x] Add static regression checks for the paired visual, trigger ownership and cooldown.
+- [ ] Roblox Studio: verify both pets show the heart together, the emote cleans up after 1.6 seconds and repeated play respects the cooldown.
+- [ ] Test both display pairs, four pets, multiple players, pet removal during the emote and mobile camera readability.
