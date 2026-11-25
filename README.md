@@ -329,3 +329,7 @@ The Starter Island now has a server-synchronized day/night cycle (24 real minute
 
 ## Dynamic Weather — Sprint 4.70
 The Starter Island now cycles through clear skies, rain, fog and storms. Weather changes the lighting, clouds and atmosphere, adds island-wide rainfall and occasional storm flashes, and affects companion behavior. The HUD displays the live in-game clock, day/night phase and weather. Selected pets enjoy rain or seek shelter during storms.
+
+
+## Pet Exploration — Sprint 4.71
+Companions now have favorite places in their personal nest. They can visit garden trees, flower beds, paths and player-placed decorations/buildings, with species-specific preferences influencing where they go. Rare discoveries can trigger a short owner notification. Exploration is designed to yield to sleep, urgent needs, storm shelter, treasure hunts, toys and friendship.
