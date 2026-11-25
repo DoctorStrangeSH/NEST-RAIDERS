@@ -722,3 +722,5 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - Claiming a discovery increases persistent pair friendship and restores mood for both companions. The companion with lower mood receives the larger assistance bonus.
 - Per-pair cooldowns are stored in the player's nest profile. Only the owner may claim the marker, and server-side range and pair-identity checks are mandatory.
 - Expired or claimed events must remove their visual links and temporary world objects.
+- Mood changes written by the adventure service must be read back by the companion behavior loop, so an independent system cannot overwrite a reward on the next update.
+- Owner disconnect cleanup must remove owned markers even if the companion folder is already being destroyed.
