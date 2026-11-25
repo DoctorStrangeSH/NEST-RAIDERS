@@ -231,13 +231,9 @@ end
 
 function CompanionAdventureService:Init()
     Players.PlayerRemoving:Connect(function(player)
-        local root = Workspace:FindFirstChild("PlayerCompanions")
-        local folder = root and root:FindFirstChild("Player_" .. player.UserId)
-        if folder then
-            for _, child in ipairs(Workspace:GetChildren()) do
-                if child.Name == "PairedAdventureSecret" and child:GetAttribute("OwnerUserId") == player.UserId then
-                    child:Destroy()
-                end
+        for _, child in ipairs(Workspace:GetChildren()) do
+            if child.Name == "PairedAdventureSecret" and child:GetAttribute("OwnerUserId") == player.UserId then
+                child:Destroy()
             end
         end
     end)
