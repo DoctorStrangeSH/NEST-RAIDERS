@@ -1381,6 +1381,12 @@ function CompanionService:Init()
     Players.PlayerAdded:Connect(bindPlayer)
     Players.PlayerRemoving:Connect(function(player)
         boundPlayers[player] = nil
+        local cooldownPrefix = tostring(player.UserId) .. ":"
+        for key in pairs(socialMomentCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                socialMomentCooldowns[key] = nil
+            end
+        end
         self._generations[player] = nil
         self:ClearPlayer(player)
         local displayFolder = self._displayFolders[player]
