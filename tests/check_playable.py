@@ -2063,3 +2063,18 @@ assert 'local sharedDiscoveryLeaderUntil = 0' in companion_service
 assert 'sharedDiscoveryLeaderUntil = now + 18' in companion_service
 assert '(currentPosition - sharedDiscoveryLeaderTarget).Magnitude <= 6' in companion_service
 assert 'sharedDiscoveryLeaderUntil = 0' in companion_service
+
+
+# Sprint 4.87 — bonded companions can play a short server-owned ball-passing game.
+assert 'local pairedBallCooldowns = {}' in companion_service
+assert 'local function showPairedBallGame(firstModel, secondModel, ownerUserId, pairKey, personality, now)' in companion_service
+assert 'ball.Name = "CompanionFriendshipBall"' in companion_service
+assert 'ball:SetAttribute("OwnerUserId", ownerUserId)' in companion_service
+assert 'ball:SetAttribute("PairKey", pairKey)' in companion_service
+assert 'ball.CanCollide = false' in companion_service
+assert 'TweenService:Create(' in companion_service
+assert 'TweenInfo.new(0.34, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)' in companion_service
+assert 'if pairBondScore >= 10 then' in companion_service
+assert 'local ballChance = (personality == "Игривый" or personality == "Энергичный"' in companion_service
+assert 'pairedBallCooldowns[ballGameKey] = now + 45' in companion_service
+assert 'for key in pairs(pairedBallCooldowns) do' in companion_service
