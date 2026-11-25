@@ -2007,3 +2007,23 @@ assert 'activeHabit = nil' in companion_service
 assert 'local habitPhase = now * 2.4 + phase' in companion_service
 assert 'local habitBob, habitYaw, habitRoll = 0, 0, 0' in companion_service
 assert 'or (habitActive and model:GetAttribute("PersonalHabitText"))' in companion_service
+
+
+# Sprint 4.85 — pair-specific friendship milestones and persistent shared memories.
+assert '[80] = { Title = "Дружба без границ!"' in companion_service
+assert '[100] = { Title = "Вместе навеки!"' in companion_service
+assert 'local PAIR_BOND_MEMORIES = {' in companion_service
+assert '[60] = { Id = "TrustedPact"' in companion_service
+assert '[80] = { Id = "UnbreakablePromise"' in companion_service
+assert '[100] = { Id = "ForeverTogether"' in companion_service
+assert 'local memoryKey = "Pair:" .. bondKey .. ":" .. pairMemory.Id' in companion_service
+assert 'profile.Nest.DiscoveredBondMoments[memoryKey] = true' in companion_service
+assert 'showSpeciesBondMoment(model, partnerModel, pairMemory)' in companion_service
+assert 'Новое воспоминание дружбы:' in companion_service
+assert 'local PAIR_MEMORIES = {' in gift_journal
+assert 'RequiredBond = 60, Id = "TrustedPact"' in gift_journal
+assert 'RequiredBond = 80, Id = "UnbreakablePromise"' in gift_journal
+assert 'RequiredBond = 100, Id = "ForeverTogether"' in gift_journal
+assert 'local companionBonds = type(profile.Nest.CompanionBonds) == "table"' in gift_journal
+assert 'local key = "Pair:" .. tostring(bondKey) .. ":" .. memory.Id' in gift_journal
+assert 'local total = #MOMENTS + pairTotal + giftTotal' in gift_journal
