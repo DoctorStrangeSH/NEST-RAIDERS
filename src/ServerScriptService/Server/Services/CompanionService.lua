@@ -25,6 +25,7 @@ local speciesMomentCooldowns = {}
 local companionCareCooldowns = {}
 local sharedDiscoveryCooldowns = {}
 local pairedBallCooldowns = {}
+local hideSeekCooldowns = {}
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -462,6 +463,13 @@ local function showSharedHeartMoment(firstModel, secondModel)
                 end)
             end
         end
+    end
+end
+
+local function clearHideSeek(model)
+    if not model or not model.Parent then return end
+    for _, attribute in ipairs({"HideSeekRole", "HideSeekUntil", "HideSeekStart", "HideSeekTarget", "HideSeekPartner"}) do
+        model:SetAttribute(attribute, nil)
     end
 end
 
@@ -1351,6 +1359,35 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     end
                     model:SetAttribute("IsSleeping", isSleeping)
 
+                    local hideRole = model:GetAttribute("HideSeekRole")
+                    local hideUntil = tonumber(model:GetAttribute("HideSeekUntil")) or 0
+                    local hideStart = tonumber(model:GetAttribute("HideSeekStart")) or 0
+                    local hideTarget = model:GetAttribute("HideSeekTarget")
+                    local partnerIdForGame = partnerModel and partnerModel:GetAttribute("CompanionInstanceId")
+                    local liveNeeds = profile.Nest.CompanionNeeds or {}
+                    local selfNeeds = liveNeeds[instanceId] or {}
+                    local otherNeeds = partnerIdForGame and liveNeeds[partnerIdForGame] or {}
+                    local hideActive = hideRole ~= nil and hideUntil > now and partnerModel
+                        and model:GetAttribute("HideSeekPartner") == partnerIdForGame
+                        and partnerModel:GetAttribute("HideSeekPartner") == instanceId
+                        and partnerModel:GetAttribute("HideSeekUntil") == hideUntil
+                        and typeof(hideTarget) == "Vector3"
+                        and not isSleeping and not partnerSleeping and not seeksShelter
+                        and (tonumber(selfNeeds.Energy) or energy) >= 25
+                        and (tonumber(otherNeeds.Energy) or 100) >= 25
+                        and (tonumber(selfNeeds.Hunger) or hunger) >= 25
+                        and (tonumber(otherNeeds.Hunger) or 100) >= 25
+                        and (tonumber(otherNeeds.RestingUntil) or 0) <= os.time()
+                    if hideRole and not hideActive then
+                        if partnerModel and partnerModel:GetAttribute("HideSeekPartner") == instanceId then
+                            clearHideSeek(partnerModel)
+                        end
+                        clearHideSeek(model)
+                        targetPosition = currentPosition
+                        isAtTarget = true
+                        idleUntil = now + 0.5
+                    end
+
                     if isSleeping then
                         if careUntil > 0 and partnerModel
                             and partnerModel:GetAttribute("BeingComfortedBy") == instanceId then
@@ -1385,6 +1422,38 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         idleUntil = math.max(idleUntil, now + 0.2)
                         bob = math.sin(now * 1.2 + phase) * 0.025
                         yawOffset = math.sin(now * 0.35 + phase) * 0.025
+                    elseif hideActive then
+                        -- Use the same movement state, never a second PivotTo loop.
+                        targetIsSocial = false
+                        targetIsToy = false
+                        targetIsInterest = false
+                        targetIsShelter = false
+                        targetIsChase = false
+                        socialPlayUntil = 0
+                        toyPlayUntil = 0
+                        activeHabit = nil
+                        targetPosition = hideRole == "Hider" and hideTarget
+                            or (now < hideStart + 2.5 and currentPosition or hideTarget)
+                        local direction = targetPosition - currentPosition
+                        if direction.Magnitude > 0.2 then
+                            currentPosition += direction.Unit * math.min(direction.Magnitude, 3.2 * delta)
+                            facing = math.atan2(direction.X, direction.Z)
+                            bob = math.abs(math.sin(now * 9 + phase)) * 0.1
+                        else
+                            bob = math.abs(math.sin(now * 3 + phase)) * 0.06
+                        end
+                        behavior = hideRole == "Hider" and "HidingFromFriend"
+                            or (now < hideStart + 2.5 and "CountingForFriend" or "FindingFriend")
+                        if hideRole == "Seeker" and now >= hideStart + 2.5
+                            and (currentPosition - hideTarget).Magnitude <= 1.5
+                            and (partnerModel:GetPivot().Position - hideTarget).Magnitude <= 1.8 then
+                            clearHideSeek(model)
+                            clearHideSeek(partnerModel)
+                            showSharedHeartMoment(model, partnerModel)
+                            player:SetAttribute("LastNotice", "Питомцы сыграли в прятки!")
+                        end
+                        isAtTarget = true
+                        idleUntil = now + 0.5
                     else
                         if careUntil > 0 and now >= careUntil then
                             if not careRewarded and partnerModel and partnerModel.Parent
@@ -1911,12 +1980,50 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                                 partnerPersonality,
                                                 isReunion
                                             )
+                                            -- Choose a bounded hiding spot from existing island landmarks.
+                                            local hideKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                            local otherNeeds = profile.Nest.CompanionNeeds and profile.Nest.CompanionNeeds[partnerId] or {}
+                                            local curious = personality == "Любопытный" or personality == "Любознательный"
+                                                or partnerPersonality == "Любопытный" or partnerPersonality == "Любознательный"
+                                            local hideStarted = false
+                                            if pairBondScore >= 20 and not partnerSleeping and not seeksShelter
+                                                and mood >= 45 and energy >= 25 and hunger >= 25
+                                                and (tonumber(otherNeeds.Energy) or 100) >= 25
+                                                and (tonumber(otherNeeds.Hunger) or 100) >= 25
+                                                and (tonumber(otherNeeds.RestingUntil) or 0) <= os.time()
+                                                and (partnerBehavior == "Socializing" or partnerBehavior == "SeekingFriend")
+                                                and (tonumber(partnerModel:GetAttribute("SharedDiscoveryTargetUntil")) or 0) <= now
+                                                and sharedDiscoveryLeaderUntil <= now
+                                                and (hideSeekCooldowns[hideKey] or 0) <= now
+                                                and random:NextNumber() < (curious and 0.45 or 0.24) then
+                                                local spots = {}
+                                                for _, point in ipairs(interestPoints) do
+                                                    if (point.Category == "Trees" or point.Category == "Flowers" or point.Category == "Shelter")
+                                                        and (point.Position - currentPosition).Magnitude <= 8
+                                                        and (point.Position - currentPosition).Magnitude >= 3 then
+                                                        table.insert(spots, point.Position)
+                                                    end
+                                                end
+                                                if #spots > 0 then
+                                                    local spot = spots[random:NextInteger(1, #spots)]
+                                                    local hider = random:NextNumber() < 0.5 and model or partnerModel
+                                                    for _, pet in ipairs({model, partnerModel}) do
+                                                        pet:SetAttribute("HideSeekRole", pet == hider and "Hider" or "Seeker")
+                                                        pet:SetAttribute("HideSeekStart", now)
+                                                        pet:SetAttribute("HideSeekUntil", now + 12)
+                                                        pet:SetAttribute("HideSeekTarget", spot)
+                                                        pet:SetAttribute("HideSeekPartner", pet == model and partnerId or instanceId)
+                                                    end
+                                                    hideSeekCooldowns[hideKey] = now + 60
+                                                    hideStarted = true
+                                                end
+                                            end
                                             -- Established pairs occasionally turn a normal reunion into a visible ball-passing game.
                                             if pairBondScore >= 10 then
                                                 local ballGameKey = tostring(player.UserId) .. ":" .. tostring(pairId)
                                                 local ballChance = (personality == "Игривый" or personality == "Энергичный"
                                                     or partnerPersonality == "Игривый" or partnerPersonality == "Энергичный") and 0.42 or 0.22
-                                                if (pairedBallCooldowns[ballGameKey] or 0) <= now
+                                                if not hideStarted and (pairedBallCooldowns[ballGameKey] or 0) <= now
                                                     and random:NextNumber() < ballChance
                                                     and showPairedBallGame(model, partnerModel, player.UserId, pairId, personality, now) then
                                                     pairedBallCooldowns[ballGameKey] = now + 45
@@ -1928,7 +2035,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                             local speciesMoment = speciesKey and SPECIES_BOND_MOMENTS[speciesKey]
                                             if speciesMoment and pairBondScore >= 30 then
                                                 local speciesCooldownKey = momentKey .. ":" .. speciesKey
-                                                if (speciesMomentCooldowns[speciesCooldownKey] or 0) <= now
+                                                if not hideStarted and (speciesMomentCooldowns[speciesCooldownKey] or 0) <= now
                                                     and random:NextNumber() < 0.35 then
                                                     speciesMomentCooldowns[speciesCooldownKey] = now + 180
                                                     showSpeciesBondMoment(model, partnerModel, speciesMoment)
@@ -2060,7 +2167,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         end
                         behavior = "PersonalHabit"
                     end
-                    if reactionActive then
+                    if reactionActive and not hideActive then
                         local reactionPhase = now * 8 + phase
                         if giftReaction == "Jump" or giftReaction == "Bounce" then
                             reactionBob = math.abs(math.sin(reactionPhase)) * (giftReaction == "Jump" and 0.58 or 0.34)
@@ -2091,7 +2198,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         model:SetAttribute("GiftReactionUntil", nil)
                         model:SetAttribute("GiftReactionRare", nil)
                     end
-                    moodLabel.Text = (reactionActive and model:GetAttribute("GiftReactionText"))
+                    moodLabel.Text = (hideActive and (behavior == "HidingFromFriend" and "Прячется!" or behavior == "CountingForFriend" and "Считает..." or "Ищет друга!"))
+                        or (reactionActive and model:GetAttribute("GiftReactionText"))
                         or (beingComforted and "Друг рядом, всё хорошо ♥")
                         or (careUntil > now and "Утешает друга ♥")
                         or (habitActive and model:GetAttribute("PersonalHabitText"))
@@ -2372,6 +2480,9 @@ function CompanionService:Init()
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
                 pairedBallCooldowns[key] = nil
             end
+        end
+        for key in pairs(hideSeekCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then hideSeekCooldowns[key] = nil end
         end
         self._generations[player] = nil
         self:ClearPlayer(player)
