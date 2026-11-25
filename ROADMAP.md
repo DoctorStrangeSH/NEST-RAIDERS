@@ -1364,3 +1364,23 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Run multiple weather rotations and monitor particle, tween and server performance.
 
 **Acceptance:** weather presets, environmental effects, species reactions and live HUD display are integrated and statically checked; visual, low-end performance, multiplayer and gameplay acceptance remain open.
+
+
+### Sprint 4.71 — Favorite places and autonomous nest exploration
+- [x] Assign favorite place categories to selected starter and nocturnal species: flowers, water, trees, lanterns, high ground and crystals.
+- [x] Discover nearby points of interest from the player's own nest: permanent garden trees, flower beds and path stones.
+- [x] Recognize player-built landmarks and decorations as additional destinations (trees, flowers, ponds, fountains, cottages, watchtowers, lanterns, crystals and seats).
+- [x] Weight destination selection toward each species' favorite category while discouraging immediate repetition.
+- [x] Let companions autonomously explore nearby landmarks when their mood, hunger and energy permit.
+- [x] Show visible companion states and labels while exploring and visiting a point of interest.
+- [x] Add rare discovery moments that notify the owner without granting unbalanced rewards.
+- [x] Keep exploration inside the owner's nest and preserve sleep, shelter, treasure, toys and social behavior priorities.
+- [x] Add regression checks for species preferences, landmark discovery, weighted selection and discovery notices.
+- [ ] Roblox Studio: confirm all four display slots find nearby destinations without leaving the nest boundary.
+- [ ] Place each decor/build category and confirm pets select the matching favorite destination more often.
+- [ ] Verify exploration does not overlap the hatch station, toys, nest, building placement or other pets.
+- [ ] Confirm rare discovery notices are readable and do not spam while several pets explore.
+- [ ] Test refresh, rejoin and changing placed decorations; stale destinations must not remain.
+- [ ] Test pets with low energy, hunger, sleep and storm shelter needs; urgent needs must take priority.
+
+**Acceptance:** favorite-place preferences, autonomous exploration and rare owner notices are integrated and statically checked; visual, multiplayer, placement and behavior-priority acceptance remain open.
