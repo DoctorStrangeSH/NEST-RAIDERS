@@ -1093,3 +1093,13 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Keep the pair together through several social sessions; verify the emote does not repeat inside the 18-second pair cooldown.
 - [ ] Verify the emote does not grant extra mood, friendship, coins or XP beyond the existing social-session reward.
 - [ ] Test display pairs 1–2 and 3–4, four pets, two players, pet removal during the effect and mobile camera readability.
+
+
+## Sprint 4.75 — Personality-aware relationships
+- [ ] Test Осторожный + Осторожный at bond 0–9; verify they do not force social approaches before trust is built, while still allowing the pair to gain bond through an allowed route.
+- [ ] Test Осторожный + Дружелюбный and Осторожный + Добродушный at bond 0; verify the outgoing pet can initiate and the cautious pet can accept.
+- [ ] Raise a cautious pair to 10 bond; verify social approaches become possible without a personality change.
+- [ ] Compare Дружелюбный / Добродушный against Спокойный / Мудрый; verify outgoing pets initiate more often over a comparable observation window.
+- [ ] Verify increasing bond raises social chance gradually but does not create constant movement or interrupt sleep, shelter, hunger, or energy rules.
+- [ ] Verify FriendshipStyle is correct on both display pairs and remains correct after respawn/rejoin.
+- [ ] Confirm no additional mood, bond, currency or XP is granted by the new personality modifiers.
