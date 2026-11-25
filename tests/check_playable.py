@@ -1795,3 +1795,16 @@ assert 'socialMomentCooldowns[momentKey] = now + 18' in companion_service
 assert 'showSharedHeartMoment(model, partnerModel)' in companion_service
 assert 'local cooldownPrefix = tostring(player.UserId) .. ":"' in companion_service
 assert 'if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then' in companion_service
+
+
+# Sprint 4.75 — personality and familiarity influence social behavior.
+assert 'local partnerPersonality = partnerModel and partnerModel:GetAttribute("Personality") or ""' in companion_service
+assert 'local pairBondScore = pairBondKey and profile.Nest and profile.Nest.CompanionBonds' in companion_service
+assert 'local isCautious = personality == "Осторожный"' in companion_service
+assert 'local isSocialLeader = personality == "Дружелюбный" or personality == "Добродушный"' in companion_service
+assert 'model:SetAttribute("FriendshipStyle", friendshipStyle)' in companion_service
+assert 'local cautiousCanApproach = not isCautious or pairBondScore >= 10' in companion_service
+assert 'or partnerPersonality == "Дружелюбный" or partnerPersonality == "Добродушный"' in companion_service
+assert 'local bondSocialBonus = math.min(pairBondScore / 100, 1) * 0.18' in companion_service
+assert 'local outgoingBonus = isSocialLeader and 0.12 or 0' in companion_service
+assert 'random:NextNumber() < effectiveSocialChance' in companion_service
