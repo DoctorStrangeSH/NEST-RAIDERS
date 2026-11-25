@@ -733,3 +733,11 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - The milestone is cosmetic only: it does not grant currency, XP, combat power or extra friendship points. Ordinary social sessions do not produce milestone notifications.
 - Effects self-clean after 2.4 seconds. The milestone is derived from the persistent pair score, so no extra profile field or migration is needed.
 - Roblox Studio verification is required for readability, cleanup, threshold behavior, multiplayer isolation and persistence after rejoin.
+
+
+### Shared Friendship Emotes — Sprint 4.74
+- When two displayed companions reach one another and begin a social-play session, both receive a small heart emote above their heads.
+- The lower display slot is the sole trigger owner, preventing duplicate effects from the two independent companion behavior loops.
+- A per-player/per-pair 18-second cooldown prevents visual spam. Each BillboardGui removes itself after 1.6 seconds.
+- The emote is cosmetic only and does not change mood, friendship, currency or XP.
+- Studio acceptance must cover simultaneous display, cleanup, cooldown, both display pairs, multiplayer isolation, pet removal and mobile readability.
