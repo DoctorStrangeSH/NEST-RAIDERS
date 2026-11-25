@@ -799,7 +799,20 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         end
                     end
                     local partnerBehavior = partnerModel and partnerModel:GetAttribute("Behavior")
+                    local partnerPersonality = partnerModel and partnerModel:GetAttribute("Personality") or ""
                     local partnerSleeping = partnerModel and partnerModel:GetAttribute("IsSleeping") == true
+                    local pairBondKey = partnerModel and getBondKey(instanceId, partnerModel:GetAttribute("CompanionInstanceId"))
+                    local pairBondScore = pairBondKey and profile.Nest and profile.Nest.CompanionBonds
+                        and math.clamp(math.floor(tonumber(profile.Nest.CompanionBonds[pairBondKey]) or 0), 0, 100) or 0
+                    local isCautious = personality == "Осторожный"
+                    local isSocialLeader = personality == "Дружелюбный" or personality == "Добродушный"
+                    local friendshipStyle = isCautious and (pairBondScore < 10 and "Привыкает постепенно" or "Доверяет другу")
+                        or isSocialLeader and "Сам ищет друзей"
+                        or personality == "Игривый" and "Любит совместные игры"
+                        or "Спокойное общение"
+                    if model:GetAttribute("FriendshipStyle") ~= friendshipStyle then
+                        model:SetAttribute("FriendshipStyle", friendshipStyle)
+                    end
                     local isSleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
                     local clockTime = Lighting.ClockTime
                     local isNight = clockTime >= 19 or clockTime < 6
@@ -980,10 +993,20 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         end
 
                         if isAtTarget and now >= idleUntil and socialPlayUntil <= now and not targetIsSocial then
+                            local cautiousCanApproach = not isCautious or pairBondScore >= 10
+                                or partnerPersonality == "Дружелюбный" or partnerPersonality == "Добродушный"
                             local canSocialize = partnerModel and socialApproach and not partnerSleeping
-                                and mood >= 45 and energy >= 20
+                                and mood >= 45 and energy >= 20 and cautiousCanApproach
+                            -- Familiarity makes cautious pets more willing to socialize,
+                            -- while outgoing personalities are more likely to initiate first contact.
+                            local bondSocialBonus = math.min(pairBondScore / 100, 1) * 0.18
+                            local outgoingBonus = isSocialLeader and 0.12 or 0
+                            local effectiveSocialChance = math.clamp(
+                                (personalityProfile.SocialChance or 0.16) + bondSocialBonus + outgoingBonus,
+                                0.03, 0.72
+                            )
                             local socialTrigger = partnerBehavior == "SeekingFriend"
-                                or random:NextNumber() < personalityProfile.SocialChance
+                                or random:NextNumber() < effectiveSocialChance
                             local canPlay = toyPart and mood >= 35
                                 and energy >= math.max(0, math.floor(tonumber(toyDefinition.EnergyCost) or 0))
                             local favoriteToy = toyId ~= nil and toyId == petDefinition.FavoriteToy
