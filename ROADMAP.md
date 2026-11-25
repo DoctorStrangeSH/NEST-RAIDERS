@@ -1397,3 +1397,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Increase the pair's persistent friendship score after the owner claims the discovery.
 - [x] Persist per-pair adventure cooldowns and validate owner, pair identity, and interaction distance on the server.
 - [ ] Verify paired events, visual cleanup, profile persistence, multiplayer isolation, and mobile prompt behavior in Roblox Studio.
+
+
+### Sprint 4.73 — Friendship milestone celebrations
+- [x] Add four distinct friendship milestones at 10, 30, 60 and 90 pair-bond points.
+- [x] Celebrate both companions together with a temporary color-coded glow and a readable shared milestone banner.
+- [x] Send a single owner notification only when a new milestone is reached; ordinary friendship points do not spam notices.
+- [x] Keep milestone presentation cosmetic and server-triggered from the existing completed social-session reward.
+- [x] Add static regression checks for all milestone thresholds, effects and reward integration.
+- [ ] Roblox Studio: verify milestone effects appear on both pets, remain readable at different camera zoom levels and clean up after 2.4 seconds.
+- [ ] Verify milestones trigger exactly once at each threshold and persist correctly after rejoin.
+- [ ] Verify multiple display pairs and multiple players do not share banners, highlights or notifications.
