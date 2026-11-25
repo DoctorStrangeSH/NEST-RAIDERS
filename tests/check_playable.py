@@ -1809,3 +1809,17 @@ assert 'or random:NextNumber() < 0.035' in companion_service
 assert 'local bondSocialBonus = math.min(pairBondScore / 100, 1) * 0.18' in companion_service
 assert 'local outgoingBonus = isSocialLeader and 0.12 or 0' in companion_service
 assert 'random:NextNumber() < effectiveSocialChance' in companion_service
+
+
+# Sprint 4.76 — established friends can trigger a short shared chase.
+assert 'local socialChaseCooldowns = {}' in companion_service
+assert 'local targetIsChase = false' in companion_service
+assert 'if slot < partnerSlot and partnerModel and pairBondScore >= 30' in companion_service
+assert 'socialChaseCooldowns[chaseKey] = now + 35' in companion_service
+assert 'local chaseUntil = now + 4.5' in companion_service
+assert 'model:SetAttribute("CompanionChaseUntil", chaseUntil)' in companion_service
+assert 'partnerModel:SetAttribute("CompanionChaseUntil", chaseUntil)' in companion_service
+assert 'local partnerPositionForChase = partnerModel and partnerModel:GetPivot().Position' in companion_service
+assert 'local chaseRadius = 2.4' in companion_service
+assert 'targetIsChase and "ChasingFriend"' in companion_service
+assert 'for key in pairs(socialChaseCooldowns) do' in companion_service
