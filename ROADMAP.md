@@ -1386,3 +1386,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Test pets with low energy, hunger, sleep and storm shelter needs; urgent needs must take priority.
 
 **Acceptance:** favorite-place preferences, autonomous exploration and rare owner notices are integrated and statically checked; visual, multiplayer, placement and behavior-priority acceptance remain open.
+
+
+### Sprint 4.72 — Paired companion adventures
+- [x] Add a server-owned paired-adventure loop for two active companions.
+- [x] Require both companions to be awake, nearby, and sufficiently happy before an adventure starts.
+- [x] Create a shared secret marker with a visible bond beam and a proximity interaction.
+- [x] Add a rare golden-secret variant with a distinct presentation and owner notification.
+- [x] Reward both companions with saved mood; the companion with lower mood receives a larger mutual-aid boost.
+- [x] Increase the pair's persistent friendship score after the owner claims the discovery.
+- [x] Persist per-pair adventure cooldowns and validate owner, pair identity, and interaction distance on the server.
+- [ ] Verify paired events, visual cleanup, profile persistence, multiplayer isolation, and mobile prompt behavior in Roblox Studio.
