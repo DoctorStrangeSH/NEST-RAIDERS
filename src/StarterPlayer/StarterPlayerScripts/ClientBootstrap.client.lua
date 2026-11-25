@@ -2089,6 +2089,82 @@ bookLayout.Padding = UDim.new(0, 8)
 bookLayout.SortOrder = Enum.SortOrder.LayoutOrder
 bookLayout.Parent = bookList
 
+local bondJournalPanel = Instance.new("Frame")
+bondJournalPanel.Name = "BondJournalPanel"
+bondJournalPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+bondJournalPanel.Position = UDim2.fromScale(0.5, 0.5)
+bondJournalPanel.Size = UDim2.new(0.9, 0, 0.76, 0)
+bondJournalPanel.BackgroundColor3 = Color3.fromRGB(29, 43, 47)
+bondJournalPanel.BorderSizePixel = 0
+bondJournalPanel.Visible = false
+bondJournalPanel.Parent = gui
+addCorner(bondJournalPanel, 18)
+addStroke(bondJournalPanel, Color3.fromRGB(157, 194, 139), 2)
+local bondJournalSize = Instance.new("UISizeConstraint")
+bondJournalSize.MinSize = Vector2.new(290, 320)
+bondJournalSize.MaxSize = Vector2.new(480, 590)
+bondJournalSize.Parent = bondJournalPanel
+
+local bondJournalTitle = Instance.new("TextLabel")
+bondJournalTitle.BackgroundTransparency = 1
+bondJournalTitle.Position = UDim2.fromOffset(18, 12)
+bondJournalTitle.Size = UDim2.new(1, -76, 0, 30)
+bondJournalTitle.Font = Enum.Font.GothamBlack
+bondJournalTitle.Text = "ДНЕВНИК ДРУЖБЫ"
+bondJournalTitle.TextColor3 = Color3.fromRGB(215, 238, 184)
+bondJournalTitle.TextSize = 17
+bondJournalTitle.TextXAlignment = Enum.TextXAlignment.Left
+bondJournalTitle.Parent = bondJournalPanel
+
+local bondJournalClose = Instance.new("TextButton")
+bondJournalClose.AnchorPoint = Vector2.new(1, 0)
+bondJournalClose.Position = UDim2.new(1, -12, 0, 10)
+bondJournalClose.Size = UDim2.fromOffset(38, 34)
+bondJournalClose.BackgroundColor3 = Color3.fromRGB(74, 91, 83)
+bondJournalClose.Text = "✕"
+bondJournalClose.TextColor3 = Color3.new(1, 1, 1)
+bondJournalClose.TextSize = 18
+bondJournalClose.Font = Enum.Font.GothamBold
+bondJournalClose.Parent = bondJournalPanel
+addCorner(bondJournalClose, 10)
+
+local bondJournalProgress = Instance.new("TextLabel")
+bondJournalProgress.BackgroundTransparency = 1
+bondJournalProgress.Position = UDim2.fromOffset(18, 48)
+bondJournalProgress.Size = UDim2.new(1, -36, 0, 24)
+bondJournalProgress.Font = Enum.Font.GothamBold
+bondJournalProgress.TextColor3 = Color3.fromRGB(197, 218, 183)
+bondJournalProgress.TextSize = 13
+bondJournalProgress.TextXAlignment = Enum.TextXAlignment.Left
+bondJournalProgress.Parent = bondJournalPanel
+
+local bondJournalHint = Instance.new("TextLabel")
+bondJournalHint.BackgroundTransparency = 1
+bondJournalHint.Position = UDim2.fromOffset(18, 74)
+bondJournalHint.Size = UDim2.new(1, -36, 0, 34)
+bondJournalHint.Font = Enum.Font.GothamMedium
+bondJournalHint.Text = "Знакомь питомцев, наблюдай за их дружбой и открывай редкие моменты."
+bondJournalHint.TextColor3 = Color3.fromRGB(171, 193, 171)
+bondJournalHint.TextSize = 11
+bondJournalHint.TextWrapped = true
+bondJournalHint.TextXAlignment = Enum.TextXAlignment.Left
+bondJournalHint.Parent = bondJournalPanel
+
+local bondJournalList = Instance.new("ScrollingFrame")
+bondJournalList.Name = "BondJournalEntries"
+bondJournalList.Position = UDim2.fromOffset(12, 112)
+bondJournalList.Size = UDim2.new(1, -24, 1, -124)
+bondJournalList.BackgroundTransparency = 1
+bondJournalList.BorderSizePixel = 0
+bondJournalList.ScrollBarThickness = 5
+bondJournalList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+bondJournalList.CanvasSize = UDim2.new()
+bondJournalList.Parent = bondJournalPanel
+local bondJournalLayout = Instance.new("UIListLayout")
+bondJournalLayout.Padding = UDim.new(0, 8)
+bondJournalLayout.SortOrder = Enum.SortOrder.LayoutOrder
+bondJournalLayout.Parent = bondJournalList
+
 local inventoryPanel = Instance.new("Frame")
 inventoryPanel.Name = "CompanionInventory"
 inventoryPanel.AnchorPoint = Vector2.new(0.5, 0.5)
