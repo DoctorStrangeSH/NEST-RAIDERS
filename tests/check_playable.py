@@ -1954,3 +1954,24 @@ assert '["Эпический"] = 0.07' in companion_service
 assert '["Легендарный"] = 0.10' in companion_service
 assert '["Мифический"] = 0.14' in companion_service
 assert 'rareChance = math.clamp(rareChance + (RARITY_SPECIAL_GIFT_BONUS[giverDefinition.Rarity or ""] or 0), 0.02, 0.35)' in companion_service
+
+
+# Sprint 4.83 — personality-driven gift reactions and paired pet emotes.
+assert 'local GIFT_RECEIVER_REACTIONS = {' in companion_service
+assert 'local GIFT_GIVER_REACTIONS = {' in companion_service
+assert 'local function setGiftReaction(model, reaction, duration, rare)' in companion_service
+assert 'model:SetAttribute("GiftReaction", reaction.Animation)' in companion_service
+assert 'model:SetAttribute("GiftReactionUntil", os.clock() + duration)' in companion_service
+assert 'receiverReaction = { Animation = "Amazed", Text = "Невероятный подарок!" }' in companion_service
+assert 'giverReaction = { Animation = "Proud", Text = "Я нашёл нечто особенное!" }' in companion_service
+assert 'setGiftReaction(receiverModel, receiverReaction, duration, isRare)' in companion_service
+assert 'setGiftReaction(giverModel, giverReaction, duration * 0.9, isRare)' in companion_service
+assert 'local reactionActive = giftReaction ~= nil and now < reactionUntil and not isSleeping' in companion_service
+assert 'giftReaction == "Jump" or giftReaction == "Bounce"' in companion_service
+assert 'giftReaction == "Spin"' in companion_service
+assert 'giftReaction == "Hug"' in companion_service
+assert 'giftReaction == "Amazed"' in companion_service
+assert 'local hugOffset = Vector3.zero' in companion_service
+assert 'hugOffset = towardFriend.Unit * 0.38' in companion_service
+assert 'behavior = giftReaction == "Hug" and "HuggingFriend" or "CelebratingGift"' in companion_service
+assert 'model:SetAttribute("GiftReaction", nil)' in companion_service
