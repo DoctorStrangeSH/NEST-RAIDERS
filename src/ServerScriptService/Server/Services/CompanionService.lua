@@ -366,7 +366,14 @@ local BOND_MILESTONES = {
     [10] = { Title = "Первые друзья!", Color = Color3.fromRGB(116, 222, 174) },
     [30] = { Title = "Крепкая дружба!", Color = Color3.fromRGB(104, 194, 255) },
     [60] = { Title = "Неразлучная команда!", Color = Color3.fromRGB(194, 139, 255) },
+    [80] = { Title = "Дружба без границ!", Color = Color3.fromRGB(225, 157, 255) },
     [90] = { Title = "Друзья навсегда!", Color = Color3.fromRGB(255, 205, 112) },
+    [100] = { Title = "Вместе навеки!", Color = Color3.fromRGB(255, 225, 145) },
+}
+local PAIR_BOND_MEMORIES = {
+    [60] = { Id = "TrustedPact", Title = "Тайный знак дружбы", Icon = "🤝", Color = Color3.fromRGB(194, 139, 255), Text = "Питомцы придумали собственный знак дружбы" },
+    [80] = { Id = "UnbreakablePromise", Title = "Обещание неразлучности", Icon = "💞", Color = Color3.fromRGB(225, 157, 255), Text = "Друзья обещают всегда поддерживать друг друга" },
+    [100] = { Id = "ForeverTogether", Title = "Друзья навеки", Icon = "🌟", Color = Color3.fromRGB(255, 225, 145), Text = "Их дружба стала по-настоящему особенной" },
 }
 
 local function showBondMilestone(player, firstModel, secondModel, milestone)
@@ -1273,6 +1280,16 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                         local milestone = BOND_MILESTONES[bondScore]
                                         if milestone then
                                             showBondMilestone(player, model, partnerModel, milestone)
+                                        end
+                                        local pairMemory = PAIR_BOND_MEMORIES[bondScore]
+                                        if pairMemory then
+                                            profile.Nest.DiscoveredBondMoments = profile.Nest.DiscoveredBondMoments or {}
+                                            local memoryKey = "Pair:" .. bondKey .. ":" .. pairMemory.Id
+                                            if profile.Nest.DiscoveredBondMoments[memoryKey] ~= true then
+                                                profile.Nest.DiscoveredBondMoments[memoryKey] = true
+                                                showSpeciesBondMoment(model, partnerModel, pairMemory)
+                                                player:SetAttribute("LastNotice", "Новое воспоминание дружбы: " .. pairMemory.Title)
+                                            end
                                         end
                                         local partnerDefinition = CompanionCatalog[partnerModel:GetAttribute("CompanionId")] or {}
                                         if random:NextNumber() < 0.5 then
