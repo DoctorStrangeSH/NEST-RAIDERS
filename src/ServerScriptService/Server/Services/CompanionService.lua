@@ -1117,6 +1117,12 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             isAtTarget = false
                         end
 
+                        if targetIsRestingTogether and (not partnerModel or not partnerSleeping) then
+                            targetIsRestingTogether = false
+                            targetPosition = currentPosition
+                            isAtTarget = true
+                            model:SetAttribute("RestingWithFriend", nil)
+                        end
                         local chaseUntil = tonumber(model:GetAttribute("CompanionChaseUntil")) or 0
                         local partnerChaseUntil = partnerModel and (tonumber(partnerModel:GetAttribute("CompanionChaseUntil")) or 0) or 0
                         local partnerPositionForChase = partnerModel and partnerModel:GetPivot().Position
