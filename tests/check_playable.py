@@ -1737,7 +1737,10 @@ assert 'local function tryStartAdventure(player)' in adventure_service
 assert 'local PAIR_COOLDOWN = 300' in adventure_service
 assert 'local MIN_BOND = 10' in adventure_service
 assert 'bond >= MIN_BOND' in adventure_service
-assert 'local rare = random:NextNumber() <= 0.12' in adventure_service
+assert 'local rareChance = choice.Bond >= 90 and 0.20' in adventure_service
+assert 'or choice.Bond >= 60 and 0.16' in adventure_service
+assert 'or choice.Bond >= 30 and 0.12' in adventure_service
+assert 'local rare = random:NextNumber() <= rareChance' in adventure_service
 assert 'prompt.Triggered:Connect(function(collector)' in adventure_service
 assert 'if claimed or collector ~= player or not player.Parent then return end' in adventure_service
 assert '(root.Position - marker.Position).Magnitude > 13' in adventure_service
