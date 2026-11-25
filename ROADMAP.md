@@ -1578,3 +1578,19 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify two different pairs unlock separate memories and do not overwrite each other.
 - [ ] Verify all three memories remain discovered after leaving and rejoining.
 - [ ] Verify journal entries update after each milestone and layout remains readable on mobile/tablet/desktop.
+
+
+### Sprint 4.86 — Cooperative companion life
+- [x] Add comfort behavior: a bonded companion can notice a sad friend (mood <= 35), approach and stay beside them for a short comforting interaction.
+- [x] Caring personalities initiate comfort more often than other personalities.
+- [x] A completed comfort interaction raises the receiver's mood by 6 (9 for a caring companion) and the initiator's mood by 2; both values are persisted in the profile.
+- [x] Show distinct overhead captions and gentle paired sway while the interaction is active.
+- [x] Add cooperative exploration: when a bonded pair (20+ bond) has a safe idle window, one companion can invite the other to the same point of interest.
+- [x] Keep the invited companion's shared destination ahead of solo idle choices and require both pets to arrive within 6 studs before completing the discovery.
+- [x] Shared discoveries raise both moods by 3, show a shared-heart effect and notify the player; pair cooldown prevents repeated prompts for 90 seconds.
+- [x] Expire abandoned shared invitations and clear their transient attributes.
+- [x] Add static regression assertions for comfort thresholds/rewards, invitation routing, arrival checks and cleanup.
+- [ ] Roblox Studio: verify comfort starts only for genuinely low-mood companions and does not interrupt sleep or needs.
+- [ ] Verify both pets arrive at the same discovery point and the shared reward/notice occurs once if either arrives first.
+- [ ] Verify a partner who cannot join (sleeping, busy, or out of range) does not receive a false shared-discovery reward.
+- [ ] Verify the new overhead captions remain legible and do not collide with gift/friendship billboards on mobile/tablet/desktop.
