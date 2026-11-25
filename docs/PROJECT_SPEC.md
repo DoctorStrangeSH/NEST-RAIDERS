@@ -800,3 +800,13 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - BondJournalService handles the RemoteFunction request and checks ProfileLoaded. Discovery IDs are persisted in the profile template under Nest.DiscoveredBondMoments.
 - The UI uses the existing responsive HUD scaling, scrollable card list, dedicated menu entry and close button.
 - Studio acceptance must verify discovery refresh/rejoin persistence, hidden-data privacy, completion math, viewport scaling and safe handling while profile data loads.
+
+
+### Friendship Tiers — Sprint 4.81
+- Pair friendship is a persistent score from 0 to 100, stored by the server under Nest.CompanionBonds using a stable, order-independent pair key.
+- Tier thresholds: 0–9 Знакомство; 10–29 Приятели; 30–59 Друзья; 60–89 Лучшие друзья; 90–100 Неразлучные.
+- Each active companion displays its current pair tier and score in a compact overhead badge with a 0–100 progress bar. The badge is hidden when there is no active pair or no earned bond score.
+- The badge uses a consistent tier color and updates during the companion simulation loop. Server-side profile data remains authoritative.
+- Paired adventures improve rare discovery odds by tier: 8%, 12%, 16%, and 20% for the four earned tiers (10+, 30+, 60+, 90+). This changes only the rare variant probability, not the event's base spawn frequency or cooldown.
+- Paired adventure claims update both companions' FriendshipScore and FriendshipLevel attributes immediately.
+- No paid boosts, currency multipliers, XP rewards, or direct combat power are granted by friendship tiers.
