@@ -40,6 +40,12 @@ local MOMENTS = {
     },
 }
 
+local PAIR_MEMORIES = {
+    { RequiredBond = 60, Id = "TrustedPact", Title = "Тайный знак дружбы", Icon = "🤝", Color = Color3.fromRGB(194, 139, 255), Hint = "Нужно достичь 60 очков дружбы с одним питомцем." },
+    { RequiredBond = 80, Id = "UnbreakablePromise", Title = "Обещание неразлучности", Icon = "💞", Color = Color3.fromRGB(225, 157, 255), Hint = "Нужно достичь 80 очков дружбы с одним питомцем." },
+    { RequiredBond = 100, Id = "ForeverTogether", Title = "Друзья навеки", Icon = "🌟", Color = Color3.fromRGB(255, 225, 145), Hint = "Нужно достичь максимальной дружбы с одним питомцем." },
+}
+
 local GIFT_COLLECTION = {
     MeadowEgg = { Biome = "Луговые острова", Gifts = { { "Букет луговых цветов", "🌼" }, { "Корзинка сладких ягод", "🫐" }, { "Резной желудь", "🌰" } } },
     EmeraldEgg = { Biome = "Изумрудные чащи", Gifts = { { "Светящийся лист", "🍃" }, { "Лесной кристалл", "💎" }, { "Живой росток", "🌱" } } },
@@ -77,6 +83,31 @@ local function buildSnapshot(profile)
         })
     end
 
+    local pairTotal = 0
+    local companionBonds = type(profile.Nest.CompanionBonds) == "table" and profile.Nest.CompanionBonds or {}
+    for bondKey, scoreValue in pairs(companionBonds) do
+        local score = math.clamp(math.floor(tonumber(scoreValue) or 0), 0, 100)
+        if score > 0 then
+            for _, memory in ipairs(PAIR_MEMORIES) do
+                local key = "Pair:" .. tostring(bondKey) .. ":" .. memory.Id
+                local discovered = discoveries[key] == true
+                if discovered then discoveredCount += 1 end
+                pairTotal += 1
+                table.insert(entries, {
+                    Id = "pair:" .. key,
+                    Title = discovered and memory.Title or "???",
+                    Hint = discovered and "Это воспоминание принадлежит вашей особенной паре питомцев."
+                        or memory.Hint,
+                    Rarity = memory.RequiredBond >= 100 and "Легендарное" or "Особенное",
+                    Icon = discovered and memory.Icon or "🔒",
+                    Color = discovered and memory.Color or Color3.fromRGB(112, 126, 145),
+                    Discovered = discovered,
+                    Category = "Pair",
+                })
+            end
+        end
+    end
+
     local giftTotal = 0
     for eggId, biome in pairs(GIFT_COLLECTION) do
         for _, gift in ipairs(biome.Gifts) do
@@ -103,7 +134,7 @@ local function buildSnapshot(profile)
         end
     end
 
-    local total = #MOMENTS + giftTotal
+    local total = #MOMENTS + pairTotal + giftTotal
     return {
         Entries = entries,
         Discovered = discoveredCount,
