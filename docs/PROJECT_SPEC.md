@@ -840,3 +840,12 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - The current anchored low-poly companion models are animated by the existing server follower loop using small vertical, yaw and roll offsets. Hug reactions gently move both companions 0.38 studs toward one another and orient them face-to-face.
 - Reaction phrases appear in the existing overhead mood label. Reaction state is server-authored through GiftReaction, GiftReactionText, GiftReactionUntil and GiftReactionRare attributes, then cleared automatically on expiry.
 - Reactions are cosmetic/emotional only and do not add currency, XP, items, bond points or combat power. Sleeping companions do not play active emotes.
+
+
+### Autonomous Personality Habits — Sprint 4.84
+- Companions may perform short, personality-specific idle habits while remaining at a safe idle position in the nest.
+- Supported habits: Curious — sniff around; Inquisitive — inspect; Playful — hop; Energetic — stretch; Calm — groom; Cautious — look around; Dreamy — daydream; Observant — watch the sky; Good-natured — sway; Friendly — look for friends/wave; Caring — check surroundings; Proud — hold a proud pose.
+- Each habit has a personality-specific trigger chance, lasts 2.2–4.0 seconds, starts after an initial 8–16 second delay, and then has a 28–52 second personal cooldown.
+- Habits require mood >= 25, energy >= 20 and hunger >= 20. They do not interrupt sleeping, shared resting, chase, social play, gift reactions or active travel.
+- Habits use small bob/yaw/roll offsets in the existing companion follower loop and display a short Russian caption in the overhead mood label.
+- Habit state is transient presentation, not a progression reward or saved collectible. It clears on expiry and immediately when sleep begins.
