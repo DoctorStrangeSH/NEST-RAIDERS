@@ -1822,4 +1822,5 @@ assert 'partnerModel:SetAttribute("CompanionChaseUntil", chaseUntil)' in compani
 assert 'local partnerPositionForChase = partnerModel and partnerModel:GetPivot().Position' in companion_service
 assert 'local chaseRadius = 2.4' in companion_service
 assert 'targetIsChase and "ChasingFriend"' in companion_service
+assert 'and not isSleeping and not partnerSleeping and mood >= 25 and energy >= 15 then' in companion_service
 assert 'for key in pairs(socialChaseCooldowns) do' in companion_service
