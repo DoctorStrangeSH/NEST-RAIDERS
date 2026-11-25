@@ -1139,6 +1139,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local careUntil = 0
             local careRewarded = false
             local isSharedDiscoveryFollower = false
+            local sharedDiscoveryLeaderUntil = 0
+            local sharedDiscoveryLeaderTarget = nil
             local targetIsChase = false
             local targetIsRestingTogether = false
             local restingTogetherUntil = 0
@@ -1203,7 +1205,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     local partnerBehavior = partnerModel and partnerModel:GetAttribute("Behavior")
                     local partnerPersonality = partnerModel and partnerModel:GetAttribute("Personality") or ""
                     local partnerSleeping = partnerModel and partnerModel:GetAttribute("IsSleeping") == true
-                    if slot < partnerSlot and interestUntil > now and partnerModel
+                    if slot < partnerSlot and sharedDiscoveryLeaderUntil > now and typeof(sharedDiscoveryLeaderTarget) == "Vector3"
+                        and (currentPosition - sharedDiscoveryLeaderTarget).Magnitude <= 6 and partnerModel
                         and partnerModel:GetAttribute("SharedDiscoveryLeader") == instanceId
                         and partnerModel:GetAttribute("SharedDiscoveryArrived") == true
                         and (partnerModel:GetPivot().Position - currentPosition).Magnitude <= 6 then
@@ -1230,6 +1233,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         partnerModel:SetAttribute("SharedDiscoveryTargetLabel", nil)
                         partnerModel:SetAttribute("SharedDiscoveryLeader", nil)
                         partnerModel:SetAttribute("SharedDiscoveryArrived", nil)
+                        sharedDiscoveryLeaderUntil = 0
+                        sharedDiscoveryLeaderTarget = nil
                     end
                     local pairBondKey = partnerModel and getBondKey(instanceId, partnerModel:GetAttribute("CompanionInstanceId"))
                     local pairBondScore = pairBondKey and profile.Nest and profile.Nest.CompanionBonds
@@ -1503,7 +1508,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 if isSharedDiscoveryFollower then
                                     model:SetAttribute("SharedDiscoveryArrived", true)
                                     isSharedDiscoveryFollower = false
-                                elseif slot < partnerSlot and partnerModel and partnerModel:GetAttribute("SharedDiscoveryLeader") == instanceId then
+                                elseif slot < partnerSlot and sharedDiscoveryLeaderUntil > now and typeof(sharedDiscoveryLeaderTarget) == "Vector3"
+                                    and (currentPosition - sharedDiscoveryLeaderTarget).Magnitude <= 6
+                                    and partnerModel and partnerModel:GetAttribute("SharedDiscoveryLeader") == instanceId then
                                     local partnerPosition = partnerModel:GetPivot().Position
                                     if (partnerPosition - currentPosition).Magnitude <= 6
                                         and partnerModel:GetAttribute("SharedDiscoveryArrived") == true then
@@ -1689,6 +1696,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                         and (sharedDiscoveryCooldowns[sharedKey] or 0) <= now
                                     if partnerCanJoin and random:NextNumber() < 0.28 then
                                         sharedDiscoveryCooldowns[sharedKey] = now + 90
+                                        sharedDiscoveryLeaderUntil = now + 18
+                                        sharedDiscoveryLeaderTarget = point.Position
                                         partnerModel:SetAttribute("SharedDiscoveryTargetPosition", point.Position)
                                         partnerModel:SetAttribute("SharedDiscoveryTargetUntil", now + 18)
                                         partnerModel:SetAttribute("SharedDiscoveryTargetLabel", point.Label)
