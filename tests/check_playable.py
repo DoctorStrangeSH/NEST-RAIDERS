@@ -1839,3 +1839,17 @@ assert 'behavior = "RestingWithFriend"' in companion_service
 assert 'model:SetAttribute("RestingWithFriend", nil)' in companion_service
 assert 'if targetIsRestingTogether and (not partnerModel or not partnerSleeping) then' in companion_service
 assert 'for key in pairs(sharedRestCooldowns) do' in companion_service
+
+
+# Sprint 4.78 — personality-specific greetings and reunion presentation.
+assert 'local pairGreetingLastAt = {}' in companion_service
+assert 'local GREETING_STYLES = {' in companion_service
+assert '["Дружелюбный"] = { Icon = "♥"' in companion_service
+assert '["Игривый"] = { Icon = "✦"' in companion_service
+assert '["Осторожный"] = { Icon = "…"' in companion_service
+assert 'local function showPersonalityGreeting(firstModel, secondModel, firstPersonality, secondPersonality, reunion)' in companion_service
+assert 'bubble.Name = reunion and "FriendshipReunionGreeting" or "PersonalityGreeting"' in companion_service
+assert 'local isReunion = lastGreeting > 0 and (now - lastGreeting) >= 120' in companion_service
+assert 'showPersonalityGreeting(' in companion_service
+assert 'glow.Name = "FriendshipReunionGlow"' in companion_service
+assert 'for key in pairs(pairGreetingLastAt) do' in companion_service
