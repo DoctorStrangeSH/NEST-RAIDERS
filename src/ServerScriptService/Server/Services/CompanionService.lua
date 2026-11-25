@@ -19,6 +19,7 @@ local socialMomentCooldowns = {}
 local pairGreetingLastAt = {}
 local socialChaseCooldowns = {}
 local sharedRestCooldowns = {}
+local speciesMomentCooldowns = {}
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -350,12 +351,76 @@ local function showPersonalityGreeting(firstModel, secondModel, firstPersonality
     end
 end
 
+local SPECIES_BOND_MOMENTS = {
+    ["Fox|Turtle"] = { Title = "Лесные хранители", Icon = "🍃", Color = Color3.fromRGB(151, 207, 119), Text = "Лис показывает черепахе тайную тропу" },
+    ["Dragon|Owl"] = { Title = "Искра мудрости", Icon = "✨", Color = Color3.fromRGB(157, 190, 255), Text = "Дракон делится искоркой с мудрой совой" },
+    ["EmberFox|MagmaDragon"] = { Title = "Тёплое пламя", Icon = "🔥", Color = Color3.fromRGB(255, 157, 91), Text = "Два огненных друга создают общий вихрь искр" },
+    ["AncientStag|RootSprite"] = { Title = "Древний союз", Icon = "🌿", Color = Color3.fromRGB(177, 208, 125), Text = "Духи леса пробуждают маленький росток" },
+}
+
+local function getSpeciesMomentKey(firstKind, secondKind)
+    if not firstKind or not secondKind then return nil end
+    if firstKind > secondKind then firstKind, secondKind = secondKind, firstKind end
+    return firstKind .. "|" .. secondKind
+end
+
+local function showSpeciesBondMoment(firstModel, secondModel, moment)
+    for _, model in ipairs({ firstModel, secondModel }) do
+        if model and model.Parent then
+            local adornee = model:FindFirstChild("Head") or model.PrimaryPart
+            if adornee then
+                local bubble = Instance.new("BillboardGui")
+                bubble.Name = "SpeciesBondMoment"
+                bubble.Adornee = adornee
+                bubble.Size = UDim2.fromOffset(178, 52)
+                bubble.StudsOffset = Vector3.new(0, 1.65, 0)
+                bubble.AlwaysOnTop = false
+                bubble.Parent = model
+                local label = Instance.new("TextLabel")
+                label.Size = UDim2.fromScale(1, 1)
+                label.BackgroundColor3 = Color3.fromRGB(27, 39, 48)
+                label.BackgroundTransparency = 0.08
+                label.BorderSizePixel = 0
+                label.Font = Enum.Font.GothamBold
+                label.TextScaled = true
+                label.TextWrapped = true
+                label.TextColor3 = moment.Color
+                label.Text = moment.Icon .. " " .. moment.Title
+                label.Parent = bubble
+                local corner = Instance.new("UICorner")
+                corner.CornerRadius = UDim.new(0, 10)
+                corner.Parent = label
+                local stroke = Instance.new("UIStroke")
+                stroke.Color = moment.Color
+                stroke.Transparency = 0.25
+                stroke.Thickness = 1.4
+                stroke.Parent = label
+                task.delay(3.4, function()
+                    if bubble.Parent then bubble:Destroy() end
+                end)
+            end
+            local glow = Instance.new("Highlight")
+            glow.Name = "SpeciesBondGlow"
+            glow.Adornee = model
+            glow.FillColor = moment.Color
+            glow.OutlineColor = moment.Color
+            glow.FillTransparency = 0.78
+            glow.OutlineTransparency = 0.15
+            glow.DepthMode = Enum.HighlightDepthMode.Occluded
+            glow.Parent = model
+            task.delay(3.4, function()
+                if glow.Parent then glow:Destroy() end
+            end)
+        end
+    end
+end
 local function buildPet(parent, companion, index)
     local definition = DEFINITIONS[companion.Id] or DEFINITIONS.MeadowFox
     local model = Instance.new("Model")
     model.Name = string.format("%s_%d", companion.Id, index)
     model:SetAttribute("CompanionId", companion.Id)
     model:SetAttribute("CompanionInstanceId", companion.InstanceId or "")
+    model:SetAttribute("CompanionKind", definition.Kind or companion.Id)
     model:SetAttribute("Rarity", companion.Rarity or "Обычный")
     model:SetAttribute("Stars", companion.Stars or 1)
     model.Parent = parent
@@ -1292,6 +1357,24 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                                 partnerPersonality,
                                                 isReunion
                                             )
+                                            local firstKind = model:GetAttribute("CompanionKind")
+                                            local secondKind = partnerModel:GetAttribute("CompanionKind")
+                                            local speciesKey = getSpeciesMomentKey(firstKind, secondKind)
+                                            local speciesMoment = speciesKey and SPECIES_BOND_MOMENTS[speciesKey]
+                                            if speciesMoment and pairBondScore >= 30 then
+                                                local speciesCooldownKey = momentKey .. ":" .. speciesKey
+                                                if (speciesMomentCooldowns[speciesCooldownKey] or 0) <= now
+                                                    and random:NextNumber() < 0.35 then
+                                                    speciesMomentCooldowns[speciesCooldownKey] = now + 180
+                                                    showSpeciesBondMoment(model, partnerModel, speciesMoment)
+                                                    profile.Nest.DiscoveredBondMoments = profile.Nest.DiscoveredBondMoments or {}
+                                                    local isNewDiscovery = profile.Nest.DiscoveredBondMoments[speciesKey] ~= true
+                                                    profile.Nest.DiscoveredBondMoments[speciesKey] = true
+                                                    if isNewDiscovery then
+                                                        player:SetAttribute("LastNotice", "Открыто особое взаимодействие: " .. speciesMoment.Title)
+                                                    end
+                                                end
+                                            end
                                         end
                                     end
                                 end
@@ -1586,6 +1669,10 @@ function CompanionService:Init()
         for key in pairs(pairGreetingLastAt) do
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
                 pairGreetingLastAt[key] = nil
+            end
+        end        for key in pairs(speciesMomentCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                speciesMomentCooldowns[key] = nil
             end
         end
         for key in pairs(socialChaseCooldowns) do
