@@ -1248,3 +1248,14 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify 75-second comfort and 90-second discovery cooldowns prevent spam during the session.
 - [ ] Test with three active pets; unrelated third pet must not join or receive rewards.
 - [ ] Check captions, movement, billboards and performance on phone, tablet and desktop.
+
+
+## Sprint 4.87 — Shared ball play
+- [ ] Build a pair with at least 10 saved friendship points and observe repeated social sessions; verify ball play can occur but does not trigger every time.
+- [ ] Verify Playful/Energetic pairs trigger more often than other personality combinations over controlled repeated trials.
+- [ ] Verify the ball appears between the correct two companions, passes alternately five times, displays "ПАС!" and cleans up within 4.5 seconds.
+- [ ] Verify the ball has no collision/touch/query behavior and cannot block players, pets, prompts or building placement.
+- [ ] Remove either pet during the animation; verify the ball is destroyed without errors.
+- [ ] Put either pet to sleep or make it unavailable before social play; verify no ball game starts.
+- [ ] Verify the 45-second cooldown is isolated by owner and pair, and is cleared when the owner leaves.
+- [ ] Test visibility and label readability at desktop, tablet and mobile camera distances.
