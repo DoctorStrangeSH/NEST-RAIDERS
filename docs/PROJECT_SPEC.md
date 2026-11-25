@@ -750,3 +750,12 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - The server publishes FriendshipStyle for presentation: Привыкает постепенно / Доверяет другу, Сам ищет друзей, Любит совместные игры, or Спокойное общение.
 - This sprint changes behavior selection only; it adds no currency, XP, mood or friendship rewards. Existing social-session rewards and cooldowns remain authoritative.
 - Studio acceptance must verify all personality pairings, avoid permanent isolation, preserve needs, and confirm both display pairs and rejoin behavior.
+
+
+### Friendship Chase Games — Sprint 4.76
+- Pairs with at least 30 saved bond points may occasionally start a short chase after a completed social-play session.
+- The lower display slot owns the trigger and writes the same CompanionChaseUntil timestamp to both pet models, preventing duplicate starts.
+- During the shared 4.5-second window, each awake companion continuously updates a moving target around its partner and publishes Behavior = ChasingFriend. The chase stops if either pet is sleeping or falls below the minimum mood/energy threshold.
+- A 35-second per-player/per-pair cooldown prevents repeated interruptions. The cooldown is runtime-only and cleared on player departure.
+- The interaction is cosmetic and grants no extra mood, friendship, currency or XP. Existing social-session rewards remain unchanged.
+- Studio acceptance must verify visible movement, no jitter/collision, clean return to routine, both display pairs, interruptions, multiplayer isolation and mobile readability.
