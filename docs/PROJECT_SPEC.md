@@ -768,3 +768,12 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - During the rest the server publishes Behavior = RestingWithFriend and the RestingWithFriend model attribute. The state clears when the rest ends, the partner wakes, or the resting pet itself falls asleep.
 - A 55-second per-player/per-pair runtime cooldown prevents repeated approaches. It is cleared when the owner leaves.
 - This is a cosmetic interaction only: it does not change sleep timers, energy, mood, bond, currency or XP. Studio acceptance must verify position, no overlap, wake interruption, thresholds, both pairs and multiplayer isolation.
+
+
+### Personality Greetings and Reunion Moments — Sprint 4.78
+- When a displayed pair begins a social session, each companion shows a short greeting above its head. The greeting's icon, color and phrase are selected from that pet's Personality, so the two pets may react differently to the same meeting.
+- Supported styles include Friendly (Дружелюбный), Good-natured (Добродушный), Playful (Игривый), Energetic (Энергичный), Cautious (Осторожный), Calm (Спокойный), Wise (Мудрый) and Dreamy (Мечтательный). Unknown personalities use a neutral friendly fallback.
+- The server tracks the last greeting timestamp per owner/pair. If at least 120 seconds have passed since the pair's previous greeting, both receive a longer reunion greeting and a warm temporary Highlight.
+- Normal greeting bubbles last 2.1 seconds; reunion bubbles and glow last 3.2 seconds. The existing 18-second shared visual cooldown still prevents spam.
+- Greeting timestamps are runtime-only and cleared on owner departure. This system does not change bond, mood, needs, currency or XP.
+- Studio acceptance must verify paired presentation, all personalities, reunion timing, cleanup, both display pairs, multiplayer isolation and mobile readability.
