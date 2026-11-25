@@ -1103,3 +1103,14 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify increasing bond raises social chance gradually but does not create constant movement or interrupt sleep, shelter, hunger, or energy rules.
 - [ ] Verify FriendshipStyle is correct on both display pairs and remains correct after respawn/rejoin.
 - [ ] Confirm no additional mood, bond, currency or XP is granted by the new personality modifiers.
+
+
+## Sprint 4.76 — Friendship chase games
+- [ ] With pair bond below 30, complete several social sessions; verify the new chase does not start.
+- [ ] With pair bond 30+, complete social sessions; verify an occasional chase begins for both pets at the same time.
+- [ ] Verify both companions move around the partner target for approximately 4.5 seconds and publish ChasingFriend while moving.
+- [ ] Verify both pets return to normal wandering/social routines when the shared window ends.
+- [ ] Put either pet to sleep, remove it from display, or lower its mood/energy below the guard during a chase; verify the behavior stops safely.
+- [ ] Verify the same pair cannot trigger another chase inside the 35-second cooldown, and another pair/player has an independent cooldown.
+- [ ] Test display pairs 1–2 and 3–4, multiple players, low-end graphics and mobile camera readability.
+- [ ] Confirm chase behavior grants no extra mood, bond, currency or XP.
