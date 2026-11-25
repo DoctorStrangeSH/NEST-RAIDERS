@@ -1975,3 +1975,35 @@ assert 'local hugOffset = Vector3.zero' in companion_service
 assert 'hugOffset = towardFriend.Unit * 0.38' in companion_service
 assert 'behavior = giftReaction == "Hug" and "HuggingFriend" or "CelebratingGift"' in companion_service
 assert 'model:SetAttribute("GiftReaction", nil)' in companion_service
+
+
+# Sprint 4.84 — autonomous personality habits in quiet nest moments.
+assert 'local COMPANION_HABITS = {' in companion_service
+for personality, habit_id in (
+    ("Любопытный", "SniffAround"),
+    ("Любознательный", "Inspect"),
+    ("Игривый", "PlayfulHop"),
+    ("Энергичный", "Stretch"),
+    ("Спокойный", "Groom"),
+    ("Осторожный", "LookAround"),
+    ("Мечтательный", "Daydream"),
+    ("Наблюдательный", "WatchSky"),
+    ("Добродушный", "Sway"),
+    ("Дружелюбный", "Wave"),
+    ("Заботливый", "Care"),
+    ("Гордый", "Proud"),
+):
+    assert f'["{personality}"] = {{ Id = "{habit_id}"' in companion_service
+assert 'local activeHabit = nil' in companion_service
+assert 'local nextHabitAt = os.clock() + random:NextNumber(8, 16)' in companion_service
+assert 'activeHabitUntil = now + random:NextNumber(2.2, 4.0)' in companion_service
+assert 'nextHabitAt = now + random:NextNumber(28, 52)' in companion_service
+assert 'model:SetAttribute("PersonalHabit", habit.Id)' in companion_service
+assert 'model:SetAttribute("PersonalHabitText", habit.Text)' in companion_service
+assert 'local habitActive = activeHabit ~= nil and now < activeHabitUntil and isAtTarget and not isSleeping' in companion_service
+assert 'behavior = "PersonalHabit"' in companion_service
+assert 'model:SetAttribute("PersonalHabit", nil)' in companion_service
+assert 'activeHabit = nil' in companion_service
+assert 'local habitPhase = now * 2.4 + phase' in companion_service
+assert 'local habitBob, habitYaw, habitRoll = 0, 0, 0' in companion_service
+assert 'or (habitActive and model:GetAttribute("PersonalHabitText"))' in companion_service
