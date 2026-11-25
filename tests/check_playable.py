@@ -1942,7 +1942,7 @@ assert 'local GIFT_COLLECTION = {' in gift_journal
 assert 'profile.Nest.DiscoveredCompanionGifts' in gift_journal
 assert 'local giftTotal = 0' in gift_journal
 assert 'Id = "gift:" .. key' in gift_journal
-assert 'local total = #MOMENTS + giftTotal' in gift_journal
+assert 'local total = #MOMENTS + pairTotal + giftTotal' in gift_journal
 
 assert 'local partnerDefinition = CompanionCatalog[partnerModel:GetAttribute("CompanionId")] or {}' in companion_service
 assert 'if random:NextNumber() < 0.5 then' in companion_service
