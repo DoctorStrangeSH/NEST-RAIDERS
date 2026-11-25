@@ -1365,6 +1365,7 @@ local menuIconStyles = {
     { Color = Color3.fromRGB(90, 166, 132), Kind = "paw" },
     { Color = Color3.fromRGB(205, 151, 74), Kind = "egg" },
     { Color = Color3.fromRGB(115, 137, 196), Kind = "book" },
+    { Color = Color3.fromRGB(116, 164, 113), Kind = "heart" },
     { Color = Color3.fromRGB(116, 164, 113), Kind = "nest" },
     { Color = Color3.fromRGB(173, 133, 92), Kind = "star" },
     { Color = Color3.fromRGB(153, 119, 173), Kind = "flower" },
@@ -1409,6 +1410,18 @@ local function drawMenuIcon(parent, kind)
         addIconShape(parent, "BookLeft", 9, 14, 9, 16, -5, white, 3)
         addIconShape(parent, "BookRight", 19, 14, 9, 16, 5, white, 3)
         addIconShape(parent, "BookSpine", 14, 14, 2, 17, 0, Color3.fromRGB(115, 137, 196))
+    elseif kind == "heart" then
+        local heart = Instance.new("TextLabel")
+        heart.Name = "FriendshipHeart"
+        heart.BackgroundTransparency = 1
+        heart.Position = UDim2.fromOffset(1, 0)
+        heart.Size = UDim2.fromOffset(26, 27)
+        heart.Font = Enum.Font.GothamBlack
+        heart.Text = "♥"
+        heart.TextColor3 = white
+        heart.TextSize = 22
+        heart.ZIndex = parent.ZIndex + 1
+        heart.Parent = parent
     elseif kind == "nest" then
         addIconShape(parent, "NestRimTop", 14, 13, 19, 3, -12, white)
         addIconShape(parent, "NestRimMid", 14, 17, 21, 3, 0, white)
@@ -6407,6 +6420,7 @@ local function renderBondJournal(data)
 end
 
 local function openBondJournal()
+    bookPanel.Visible = false
     bondJournalPanel.Visible = true
     local data = invokeBondJournal()
     if data then renderBondJournal(data) end
