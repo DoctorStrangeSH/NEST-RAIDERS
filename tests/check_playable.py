@@ -1715,6 +1715,7 @@ assert 'local DECOR_INTERESTS = {' in companion_service
 assert 'local function collectInterestPoints(plotModel, home)' in companion_service
 assert 'local function chooseInterestPoint(points, favoritePlace, random, previousId)' in companion_service
 assert 'local interestPoints = collectInterestPoints(plot.Model, home)' in companion_service
+assert 'if now - interestPointsUpdatedAt >= 5 and plot.Model and plot.Model.Parent then' in companion_service
 assert 'local canExplore = #interestPoints > 0 and energy >= 25 and hunger >= 25 and mood >= 30' in companion_service
 assert 'local explorationChance = (personality == "Любопытный" or personality == "Любознательный") and 0.34 or 0.2' in companion_service
 assert 'targetIsInterest = true' in companion_service
