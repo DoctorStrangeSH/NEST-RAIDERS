@@ -1489,3 +1489,16 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Roblox Studio: verify first-time discovery appears after refresh/reopen and remains after leave/rejoin.
 - [ ] Verify locked entries never leak species names, all four discovered entries display correctly, and 0/4–4/4 progress is accurate.
 - [ ] Test mobile/tablet/desktop scaling, scrolling, close behavior, simultaneous panels, and profile-not-loaded handling.
+
+
+### Sprint 4.81 — Visible friendship tiers
+- [x] Surface each active companion pair's relationship level and 0–100 score above the pets in the live world.
+- [x] Add a compact progress bar with tier-specific color: acquaintance, companions, friends, best friends, inseparable.
+- [x] Hide the relationship badge until a pair has earned its first bond point; keep the HUD free of unrelated/empty badges.
+- [x] Update both companion models immediately when a paired adventure is claimed.
+- [x] Scale rare shared-adventure odds by relationship tier: 8% (10–29), 12% (30–59), 16% (60–89), 20% (90–100).
+- [x] Add static regression assertions for live UI updates, progress math, and server-side tier rewards.
+- [ ] Roblox Studio: verify visible progress updates after social sessions and paired adventures.
+- [ ] Verify all five tier labels/colors at boundary scores 0, 10, 30, 60 and 90.
+- [ ] Verify rare adventure chance is tier-scaled without increasing the base adventure frequency.
+- [ ] Test readability and overlap on mobile/tablet/desktop with 1–3 active companions.
