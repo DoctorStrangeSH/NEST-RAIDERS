@@ -867,3 +867,12 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - **Cooperative discovery:** when a pair has at least 20 bond and one companion selects an exploration point, the leader may invite its paired companion to the same point. The invitation is transient server-authored model attributes and expires after 18 seconds.
 - The invited companion prioritizes the shared target over solo activities. A shared discovery completes only when both companions have arrived within 6 studs. Both gain 3 mood, both receive a discovery label, a shared-heart effect is shown, and the player receives a notice. The pair has a 90-second session cooldown.
 - An abandoned invitation expires and is cleared without a reward. These are cosmetic/social world events and do not grant currency, items, XP or permanent collection unlocks.
+
+
+### Shared Companion Games — Sprint 4.87 foundation
+- An established display pair (persistent bond 10+) may occasionally turn a normal social session into a short ball-passing game.
+- The lower display slot owns the trigger, so the pair creates only one ball. Playful or Energetic personalities increase the chance; all other personalities retain a lower chance.
+- The server creates a temporary anchored Neon ball between the two live companion models. The ball is non-colliding, non-touching and non-queryable, carries owner/pair metadata, and performs five alternating eased passes between the companions.
+- The presentation lasts at most 4.5 seconds and is destroyed early if either companion disappears. A 45-second per-owner/pair cooldown prevents repeated effects; entries are cleared on owner departure.
+- The event is cosmetic: it does not change mood, friendship, needs, currency, XP, inventory or progression.
+- This is the first shared-game slice. Hide-and-seek, shared toy play and cooperative treasure hunts are not yet implemented.
