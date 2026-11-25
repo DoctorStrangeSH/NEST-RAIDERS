@@ -1536,3 +1536,17 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify discoveries survive leave/rejoin and the journal reveals only gifts actually received.
 - [ ] Verify 90-second cooldown and that gift moments do not overlap other overhead UI excessively.
 - [ ] Check journal scrolling and layout on phone, tablet and desktop.
+
+
+### Sprint 4.83 — Emotional gift reactions
+- [x] Add personality-specific receiver reactions: jump, spin, hug, shy sway, calm sway, dreamy sway and proud pose.
+- [x] Add independent giver reactions so the presenting companion also celebrates or reacts modestly.
+- [x] Rare gifts trigger a special amazed receiver reaction and a proud giver reaction with a longer presentation window.
+- [x] Drive reactions through server-owned model attributes and the existing companion movement loop; no separate client animation controller is required.
+- [x] Add paired approach offsets and face-to-face orientation for hug reactions.
+- [x] Show each pet's reaction phrase in its existing overhead mood label.
+- [x] Clear reaction attributes automatically when the reaction expires; sleeping companions do not perform active gift emotes.
+- [x] Add regression assertions for personality maps, rare reactions, paired hug offsets and cleanup.
+- [ ] Roblox Studio: verify emotes read naturally with the current low-poly companion models.
+- [ ] Check that two companions do not clip into each other during hugs and that movement resumes smoothly afterwards.
+- [ ] Verify rare gift presentation is visually distinct and reaction text remains readable on mobile/tablet/desktop.
