@@ -1221,3 +1221,15 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify overhead Russian captions fit on screen and do not collide with friendship/gift billboards.
 - [ ] Verify the third displayed pet can perform its own habit independently of the paired pets.
 - [ ] Check movement readability and performance on phone, tablet and desktop.
+
+
+## Sprint 4.85 — Special friendship memories
+- [ ] Raise one pair from 59 to 60 bond and verify Trusted Pact unlocks once with a shared celebration.
+- [ ] Raise the same pair from 79 to 80 and verify Unbreakable Promise unlocks once.
+- [ ] Raise the same pair from 99 to 100 and verify Friends Forever unlocks once.
+- [ ] Verify existing 10, 30 and 90 milestones still trigger as before.
+- [ ] Create a second pair and verify its pair-specific memory keys are independent of the first pair.
+- [ ] Verify the journal lists three locked entries per bonded pair, with correct threshold hints and hidden titles.
+- [ ] Verify discovered pair memories reveal their title/icon and increase the completion count exactly once.
+- [ ] Leave/rejoin and verify all unlocked memories persist and are not re-announced.
+- [ ] Check banners/glows do not overlap gift/reaction billboards excessively on phone, tablet and desktop.
