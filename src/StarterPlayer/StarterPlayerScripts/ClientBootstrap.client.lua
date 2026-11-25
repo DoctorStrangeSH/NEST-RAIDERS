@@ -6322,6 +6322,99 @@ end
 collectionButton.Activated:Connect(openCollectionBook)
 bookClose.Activated:Connect(function() bookPanel.Visible = false end)
 
+local function invokeBondJournal()
+    local success, response = pcall(function()
+        return bondJournalRemote:InvokeServer({ Action = "Get" })
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось открыть дневник дружбы.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Дневник дружбы временно недоступен.")
+        return nil
+    end
+    return response.Data
+end
+
+local function renderBondJournal(data)
+    if type(data) ~= "table" then return end
+    bondJournalProgress.Text = string.format(
+        "Открыто секретов: %d / %d  ·  %d%%",
+        data.Discovered or 0, data.Total or 0, data.CompletionPercent or 0
+    )
+    for _, child in ipairs(bondJournalList:GetChildren()) do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+    for index, entry in ipairs(data.Entries or {}) do
+        local card = Instance.new("Frame")
+        card.Name = "BondMoment_" .. tostring(index)
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 94)
+        card.BackgroundColor3 = entry.Discovered and Color3.fromRGB(47, 73, 59) or Color3.fromRGB(39, 53, 55)
+        card.BorderSizePixel = 0
+        card.Parent = bondJournalList
+        addCorner(card, 11)
+        local accent = Instance.new("Frame")
+        accent.Size = UDim2.new(0, 4, 1, -16)
+        accent.Position = UDim2.fromOffset(5, 8)
+        accent.BackgroundColor3 = entry.Color or Color3.fromRGB(112, 126, 145)
+        accent.BorderSizePixel = 0
+        accent.Parent = card
+        addCorner(accent, 3)
+        local icon = Instance.new("TextLabel")
+        icon.BackgroundTransparency = 1
+        icon.Position = UDim2.fromOffset(15, 13)
+        icon.Size = UDim2.fromOffset(42, 42)
+        icon.Font = Enum.Font.GothamBlack
+        icon.Text = entry.Icon or "🔒"
+        icon.TextSize = 25
+        icon.Parent = card
+        local title = Instance.new("TextLabel")
+        title.BackgroundTransparency = 1
+        title.Position = UDim2.fromOffset(62, 9)
+        title.Size = UDim2.new(1, -74, 0, 23)
+        title.Font = Enum.Font.GothamBold
+        title.Text = entry.Discovered and entry.Title or "???  ·  Секрет не открыт"
+        title.TextColor3 = entry.Discovered and (entry.Color or Color3.fromRGB(215, 238, 184)) or Color3.fromRGB(165, 177, 169)
+        title.TextSize = 13
+        title.TextXAlignment = Enum.TextXAlignment.Left
+        title.TextTruncate = Enum.TextTruncate.AtEnd
+        title.Parent = card
+        local rarity = Instance.new("TextLabel")
+        rarity.BackgroundTransparency = 1
+        rarity.Position = UDim2.fromOffset(62, 32)
+        rarity.Size = UDim2.new(1, -74, 0, 16)
+        rarity.Font = Enum.Font.GothamBlack
+        rarity.Text = string.upper(tostring(entry.Rarity or "Секрет"))
+        rarity.TextColor3 = entry.Color or Color3.fromRGB(145, 159, 148)
+        rarity.TextSize = 9
+        rarity.TextXAlignment = Enum.TextXAlignment.Left
+        rarity.Parent = card
+        local hint = Instance.new("TextLabel")
+        hint.BackgroundTransparency = 1
+        hint.Position = UDim2.fromOffset(62, 51)
+        hint.Size = UDim2.new(1, -74, 0, 34)
+        hint.Font = Enum.Font.GothamMedium
+        hint.Text = entry.Hint or "Продолжай знакомить питомцев."
+        hint.TextColor3 = Color3.fromRGB(189, 203, 188)
+        hint.TextSize = 10
+        hint.TextWrapped = true
+        hint.TextXAlignment = Enum.TextXAlignment.Left
+        hint.TextYAlignment = Enum.TextYAlignment.Top
+        hint.Parent = card
+    end
+end
+
+local function openBondJournal()
+    bondJournalPanel.Visible = true
+    local data = invokeBondJournal()
+    if data then renderBondJournal(data) end
+end
+
+bondJournalButton.Activated:Connect(openBondJournal)
+bondJournalClose.Activated:Connect(function() bondJournalPanel.Visible = false end)
+
 local function openInventory()
     inventoryPanel.Visible = true
     local data = invokeInventory({ Action = "Get" })
