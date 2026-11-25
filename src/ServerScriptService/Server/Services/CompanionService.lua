@@ -1598,7 +1598,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local sharedTarget = model:GetAttribute("SharedDiscoveryTargetPosition")
                             local sharedTargetUntil = tonumber(model:GetAttribute("SharedDiscoveryTargetUntil")) or 0
                             local followingSharedDiscovery = typeof(sharedTarget) == "Vector3"
-                                and sharedTargetUntil > now and partnerModel
+                                and sharedTargetUntil > now
+                                and model:GetAttribute("SharedDiscoveryArrived") ~= true and partnerModel
                                 and model:GetAttribute("SharedDiscoveryLeader")
                                     == partnerModel:GetAttribute("CompanionInstanceId")
                             if followingSharedDiscovery
