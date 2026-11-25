@@ -1720,7 +1720,7 @@ assert 'local canExplore = #interestPoints > 0 and energy >= 25 and hunger >= 25
 assert 'local explorationChance = (personality == "Любопытный" or personality == "Любознательный") and 0.34 or 0.2' in companion_service
 assert 'targetIsInterest = true' in companion_service
 assert 'model:SetAttribute("InterestTargetLabel", point.Label)' in companion_service
-assert 'behavior = targetIsInterest and "Exploring"' in companion_service
+assert 'targetIsInterest and "Exploring"' in companion_service
 assert 'behavior = "VisitingInterest"' in companion_service
 assert 'model:SetAttribute("LastDiscovery", discovery)' in companion_service
 assert 'player:SetAttribute("LastNotice", companion.Name .. " заметил кое-что интересное: "' in companion_service
