@@ -15,6 +15,7 @@ CompanionService._displayFolders = {}
 CompanionService._generations = {}
 local MAX_VISIBLE_COMPANIONS = 3
 local FOLLOW_INTERVAL = 0.1
+local socialMomentCooldowns = {}
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -237,6 +238,37 @@ local function showBondMilestone(player, firstModel, secondModel, milestone)
     player:SetAttribute("LastNotice", "Новый этап дружбы: " .. milestone.Title)
 end
 
+local function showSharedHeartMoment(firstModel, secondModel)
+    for _, model in ipairs({ firstModel, secondModel }) do
+        if model and model.Parent then
+            local head = model:FindFirstChild("Head")
+            local adornee = head or model.PrimaryPart
+            if adornee then
+                local bubble = Instance.new("BillboardGui")
+                bubble.Name = "SharedFriendshipHeart"
+                bubble.Adornee = adornee
+                bubble.Size = UDim2.fromOffset(42, 42)
+                bubble.StudsOffset = Vector3.new(0, 1.05, 0)
+                bubble.AlwaysOnTop = true
+                bubble.Parent = model
+                local heart = Instance.new("TextLabel")
+                heart.Name = "Heart"
+                heart.Size = UDim2.fromScale(1, 1)
+                heart.BackgroundTransparency = 1
+                heart.Font = Enum.Font.GothamBold
+                heart.Text = "♥"
+                heart.TextColor3 = Color3.fromRGB(255, 112, 153)
+                heart.TextStrokeColor3 = Color3.fromRGB(75, 35, 54)
+                heart.TextStrokeTransparency = 0.25
+                heart.TextScaled = true
+                heart.Parent = bubble
+                task.delay(1.6, function()
+                    if bubble.Parent then bubble:Destroy() end
+                end)
+            end
+        end
+    end
+end
 local function buildPet(parent, companion, index)
     local definition = DEFINITIONS[companion.Id] or DEFINITIONS.MeadowFox
     local model = Instance.new("Model")
@@ -1057,6 +1089,15 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                     idleUntil = socialPlayUntil
                                     local towardFriend = partnerPosition - currentPosition
                                     facing = math.atan2(towardFriend.X, towardFriend.Z)
+                                    if slot < partnerSlot and partnerModel then
+                                        local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                                        local pairId = getBondKey(instanceId, partnerId)
+                                        local momentKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                        if pairId and (socialMomentCooldowns[momentKey] or 0) <= now then
+                                            socialMomentCooldowns[momentKey] = now + 18
+                                            showSharedHeartMoment(model, partnerModel)
+                                        end
+                                    end
                                 end
                                 bob = math.sin(now * 2 + phase) * 0.045
                             elseif nearToy and toyPlayUntil > now and energy > 10 then
