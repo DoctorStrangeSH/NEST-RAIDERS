@@ -1085,3 +1085,11 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify milestone score/title remains after rejoin and no celebration replays just for loading the profile.
 - [ ] Test both display pairs and two players in one server; verify visual effects and notices stay owner/pair scoped.
 - [ ] Check banner readability on desktop and mobile at minimum and maximum camera zoom.
+
+
+## Sprint 4.74 — Shared friendship emotes
+- [ ] Display two awake companions with enough mood to socialize; wait for a shared social session and verify a heart appears above both pets at the same time.
+- [ ] Verify each heart disappears after approximately 1.6 seconds.
+- [ ] Keep the pair together through several social sessions; verify the emote does not repeat inside the 18-second pair cooldown.
+- [ ] Verify the emote does not grant extra mood, friendship, coins or XP beyond the existing social-session reward.
+- [ ] Test display pairs 1–2 and 3–4, four pets, two players, pet removal during the effect and mobile camera readability.
