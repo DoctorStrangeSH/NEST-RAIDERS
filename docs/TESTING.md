@@ -1197,3 +1197,16 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify first-time discoveries persist after leave/rejoin and only discovered gift titles/icons are revealed in the friendship journal.
 - [ ] Verify gift cards/glows clean up after 2.8 seconds and do not accumulate in the world.
 - [ ] Check the 52-entry friendship journal scrolls smoothly and remains usable on phone, tablet and desktop.
+
+
+## Sprint 4.83 — Emotional gift reactions
+- [ ] Trigger ordinary gifts for each personality and verify receiver reaction matches the personality map.
+- [ ] Verify giver reacts independently and does not display the receiver's reaction by mistake.
+- [ ] Trigger a special gift and verify Amazed receiver + Proud giver reactions, longer duration and gold presentation.
+- [ ] Verify Jump/Bounce, Spin, Hug, Shy, Sway/Dream, Proud and Amazed movements are visible without abrupt snapping.
+- [ ] During Hug, verify both pets move slightly toward each other, face one another and do not clip through their bodies.
+- [ ] Verify overhead reaction phrases fit without covering the friendship badge or gift card for too long.
+- [ ] Verify reaction attributes clear after 2.8 seconds (ordinary) / 3.6 seconds (special), and movement returns to normal.
+- [ ] Verify a sleeping pet does not perform active movement; reaction resumes/clears safely after the timer.
+- [ ] Test with three active pets to ensure one pair's gift reaction does not animate the unrelated third pet.
+- [ ] Check readability and movement on phone, tablet and desktop camera distances.
