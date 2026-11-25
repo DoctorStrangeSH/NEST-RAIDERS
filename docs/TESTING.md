@@ -1178,7 +1178,7 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify each of the eight origin egg pools selects only its own biome gift set.
 - [ ] Compare personality types; confirm caring/friendly personalities receive their configured chance modifier and independent/proud personalities their reduction.
 - [ ] Check friendship chance bands at 9/10, 29/30, 59/60 and 89/90; confirm final chance stays within 2–40%.
-- [ ] Confirm special gift roll follows the tier values (4%, 9%, 14%, 20%) and does not create currency, XP, materials or combat power.
+- [ ] Confirm special gift base odds follow friendship tiers (4%, 9%, 14%, 20%), then rarity adds 2%, 4%, 7%, 10% or 14% and final chance never exceeds 35%; no currency, XP, materials or combat power are created.
 - [ ] Verify receiver mood increases by 5 and giver mood by 2, both capped at 100 and retained by the companion simulation.
 - [ ] Verify the same pair cannot trigger another gift within 90 seconds; another pair remains eligible.
 - [ ] Verify first-time discoveries persist after leave/rejoin and only discovered gift titles/icons are revealed in the friendship journal.
