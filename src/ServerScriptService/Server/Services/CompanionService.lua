@@ -27,6 +27,7 @@ local sharedDiscoveryCooldowns = {}
 local pairedBallCooldowns = {}
 local hideSeekCooldowns = {}
 local sharedToyCooldowns = {}
+local sharedTreasureCooldowns = {}
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -1417,6 +1418,37 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         idleUntil = now + 0.5
                     end
 
+                    local treasureUntil = tonumber(model:GetAttribute("PairTreasureUntil")) or 0
+                    local treasureTarget = model:GetAttribute("PairTreasureTarget")
+                    local treasureActive = treasureUntil > now and partnerModel
+                        and typeof(treasureTarget) == "Vector3"
+                        and model:GetAttribute("PairTreasurePartner") == partnerIdForGame
+                        and partnerModel:GetAttribute("PairTreasurePartner") == instanceId
+                        and partnerModel:GetAttribute("PairTreasureUntil") == treasureUntil
+                        and not hideActive and not sharedToyActive and not isSleeping and not partnerSleeping
+                        and weatherState ~= "Storm"
+                        and (tonumber(selfNeeds.RestingUntil) or 0) <= os.time()
+                        and (tonumber(otherNeeds.RestingUntil) or 0) <= os.time()
+                        and (tonumber(selfNeeds.Energy) or energy) >= 35
+                        and (tonumber(otherNeeds.Energy) or 100) >= 35
+                        and (tonumber(selfNeeds.Hunger) or hunger) >= 25
+                        and (tonumber(otherNeeds.Hunger) or 100) >= 25
+                    local function clearPairTreasure()
+                        for _, pet in ipairs({model, partnerModel}) do
+                            if pet:GetAttribute("PairTreasureUntil") == treasureUntil then
+                                pet:SetAttribute("PairTreasureUntil", nil)
+                                pet:SetAttribute("PairTreasureTarget", nil)
+                                pet:SetAttribute("PairTreasurePartner", nil)
+                            end
+                        end
+                    end
+                    if treasureUntil > 0 and not treasureActive then
+                        clearPairTreasure()
+                        targetPosition = currentPosition
+                        isAtTarget = true
+                        idleUntil = now + 0.5
+                    end
+
                     if isSleeping then
                         if careUntil > 0 and partnerModel
                             and partnerModel:GetAttribute("BeingComfortedBy") == instanceId then
@@ -1451,6 +1483,52 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         idleUntil = math.max(idleUntil, now + 0.2)
                         bob = math.sin(now * 1.2 + phase) * 0.025
                         yawOffset = math.sin(now * 0.35 + phase) * 0.025
+                    elseif treasureActive then
+                        targetIsSocial = false
+                        targetIsToy = false
+                        targetIsInterest = false
+                        targetIsShelter = false
+                        targetIsChase = false
+                        if targetIsTreasure and treasureSearchOwner == instanceId then treasureSearchOwner = nil end
+                        targetIsTreasure = false
+                        socialPlayUntil = 0
+                        toyPlayUntil = 0
+                        activeHabit = nil
+                        local side = slot < partnerSlot and -1.25 or 1.25
+                        targetPosition = treasureTarget + Vector3.new(side, 0, 0)
+                        local direction = targetPosition - currentPosition
+                        if direction.Magnitude > 0.2 then
+                            currentPosition += direction.Unit * math.min(direction.Magnitude, 3.2 * delta)
+                            facing = math.atan2(direction.X, direction.Z)
+                            bob = math.abs(math.sin(now * 9 + phase)) * 0.1
+                        else
+                            local toward = treasureTarget - currentPosition
+                            facing = math.atan2(toward.X, toward.Z)
+                            bob = math.abs(math.sin(now * 6 + phase)) * 0.12
+                        end
+                        behavior = "SearchingTogether"
+                        local partnerTarget = treasureTarget + Vector3.new(-side, 0, 0)
+                        if slot < partnerSlot and (currentPosition - targetPosition).Magnitude <= 0.5
+                            and (partnerModel:GetPivot().Position - partnerTarget).Magnitude <= 0.8 then
+                            clearPairTreasure()
+                            local crystal = Instance.new("Part")
+                            crystal.Name = "SharedTreasureDiscovery"
+                            crystal.Shape = Enum.PartType.Ball
+                            crystal.Size = Vector3.new(0.85, 0.85, 0.85)
+                            crystal.Material = Enum.Material.Neon
+                            crystal.Color = Color3.fromRGB(255, 212, 104)
+                            crystal.Anchored = true
+                            crystal.CanCollide = false
+                            crystal.CanTouch = false
+                            crystal.CanQuery = false
+                            crystal.Position = treasureTarget + Vector3.new(0, 0.7, 0)
+                            crystal.Parent = folder
+                            Debris:AddItem(crystal, 3)
+                            showSharedHeartMoment(model, partnerModel)
+                            player:SetAttribute("LastNotice", "Питомцы вместе нашли сокровище!")
+                        end
+                        isAtTarget = true
+                        idleUntil = now + 0.5
                     elseif sharedToyActive then
                         targetIsSocial = false
                         targetIsToy = false
@@ -2106,12 +2184,45 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                                 sharedToyCooldowns[sharedToyKey] = now + 60
                                                 toyStarted = true
                                             end
+                                            local treasureStarted = false
+                                            local treasureKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                            if not hideStarted and not toyStarted and pairBondScore >= 30
+                                                and not partnerSleeping and weatherState ~= "Storm"
+                                                and mood >= 45 and energy >= 35 and hunger >= 25
+                                                and (tonumber(otherNeeds.Energy) or 100) >= 35
+                                                and (tonumber(otherNeeds.Hunger) or 100) >= 25
+                                                and (tonumber(otherNeeds.RestingUntil) or 0) <= os.time()
+                                                and (partnerBehavior == "Socializing" or partnerBehavior == "SeekingFriend")
+                                                and not treasureSearchOwner and not giftCache
+                                                and sharedDiscoveryLeaderUntil <= now
+                                                and (tonumber(partnerModel:GetAttribute("SharedDiscoveryTargetUntil")) or 0) <= now
+                                                and (sharedTreasureCooldowns[treasureKey] or 0) <= now
+                                                and random:NextNumber() < (curious and 0.4 or 0.2) then
+                                                local spots = {}
+                                                for _, point in ipairs(interestPoints) do
+                                                    if (point.Position - currentPosition).Magnitude <= 7
+                                                        and (point.Position - currentPosition).Magnitude >= 3
+                                                        and (point.Position - partnerModel:GetPivot().Position).Magnitude <= 7 then
+                                                        table.insert(spots, point.Position)
+                                                    end
+                                                end
+                                                if #spots > 0 then
+                                                    local spot = spots[random:NextInteger(1, #spots)]
+                                                    for _, pet in ipairs({model, partnerModel}) do
+                                                        pet:SetAttribute("PairTreasureUntil", now + 10)
+                                                        pet:SetAttribute("PairTreasureTarget", spot)
+                                                        pet:SetAttribute("PairTreasurePartner", pet == model and partnerId or instanceId)
+                                                    end
+                                                    sharedTreasureCooldowns[treasureKey] = now + 90
+                                                    treasureStarted = true
+                                                end
+                                            end
                                             -- Established pairs occasionally turn a normal reunion into a visible ball-passing game.
                                             if pairBondScore >= 10 then
                                                 local ballGameKey = tostring(player.UserId) .. ":" .. tostring(pairId)
                                                 local ballChance = (personality == "Игривый" or personality == "Энергичный"
                                                     or partnerPersonality == "Игривый" or partnerPersonality == "Энергичный") and 0.42 or 0.22
-                                                if not hideStarted and not toyStarted and (pairedBallCooldowns[ballGameKey] or 0) <= now
+                                                if not hideStarted and not toyStarted and not treasureStarted and (pairedBallCooldowns[ballGameKey] or 0) <= now
                                                     and random:NextNumber() < ballChance
                                                     and showPairedBallGame(model, partnerModel, player.UserId, pairId, personality, now) then
                                                     pairedBallCooldowns[ballGameKey] = now + 45
@@ -2123,7 +2234,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                             local speciesMoment = speciesKey and SPECIES_BOND_MOMENTS[speciesKey]
                                             if speciesMoment and pairBondScore >= 30 then
                                                 local speciesCooldownKey = momentKey .. ":" .. speciesKey
-                                                if not hideStarted and not toyStarted and (speciesMomentCooldowns[speciesCooldownKey] or 0) <= now
+                                                if not hideStarted and not toyStarted and not treasureStarted and (speciesMomentCooldowns[speciesCooldownKey] or 0) <= now
                                                     and random:NextNumber() < 0.35 then
                                                     speciesMomentCooldowns[speciesCooldownKey] = now + 180
                                                     showSpeciesBondMoment(model, partnerModel, speciesMoment)
@@ -2255,7 +2366,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         end
                         behavior = "PersonalHabit"
                     end
-                    if reactionActive and not hideActive and not sharedToyActive then
+                    if reactionActive and not hideActive and not sharedToyActive and not treasureActive then
                         local reactionPhase = now * 8 + phase
                         if giftReaction == "Jump" or giftReaction == "Bounce" then
                             reactionBob = math.abs(math.sin(reactionPhase)) * (giftReaction == "Jump" and 0.58 or 0.34)
@@ -2286,7 +2397,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         model:SetAttribute("GiftReactionUntil", nil)
                         model:SetAttribute("GiftReactionRare", nil)
                     end
-                    moodLabel.Text = (sharedToyActive and (behavior == "PlayingSharedToy" and "Играют вместе!" or "Идёт к игрушке"))
+                    moodLabel.Text = (treasureActive and "Ищут сокровище вместе!")
+                        or (sharedToyActive and (behavior == "PlayingSharedToy" and "Играют вместе!" or "Идёт к игрушке"))
                         or (hideActive and (behavior == "HidingFromFriend" and "Прячется!" or behavior == "CountingForFriend" and "Считает..." or "Ищет друга!"))
                         or (reactionActive and model:GetAttribute("GiftReactionText"))
                         or (beingComforted and "Друг рядом, всё хорошо ♥")
@@ -2569,6 +2681,9 @@ function CompanionService:Init()
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
                 pairedBallCooldowns[key] = nil
             end
+        end
+        for key in pairs(sharedTreasureCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then sharedTreasureCooldowns[key] = nil end
         end
         for key in pairs(sharedToyCooldowns) do
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then sharedToyCooldowns[key] = nil end
