@@ -1465,3 +1465,15 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Roblox Studio: verify each personality's greeting text/icon, readability and cleanup on both pets.
 - [ ] Verify reunion styling appears only after 120 seconds, not during ordinary repeated greetings.
 - [ ] Test both display pairs, all personalities, pet removal during an effect, multiplayer isolation and mobile camera scaling.
+
+
+### Sprint 4.79 — Species-specific friendship discoveries
+- [x] Add four rare pair-specific moments: Fox + Turtle, Dragon + Owl, EmberFox + MagmaDragon, and AncientStag + RootSprite.
+- [x] Derive species identity from each companion model's server-authored CompanionKind attribute.
+- [x] Require 30+ pair bond and a 35% roll when the pair begins a social session; use a 180-second per-owner/pair/species cooldown.
+- [x] Present each moment with its own title, icon, color, paired speech bubble and temporary glow.
+- [x] Publish SpeciesBondMoment and SpeciesBondMomentUntil attributes for future animation/presentation hooks.
+- [x] Persist first-time discoveries in profile.Nest.DiscoveredBondMoments and notify the owner once per species combination.
+- [x] Clear runtime cooldown entries when the owner leaves; add static regression checks.
+- [ ] Roblox Studio: verify all four pair combinations, visual readability, discovery notification exactly once, persistence after rejoin and no repeat spam.
+- [ ] Test pair order reversal, both display pairs, multiple players, pet removal during effect and mobile scaling.
