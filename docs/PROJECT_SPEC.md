@@ -875,10 +875,16 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - The server creates a temporary anchored Neon ball between the two live companion models. The ball is non-colliding, non-touching and non-queryable, carries owner/pair metadata, and performs five alternating eased passes between the companions.
 - The presentation lasts at most 4.5 seconds and is destroyed early if either companion disappears. A 45-second per-owner/pair cooldown prevents repeated effects; entries are cleared on owner departure.
 - The event is cosmetic: it does not change mood, friendship, needs, currency, XP, inventory or progression.
-- This is the first shared-game slice. Hide-and-seek and shared toy play are described below; cooperative treasure hunts remain outstanding.
+- This is the first shared-game slice. Hide-and-seek and shared toy play are described below; cooperative treasure hunts are described in the subsequent section.
 
 
 ### Shared Companion Games — hide and seek and equipped toys
 - Pairs at 20+ bond may use existing nearby tree, flower and shelter landmarks for hide and seek. Curious personalities raise the selection chance. Roles are randomized; the seeker waits 2.5 seconds, and the game ends on arrival or after 12 seconds.
 - When an equipped toy is nearby, an eligible pair may instead approach opposite sides of that toy for a brief cooperative session. The toy animates while both are near it. The session expires after 10 seconds.
-- Both games use reciprocal server-authored pair attributes, current need checks, the existing movement loop, and separate 60-second per-pair cooldowns. Neither grants extra currency or XP. Shared treasure hunt remains outstanding.
+- Both games use reciprocal server-authored pair attributes, current need checks, the existing movement loop, and separate 60-second per-pair cooldowns. Neither grants extra currency or XP. Shared treasure hunt is described below.
+
+
+### Shared Companion Games — treasure hunt
+- A pair at 30+ bond may search a nearby landmark, with curious personalities more likely to initiate. Both pets must be awake, have at least 35 energy and 25 hunger, and not be in a storm.
+- Both approach opposite sides of a shared point. Only the lower display slot can complete the event, after both reach their positions. The discovery spawns a temporary golden visual and owner notice without additional currency, XP or items.
+- Reciprocal partner attributes, a 10-second deadline and a 90-second pair cooldown bound the interaction. This is a cosmetic shared activity, not a replacement for the existing claimable solo treasure.
