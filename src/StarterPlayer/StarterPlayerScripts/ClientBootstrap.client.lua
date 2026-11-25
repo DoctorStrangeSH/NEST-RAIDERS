@@ -1273,8 +1273,8 @@ addStroke(profileButton, Color3.fromRGB(160, 220, 192), 1.5)
 -- Compact responsive navigation: keep every feature reachable on desktop and mobile.
 -- Previously the last buttons were fixed at Y=692 and disappeared off small screens.
 local menuButtons = {
-    inventoryButton, shopButton, collectionButton, bondJournalButton, nestButton, displayButton,
-    decorButton, buildButton, visitButton, raidButton, contestButton, hallButton, materialsButton, artifactsButton, profileButton,
+    inventoryButton, shopButton, collectionButton, nestButton, displayButton,
+    decorButton, buildButton, visitButton, raidButton, contestButton, hallButton, materialsButton, artifactsButton, bondJournalButton, profileButton,
 }
 local navToggle = Instance.new("TextButton")
 navToggle.Name = "MenuToggle"
@@ -1365,7 +1365,6 @@ local menuIconStyles = {
     { Color = Color3.fromRGB(90, 166, 132), Kind = "paw" },
     { Color = Color3.fromRGB(205, 151, 74), Kind = "egg" },
     { Color = Color3.fromRGB(115, 137, 196), Kind = "book" },
-    { Color = Color3.fromRGB(116, 164, 113), Kind = "heart" },
     { Color = Color3.fromRGB(116, 164, 113), Kind = "nest" },
     { Color = Color3.fromRGB(173, 133, 92), Kind = "star" },
     { Color = Color3.fromRGB(153, 119, 173), Kind = "flower" },
@@ -1376,6 +1375,7 @@ local menuIconStyles = {
     { Color = Color3.fromRGB(112, 129, 180), Kind = "podium" },
     { Color = Color3.fromRGB(91, 139, 173), Kind = "gem" },
     { Color = Color3.fromRGB(145, 111, 185), Kind = "crystal" },
+    { Color = Color3.fromRGB(116, 164, 113), Kind = "heart" },
     { Color = Color3.fromRGB(90, 151, 130), Kind = "profile" },
 }
 
