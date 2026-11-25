@@ -1259,3 +1259,12 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Put either pet to sleep or make it unavailable before social play; verify no ball game starts.
 - [ ] Verify the 45-second cooldown is isolated by owner and pair, and is cleared when the owner leaves.
 - [ ] Test visibility and label readability at desktop, tablet and mobile camera distances.
+
+
+## Sprint 4.87 — Hide and seek and cooperative toys
+- [ ] With a 20+ bond pair, observe hide and seek near a tree, flower bed or shelter. Confirm randomized roles, seeker delay, arrival and one completion notice.
+- [ ] Verify no eligible landmark means no hide-and-seek session; timeout clears both roles.
+- [ ] Equip a toy on either display slot and verify both pets approach opposite sides of the same toy, with visible play captions and animation.
+- [ ] Verify both games cancel when a pet sleeps, is removed, has low needs or seeks storm shelter.
+- [ ] Verify separate 60-second cooldowns, no additional currency/XP and no simultaneous ball game.
+- [ ] Verify normal pet behavior and toy state resume after expiry; test multiple owners and mobile readability.
