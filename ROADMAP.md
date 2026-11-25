@@ -1594,3 +1594,17 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify both pets arrive at the same discovery point and the shared reward/notice occurs once if either arrives first.
 - [ ] Verify a partner who cannot join (sleeping, busy, or out of range) does not receive a false shared-discovery reward.
 - [ ] Verify the new overhead captions remain legible and do not collide with gift/friendship billboards on mobile/tablet/desktop.
+
+
+### Sprint 4.87 — Shared ball play (first playable slice)
+- [x] Add an occasional ball-passing moment when an established companion pair (10+ friendship) begins a social session.
+- [x] Give playful and energetic personalities a higher chance to initiate the shared game.
+- [x] Create a short-lived, non-colliding server-owned ball with a readable Russian pass cue and a soft species-neutral glow.
+- [x] Animate five alternating passes between the two live companion models; stop and clean up if either model disappears.
+- [x] Add a 45-second per-owner/pair cooldown and clear its entries when the owner leaves.
+- [x] Add static regression assertions for eligibility, presentation, animation, ownership metadata, cleanup and cooldown.
+- [ ] Roblox Studio: verify the ball visibly travels between both pets without clipping through terrain or UI.
+- [ ] Verify sleeping, busy, removed and distant companions never start or receive a ball game.
+- [ ] Verify cooldown isolation across pairs and players; test desktop, tablet and mobile camera distances.
+
+**Scope:** this is the first playable shared-game slice. Hide-and-seek, cooperative toy play and shared treasure hunts remain future work; do not mark Sprint 4.87 complete until the Studio acceptance cases pass.
