@@ -186,7 +186,8 @@ local function tryStartAdventure(player)
             local secondPosition = second:GetPivot().Position
             local awake = first:GetAttribute("IsSleeping") ~= true and second:GetAttribute("IsSleeping") ~= true
             local mood = math.min(tonumber(first:GetAttribute("Mood")) or 50, tonumber(second:GetAttribute("Mood")) or 50)
-            if key and awake and mood >= 25 and (firstPosition - secondPosition).Magnitude <= MAX_DISTANCE
+            local bond = key and math.floor(tonumber(profile.Nest.CompanionBonds and profile.Nest.CompanionBonds[key]) or 0) or 0
+            if key and awake and mood >= 25 and bond >= MIN_BOND and (firstPosition - secondPosition).Magnitude <= MAX_DISTANCE
                 and (tonumber(profile.Nest.CompanionAdventureCooldowns[key]) or 0) <= os.time()
                 and not activeEvents[key] then
                 table.insert(candidates, { First = first, Second = second, Key = key })
