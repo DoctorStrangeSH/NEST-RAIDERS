@@ -1725,7 +1725,16 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
                     model:SetAttribute("Mood", mood)
                     model:SetAttribute("Behavior", behavior)
-                    local position = currentPosition + Vector3.new(0, bob + reactionBob, 0)
+                    local hugOffset = Vector3.zero
+                    if reactionActive and giftReaction == "Hug" and partnerModel and partnerModel.Parent then
+                        local partnerPosition = partnerModel:GetPivot().Position
+                        local towardFriend = partnerPosition - currentPosition
+                        if towardFriend.Magnitude > 0.1 then
+                            hugOffset = towardFriend.Unit * 0.38
+                            facing = math.atan2(towardFriend.X, towardFriend.Z)
+                        end
+                    end
+                    local position = currentPosition + hugOffset + Vector3.new(0, bob + reactionBob, 0)
                     model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset + reactionYaw, reactionRoll))
                     task.wait(0.12)
                 end
