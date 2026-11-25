@@ -1430,3 +1430,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Roblox Studio: test cautious+cautious, cautious+friendly, friendly+friendly and playful pairs; verify approaches feel distinct and no pair becomes permanently isolated.
 - [ ] Verify bond growth changes social frequency without resetting needs, mood, or existing cooldowns.
 - [ ] Verify behavior labels remain correct after respawn/rejoin and across both display pairs.
+
+
+### Sprint 4.76 — Friendship chase games
+- [x] Let established pairs (30+ bond) occasionally turn a completed social session into a short shared chase.
+- [x] Replicate a shared 4.5-second chase window to both companions; both orbit/chase around the moving partner target instead of only changing a text label.
+- [x] Require both companions to remain awake and above minimum mood/energy thresholds during the chase.
+- [x] Add a 35-second per-player/per-pair cooldown and clear cooldown memory when the owner leaves.
+- [x] Publish the ChasingFriend behavior state for future animation/UI presentation.
+- [x] Add static regression checks for trigger ownership, shared timing, movement target and cooldown cleanup.
+- [ ] Roblox Studio: verify both pets move visibly together, do not collide or jitter, and return to normal routines after 4.5 seconds.
+- [ ] Test bond thresholds, both display pairs, pet removal/sleep during play, multiplayer isolation and mobile readability.
