@@ -1756,3 +1756,16 @@ assert 'local savedMood = profile.Nest and profile.Nest.CompanionMood' in compan
 assert 'mood = math.clamp(math.floor(tonumber(savedMood) or mood), 0, 100)' in companion_service
 assert 'for _, child in ipairs(Workspace:GetChildren()) do' in adventure_service
 assert 'child:GetAttribute("OwnerUserId") == player.UserId' in adventure_service
+
+
+# Sprint 4.73 — friendship milestone celebrations.
+assert 'local BOND_MILESTONES = {' in companion_service
+assert '[10] = { Title = "Первые друзья!"' in companion_service
+assert '[30] = { Title = "Крепкая дружба!"' in companion_service
+assert '[60] = { Title = "Неразлучная команда!"' in companion_service
+assert '[90] = { Title = "Друзья навсегда!"' in companion_service
+assert 'local function showBondMilestone(player, firstModel, secondModel, milestone)' in companion_service
+assert 'glow.Name = "FriendshipMilestoneGlow"' in companion_service
+assert 'banner.Name = "FriendshipMilestoneBanner"' in companion_service
+assert 'local milestone = BOND_MILESTONES[bondScore]' in companion_service
+assert 'if milestone then' in companion_service
