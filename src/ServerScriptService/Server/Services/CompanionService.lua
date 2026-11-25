@@ -850,6 +850,58 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             bubbleCorner.CornerRadius = UDim.new(0, 8)
             bubbleCorner.Parent = moodLabel
 
+            -- Always-visible pair progress makes friendship a readable gameplay system.
+            local friendshipBillboard = Instance.new("BillboardGui")
+            friendshipBillboard.Name = "FriendshipProgress"
+            friendshipBillboard.Adornee = model.PrimaryPart
+            friendshipBillboard.Size = UDim2.fromOffset(148, 30)
+            friendshipBillboard.StudsOffset = Vector3.new(0, 3.55, 0)
+            friendshipBillboard.AlwaysOnTop = false
+            friendshipBillboard.Enabled = false
+            friendshipBillboard.Parent = model
+
+            local friendshipCard = Instance.new("Frame")
+            friendshipCard.Size = UDim2.fromScale(1, 1)
+            friendshipCard.BackgroundColor3 = Color3.fromRGB(29, 39, 51)
+            friendshipCard.BackgroundTransparency = 0.1
+            friendshipCard.BorderSizePixel = 0
+            friendshipCard.Parent = friendshipBillboard
+            local friendshipCardCorner = Instance.new("UICorner")
+            friendshipCardCorner.CornerRadius = UDim.new(0, 8)
+            friendshipCardCorner.Parent = friendshipCard
+            local friendshipCardStroke = Instance.new("UIStroke")
+            friendshipCardStroke.Thickness = 1
+            friendshipCardStroke.Transparency = 0.3
+            friendshipCardStroke.Parent = friendshipCard
+
+            local friendshipText = Instance.new("TextLabel")
+            friendshipText.BackgroundTransparency = 1
+            friendshipText.Position = UDim2.fromOffset(7, 1)
+            friendshipText.Size = UDim2.new(1, -14, 0, 19)
+            friendshipText.Font = Enum.Font.GothamBold
+            friendshipText.TextSize = 10
+            friendshipText.TextXAlignment = Enum.TextXAlignment.Center
+            friendshipText.TextColor3 = Color3.fromRGB(214, 224, 234)
+            friendshipText.Parent = friendshipCard
+
+            local friendshipTrack = Instance.new("Frame")
+            friendshipTrack.Position = UDim2.new(0, 8, 1, -7)
+            friendshipTrack.Size = UDim2.new(1, -16, 0, 3)
+            friendshipTrack.BackgroundColor3 = Color3.fromRGB(69, 79, 91)
+            friendshipTrack.BorderSizePixel = 0
+            friendshipTrack.Parent = friendshipCard
+            local friendshipTrackCorner = Instance.new("UICorner")
+            friendshipTrackCorner.CornerRadius = UDim.new(1, 0)
+            friendshipTrackCorner.Parent = friendshipTrack
+            local friendshipFill = Instance.new("Frame")
+            friendshipFill.Size = UDim2.fromScale(0, 1)
+            friendshipFill.BackgroundColor3 = Color3.fromRGB(116, 222, 174)
+            friendshipFill.BorderSizePixel = 0
+            friendshipFill.Parent = friendshipTrack
+            local friendshipFillCorner = Instance.new("UICorner")
+            friendshipFillCorner.CornerRadius = UDim.new(1, 0)
+            friendshipFillCorner.Parent = friendshipFill
+
             profile.Nest.CompanionBonds = profile.Nest.CompanionBonds or {}
             local petDefinition = CompanionCatalog[companion.Id] or {}
             local activityPeriod = petDefinition.ActivityPeriod or "Any"
@@ -1431,8 +1483,20 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     local partnerId = partnerModel and partnerModel:GetAttribute("CompanionInstanceId")
                     local bondKey = getBondKey(instanceId, partnerId)
                     local bondScore = bondKey and math.clamp(math.floor(tonumber(profile.Nest.CompanionBonds[bondKey]) or 0), 0, 100) or 0
+                    local bondLevel = getBondLevel(bondScore)
                     model:SetAttribute("FriendshipScore", bondScore)
-                    model:SetAttribute("FriendshipLevel", getBondLevel(bondScore))
+                    model:SetAttribute("FriendshipLevel", bondLevel)
+                    friendshipBillboard.Enabled = bondKey ~= nil and bondScore > 0
+                    local bondColor = bondScore >= 90 and Color3.fromRGB(255, 205, 112)
+                        or bondScore >= 60 and Color3.fromRGB(194, 139, 255)
+                        or bondScore >= 30 and Color3.fromRGB(104, 194, 255)
+                        or bondScore >= 10 and Color3.fromRGB(116, 222, 174)
+                        or Color3.fromRGB(160, 177, 194)
+                    friendshipText.Text = string.format("♥ %s  ·  %d/100", bondLevel, bondScore)
+                    friendshipText.TextColor3 = bondColor
+                    friendshipCardStroke.Color = bondColor
+                    friendshipFill.BackgroundColor3 = bondColor
+                    friendshipFill.Size = UDim2.new(bondScore / 100, 0, 1, 0)
                     moodLabel.Text = isSleeping and "Zzz"
                         or (behavior == "Searching" and "Ищет сокровище")
                         or (behavior == "FoundGift" and "Нашёл подарок!")
