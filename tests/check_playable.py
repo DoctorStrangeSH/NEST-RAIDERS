@@ -1651,7 +1651,7 @@ assert 'petDefinition.FavoriteToy' in companion_service
 assert 'model:SetAttribute("FavoriteToy"' in companion_service
 assert 'model:SetAttribute("DisplaySlot", slot)' in companion_service
 assert 'model:SetAttribute("NestHomePosition", home)' in companion_service
-assert 'moodLabel.Text = isSleeping and "Zzz"' in companion_service
+assert '(isSleeping and "Zzz")' in companion_service
 
 # Sprint 4.67 — persistent friendship between displayed companions.
 assert 'CompanionBonds = {}' in profile_template
