@@ -2058,3 +2058,8 @@ assert 'if careUntil > 0 and partnerModel' in companion_service
 assert 'partnerModel:GetAttribute("BeingComfortedBy") == instanceId' in companion_service
 assert 'model:GetAttribute("SharedDiscoveryArrived") ~= true and partnerModel' in companion_service
 assert 'partnerModel:SetAttribute("SharedDiscoveryArrived", nil)' in companion_service
+
+assert 'local sharedDiscoveryLeaderUntil = 0' in companion_service
+assert 'sharedDiscoveryLeaderUntil = now + 18' in companion_service
+assert '(currentPosition - sharedDiscoveryLeaderTarget).Magnitude <= 6' in companion_service
+assert 'sharedDiscoveryLeaderUntil = 0' in companion_service
