@@ -741,3 +741,12 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - A per-player/per-pair 18-second cooldown prevents visual spam. Each BillboardGui removes itself after 1.6 seconds.
 - The emote is cosmetic only and does not change mood, friendship, currency or XP.
 - Studio acceptance must cover simultaneous display, cleanup, cooldown, both display pairs, multiplayer isolation, pet removal and mobile readability.
+
+
+### Personality-aware Relationships — Sprint 4.75
+- Companion social behavior is influenced by the pet's existing Personality and the saved bond score with its displayed partner.
+- Cautious (Осторожный) companions need at least 10 pair-bond points before ordinary social approaches, but may accept an approach earlier from a Friendly (Дружелюбный) or Good-natured (Добродушный) partner. This gives cautious pairs a path into friendship without forcing instant trust.
+- Friendly and Good-natured companions receive a higher social-initiation chance. Increasing pair bond gradually raises the social approach chance for both pets, capped to prevent constant interruptions.
+- The server publishes FriendshipStyle for presentation: Привыкает постепенно / Доверяет другу, Сам ищет друзей, Любит совместные игры, or Спокойное общение.
+- This sprint changes behavior selection only; it adds no currency, XP, mood or friendship rewards. Existing social-session rewards and cooldowns remain authoritative.
+- Studio acceptance must verify all personality pairings, avoid permanent isolation, preserve needs, and confirm both display pairs and rejoin behavior.
