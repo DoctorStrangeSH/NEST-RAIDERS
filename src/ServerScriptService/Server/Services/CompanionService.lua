@@ -1203,6 +1203,34 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     local partnerBehavior = partnerModel and partnerModel:GetAttribute("Behavior")
                     local partnerPersonality = partnerModel and partnerModel:GetAttribute("Personality") or ""
                     local partnerSleeping = partnerModel and partnerModel:GetAttribute("IsSleeping") == true
+                    if slot < partnerSlot and interestUntil > now and partnerModel
+                        and partnerModel:GetAttribute("SharedDiscoveryLeader") == instanceId
+                        and partnerModel:GetAttribute("SharedDiscoveryArrived") == true
+                        and (partnerModel:GetPivot().Position - currentPosition).Magnitude <= 6 then
+                        local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                        profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
+                        local selfMood = math.clamp(mood + 3, 0, 100)
+                        local partnerCurrentMood = math.clamp(
+                            math.floor(tonumber(profile.Nest.CompanionMood[partnerId])
+                                or tonumber(partnerModel:GetAttribute("Mood")) or 50), 0, 100
+                        )
+                        local partnerMoodAfter = math.clamp(partnerCurrentMood + 3, 0, 100)
+                        mood = selfMood
+                        profile.Nest.CompanionMood[instanceId] = selfMood
+                        profile.Nest.CompanionMood[partnerId] = partnerMoodAfter
+                        model:SetAttribute("Mood", selfMood)
+                        partnerModel:SetAttribute("Mood", partnerMoodAfter)
+                        local sharedLabel = tostring(model:GetAttribute("InterestTargetLabel") or "тайное место")
+                        model:SetAttribute("LastDiscovery", "Открытие вместе: " .. sharedLabel)
+                        partnerModel:SetAttribute("LastDiscovery", "Открытие вместе: " .. sharedLabel)
+                        showSharedHeartMoment(model, partnerModel)
+                        player:SetAttribute("LastNotice", "Вместе питомцы открыли: " .. sharedLabel .. "!")
+                        partnerModel:SetAttribute("SharedDiscoveryTargetPosition", nil)
+                        partnerModel:SetAttribute("SharedDiscoveryTargetUntil", nil)
+                        partnerModel:SetAttribute("SharedDiscoveryTargetLabel", nil)
+                        partnerModel:SetAttribute("SharedDiscoveryLeader", nil)
+                        partnerModel:SetAttribute("SharedDiscoveryArrived", nil)
+                    end
                     local pairBondKey = partnerModel and getBondKey(instanceId, partnerModel:GetAttribute("CompanionInstanceId"))
                     local pairBondScore = pairBondKey and profile.Nest and profile.Nest.CompanionBonds
                         and math.clamp(math.floor(tonumber(profile.Nest.CompanionBonds[pairBondKey]) or 0), 0, 100) or 0
