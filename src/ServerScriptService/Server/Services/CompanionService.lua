@@ -1,6 +1,8 @@
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -22,6 +24,7 @@ local sharedRestCooldowns = {}
 local speciesMomentCooldowns = {}
 local companionCareCooldowns = {}
 local sharedDiscoveryCooldowns = {}
+local pairedBallCooldowns = {}
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -461,6 +464,83 @@ local function showSharedHeartMoment(firstModel, secondModel)
         end
     end
 end
+
+local function showPairedBallGame(firstModel, secondModel, ownerUserId, pairKey, personality, now)
+    if not firstModel or not secondModel or not firstModel.Parent or not secondModel.Parent then return false end
+    if firstModel.Parent ~= secondModel.Parent then return false end
+    local firstPosition = firstModel:GetPivot().Position
+    local secondPosition = secondModel:GetPivot().Position
+    if (firstPosition - secondPosition).Magnitude > 12 then return false end
+
+    local ballColor = (personality == "Энергичный" or personality == "Игривый")
+        and Color3.fromRGB(255, 205, 91)
+        or personality == "Дружелюбный" and Color3.fromRGB(255, 132, 174)
+        or personality == "Спокойный" and Color3.fromRGB(133, 221, 184)
+        or Color3.fromRGB(117, 205, 245)
+
+    local ball = Instance.new("Part")
+    ball.Name = "CompanionFriendshipBall"
+    ball.Shape = Enum.PartType.Ball
+    ball.Size = Vector3.new(0.62, 0.62, 0.62)
+    ball.Material = Enum.Material.Neon
+    ball.Color = ballColor
+    ball.Anchored = true
+    ball.CanCollide = false
+    ball.CanTouch = false
+    ball.CanQuery = false
+    ball.CastShadow = false
+    ball:SetAttribute("OwnerUserId", ownerUserId)
+    ball:SetAttribute("PairKey", pairKey)
+    ball.Parent = Workspace
+
+    local light = Instance.new("PointLight")
+    light.Color = ballColor
+    light.Brightness = 0.7
+    light.Range = 7
+    light.Parent = ball
+
+    local bubble = Instance.new("BillboardGui")
+    bubble.Name = "CompanionBallGameLabel"
+    bubble.Size = UDim2.fromOffset(76, 22)
+    bubble.StudsOffset = Vector3.new(0, 0.72, 0)
+    bubble.AlwaysOnTop = false
+    bubble.Adornee = ball
+    bubble.Parent = ball
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.fromScale(1, 1)
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.GothamBold
+    label.Text = "ПАС!"
+    label.TextColor3 = Color3.fromRGB(255, 255, 244)
+    label.TextStrokeColor3 = Color3.fromRGB(38, 54, 65)
+    label.TextStrokeTransparency = 0.2
+    label.TextScaled = true
+    label.Parent = bubble
+
+    local initial = (firstPosition + secondPosition) * 0.5 + Vector3.new(0, 1.25, 0)
+    ball.Position = initial
+    Debris:AddItem(ball, 4.5)
+
+    task.spawn(function()
+        for pass = 1, 5 do
+            if not ball.Parent or not firstModel.Parent or not secondModel.Parent then break end
+            local receiver = pass % 2 == 1 and secondModel or firstModel
+            local targetPosition = receiver:GetPivot().Position + Vector3.new(0, 1.25, 0)
+            local tween = TweenService:Create(
+                ball,
+                TweenInfo.new(0.34, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+                { Position = targetPosition }
+            )
+            tween:Play()
+            local playbackState = tween.Completed:Wait()
+            if playbackState ~= Enum.PlaybackState.Completed then break end
+        end
+        if ball.Parent then ball:Destroy() end
+    end)
+    return true
+end
+
 local GREETING_STYLES = {
     ["Дружелюбный"] = { Icon = "♥", Color = Color3.fromRGB(255, 125, 166), Text = "Рад тебя видеть!" },
     ["Добродушный"] = { Icon = "♥", Color = Color3.fromRGB(255, 174, 120), Text = "Привет, друг!" },
@@ -1831,6 +1911,17 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                                 partnerPersonality,
                                                 isReunion
                                             )
+                                            -- Established pairs occasionally turn a normal reunion into a visible ball-passing game.
+                                            if pairBondScore >= 10 then
+                                                local ballGameKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                                local ballChance = (personality == "Игривый" or personality == "Энергичный"
+                                                    or partnerPersonality == "Игривый" or partnerPersonality == "Энергичный") and 0.42 or 0.22
+                                                if (pairedBallCooldowns[ballGameKey] or 0) <= now
+                                                    and random:NextNumber() < ballChance
+                                                    and showPairedBallGame(model, partnerModel, player.UserId, pairId, personality, now) then
+                                                    pairedBallCooldowns[ballGameKey] = now + 45
+                                                end
+                                            end
                                             local firstKind = model:GetAttribute("CompanionKind")
                                             local secondKind = partnerModel:GetAttribute("CompanionKind")
                                             local speciesKey = getSpeciesMomentKey(firstKind, secondKind)
@@ -2275,6 +2366,11 @@ function CompanionService:Init()
         for key in pairs(sharedRestCooldowns) do
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
                 sharedRestCooldowns[key] = nil
+            end
+        end
+        for key in pairs(pairedBallCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                pairedBallCooldowns[key] = nil
             end
         end
         self._generations[player] = nil
