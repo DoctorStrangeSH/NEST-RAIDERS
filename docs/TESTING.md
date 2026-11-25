@@ -1126,3 +1126,14 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Let the resting pet fall asleep; verify its own sleep state takes priority and the shared-rest marker clears.
 - [ ] Verify the same pair respects its 55-second cooldown, while another pair/player has an independent cooldown.
 - [ ] Test both display pairs, multiplayer, low-end graphics and mobile camera readability; confirm no needs or rewards are changed.
+
+
+## Sprint 4.78 — Personality greetings and reunion moments
+- [ ] Trigger a social session with each supported personality; verify the matching icon, color and phrase appears above the correct companion.
+- [ ] Pair two different personalities; verify each pet displays its own greeting style at the same time.
+- [ ] Verify ordinary greeting bubbles disappear after approximately 2.1 seconds.
+- [ ] Trigger another greeting for the same pair within 120 seconds; verify no reunion glow/banner appears.
+- [ ] Wait at least 120 seconds after the previous greeting; trigger a new social session and verify both pets receive the reunion greeting and warm glow.
+- [ ] Verify reunion visuals clean up after approximately 3.2 seconds and the existing 18-second spam cooldown remains effective.
+- [ ] Test both display pairs, all personality styles, pet removal during an effect, two players, and mobile camera readability.
+- [ ] Confirm greetings do not grant extra bond, mood, needs, currency or XP.
