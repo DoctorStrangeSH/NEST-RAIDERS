@@ -267,8 +267,7 @@ local function tryGiveCompanionGift(player, profile, giverModel, receiverModel, 
     GIFT_COOLDOWNS[cooldownKey] = now + 90
     profile.Nest.DiscoveredCompanionGifts = profile.Nest.DiscoveredCompanionGifts or {}
     profile.Nest.CompanionGiftCount = math.max(0, math.floor(tonumber(profile.Nest.CompanionGiftCount) or 0)) + 1
-    local giftKey = tostring(giverDefinition.EggId or "MeadowEgg") .. ":" ..
-        tostring(giverDefinition.Personality or "Обычный") .. ":" .. gift.Name
+    local giftKey = tostring(giverDefinition.EggId or "MeadowEgg") .. ":" .. gift.Name
     local isNewDiscovery = profile.Nest.DiscoveredCompanionGifts[giftKey] ~= true
     profile.Nest.DiscoveredCompanionGifts[giftKey] = true
 
@@ -1858,7 +1857,8 @@ function CompanionService:Init()
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
                 pairGreetingLastAt[key] = nil
             end
-        end        for key in pairs(speciesMomentCooldowns) do
+        end
+        for key in pairs(speciesMomentCooldowns) do
             if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
                 speciesMomentCooldowns[key] = nil
             end
