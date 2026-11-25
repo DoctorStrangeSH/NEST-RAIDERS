@@ -178,6 +178,65 @@ local function getBondLevel(score)
     return "Знакомство"
 end
 
+local BOND_MILESTONES = {
+    [10] = { Title = "Первые друзья!", Color = Color3.fromRGB(116, 222, 174) },
+    [30] = { Title = "Крепкая дружба!", Color = Color3.fromRGB(104, 194, 255) },
+    [60] = { Title = "Неразлучная команда!", Color = Color3.fromRGB(194, 139, 255) },
+    [90] = { Title = "Друзья навсегда!", Color = Color3.fromRGB(255, 205, 112) },
+}
+
+local function showBondMilestone(player, firstModel, secondModel, milestone)
+    if not firstModel or not secondModel or not milestone then return end
+    for _, model in ipairs({ firstModel, secondModel }) do
+        model:SetAttribute("BondMoment", milestone.Title)
+        model:SetAttribute("BondMomentUntil", os.clock() + 2.4)
+        local glow = Instance.new("Highlight")
+        glow.Name = "FriendshipMilestoneGlow"
+        glow.Adornee = model
+        glow.FillColor = milestone.Color
+        glow.OutlineColor = milestone.Color
+        glow.FillTransparency = 0.48
+        glow.OutlineTransparency = 0.05
+        glow.DepthMode = Enum.HighlightDepthMode.Occluded
+        glow.Parent = model
+        task.delay(2.4, function()
+            if glow.Parent then glow:Destroy() end
+            if model.Parent and model:GetAttribute("BondMoment") == milestone.Title then
+                model:SetAttribute("BondMoment", nil)
+                model:SetAttribute("BondMomentUntil", nil)
+            end
+        end)
+    end
+
+    local root = firstModel.PrimaryPart
+    if root then
+        local banner = Instance.new("BillboardGui")
+        banner.Name = "FriendshipMilestoneBanner"
+        banner.Adornee = root
+        banner.Size = UDim2.fromOffset(220, 42)
+        banner.StudsOffset = Vector3.new(0, 4.1, 0)
+        banner.AlwaysOnTop = true
+        banner.Parent = firstModel
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.fromScale(1, 1)
+        label.BackgroundColor3 = Color3.fromRGB(28, 37, 49)
+        label.BackgroundTransparency = 0.08
+        label.BorderSizePixel = 0
+        label.Font = Enum.Font.GothamBold
+        label.TextSize = 15
+        label.TextColor3 = milestone.Color
+        label.Text = "✦ " .. milestone.Title .. " ✦"
+        label.Parent = banner
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 12)
+        corner.Parent = label
+        task.delay(2.4, function()
+            if banner.Parent then banner:Destroy() end
+        end)
+    end
+    player:SetAttribute("LastNotice", "Новый этап дружбы: " .. milestone.Title)
+end
+
 local function buildPet(parent, companion, index)
     local definition = DEFINITIONS[companion.Id] or DEFINITIONS.MeadowFox
     local model = Instance.new("Model")
@@ -769,6 +828,10 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                         model:SetAttribute("FriendshipLevel", bondLevel)
                                         partnerModel:SetAttribute("FriendshipScore", bondScore)
                                         partnerModel:SetAttribute("FriendshipLevel", bondLevel)
+                                        local milestone = BOND_MILESTONES[bondScore]
+                                        if milestone then
+                                            showBondMilestone(player, model, partnerModel, milestone)
+                                        end
                                     end
                                 end
                             end
