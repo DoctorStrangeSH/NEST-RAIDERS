@@ -6353,7 +6353,7 @@ end
 local function renderBondJournal(data)
     if type(data) ~= "table" then return end
     bondJournalProgress.Text = string.format(
-        "Открыто секретов: %d / %d  ·  %d%%",
+        "Открыто воспоминаний: %d / %d  ·  %d%%",
         data.Discovered or 0, data.Total or 0, data.CompletionPercent or 0
     )
     for _, child in ipairs(bondJournalList:GetChildren()) do
