@@ -1137,3 +1137,15 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Verify reunion visuals clean up after approximately 3.2 seconds and the existing 18-second spam cooldown remains effective.
 - [ ] Test both display pairs, all personality styles, pet removal during an effect, two players, and mobile camera readability.
 - [ ] Confirm greetings do not grant extra bond, mood, needs, currency or XP.
+
+
+## Sprint 4.79 — Species-specific friendship discoveries
+- [ ] Raise Fox + Turtle bond to 30+; trigger social sessions until Лесные хранители appears.
+- [ ] Repeat with Dragon + Owl, EmberFox + MagmaDragon, and AncientStag + RootSprite; verify the correct unique title/icon/color.
+- [ ] Reverse each pair's display order; verify the same species interaction is selected.
+- [ ] Verify the moment only has a chance to occur at 30+ bond and never occurs for an unsupported species combination.
+- [ ] Verify both models receive SpeciesBondMoment / SpeciesBondMomentUntil and that attributes, bubbles and highlights clear after approximately 3.4 seconds.
+- [ ] Verify first-time discovery notification appears once and profile.Nest.DiscoveredBondMoments survives leaving/rejoining.
+- [ ] Trigger repeated sessions inside 180 seconds; verify no repeated species moment for the same owner/pair/species. Verify a different pair has an independent cooldown.
+- [ ] Test both display pairs, multiple players, pet removal during the effect and mobile readability.
+- [ ] Confirm species moments grant no additional bond, mood, needs, currency or XP.
