@@ -1597,7 +1597,11 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local restKey = pairBondKey and (tostring(player.UserId) .. ":" .. tostring(pairBondKey))
                             local sharedTarget = model:GetAttribute("SharedDiscoveryTargetPosition")
                             local sharedTargetUntil = tonumber(model:GetAttribute("SharedDiscoveryTargetUntil")) or 0
-                            if typeof(sharedTarget) == "Vector3" and sharedTargetUntil > now
+                            local followingSharedDiscovery = typeof(sharedTarget) == "Vector3"
+                                and sharedTargetUntil > now and partnerModel
+                                and model:GetAttribute("SharedDiscoveryLeader")
+                                    == partnerModel:GetAttribute("CompanionInstanceId")
+                            if followingSharedDiscovery
                                 and partnerModel and model:GetAttribute("SharedDiscoveryLeader")
                                     == partnerModel:GetAttribute("CompanionInstanceId") then
                                 targetPosition = sharedTarget
@@ -1619,7 +1623,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 and partnerMood <= 35 and mood >= 45 and energy >= 20 and hunger >= 20
                                 and pairBondScore >= 10 and socialApproach
                                 and careKey and (companionCareCooldowns[careKey] or 0) <= now
-                            if canComfortFriend and random:NextNumber() < (personality == "Заботливый" and 0.72 or 0.28) then
+                            if followingSharedDiscovery then
+                                -- Keep the partner's shared destination; do not replace it with a solo activity.
+                            elseif canComfortFriend and random:NextNumber() < (personality == "Заботливый" and 0.72 or 0.28) then
                                 targetPosition = socialApproach
                                 targetIsCaring = true
                                 targetIsToy = false
