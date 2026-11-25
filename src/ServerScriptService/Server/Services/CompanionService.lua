@@ -192,6 +192,13 @@ local PERSONALITY_GIFT_BONUS = {
     ["Мечтательный"] = 0.05, ["Гордый"] = -0.04, ["Независимый"] = -0.05,
     ["Осторожный"] = -0.03,
 }
+local RARITY_SPECIAL_GIFT_BONUS = {
+    ["Необычный"] = 0.02,
+    ["Редкий"] = 0.04,
+    ["Эпический"] = 0.07,
+    ["Легендарный"] = 0.10,
+    ["Мифический"] = 0.14,
+}
 
 local function showCompanionGift(giverModel, receiverModel, gift, isRare)
     if not giverModel or not giverModel.Parent or not receiverModel or not receiverModel.Parent then return end
@@ -259,6 +266,7 @@ local function tryGiveCompanionGift(player, profile, giverModel, receiverModel, 
         or bondScore >= 60 and 0.14
         or bondScore >= 30 and 0.09
         or 0.04
+    rareChance = math.clamp(rareChance + (RARITY_SPECIAL_GIFT_BONUS[giverDefinition.Rarity or ""] or 0), 0.02, 0.35)
     local isRare = random:NextNumber() <= rareChance
     if isRare then
         gift = { Name = "Особенный дар: " .. gift.Name, Icon = "💖" }
