@@ -1287,7 +1287,7 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                             local memoryKey = "Pair:" .. bondKey .. ":" .. pairMemory.Id
                                             if profile.Nest.DiscoveredBondMoments[memoryKey] ~= true then
                                                 profile.Nest.DiscoveredBondMoments[memoryKey] = true
-                                                showSpeciesBondMoment(model, partnerModel, pairMemory)
+                                                showSharedHeartMoment(model, partnerModel)
                                                 player:SetAttribute("LastNotice", "Новое воспоминание дружбы: " .. pairMemory.Title)
                                             end
                                         end
