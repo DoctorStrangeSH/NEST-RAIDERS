@@ -777,3 +777,16 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - Normal greeting bubbles last 2.1 seconds; reunion bubbles and glow last 3.2 seconds. The existing 18-second shared visual cooldown still prevents spam.
 - Greeting timestamps are runtime-only and cleared on owner departure. This system does not change bond, mood, needs, currency or XP.
 - Studio acceptance must verify paired presentation, all personalities, reunion timing, cleanup, both display pairs, multiplayer isolation and mobile readability.
+
+
+### Species-specific Friendship Discoveries — Sprint 4.79
+- Four rare pair interactions are defined by the species Kind values, independent of which display slot contains each pet:
+  - Fox + Turtle: Лесные хранители.
+  - Dragon + Owl: Искра мудрости.
+  - EmberFox + MagmaDragon: Тёплое пламя.
+  - AncientStag + RootSprite: Древний союз.
+- A pair must have at least 30 saved bond points. When a social session begins, a matching pair has a 35% chance to perform its special moment, subject to a 180-second per-owner/pair/species runtime cooldown.
+- Both companions show a species-specific title/icon/color bubble and temporary glow for 3.4 seconds. Server-authored SpeciesBondMoment and SpeciesBondMomentUntil attributes are exposed for animation/presentation layers.
+- First-time combinations are stored in profile.Nest.DiscoveredBondMoments and notify the owner once. The discovery is account/profile progress; subsequent activations remain possible after cooldown.
+- Unknown combinations continue using ordinary personality greetings and social play. No additional bond, mood, needs, currency or XP is granted.
+- Studio acceptance must verify order-independent matching, all four interactions, save/rejoin persistence, notification deduplication, visual cleanup, multiplayer isolation and mobile readability.
