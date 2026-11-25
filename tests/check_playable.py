@@ -1940,3 +1940,10 @@ assert 'profile.Nest.DiscoveredCompanionGifts' in gift_journal
 assert 'local giftTotal = 0' in gift_journal
 assert 'Id = "gift:" .. key' in gift_journal
 assert 'local total = #MOMENTS + giftTotal' in gift_journal
+
+assert 'local partnerDefinition = CompanionCatalog[partnerModel:GetAttribute("CompanionId")] or {}' in companion_service
+assert 'if random:NextNumber() < 0.5 then' in companion_service
+assert 'player, profile, partnerModel, model, partnerDefinition' in companion_service
+assert 'local giftKey = tostring(giverDefinition.EggId or "MeadowEgg") .. ":" .. gift.Name' in companion_service
+assert 'giftDiscoveries[key] == true' in gift_journal
+assert 'Открыто воспоминаний: %d / %d  ·  %d%%' in client
