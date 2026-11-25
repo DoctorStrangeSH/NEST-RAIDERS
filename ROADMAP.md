@@ -1519,3 +1519,20 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Verify discoveries survive leave/rejoin and the journal reveals only gifts actually received.
 - [ ] Verify 90-second cooldown and that gift moments do not overlap other overhead UI excessively.
 - [ ] Check journal scrolling and layout on phone, tablet and desktop.
+
+
+### Sprint 4.82 — Gifts and caring moments
+- [x] Add biome-themed gift pools for Meadow, Emerald, Frost, Ember, Crystal, Ancient, Forgotten Cave and Lineage origins.
+- [x] Let either companion initiate a gift after a completed shared social session.
+- [x] Adjust gift likelihood using the giver's personality and the pair's saved friendship tier.
+- [x] Add a rarer special-gift variant whose chance also improves with friendship.
+- [x] Show the gift above the receiver with a temporary glow and a readable Russian message.
+- [x] Persist discovered gifts and total gift count in the player nest profile.
+- [x] Give both pets a small mood response; do not grant coins, XP, materials or combat power.
+- [x] Add all 48 normal/special gift variants to the friendship memory journal with spoiler-safe hints.
+- [x] Add a 90-second per-pair runtime cooldown and clear it when the player leaves.
+- [x] Add static regression assertions for biome pools, personality modifiers, reward safety and journal wiring.
+- [ ] Roblox Studio: observe both gift directions with two or three active pets.
+- [ ] Verify discoveries survive leave/rejoin and the journal reveals only gifts actually received.
+- [ ] Verify 90-second cooldown and that gift moments do not overlap other overhead UI excessively.
+- [ ] Check journal scrolling and layout on phone, tablet and desktop.
