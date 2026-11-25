@@ -20,6 +20,7 @@ local pairGreetingLastAt = {}
 local socialChaseCooldowns = {}
 local sharedRestCooldowns = {}
 local speciesMomentCooldowns = {}
+local companionCareCooldowns = {}
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -1133,6 +1134,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local toyPlayUntil = 0
             local socialPlayUntil = 0
             local socialRewarded = false
+            local targetIsCaring = false
+            local careUntil = 0
+            local careRewarded = false
             local targetIsChase = false
             local targetIsRestingTogether = false
             local restingTogetherUntil = 0
@@ -1243,6 +1247,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         isAtTarget = true
                         targetIsToy = false
                         targetIsSocial = false
+                        targetIsCaring = false
+                        careUntil = 0
                         targetIsRestingTogether = false
                         restingTogetherUntil = 0
                         model:SetAttribute("RestingWithFriend", nil)
@@ -1259,6 +1265,29 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         bob = math.sin(now * 1.2 + phase) * 0.025
                         yawOffset = math.sin(now * 0.35 + phase) * 0.025
                     else
+                        if careUntil > 0 and now >= careUntil then
+                            if not careRewarded and partnerModel and partnerModel.Parent
+                                and (partnerModel:GetPivot().Position - currentPosition).Magnitude <= 8 then
+                                local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                                profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
+                                local savedPartnerMood = math.clamp(
+                                    math.floor(tonumber(profile.Nest.CompanionMood[partnerId]) or partnerMood), 0, 100
+                                )
+                                local comfortBoost = personality == "Заботливый" and 9 or 6
+                                local updatedPartnerMood = math.clamp(savedPartnerMood + comfortBoost, 0, 100)
+                                profile.Nest.CompanionMood[partnerId] = updatedPartnerMood
+                                partnerModel:SetAttribute("Mood", updatedPartnerMood)
+                                partnerModel:SetAttribute("BeingComfortedUntil", nil)
+                                partnerModel:SetAttribute("BeingComfortedBy", nil)
+                                mood = math.clamp(mood + 2, 0, 100)
+                                profile.Nest.CompanionMood[instanceId] = mood
+                                model:SetAttribute("Mood", mood)
+                                player:SetAttribute("LastNotice", companion.Name .. " утешил друга: настроение +" .. comfortBoost .. "!")
+                            end
+                            careRewarded = true
+                            careUntil = 0
+                            idleUntil = now + random:NextNumber(2, 4)
+                        end
                         if socialPlayUntil > 0 and now >= socialPlayUntil then
                             if not socialRewarded and partnerModel and not partnerSleeping
                                 and (partnerModel:GetPivot().Position - currentPosition).Magnitude <= 10 then
@@ -1341,7 +1370,16 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         if not isAtTarget and (targetPosition - currentPosition).Magnitude < 0.2 then
                             currentPosition = targetPosition
                             isAtTarget = true
-                            if targetIsRestingTogether then
+                            if targetIsCaring then
+                                targetIsCaring = false
+                                careUntil = now + random:NextNumber(2.8, 3.8)
+                                careRewarded = false
+                                idleUntil = careUntil
+                                if partnerModel and partnerModel.Parent then
+                                    partnerModel:SetAttribute("BeingComfortedUntil", careUntil)
+                                    partnerModel:SetAttribute("BeingComfortedBy", instanceId)
+                                end
+                            elseif targetIsRestingTogether then
                                 targetIsRestingTogether = false
                                 restingTogetherUntil = now + random:NextNumber(4.5, 6.5)
                                 idleUntil = restingTogetherUntil
@@ -1485,7 +1523,24 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local canExplore = #interestPoints > 0 and energy >= 25 and hunger >= 25 and mood >= 30
                             local explorationChance = (personality == "Любопытный" or personality == "Любознательный") and 0.34 or 0.2
                             local restKey = pairBondKey and (tostring(player.UserId) .. ":" .. tostring(pairBondKey))
-                            if canRestTogether and restKey and (sharedRestCooldowns[restKey] or 0) <= now
+                            local partnerMood = partnerModel and math.clamp(
+                                math.floor(tonumber(partnerModel:GetAttribute("Mood")) or 50), 0, 100
+                            ) or 100
+                            local careKey = restKey
+                            local canComfortFriend = slot < partnerSlot and partnerModel and not partnerSleeping
+                                and partnerMood <= 35 and mood >= 45 and energy >= 20 and hunger >= 20
+                                and pairBondScore >= 10 and socialApproach
+                                and careKey and (companionCareCooldowns[careKey] or 0) <= now
+                            if canComfortFriend and random:NextNumber() < (personality == "Заботливый" and 0.72 or 0.28) then
+                                targetPosition = socialApproach
+                                targetIsCaring = true
+                                targetIsToy = false
+                                targetIsSocial = false
+                                targetIsTreasure = false
+                                targetIsInterest = false
+                                targetIsShelter = false
+                                companionCareCooldowns[careKey] = now + 75
+                            elseif canRestTogether and restKey and (sharedRestCooldowns[restKey] or 0) <= now
                                 and random:NextNumber() < 0.32 then
                                 local sleepingPosition = partnerModel:GetPivot().Position
                                 local towardHome = home - sleepingPosition
@@ -1737,10 +1792,26 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         model:SetAttribute("PersonalHabitText", nil)
                         model:SetAttribute("PersonalHabitUntil", nil)
                     end
+                    local beingComfortedUntil = tonumber(model:GetAttribute("BeingComfortedUntil")) or 0
+                    local beingComforted = beingComfortedUntil > now and not isSleeping
+                    if beingComforted then
+                        behavior = "BeingComforted"
+                    elseif beingComfortedUntil > 0 then
+                        model:SetAttribute("BeingComfortedUntil", nil)
+                        model:SetAttribute("BeingComfortedBy", nil)
+                    end
+                    if careUntil > now and not isSleeping then
+                        behavior = "ComfortingFriend"
+                    end
                     local reactionUntil = tonumber(model:GetAttribute("GiftReactionUntil")) or 0
                     local giftReaction = model:GetAttribute("GiftReaction")
                     local reactionActive = giftReaction ~= nil and now < reactionUntil and not isSleeping
                     local reactionBob, reactionYaw, reactionRoll = 0, 0, 0
+                    if beingComforted or careUntil > now then
+                        local comfortPhase = now * 2.2 + phase
+                        reactionBob = math.sin(comfortPhase) * 0.035
+                        reactionRoll = math.sin(comfortPhase * 0.6) * 0.09
+                    end
                     local habitBob, habitYaw, habitRoll = 0, 0, 0
                     if habitActive and not reactionActive then
                         local habitPhase = now * 2.4 + phase
@@ -1802,6 +1873,8 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         model:SetAttribute("GiftReactionRare", nil)
                     end
                     moodLabel.Text = (reactionActive and model:GetAttribute("GiftReactionText"))
+                        or (beingComforted and "Друг рядом, всё хорошо ♥")
+                        or (careUntil > now and "Утешает друга ♥")
                         or (habitActive and model:GetAttribute("PersonalHabitText"))
                         or (isSleeping and "Zzz")
                         or (behavior == "Searching" and "Ищет сокровище")
