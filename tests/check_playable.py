@@ -2176,3 +2176,27 @@ assert 'makeEgg(voidEggs' in world and 'VoidStarshardNodes' in world
 assert 'MineVoidShardPrompt' in world and 'VoidShardNodeId' in world
 assert 'VoidFrontier' in world_health and 'VoidStarshardNodes' in world_health and 'EggSpawnPoints' in world_health
 assert 'Пещера и Граница пустоты' in client
+
+
+# Sprint 4.92 — deterministic Void Forge crafting.
+void_forge_catalog = Path("src/ReplicatedStorage/Shared/Config/ArtifactCatalog.lua").read_text()
+void_forge_inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
+void_forge_world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
+void_forge_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
+void_forge_client = Path("src/StarterPlayer/StarterPlayerScripts/ClientBootstrap.client.lua").read_text()
+assert 'VoidHarvester = {' in void_forge_catalog and 'RiftCompass = {' in void_forge_catalog
+assert 'NebulaCharm = {' in void_forge_catalog
+assert 'GatherBonus = 0.18' in void_forge_catalog and 'ResearchBonus = 0.15' in void_forge_catalog
+assert 'HatchBonus = 0.12' in void_forge_catalog
+assert 'payload.Action == "CraftVoidArtifact"' in void_forge_inventory
+assert 'player:GetAttribute("CurrentBiome") ~= "VoidFrontier"' in void_forge_inventory
+assert 'ProgressionService:CanEnterZone(player, "VoidFrontier")' in void_forge_inventory
+assert 'VoidForgeStation' in void_forge_inventory and 'profile.Artifacts >= 40' in void_forge_inventory
+for recipe in ('VoidHarvester', 'RiftCompass', 'NebulaCharm'):
+    assert recipe in void_forge_inventory and recipe in void_forge_client
+assert 'profile.Artifacts' in void_forge_inventory and 'Origin = "VoidForge"' in void_forge_inventory
+assert 'VoidForge = Instance.new("Folder")' in void_forge_world
+assert 'OpenVoidForgePrompt' in void_forge_world and 'VoidForgeCore' in void_forge_world
+assert 'VoidForgeFloor' in void_forge_health and 'OpenVoidForgePrompt' in void_forge_health
+assert 'ProximityPromptService.PromptTriggered' in void_forge_client
+assert 'updateVoidForgeButtons' in void_forge_client and 'CurrentBiome' in void_forge_client
