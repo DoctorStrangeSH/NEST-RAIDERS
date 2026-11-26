@@ -233,7 +233,9 @@ function VoidBossService:Init()
                 hit = (root.Position - targetPosition).Magnitude <= attack.Radius
             end
             if hit then
-                humanoid:TakeDamage(attack.Damage + (phase == 3 and 8 or 0))
+                local gearDefense = math.clamp(tonumber(player:GetAttribute("GearDefenseBonus")) or 0, 0, 0.5)
+                local incomingDamage = attack.Damage + (phase == 3 and 8 or 0)
+                humanoid:TakeDamage(math.max(1, math.floor(incomingDamage * (1 - gearDefense) + 0.5)))
                 player:SetAttribute("VoidBossDamagePulse", (player:GetAttribute("VoidBossDamagePulse") or 0) + 1)
                 player:SetAttribute("LastNotice", "Атака Пожирателя звёзд задела тебя! Следи за метками.")
             else
@@ -265,7 +267,9 @@ function VoidBossService:Init()
             if self._windups[player] then return end
             if self._lastHit[player] and now - self._lastHit[player] < HIT_COOLDOWN then return end
             self._lastHit[player] = now
-            progress.VoidBossHealth = math.max(0, progress.VoidBossHealth - HIT_DAMAGE)
+            local gearDamage = math.clamp(tonumber(player:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)
+            local dealtDamage = math.max(1, math.floor(HIT_DAMAGE * (1 + gearDamage) + 0.5))
+            progress.VoidBossHealth = math.max(0, progress.VoidBossHealth - dealtDamage)
             player:SetAttribute("VoidBossHitPulse", (player:GetAttribute("VoidBossHitPulse") or 0) + 1)
             publish(player, profile, progress)
             if progress.VoidBossHealth <= 0 then
