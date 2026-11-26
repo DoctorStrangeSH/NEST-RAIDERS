@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local ProximityPromptService = game:GetService("ProximityPromptService")
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
 local player = Players.LocalPlayer
@@ -2505,7 +2506,7 @@ local artifactsCraft = Instance.new("TextButton")
 artifactsCraft.Position = UDim2.fromOffset(16, 100)
 artifactsCraft.Size = UDim2.new(1, -32, 0, 40)
 artifactsCraft.BackgroundColor3 = Color3.fromRGB(112, 78, 157)
-artifactsCraft.Text = "СОЗДАТЬ АРТЕФАКТ · 4 ЛЕПЕСТКА · 2 ЗВЁЗДНЫХ · 2 КРИСТАЛЬНЫХ · 1 ПЕПЕЛЬНЫЙ · 250 МОНЕТ"
+artifactsCraft.Text = "МАСТЕРСКАЯ ДРЕВНИХ ВЫСОТ · СЛУЧАЙНЫЙ АРТЕФАКТ"
 artifactsCraft.TextColor3 = Color3.fromRGB(255, 248, 255)
 artifactsCraft.TextSize = 10
 artifactsCraft.TextWrapped = true
@@ -2513,11 +2514,41 @@ artifactsCraft.Font = Enum.Font.GothamBlack
 artifactsCraft.Parent = artifactsPanel
 addCorner(artifactsCraft, 10)
 
+local voidForgeButtons = {}
+local function makeVoidForgeButton(name, recipeId, y, label, color)
+    local button = Instance.new("TextButton")
+    button.Name = name
+    button.Position = UDim2.fromOffset(16, y)
+    button.Size = UDim2.new(1, -32, 0, 32)
+    button.BackgroundColor3 = color
+    button.Text = label
+    button.TextColor3 = Color3.fromRGB(250, 246, 255)
+    button.TextSize = 9
+    button.TextWrapped = true
+    button.Font = Enum.Font.GothamBlack
+    button.Visible = false
+    button.Parent = artifactsPanel
+    addCorner(button, 9)
+    button.Activated:Connect(function()
+        local data = invokeInventory({ Action = "CraftVoidArtifact", RecipeId = recipeId })
+        if data then
+            renderArtifacts(data)
+            showNotice("Кузница создала выбранный артефакт!")
+        end
+    end)
+    table.insert(voidForgeButtons, button)
+end
 
+makeVoidForgeButton("VoidHarvesterRecipe", "VoidHarvester", 144,
+    "ЖЕЗЛ ЖИЛЫ · 24 ОСКОЛКА · 6 КРИСТАЛЛОВ · 1 200 МОНЕТ", Color3.fromRGB(85, 91, 143))
+makeVoidForgeButton("RiftCompassRecipe", "RiftCompass", 179,
+    "КОМПАС РАЗЛОМА · 18 ОСКОЛКОВ · 4 ПЕПЕЛЬНЫХ · 1 000 МОНЕТ", Color3.fromRGB(92, 79, 139))
+makeVoidForgeButton("NebulaCharmRecipe", "NebulaCharm", 214,
+    "АМУЛЕТ ТУМАННОСТИ · 30 ОСКОЛКОВ · 8 ЛЕПЕСТКОВ · 1 600 МОНЕТ", Color3.fromRGB(124, 79, 143))
 
 local artifactsSlots = Instance.new("TextLabel")
 artifactsSlots.BackgroundTransparency = 1
-artifactsSlots.Position = UDim2.fromOffset(18, 146)
+artifactsSlots.Position = UDim2.fromOffset(146, 146)
 artifactsSlots.Size = UDim2.new(1, -36, 0, 42)
 artifactsSlots.Font = Enum.Font.GothamBold
 artifactsSlots.Text = "СЛОТЫ: 0 / 2"
@@ -2530,7 +2561,7 @@ artifactsSlots.Parent = artifactsPanel
 
 local artifactsList = Instance.new("ScrollingFrame")
 artifactsList.Name = "ArtifactList"
-artifactsList.Position = UDim2.fromOffset(14, 192)
+artifactsList.Position = UDim2.fromOffset(192, 192)
 artifactsList.Size = UDim2.new(1, -28, 1, -206)
 artifactsList.BackgroundTransparency = 1
 artifactsList.BorderSizePixel = 0
@@ -2867,6 +2898,30 @@ local function refreshArtifacts()
     local data = invokeInventory({ Action = "Get" })
     if data then renderArtifacts(data) end
 end
+local function updateVoidForgeButtons()
+    local visible = player:GetAttribute("CurrentBiome") == "VoidFrontier"
+    for _, button in ipairs(voidForgeButtons) do button.Visible = visible end
+    if visible then
+        artifactsSlots.Position = UDim2.fromOffset(18, 250)
+        artifactsList.Position = UDim2.fromOffset(14, 296)
+        artifactsList.Size = UDim2.new(1, -28, 1, -310)
+    else
+        artifactsSlots.Position = UDim2.fromOffset(18, 146)
+        artifactsList.Position = UDim2.fromOffset(14, 192)
+        artifactsList.Size = UDim2.new(1, -28, 1, -206)
+    end
+end
+player:GetAttributeChangedSignal("CurrentBiome"):Connect(updateVoidForgeButtons)
+updateVoidForgeButtons()
+ProximityPromptService.PromptTriggered:Connect(function(prompt)
+    if prompt and prompt.Name == "OpenVoidForgePrompt"
+        and player:GetAttribute("CurrentBiome") == "VoidFrontier" then
+        updateVoidForgeButtons()
+        refreshArtifacts()
+        artifactsPanel.Visible = true
+        showNotice("Кузница пустоты открыта. Выбери один из трёх рецептов.")
+    end
+end)
 artifactsButton.Activated:Connect(function()
     refreshArtifacts()
     artifactsPanel.Visible = true
