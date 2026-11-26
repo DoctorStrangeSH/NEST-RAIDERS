@@ -888,3 +888,10 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - A pair at 30+ bond may search a nearby landmark, with curious personalities more likely to initiate. Both pets must be awake, have at least 35 energy and 25 hunger, and not be in a storm.
 - Both approach opposite sides of a shared point. Only the lower display slot can complete the event, after both reach their positions. The discovery spawns a temporary golden visual and owner notice without additional currency, XP or items.
 - Reciprocal partner attributes, a 10-second deadline and a 90-second pair cooldown bound the interaction. This is a cosmetic shared activity, not a replacement for the existing claimable solo treasure.
+
+
+## Void Frontier — Sprint 4.88 destination foundation
+- Void Frontier is the first endgame destination slice, gated by level 75 and the existing persisted `ancient_temple_boss` completion flag.
+- Ancient Heights connects to Void Frontier by an 18-segment physical causeway. The travel prompt remains server-authoritative through ProgressionService:CanEnterZone.
+- The island contains a landing pad, six illuminated rune pillars, a central beacon, a welcome sign and a return portal to Ancient Heights.
+- This is a destination foundation only. The Void trial, unique egg/species, resource economy and final boss are not yet implemented.
