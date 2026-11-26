@@ -493,6 +493,12 @@ assert 'local z = 2665 + (index - 1) * 30' in world
 assert 'Vector3.new(13, 1.5, 50)' in world
 assert 'Vector3.new(7, 200, 200)' in world
 assert 'VoidFrontier' in world_health and 'VoidCauseway' in world_health
+assert 'VoidTrialService' in server and 'function VoidTrialService:Init()' in Path("src/ServerScriptService/Server/Services/VoidTrialService.lua").read_text()
+assert 'VoidTrialRunes = {}' in profile_template
+assert 'SEQUENCE = { "Rift", "Echo", "Star" }' in Path("src/ServerScriptService/Server/Services/VoidTrialService.lua").read_text()
+assert 'profile.CompletedQuests.void_trial = true' in Path("src/ServerScriptService/Server/Services/VoidTrialService.lua").read_text()
+assert 'VoidTrialRunePrompt' in world and 'VoidTrialAltarPrompt' in world
+assert 'VoidTrialRunePrompt' in world_health and 'VoidTrialAltarPrompt' in world_health
 assert 'AncientHeightsPortal' in world and 'AncientReturnPortal' in world
 assert 'AncientLanding' in world and 'AncientWelcomeSign' in world
 assert 'CrystalTrialProgress' in client and 'CrystalTrialBossWindup' in client
