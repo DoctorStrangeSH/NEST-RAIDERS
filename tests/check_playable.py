@@ -701,7 +701,7 @@ assert 'BOSS_MAX_HEALTH = 240' in ancient_boss and 'PLAYER_HIT_DAMAGE = 24' in a
 assert 'Id = "VineSlam"' in ancient_boss and 'Id = "RootWave"' in ancient_boss
 assert 'Damage = 30' in ancient_boss and 'Damage = 18' in ancient_boss
 assert 'WindupSeconds = 1.8' in ancient_boss and 'WindupSeconds = 1.25' in ancient_boss
-assert 'humanoid:TakeDamage(attack.Damage)' in ancient_boss and 'AncientTempleBossWindup' in ancient_boss
+assert 'GearDefenseBonus' in ancient_boss and 'AncientTempleBossWindup' in ancient_boss
 assert 'CompletedQuests.ancient_temple_trial' in ancient_boss
 assert 'CompletedQuests.ancient_temple_boss = true' in ancient_boss
 assert 'REWARD_COMPANION_ID = "HeartwoodGuardian"' in ancient_boss
