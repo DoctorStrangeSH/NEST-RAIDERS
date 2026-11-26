@@ -1637,3 +1637,13 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add world-health diagnostics and regression checks for the new destination and both travel portals.
 - [ ] Roblox Studio: test locked and unlocked travel, return travel, bridge collision, respawn and multiplayer isolation.
 - [ ] Add the Void Frontier trial, egg/species catalog, resource loop and endgame reward before calling the biome complete.
+
+
+### Sprint 4.89 — Void Trial (first playable endgame objective)
+- [x] Add a persistent, per-player Rift → Echo → Star rune sequence in Void Frontier.
+- [x] Add server-side validation for biome, unlocked access, living character and interaction distance.
+- [x] Reset the sequence on an incorrect rune; keep valid progress across rejoin.
+- [x] Add a one-time altar claim with 900 coins, 650 XP and 25 Starshards.
+- [x] Add world-health checks for all three rune prompts, altar prompt and clue sign.
+- [x] Add regression checks and bootstrap registration.
+- [ ] Roblox Studio: test correct/wrong order, rejoin persistence, duplicate reward prevention and multiplayer isolation.
