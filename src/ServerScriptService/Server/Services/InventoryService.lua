@@ -542,7 +542,7 @@ function InventoryService:HandleRequest(player, payload)
         local world = Workspace:FindFirstChild("NestRaidersWorld")
         local void = world and world:FindFirstChild("VoidFrontier")
         local forge = void and void:FindFirstChild("VoidForge")
-        local station = forge and forge:FindFirstChild("VoidForgeStation")
+        local station = forge and forge:FindFirstChild("VoidForgeAnvil")
         local character = player.Character
         local root = character and character:FindFirstChild("HumanoidRootPart")
         if not station or not root or (root.Position - station.Position).Magnitude > 18 then
