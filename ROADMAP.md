@@ -1668,3 +1668,13 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Give an active Star Eater a 30% chance to discover one extra Starshard per harvest.
 - [x] Register VoidHarvestService and add world-health/regression checks.
 - [ ] Roblox Studio: test egg collection/hatching, rarity odds, cooldowns, inventory full state, and two-player isolation.
+
+
+### Sprint 4.92 — Void Forge
+- [x] Build an interactive Void Forge station on the Void Frontier island with a proximity prompt and illuminated core.
+- [x] Add three deterministic recipes that create existing equippable artifact instances: Void Harvester (gather), Rift Compass (research XP), Nebula Charm (hatch).
+- [x] Validate biome access, physical station distance, recipe ID, collection capacity and all resource balances on the server before spending anything.
+- [x] Persist crafted artifacts in the existing artifact collection and preserve compatibility with the two equipment slots, bonuses and artifact merging.
+- [x] Add a forge interaction that opens the existing artifact UI and shows recipes only while in Void Frontier.
+- [x] Add world-health and source regression checks.
+- [ ] Roblox Studio: test each recipe, insufficient materials, full collection, remote spoofing, rejoin persistence, equip/unequip and actual bonus effects.
