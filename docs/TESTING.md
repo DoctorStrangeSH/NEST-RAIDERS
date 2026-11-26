@@ -1305,3 +1305,14 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Defeat the boss twice; verify exactly one Star Eater companion, 1,800 coins, 1,200 XP and 12 Starshards are awarded.
 - [ ] Test two players with different health/completion states; their boss progress and warning markers must remain isolated.
 - [ ] Verify HUD, attack text and arena readability on desktop, tablet and mobile.
+
+
+## Sprint 4.91 — Void Frontier ecosystem
+- [ ] Collect each of the three active Void eggs; verify the hatch inventory stores `VoidEgg` and `VoidFrontier`.
+- [ ] Hatch a large controlled sample and confirm the weighted pool uses Riftling 60%, Echo Wisp 30%, Nebula Drake 10%.
+- [ ] Fill egg inventory and verify world egg collection is rejected without consuming the world egg.
+- [ ] Harvest all six Starshard nodes; verify 1–3 base shards, artifact bonus behavior and the active Star Eater 30% extra-shard chance.
+- [ ] Re-harvest a node immediately; verify the remaining cooldown is shown and no extra shards are granted.
+- [ ] Leave and rejoin; verify node cooldowns and Starshard totals persist.
+- [ ] Test two players on the same node; each player's cooldown and reward must be independent.
+- [ ] Verify egg and node placement is clear of the rune puzzle, return portal and boss arena on desktop/tablet/mobile.
