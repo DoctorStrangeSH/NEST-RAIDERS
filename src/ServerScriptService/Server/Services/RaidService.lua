@@ -810,13 +810,14 @@ local function applyRaidCombatDamage(self, match, target, amount, sourceName)
     match.CombatHealth[target] = math.max(0, (match.CombatHealth[target] or 100) - remainingDamage)
     showRaidCombatHit(target.Character, absorbed > 0)
     local shieldText = absorbed > 0 and (" Щит питомца поглотил " .. tostring(absorbed) .. ".") or ""
-    local synergyText = reducedDamage < incomingDamage
+    local synergyText = synergy and (tonumber(synergy.DamageReduction) or 0) > 0
         and (" Синергия «" .. tostring(synergy.Name) .. "» смягчила удар.") or ""
-    if reducedDamage < incomingDamage then
+    local gearText = gearDefense > 0 and " Экипировка смягчила удар." or ""
+    if synergy and (tonumber(synergy.DamageReduction) or 0) > 0 then
         pulseRaidCompanions(match, target, "DEFEND")
     end
     target:SetAttribute("LastNotice", sourceName .. ": получено " .. tostring(remainingDamage)
-        .. " урона." .. shieldText .. synergyText .. " Здоровье: " .. tostring(match.CombatHealth[target]) .. " / 100.")
+        .. " урона." .. shieldText .. synergyText .. gearText .. " Здоровье: " .. tostring(match.CombatHealth[target]) .. " / 100.")
     publishArenaState(match)
     if match.CombatHealth[target] <= 0 then
         finishMatch(self, match, target == match.Attacker and "DEFENDER" or "ATTACKER",
@@ -1383,7 +1384,9 @@ function RaidService:StrikeOpponent(player)
     if targetGuardUntil > timestamp then
         match.GuardUntil[opponent] = 0
         pulseRaidCompanions(match, opponent, "DEFEND")
-        local ended = applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE, "Контрудар парирования")
+        local counterBonus = math.clamp(tonumber(opponent:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)
+        local counterDamage = math.max(1, math.floor(RAID_PARRY_COUNTER_DAMAGE * (1 + counterBonus) + 0.5))
+        local ended = applyRaidCombatDamage(self, match, player, counterDamage, "Контрудар парирования")
         if ended then
             return { Ok = true, Message = "Парирование! Ты отразил удар и победил." }
         end
@@ -1391,7 +1394,8 @@ function RaidService:StrikeOpponent(player)
     else
         local synergy = match.RaidPetSynergy and match.RaidPetSynergy[player] or nil
         local strikeMultiplier = math.clamp(tonumber(synergy and synergy.DuelDamageMultiplier) or 1, 1, 1.15)
-        local strikeDamage = math.floor(RAID_DUEL_STRIKE_DAMAGE * strikeMultiplier + 0.5)
+        local gearDamage = math.clamp(tonumber(player:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)
+        local strikeDamage = math.max(1, math.floor(RAID_DUEL_STRIKE_DAMAGE * strikeMultiplier * (1 + gearDamage) + 0.5))
         pulseRaidCompanions(match, player, "ATTACK")
         local ended = applyRaidCombatDamage(self, match, opponent, strikeDamage, "Удар соперника")
         if ended then return { Ok = true, Message = "Соперник выбыл! Победа в рейде." } end
