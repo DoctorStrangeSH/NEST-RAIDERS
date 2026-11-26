@@ -35,6 +35,7 @@ local ProfileTemplate = {
         Elderwood = 0,
         Moonpetal = 0,
         Starshard = 0,
+        VoidNodeCooldowns = {},
         ElderwoodNodeCooldowns = {},
         LastAshfallClaimEventId = "",
         AshfallClaimedNodes = {},
