@@ -45,9 +45,9 @@ local EGG_SPAWN_POSITIONS = {
         Vector3.new(18, 21, 2630), Vector3.new(-35, 21, 2588), Vector3.new(35, 21, 2588),
     },
     VoidFrontier = {
-        Vector3.new(-28, 21, 3245), Vector3.new(0, 21, 3240), Vector3.new(28, 21, 3245),
-        Vector3.new(-42, 21, 3300), Vector3.new(-18, 21, 3360), Vector3.new(0, 21, 3370),
-        Vector3.new(18, 21, 3360), Vector3.new(-12, 21, 3275), Vector3.new(12, 21, 3275),
+        Vector3.new(-28, 19.6, 3245), Vector3.new(0, 19.6, 3240), Vector3.new(28, 19.6, 3245),
+        Vector3.new(-42, 19.6, 3300), Vector3.new(-18, 19.6, 3360), Vector3.new(0, 19.6, 3370),
+        Vector3.new(18, 19.6, 3360), Vector3.new(-12, 19.6, 3275), Vector3.new(12, 19.6, 3275),
     },
     Emberlands = {
         Vector3.new(-48, 16, 1520), Vector3.new(48, 16, 1520), Vector3.new(-48, 16, 1600),
