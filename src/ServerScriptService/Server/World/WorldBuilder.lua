@@ -2465,6 +2465,49 @@ function WorldBuilder:Build()
     makeEgg(voidEggs, Vector3.new(0, 21, 3240), Color3.fromRGB(167, 112, 255))
     makeEgg(voidEggs, Vector3.new(28, 21, 3245), Color3.fromRGB(167, 112, 255))
 
+    -- The Void Forge turns gathered endgame materials into deterministic artifacts.
+    local voidForge = Instance.new("Folder")
+    voidForge.Name = "VoidForge"
+    voidForge.Parent = void
+    local forgeFloor = part(voidForge, "VoidForgeFloor", Vector3.new(22, 1.5, 22),
+        Vector3.new(88, 18.8, 3300), Color3.fromRGB(44, 39, 72), Enum.Material.Slate)
+    local forgeBase = part(voidForge, "VoidForgeBase", Vector3.new(10, 5, 10),
+        Vector3.new(88, 22, 3300), Color3.fromRGB(55, 48, 88), Enum.Material.Basalt)
+    local forgeAnvil = part(voidForge, "VoidForgeAnvil", Vector3.new(7, 2, 6),
+        Vector3.new(88, 25.5, 3300), Color3.fromRGB(115, 105, 151), Enum.Material.Metal)
+    local forgeCore = part(voidForge, "VoidForgeCore", Vector3.new(3.2, 5, 3.2),
+        Vector3.new(88, 29, 3300), Color3.fromRGB(185, 137, 255), Enum.Material.Neon, Enum.PartType.Ball)
+    forgeCore.CanCollide = false
+    local forgeLight = Instance.new("PointLight")
+    forgeLight.Color = forgeCore.Color
+    forgeLight.Range = 24
+    forgeLight.Brightness = 1.8
+    forgeLight.Parent = forgeCore
+    local forgePrompt = Instance.new("ProximityPrompt")
+    forgePrompt.Name = "OpenVoidForgePrompt"
+    forgePrompt.ActionText = "Открыть рецепты"
+    forgePrompt.ObjectText = "Кузница пустоты"
+    forgePrompt.KeyboardKeyCode = Enum.KeyCode.E
+    forgePrompt.HoldDuration = 0.35
+    forgePrompt.MaxActivationDistance = 12
+    forgePrompt.RequiresLineOfSight = false
+    forgePrompt.Parent = forgeAnvil
+    local forgeSign = part(voidForge, "VoidForgeSign", Vector3.new(16, 6, 1),
+        Vector3.new(88, 25, 3314), Color3.fromRGB(29, 27, 49), Enum.Material.Metal)
+    forgeSign.CanCollide = false
+    local forgeGui = Instance.new("SurfaceGui")
+    forgeGui.Face = Enum.NormalId.Front
+    forgeGui.Parent = forgeSign
+    local forgeText = Instance.new("TextLabel")
+    forgeText.Size = UDim2.fromScale(1, 1)
+    forgeText.BackgroundTransparency = 1
+    forgeText.Text = "КУЗНИЦА ПУСТОТЫ\\nТри рецепта · Выбор без случайности"
+    forgeText.TextColor3 = Color3.fromRGB(224, 207, 255)
+    forgeText.TextScaled = true
+    forgeText.TextWrapped = true
+    forgeText.Font = Enum.Font.GothamBlack
+    forgeText.Parent = forgeGui
+
     -- Starshard outcrops are placed around the safe outer rim, away from the trial
     -- altar and the Star Eater arena. Each node has a stable ID and server prompt.
     local voidNodes = Instance.new("Folder")
