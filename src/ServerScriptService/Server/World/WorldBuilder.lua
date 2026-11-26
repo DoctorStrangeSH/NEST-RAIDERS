@@ -2424,6 +2424,13 @@ function WorldBuilder:Build()
             Color3.fromRGB(168, 119, 255), Enum.Material.Neon, Enum.PartType.Wedge)
         spike.CanCollide = false
     end
+    for _, descendant in ipairs(starEater:GetDescendants()) do
+        if descendant:IsA("BasePart") then
+            descendant.CanCollide = false
+            descendant.CanTouch = false
+            descendant.CanQuery = false
+        end
+    end
     local bossPrompt = Instance.new("ProximityPrompt")
     bossPrompt.Name = "VoidBossPrompt"
     bossPrompt.ActionText = "Атаковать"
