@@ -925,3 +925,14 @@ The first playable Void Frontier objective is a persistent three-rune sequence: 
 - Nebula Charm: 30 Starshards + 8 Moonpetals + 1,600 coins; grants 12% highest-rarity hatch bonus.
 - Crafted items are normal artifact instances. They persist in the existing profile, can occupy either of the two artifact slots, and use the established artifact bonus and merge systems. Collection capacity remains 40.
 - Studio acceptance is required for crafting, inventory persistence, equipment behavior and real bonus effects.
+
+
+## Voidwalker equipment — Sprint 4.93
+- The player profile now persists `GearInventory` and `EquippedGear` with four fixed slots: Weapon, Armor, Helmet and Accessory. Existing saves receive these fields through profile reconciliation; schema version is incremented.
+- The Void Forge produces four unique pieces: Riftblade, Voidplate, Starhelm and Nebula Cloak. A player can own one copy of each piece; the server checks Void Frontier access, distance to the actual forge anvil, inventory capacity, ownership and all resource balances before charging.
+- Equipping a piece replaces the currently equipped item in the same slot. Unequipping leaves the item in the collection.
+- Gear visuals are attached to the character with welded, non-colliding parts and are rebuilt after respawn.
+- Gear contributes to attack damage, incoming damage reduction, maximum health and movement speed. The four-piece Voidwalker set grants an additional 10% damage, 10% defense and 20 maximum health.
+- Gear attributes are consumed by the Void, Ancient Temple and Forgotten Heart boss encounters and by raid combat. They are server-owned and cannot be set by the client.
+- The Void Forge prompt opens the equipment panel; the artifact collection remains available separately.
+- Studio acceptance is required for R6/R15 appearance, respawn, persistence, combat balance and multiplayer.
