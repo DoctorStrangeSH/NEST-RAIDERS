@@ -2195,7 +2195,7 @@ assert 'VoidForgeStation' in void_forge_inventory and '#profile.Artifacts >= 40'
 for recipe in ('VoidHarvester', 'RiftCompass', 'NebulaCharm'):
     assert recipe in void_forge_inventory and recipe in void_forge_client
 assert 'profile.Artifacts' in void_forge_inventory and 'Origin = "VoidForge"' in void_forge_inventory
-assert 'VoidForge = Instance.new("Folder")' in void_forge_world
+assert 'voidForge = Instance.new("Folder")' in void_forge_world
 assert 'OpenVoidForgePrompt' in void_forge_world and 'VoidForgeCore' in void_forge_world
 assert 'VoidForgeFloor' in void_forge_health and 'OpenVoidForgePrompt' in void_forge_health
 assert 'ProximityPromptService.PromptTriggered' in void_forge_client
