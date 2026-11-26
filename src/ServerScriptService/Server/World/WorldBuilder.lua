@@ -2293,6 +2293,80 @@ function WorldBuilder:Build()
     voidText.Font = Enum.Font.GothamBlack
     voidText.Parent = voidGui
 
+    -- Void Trial: awaken the Rift, Echo and Star runes in the displayed order.
+    local voidTrial = Instance.new("Folder")
+    voidTrial.Name = "VoidTrial"
+    voidTrial.Parent = void
+    local voidRunes = Instance.new("Folder")
+    voidRunes.Name = "VoidTrialRunes"
+    voidRunes.Parent = voidTrial
+    local voidRuneDefinitions = {
+        { Id = "Rift", Name = "Руна Разлома", Position = Vector3.new(-58, 20, 3270), Color = Color3.fromRGB(185, 119, 255) },
+        { Id = "Echo", Name = "Руна Эха", Position = Vector3.new(-72, 20, 3300), Color = Color3.fromRGB(117, 190, 255) },
+        { Id = "Star", Name = "Руна Звезды", Position = Vector3.new(-58, 20, 3330), Color = Color3.fromRGB(255, 220, 145) },
+    }
+    for index, definition in ipairs(voidRuneDefinitions) do
+        local pedestal = part(voidRunes, definition.Id .. "RunePedestal",
+            Vector3.new(6, 2, 6), definition.Position - Vector3.new(0, 1.2, 0),
+            Color3.fromRGB(48, 48, 75), Enum.Material.Basalt)
+        pedestal:SetAttribute("VoidRuneId", definition.Id)
+        local rune = part(voidRunes, definition.Id .. "RuneStone",
+            Vector3.new(2.2, 4.5, 2.2), definition.Position,
+            definition.Color, Enum.Material.Neon, Enum.PartType.Ball)
+        rune.CanCollide = false
+        rune:SetAttribute("VoidRuneId", definition.Id)
+        local light = Instance.new("PointLight")
+        light.Color = definition.Color
+        light.Range = 13
+        light.Brightness = 0.9
+        light.Parent = rune
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "VoidTrialRunePrompt"
+        prompt.ActionText = "Пробудить"
+        prompt.ObjectText = definition.Name
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.45
+        prompt.MaxActivationDistance = 10
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = rune
+    end
+
+    local voidAltar = part(voidTrial, "VoidTrialAltar", Vector3.new(8, 3, 8),
+        Vector3.new(-35, 20, 3300), Color3.fromRGB(64, 56, 92), Enum.Material.Slate)
+    local altarCore = part(voidTrial, "VoidTrialAltarCore", Vector3.new(2.5, 5, 2.5),
+        Vector3.new(-35, 23, 3300), Color3.fromRGB(181, 139, 255), Enum.Material.Neon, Enum.PartType.Ball)
+    altarCore.CanCollide = false
+    local altarLight = Instance.new("PointLight")
+    altarLight.Color = altarCore.Color
+    altarLight.Range = 18
+    altarLight.Brightness = 1.2
+    altarLight.Parent = altarCore
+    local altarPrompt = Instance.new("ProximityPrompt")
+    altarPrompt.Name = "VoidTrialAltarPrompt"
+    altarPrompt.ActionText = "Завершить испытание"
+    altarPrompt.ObjectText = "Алтарь трёх рун"
+    altarPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    altarPrompt.HoldDuration = 0.8
+    altarPrompt.MaxActivationDistance = 11
+    altarPrompt.RequiresLineOfSight = false
+    altarPrompt.Parent = voidAltar
+
+    local voidClue = part(voidTrial, "VoidTrialClueSign", Vector3.new(22, 8, 1),
+        Vector3.new(-35, 27, 3320), Color3.fromRGB(31, 35, 58), Enum.Material.Metal)
+    voidClue.CanCollide = false
+    local clueGui = Instance.new("SurfaceGui")
+    clueGui.Face = Enum.NormalId.Front
+    clueGui.Parent = voidClue
+    local clueText = Instance.new("TextLabel")
+    clueText.Size = UDim2.fromScale(1, 1)
+    clueText.BackgroundTransparency = 1
+    clueText.Text = "ИСПЫТАНИЕ ПУСТОТЫ\\nРазлом → Эхо → Звезда\\nЗатем коснись алтаря"
+    clueText.TextColor3 = Color3.fromRGB(226, 215, 255)
+    clueText.TextScaled = true
+    clueText.TextWrapped = true
+    clueText.Font = Enum.Font.GothamBlack
+    clueText.Parent = clueGui
+
     return world
 end
 
