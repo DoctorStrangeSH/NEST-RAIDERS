@@ -401,7 +401,6 @@ local CompanionCatalog = {
         FavoritePlace = "Crystals", WeatherPreference = "Clear",
         FavoriteFood = "Звёздный нектар", FavoriteToy = "CozyPlush",
         PetMoodBonus = 14, PlayMoodBonus = 11,
-        Ability = { Id = "VoidStardust", Name = "Звёздная пыль", Description = "Повышает шанс найти редкие материалы во время исследования.", UnlockLevel = 7, CooldownSeconds = 480 },
     },
 }
 
