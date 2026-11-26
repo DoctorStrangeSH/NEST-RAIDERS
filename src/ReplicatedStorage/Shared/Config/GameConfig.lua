@@ -1,7 +1,7 @@
 local GameConfig = {}
 
 GameConfig.DataStoreName = "NestRaiders_PlayerData_v1"
-GameConfig.DataSchemaVersion = 1
+GameConfig.DataSchemaVersion = 2
 GameConfig.AutosaveIntervalSeconds = 60
 -- Keep false for instant local Studio testing without publishing or API access.
 -- Set true only in a private published test experience with Studio API access enabled.
