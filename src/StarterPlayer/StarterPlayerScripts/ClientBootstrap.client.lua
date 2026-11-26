@@ -1233,6 +1233,7 @@ addStroke(hallButton, Color3.fromRGB(171, 184, 230), 1.5)
 
 local materialsPanel
 local artifactsPanel
+local gearPanel
 local materialsButton = Instance.new("TextButton")
 materialsButton.Name = "MaterialsInventoryButton"
 materialsButton.Position = UDim2.fromOffset(18, 644)
@@ -1258,6 +1259,18 @@ artifactsButton.Parent = gui
 addCorner(artifactsButton, 12)
 addStroke(artifactsButton, Color3.fromRGB(210, 180, 255), 1.5)
 
+local gearButton = Instance.new("TextButton")
+gearButton.Name = "GearEquipmentButton"
+gearButton.Size = UDim2.fromOffset(250, 42)
+gearButton.BackgroundColor3 = Color3.fromRGB(91, 104, 151)
+gearButton.Text = "СНАРЯЖЕНИЕ"
+gearButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+gearButton.TextSize = 13
+gearButton.Font = Enum.Font.GothamBlack
+gearButton.Parent = gui
+addCorner(gearButton, 12)
+addStroke(gearButton, Color3.fromRGB(177, 190, 255), 1.5)
+
 local profileButton = Instance.new("TextButton")
 profileButton.Name = "MyPublicProfileButton"
 profileButton.Position = UDim2.fromOffset(18, 692)
@@ -1275,7 +1288,7 @@ addStroke(profileButton, Color3.fromRGB(160, 220, 192), 1.5)
 -- Previously the last buttons were fixed at Y=692 and disappeared off small screens.
 local menuButtons = {
     inventoryButton, shopButton, collectionButton, nestButton, displayButton,
-    decorButton, buildButton, visitButton, raidButton, contestButton, hallButton, materialsButton, artifactsButton, bondJournalButton, profileButton,
+    decorButton, buildButton, visitButton, raidButton, contestButton, hallButton, materialsButton, artifactsButton, gearButton, bondJournalButton, profileButton,
 }
 local navToggle = Instance.new("TextButton")
 navToggle.Name = "MenuToggle"
@@ -1376,6 +1389,7 @@ local menuIconStyles = {
     { Color = Color3.fromRGB(112, 129, 180), Kind = "podium" },
     { Color = Color3.fromRGB(91, 139, 173), Kind = "gem" },
     { Color = Color3.fromRGB(145, 111, 185), Kind = "crystal" },
+    { Color = Color3.fromRGB(125, 139, 192), Kind = "armor" },
     { Color = Color3.fromRGB(116, 164, 113), Kind = "heart" },
     { Color = Color3.fromRGB(90, 151, 130), Kind = "profile" },
 }
@@ -1465,6 +1479,11 @@ local function drawMenuIcon(parent, kind)
     elseif kind == "crystal" then
         addIconShape(parent, "ArtifactCrystal", 14, 14, 11, 17, 45, white)
         addIconShape(parent, "ArtifactCrystalCore", 14, 14, 3, 13, 0, Color3.fromRGB(145, 111, 185))
+    elseif kind == "armor" then
+        addIconShape(parent, "ArmorChest", 14, 17, 15, 17, 0, white, 3)
+        addIconShape(parent, "ArmorShoulderA", 5, 11, 8, 7, -24, white, 3)
+        addIconShape(parent, "ArmorShoulderB", 23, 11, 8, 7, 24, white, 3)
+        addIconShape(parent, "ArmorCore", 14, 17, 5, 7, 0, Color3.fromRGB(125, 139, 192), 2)
     elseif kind == "profile" then
         addIconShape(parent, "ProfileHead", 14, 9, 8, 8, 0, white)
         addIconShape(parent, "ProfileBody", 14, 21, 17, 10, 0, white)
@@ -1475,6 +1494,7 @@ local sectionLabels = {
     { Text = "МОЙ ОСТРОВ", Order = 1 },
     { Text = "ПРИКЛЮЧЕНИЯ", Order = 55 },
     { Text = "КОЛЛЕКЦИЯ И ПРОФИЛЬ", Order = 120 },
+    { Text = "ПЕРСОНАЖ", Order = 135 },
 }
 for _, section in ipairs(sectionLabels) do
     local label = Instance.new("TextLabel")
@@ -2920,10 +2940,10 @@ updateVoidForgeButtons()
 ProximityPromptService.PromptTriggered:Connect(function(prompt)
     if prompt and prompt.Name == "OpenVoidForgePrompt"
         and player:GetAttribute("CurrentBiome") == "VoidFrontier" then
-        updateVoidForgeButtons()
-        refreshArtifacts()
-        artifactsPanel.Visible = true
-        showNotice("Кузница пустоты открыта. Выбери один из трёх рецептов.")
+        updateGearLayout()
+        refreshGear()
+        gearPanel.Visible = true
+        showNotice("Кузница пустоты открыта. Здесь можно создать экипировку.")
     end
 end)
 artifactsButton.Activated:Connect(function()
@@ -2942,11 +2962,254 @@ player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
     if artifactsPanel.Visible then refreshArtifacts() end
 end)
 
+-- Character equipment: four persistent slots, crafted at the Void Forge.
+gearPanel = Instance.new("Frame")
+gearPanel.Name = "GearEquipmentPanel"
+gearPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+gearPanel.Position = UDim2.fromScale(0.5, 0.5)
+gearPanel.Size = UDim2.new(0.92, 0, 0.82, 0)
+gearPanel.BackgroundColor3 = Color3.fromRGB(29, 34, 57)
+gearPanel.BorderSizePixel = 0
+gearPanel.Visible = false
+gearPanel.Parent = gui
+addCorner(gearPanel, 18)
+addStroke(gearPanel, Color3.fromRGB(157, 169, 232), 2)
+local gearPanelSize = Instance.new("UISizeConstraint")
+gearPanelSize.MinSize = Vector2.new(280, 350)
+gearPanelSize.MaxSize = Vector2.new(540, 650)
+gearPanelSize.Parent = gearPanel
+
+local gearTitle = Instance.new("TextLabel")
+gearTitle.BackgroundTransparency = 1
+gearTitle.Position = UDim2.fromOffset(18, 12)
+gearTitle.Size = UDim2.new(1, -76, 0, 30)
+gearTitle.Font = Enum.Font.GothamBlack
+gearTitle.Text = "ЭКИПИРОВКА ПУСТОТЫ"
+gearTitle.TextColor3 = Color3.fromRGB(226, 229, 255)
+gearTitle.TextSize = 17
+gearTitle.TextXAlignment = Enum.TextXAlignment.Left
+gearTitle.Parent = gearPanel
+
+local gearClose = Instance.new("TextButton")
+gearClose.Position = UDim2.new(1, -48, 0, 10)
+gearClose.Size = UDim2.fromOffset(36, 36)
+gearClose.BackgroundColor3 = Color3.fromRGB(143, 68, 88)
+gearClose.Text = "×"
+gearClose.TextColor3 = Color3.fromRGB(255, 255, 255)
+gearClose.TextSize = 24
+gearClose.Font = Enum.Font.GothamBold
+gearClose.Parent = gearPanel
+addCorner(gearClose, 10)
+
+local gearHint = Instance.new("TextLabel")
+gearHint.BackgroundTransparency = 1
+gearHint.Position = UDim2.fromOffset(18, 48)
+gearHint.Size = UDim2.new(1, -36, 0, 38)
+gearHint.Font = Enum.Font.Gotham
+gearHint.Text = "Четыре слота персонажа. Надетые предметы меняют характеристики и внешний вид."
+gearHint.TextColor3 = Color3.fromRGB(190, 196, 224)
+gearHint.TextSize = 11
+gearHint.TextWrapped = true
+gearHint.TextXAlignment = Enum.TextXAlignment.Left
+gearHint.Parent = gearPanel
+
+local gearCraftButtons = {}
+local function makeGearCraftButton(name, itemId, position, label, color)
+    local button = Instance.new("TextButton")
+    button.Name = name
+    button.Position = position
+    button.Size = UDim2.new(0.5, -22, 0, 42)
+    button.BackgroundColor3 = color
+    button.Text = label
+    button.TextColor3 = Color3.fromRGB(250, 247, 255)
+    button.TextSize = 9
+    button.TextWrapped = true
+    button.Font = Enum.Font.GothamBlack
+    button.Visible = false
+    button.Parent = gearPanel
+    addCorner(button, 9)
+    button.Activated:Connect(function()
+        local remotes = ReplicatedStorage:FindFirstChild("NestRaidersRemotes")
+        local remote = remotes and remotes:FindFirstChild("GearInventory")
+        if not remote then showNotice("Система экипировки ещё загружается."); return end
+        local ok, response = pcall(function() return remote:InvokeServer({ Action = "Craft", ItemId = itemId }) end)
+        if not ok then showNotice("Не удалось связаться с кузницей."); return end
+        if not response or response.Ok ~= true then
+            showNotice(response and response.Message or "Не удалось создать предмет.")
+            return
+        end
+        renderGear(response.Data)
+        showNotice(response.Message or "Снаряжение создано!")
+    end)
+    table.insert(gearCraftButtons, button)
+end
+
+makeGearCraftButton("CraftRiftblade", "Riftblade", UDim2.fromOffset(16, 92),
+    "КЛИНОК · 20 ОСКОЛКОВ · 8 КРИСТАЛЛОВ · 1 200", Color3.fromRGB(95, 78, 143))
+makeGearCraftButton("CraftVoidplate", "Voidplate", UDim2.new(0.5, 6, 0, 92),
+    "ДОСПЕХ · 28 ОСКОЛКОВ · 8 ПЕПЕЛЬНЫХ · 1 600", Color3.fromRGB(75, 88, 139))
+makeGearCraftButton("CraftStarhelm", "Starhelm", UDim2.fromOffset(16, 140),
+    "ШЛЕМ · 16 ОСКОЛКОВ · 8 ЛЕПЕСТКОВ · 900", Color3.fromRGB(132, 105, 73))
+makeGearCraftButton("CraftNebulaCloak", "NebulaCloak", UDim2.new(0.5, 6, 0, 140),
+    "ПЛАЩ · 24 ОСКОЛКА · 10 ДРЕВЕСИНЫ · 1 400", Color3.fromRGB(119, 78, 139))
+
+local gearStats = Instance.new("TextLabel")
+gearStats.BackgroundColor3 = Color3.fromRGB(41, 47, 76)
+gearStats.BorderSizePixel = 0
+gearStats.Position = UDim2.fromOffset(16, 190)
+gearStats.Size = UDim2.new(1, -32, 0, 58)
+gearStats.Font = Enum.Font.GothamBold
+gearStats.Text = "ОРУЖИЕ · БРОНЯ · ШЛЕМ · АКСЕССУАР"
+gearStats.TextColor3 = Color3.fromRGB(226, 220, 255)
+gearStats.TextSize = 10
+gearStats.TextWrapped = true
+gearStats.Parent = gearPanel
+addCorner(gearStats, 10)
+
+local gearList = Instance.new("ScrollingFrame")
+gearList.Name = "GearCollection"
+gearList.Position = UDim2.fromOffset(14, 258)
+gearList.Size = UDim2.new(1, -28, 1, -272)
+gearList.BackgroundTransparency = 1
+gearList.BorderSizePixel = 0
+gearList.ScrollBarThickness = 5
+gearList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+gearList.CanvasSize = UDim2.new()
+gearList.Parent = gearPanel
+local gearLayout = Instance.new("UIListLayout")
+gearLayout.Padding = UDim.new(0, 8)
+gearLayout.SortOrder = Enum.SortOrder.LayoutOrder
+gearLayout.Parent = gearList
+
+local function invokeGear(payload)
+    local remotes = ReplicatedStorage:FindFirstChild("NestRaidersRemotes")
+    local remote = remotes and remotes:FindFirstChild("GearInventory")
+    if not remote then showNotice("Система экипировки ещё загружается."); return nil end
+    local ok, response = pcall(function() return remote:InvokeServer(payload) end)
+    if not ok or not response then showNotice("Не удалось получить данные экипировки."); return nil end
+    if response.Ok ~= true then showNotice(response.Message or "Действие с экипировкой не выполнено."); return nil end
+    return response.Data, response.Message
+end
+
+renderGear = function(data)
+    for _, child in ipairs(gearList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+    local stats = data and data.Stats or {}
+    gearStats.Text = string.format(
+        "СЛОТЫ: %d / 4%s\nУРОН +%d%% · ЗАЩИТА +%d%% · ЗДОРОВЬЕ +%d · СКОРОСТЬ +%d",
+        stats.SetPieces or 0, stats.SetBonus and " · КОМПЛЕКТ АКТИВЕН" or "",
+        math.floor((stats.DamageBonus or 0) * 100 + 0.5),
+        math.floor((stats.DefenseBonus or 0) * 100 + 0.5),
+        stats.MaxHealthBonus or 0, stats.WalkSpeedBonus or 0)
+    local items = data and data.Items or {}
+    if #items == 0 then
+        local empty = Instance.new("TextLabel")
+        empty.Size = UDim2.new(1, -8, 0, 70)
+        empty.BackgroundTransparency = 1
+        empty.Text = "Снаряжения пока нет. Создай первые предметы в Кузнице пустоты."
+        empty.TextColor3 = Color3.fromRGB(195, 195, 218)
+        empty.TextSize = 13
+        empty.TextWrapped = true
+        empty.Font = Enum.Font.GothamMedium
+        empty.Parent = gearList
+        return
+    end
+    local slotNames = { Weapon = "ОРУЖИЕ", Armor = "БРОНЯ", Helmet = "ШЛЕМ", Accessory = "АКСЕССУАР" }
+    for index, item in ipairs(items) do
+        local card = Instance.new("Frame")
+        card.Name = "Gear_" .. tostring(item.InstanceId)
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 96)
+        card.BackgroundColor3 = item.Equipped and Color3.fromRGB(58, 68, 103) or Color3.fromRGB(43, 48, 76)
+        card.BorderSizePixel = 0
+        card.Parent = gearList
+        addCorner(card, 11)
+        local name = Instance.new("TextLabel")
+        name.BackgroundTransparency = 1
+        name.Position = UDim2.fromOffset(12, 8)
+        name.Size = UDim2.new(1, -128, 0, 21)
+        name.Font = Enum.Font.GothamBlack
+        name.Text = item.Name .. " · " .. item.Rarity
+        name.TextColor3 = item.Equipped and Color3.fromRGB(255, 224, 161) or Color3.fromRGB(232, 232, 255)
+        name.TextSize = 12
+        name.TextXAlignment = Enum.TextXAlignment.Left
+        name.TextTruncate = Enum.TextTruncate.AtEnd
+        name.Parent = card
+        local detail = Instance.new("TextLabel")
+        detail.BackgroundTransparency = 1
+        detail.Position = UDim2.fromOffset(12, 32)
+        detail.Size = UDim2.new(1, -132, 0, 52)
+        detail.Font = Enum.Font.Gotham
+        detail.Text = slotNames[item.Slot] .. " · " .. item.Description
+            .. string.format("\nУрон +%d%% · Защита +%d%% · Здоровье +%d · Скорость +%d",
+                math.floor((item.DamageBonus or 0) * 100 + 0.5),
+                math.floor((item.DefenseBonus or 0) * 100 + 0.5),
+                item.MaxHealthBonus or 0, item.WalkSpeedBonus or 0)
+        detail.TextColor3 = Color3.fromRGB(190, 198, 222)
+        detail.TextSize = 9
+        detail.TextWrapped = true
+        detail.TextXAlignment = Enum.TextXAlignment.Left
+        detail.Parent = card
+        local action = Instance.new("TextButton")
+        action.AnchorPoint = Vector2.new(1, 0.5)
+        action.Position = UDim2.new(1, -10, 0.5, 0)
+        action.Size = UDim2.fromOffset(104, 34)
+        action.BackgroundColor3 = item.Equipped and Color3.fromRGB(123, 82, 89) or Color3.fromRGB(83, 123, 111)
+        action.Text = item.Equipped and "СНЯТЬ" or "НАДЕТЬ"
+        action.TextColor3 = Color3.fromRGB(255, 255, 255)
+        action.TextSize = 10
+        action.Font = Enum.Font.GothamBlack
+        action.Parent = card
+        addCorner(action, 8)
+        action.Activated:Connect(function()
+            local updated = invokeGear({
+                Action = item.Equipped and "Unequip" or "Equip",
+                Slot = item.Slot, InstanceId = item.InstanceId,
+            })
+            if updated then renderGear(updated); showNotice(item.Equipped and "Предмет снят." or "Предмет надет.") end
+        end)
+    end
+end
+
+local function updateGearLayout()
+    local inVoid = player:GetAttribute("CurrentBiome") == "VoidFrontier"
+    for _, button in ipairs(gearCraftButtons) do button.Visible = inVoid end
+    if inVoid then
+        gearStats.Position = UDim2.fromOffset(16, 190)
+        gearList.Position = UDim2.fromOffset(14, 258)
+        gearList.Size = UDim2.new(1, -28, 1, -272)
+        gearHint.Text = "Кузница пустоты создаёт четыре уникальных предмета. Каждый слот можно заменить отдельно."
+    else
+        gearStats.Position = UDim2.fromOffset(16, 96)
+        gearList.Position = UDim2.fromOffset(14, 164)
+        gearList.Size = UDim2.new(1, -28, 1, -178)
+        gearHint.Text = "Четыре слота персонажа. Надетые предметы меняют характеристики и внешний вид. Крафт доступен у Кузницы пустоты."
+    end
+end
+
+local function refreshGear()
+    local data = invokeGear({ Action = "Get" })
+    if data then renderGear(data) end
+end
+
+gearClose.Activated:Connect(function() gearPanel.Visible = false end)
+gearButton.Activated:Connect(function()
+    updateGearLayout()
+    refreshGear()
+    gearPanel.Visible = true
+end)
+player:GetAttributeChangedSignal("CurrentBiome"):Connect(updateGearLayout)
+player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
+    if gearPanel.Visible then refreshGear() end
+end)
+updateGearLayout()
+
 -- Keep panels mutually exclusive regardless of which gameplay action opens them.
 -- Picker is the sole nested dialog and retains its companion display underneath.
 local modalPanels = {
     shopPanel, nestPanel, displayPanel, buildPanel, visitPanel,
-    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel, artifactsPanel, raidPanel,
+    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel, artifactsPanel, gearPanel, raidPanel,
 }
 local closingOtherPanels = false
 local closeAllButton = Instance.new("TextButton")
