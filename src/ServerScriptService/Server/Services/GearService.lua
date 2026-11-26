@@ -256,6 +256,7 @@ function GearService:HandleRequest(player, payload)
     if payload.Action == "Get" then return { Ok = true, Data = makeSnapshot(profile) } end
 
     if payload.Action == "Craft" then
+        profile.Materials = type(profile.Materials) == "table" and profile.Materials or {}
         if player:GetAttribute("CurrentBiome") ~= "VoidFrontier"
             or not ProgressionService:CanEnterZone(player, "VoidFrontier") then
             return { Ok = false, Message = "Снаряжение создаётся только на открытой Границе пустоты." }
