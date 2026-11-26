@@ -1647,3 +1647,14 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add world-health checks for all three rune prompts, altar prompt and clue sign.
 - [x] Add regression checks and bootstrap registration.
 - [ ] Roblox Studio: test correct/wrong order, rejoin persistence, duplicate reward prevention and multiplayer isolation.
+
+
+### Sprint 4.90 — Star Eater, three-phase endgame boss
+- [x] Build a raised Void Frontier boss arena with eight illuminated pylons and a distinct Star Eater model.
+- [x] Add a server-authoritative, per-player boss fight gated by the completed Void Trial.
+- [x] Persist 540 boss health per player and unlock three combat phases at 65% and 30% health.
+- [x] Add Rift Slam, Void Pulse, Starfall and Collapse attacks with visible, player-targeted ground warnings and dodge windows.
+- [x] Add a one-time Mythic Star Eater companion, 1,800 coins, 1,200 XP and 12 Starshards.
+- [x] Add the unique companion's catalogue entry and low-poly follower appearance.
+- [x] Add Void Frontier trial/boss HUD state, attack warning visibility and world-health/regression checks.
+- [ ] Roblox Studio: verify all three phases, attack telegraphs, dodge damage, persistence, multiplayer isolation and one-time rewards.
