@@ -244,6 +244,23 @@ function WorldHealthCheck:Check()
         fail("Нет портала с Древних высот к Границе пустоты")
     end
     if void then
+        local trial = void:FindFirstChild("VoidTrial")
+        local runeFolder = trial and trial:FindFirstChild("VoidTrialRunes")
+        local runeCount = 0
+        for _, descendant in ipairs(runeFolder and runeFolder:GetDescendants() or {}) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "VoidTrialRunePrompt" then
+                runeCount += 1
+            end
+        end
+        if runeCount < 3 then fail(string.format("Руны Испытания пустоты: %d из 3", runeCount)) end
+        local altar = trial and trial:FindFirstChild("VoidTrialAltar")
+        local altarPrompt = altar and altar:FindFirstChild("VoidTrialAltarPrompt")
+        if not altarPrompt or not altarPrompt:IsA("ProximityPrompt") then
+            fail("Нет алтаря Испытания пустоты")
+        end
+        if not trial or not trial:FindFirstChild("VoidTrialClueSign") then
+            fail("Нет подсказки к последовательности Испытания пустоты")
+        end
         local bridge = void:FindFirstChild("VoidCauseway")
         local bridgeCount = 0
         for _, segment in ipairs(bridge and bridge:GetChildren() or {}) do
