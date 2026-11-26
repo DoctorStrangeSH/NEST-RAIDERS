@@ -2471,9 +2471,9 @@ function WorldBuilder:Build()
     voidNodes.Name = "VoidStarshardNodes"
     voidNodes.Parent = void
     local voidNodePositions = {
-        Vector3.new(-78, 23, 3270), Vector3.new(-78, 23, 3330),
-        Vector3.new(-35, 23, 3230), Vector3.new(0, 23, 3240),
-        Vector3.new(5, 23, 3370), Vector3.new(78, 23, 3300),
+        Vector3.new(-82, 21.5, 3255), Vector3.new(-82, 21.5, 3345),
+        Vector3.new(-35, 21.5, 3215), Vector3.new(0, 21.5, 3390),
+        Vector3.new(35, 21.5, 3390), Vector3.new(80, 21.5, 3345),
     }
     for index, position in ipairs(voidNodePositions) do
         local color = index % 2 == 0 and Color3.fromRGB(121, 179, 255) or Color3.fromRGB(183, 132, 255)
