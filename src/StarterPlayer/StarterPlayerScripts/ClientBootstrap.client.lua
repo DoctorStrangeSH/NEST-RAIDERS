@@ -2900,6 +2900,10 @@ local function refreshArtifacts()
 end
 local function updateVoidForgeButtons()
     local visible = player:GetAttribute("CurrentBiome") == "VoidFrontier"
+    artifactsCraft.Visible = not visible
+    artifactsHint.Text = visible
+        and "Кузница пустоты: выбери рецепт. Все материалы проверяются сервером до списания."
+        or "Экипируй до 2 артефактов: они усиливают доход, добычу, опыт и шанс питомца высшей редкости. Создание доступно у мастерской Древних высот."
     for _, button in ipairs(voidForgeButtons) do button.Visible = visible end
     if visible then
         artifactsSlots.Position = UDim2.fromOffset(18, 250)
