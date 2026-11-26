@@ -1903,7 +1903,7 @@ assert '"BondJournalService"' in server
 assert 'local bondJournalRemote = waitRemote("BondJournal")' in client
 assert 'bondJournalRemote and nestRemote' in client
 assert 'local bondJournalButton = Instance.new("TextButton")' in client
-assert 'artifactsButton, bondJournalButton, profileButton' in client
+assert 'artifactsButton, gearButton, bondJournalButton, profileButton' in client
 assert 'Kind = "heart"' in client and 'kind == "heart"' in client
 assert 'local bondJournalPanel = Instance.new("Frame")' in client
 assert 'local function invokeBondJournal()' in client
