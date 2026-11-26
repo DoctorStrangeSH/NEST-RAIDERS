@@ -2388,7 +2388,7 @@ local materialRows = {}
 local materialDefinitions = {
     { Id = "Elderwood", Attribute = "Elderwood", Name = "Древесная эссенция", Detail = "Древние корни и мастерская", Color = Color3.fromRGB(173, 218, 145) },
     { Id = "Moonpetal", Attribute = "Moonpetal", Name = "Лунные лепестки", Detail = "Секретные тайники Шепчущей рощи", Color = Color3.fromRGB(211, 186, 255) },
-    { Id = "Starshard", Attribute = "Starshard", Name = "Звёздные осколки", Detail = "Сокровища и испытания Пещеры", Color = Color3.fromRGB(255, 218, 143) },
+    { Id = "Starshard", Attribute = "Starshard", Name = "Звёздные осколки", Detail = "Пещера и Граница пустоты", Color = Color3.fromRGB(255, 218, 143) },
     { Id = "CrystalShard", Attribute = "CrystalShards", Name = "Кристальные осколки", Detail = "Жилы Хрустального королевства", Color = Color3.fromRGB(151, 222, 255) },
     { Id = "AshCrystal", Attribute = "AshCrystals", Name = "Пепельные кристаллы", Detail = "Последствия извержений Эмберлендс", Color = Color3.fromRGB(255, 177, 126) },
 }
