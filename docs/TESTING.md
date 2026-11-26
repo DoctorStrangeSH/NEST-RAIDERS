@@ -1316,3 +1316,16 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Leave and rejoin; verify node cooldowns and Starshard totals persist.
 - [ ] Test two players on the same node; each player's cooldown and reward must be independent.
 - [ ] Verify egg and node placement is clear of the rune puzzle, return portal and boss arena on desktop/tablet/mobile.
+
+
+## Sprint 4.92 — Void Forge crafting
+- [ ] Reach Void Frontier and use the physical forge prompt; confirm the artifact panel opens and shows all three recipes.
+- [ ] Craft Void Harvester, Rift Compass and Nebula Charm separately; verify each recipe creates the correct deterministic artifact.
+- [ ] Verify exact resource and coin deductions for all three recipes.
+- [ ] Attempt each recipe with one missing material and with insufficient coins; verify no resource is deducted.
+- [ ] Attempt crafting from another biome, while locked, and while standing away from the forge; verify rejection.
+- [ ] Fill the artifact collection to 40; verify crafting is rejected without spending resources.
+- [ ] Rejoin and confirm all crafted items remain in the collection.
+- [ ] Equip and unequip each item; verify the corresponding gather, research and hatch bonus is reflected by the existing bonus services.
+- [ ] Verify existing Ancient Heights random artifact crafting and artifact merging still work.
+- [ ] Check forge prompt, recipe controls and scrolling on desktop, tablet and mobile.
