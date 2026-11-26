@@ -419,7 +419,7 @@ local CompanionCatalog = {
         Personality = "Мечтательный", PersonalityDescription = "Любит тишину, музыку и мерцание далёких созвездий.",
         ActivityPeriod = "Night", NightGlowColor = Color3.fromRGB(124, 190, 255),
         FavoritePlace = "Flowers", WeatherPreference = "Clear",
-        FavoriteFood = "Лунная ягода", FavoriteToy = "MusicBox",
+        FavoriteFood = "Звёздный нектар", FavoriteToy = "CozyPlush",
         PetMoodBonus = 13, PlayMoodBonus = 8,
     },
     NebulaDrake = {
@@ -429,7 +429,7 @@ local CompanionCatalog = {
         Personality = "Энергичный", PersonalityDescription = "Смело исследует пустоту и первой летит навстречу приключениям.",
         ActivityPeriod = "Night", NightGlowColor = Color3.fromRGB(255, 171, 224),
         FavoritePlace = "Crystals", WeatherPreference = "Clear",
-        FavoriteFood = "Звёздный нектар", FavoriteToy = "StarlightBall",
+        FavoriteFood = "Звёздный нектар", FavoriteToy = "CozyPlush",
         PetMoodBonus = 12, PlayMoodBonus = 14,
     },
 }
