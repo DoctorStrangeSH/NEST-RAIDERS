@@ -1400,7 +1400,8 @@ assert 'power = math.clamp(power, 8, maximum)' in raid_service
 assert 'power = math.clamp(power, 5, maximum)' in raid_service
 assert 'power = math.clamp(power, 10, maximum)' in raid_service
 assert 'local petLevel, power = getRaidPetProgression(primary, synergy)' in raid_service
-assert 'local damage = power' in raid_service
+assert 'local gearDamage = math.clamp(tonumber(player:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)' in raid_service
+assert 'local damage = math.max(1, math.floor(power * (1 + gearDamage) + 0.5))' in raid_service
 assert 'local heal = power' in raid_service
 assert 'local shieldAmount = power' in raid_service
 assert 'participant:SetAttribute("RaidArenaPetLevel", ability and petLevel or 0)' in raid_service
