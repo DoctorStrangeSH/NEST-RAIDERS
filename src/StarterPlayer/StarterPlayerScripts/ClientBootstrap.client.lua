@@ -6609,13 +6609,16 @@ local function updateBiomeTrialPanel()
     local isEmber = biomeId == "Emberlands"
     local isCrystal = biomeId == "CrystalRealm"
     local isAncient = biomeId == "AncientHeights"
-    trialPanel.Visible = isEmerald or isFrost or isEmber or isCrystal or isAncient
+    local isVoid = biomeId == "VoidFrontier"
+    trialPanel.Visible = isEmerald or isFrost or isEmber or isCrystal or isAncient or isVoid
     if not trialPanel.Visible then return end
 
-    local countAttribute = isAncient and "AncientTempleProgress"
+    local countAttribute = isVoid and "VoidTrialProgress"
+        or (isAncient and "AncientTempleProgress"
         or (isCrystal and "CrystalTrialProgress"
         or (isFrost and "FrostTrialProgress" or (isEmber and "EmberTrialProgress" or "EmeraldTrialProgress")))
-    local completeAttribute = isAncient and "AncientTempleCompleted"
+    local completeAttribute = isVoid and "VoidTrialCompleted"
+        or (isAncient and "AncientTempleCompleted"
         or (isCrystal and "CrystalTrialCompleted"
         or (isFrost and "FrostTrialCompleted" or (isEmber and "EmberTrialCompleted" or "EmeraldTrialCompleted")))
     local count = math.clamp(tonumber(player:GetAttribute(countAttribute)) or 0, 0, 3)
@@ -6632,6 +6635,7 @@ local function updateBiomeTrialPanel()
     local showCaveSecret = isAncient and (caveCrystalProgress > 0 or caveCacheOpened)
     local caveBossUnlocked = isAncient and player:GetAttribute("ForgottenHeartBossUnlocked") == true
     local caveBossCompleted = isAncient and player:GetAttribute("ForgottenHeartBossCompleted") == true
+    local voidBossCompleted = isVoid and player:GetAttribute("VoidBossCompleted") == true
 
     trialPanel.Position = (isEmber or isCrystal) and UDim2.new(1, -12, 0, 286)
         or (isAncient and UDim2.new(1, -12, 0, 196) or UDim2.new(1, -12, 0, 184))
@@ -6643,7 +6647,8 @@ local function updateBiomeTrialPanel()
         or (isCrystal and Color3.fromRGB(48, 39, 76)
         or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51)))
 
-    trialTitle.Text = isAncient and "ХРАМ ДРЕВНЕГО ДРЕВА"
+    trialTitle.Text = isVoid and "ГРАНИЦА ПУСТОТЫ"
+        or (isAncient and "ХРАМ ДРЕВНЕГО ДРЕВА"
         or (isCrystal and "ИСПЫТАНИЕ ПРИЗМЫ"
         or (isEmber and "ИСПЫТАНИЕ ОГНЕННОГО СЕРДЦА"
         or (isFrost and "ИСПЫТАНИЕ СЕРДЦА ЗИМЫ" or "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ")))
@@ -6731,6 +6736,34 @@ local function updateBiomeTrialPanel()
                 bossStatus.TextColor3 = Color3.fromRGB(185, 232, 255)
             end
         end
+    elseif isVoid then
+        trialTitle.TextColor3 = Color3.fromRGB(211, 187, 255)
+        trialDescription.Text = voidBossCompleted
+            and "Пожиратель звёзд повержен! Звёздный Пожиратель уже добавлен в твою коллекцию."
+            or (completed and "Три руны пробуждены. Войди на арену и победи Пожирателя звёзд."
+                or "Пробуди руны по порядку: Разлом → Эхо → Звезда. Ошибка сбросит цепочку.")
+        trialBarFill.BackgroundColor3 = Color3.fromRGB(181, 139, 255)
+        trialBarFill.Size = UDim2.fromScale(completed and 1 or count / 3, 1)
+        trialStatus.Text = voidBossCompleted and "ПОЖИРАТЕЛЬ ПОВЕРЖЕН"
+            or (completed and "АРЕНА ОТКРЫТА" or string.format("ПРОБУЖДЕНО РУН: %d / 3", count))
+        local voidBossHealth = math.clamp(tonumber(player:GetAttribute("VoidBossHealth")) or 540, 0, 540)
+        local voidBossPhase = tonumber(player:GetAttribute("VoidBossPhase")) or 1
+        bossBarBack.Visible = completed and not voidBossCompleted
+        bossStatus.Visible = completed
+        bossBarFill.Size = UDim2.fromScale(voidBossHealth / 540, 1)
+        bossBarFill.BackgroundColor3 = voidBossPhase == 3 and Color3.fromRGB(255, 104, 164)
+            or (voidBossPhase == 2 and Color3.fromRGB(183, 125, 255) or Color3.fromRGB(124, 166, 255))
+        if player:GetAttribute("VoidBossWindup") == true then
+            local attackType = player:GetAttribute("VoidBossAttackType")
+            bossStatus.Text = attackType == "Collapse" and "КОЛЛАПС ПУСТОТЫ! БЕГИ!"
+                or (attackType == "Starfall" and "ЗВЁЗДНЫЙ ДОЖДЬ! УХОДИ С МЕТОК!"
+                or (attackType == "VoidPulse" and "ПУСТОТНАЯ ВОЛНА! ОТОЙДИ!" or "РАЗЛОМНЫЙ УДАР! УКЛОНЯЙСЯ!"))
+            bossStatus.TextColor3 = Color3.fromRGB(220, 185, 255)
+        else
+            bossStatus.Text = voidBossCompleted and "НАГРАДА ПОЛУЧЕНА"
+                or string.format("ПОЖИРАТЕЛЬ ЗВЁЗД · ФАЗА %d / III · %d / 540", voidBossPhase, voidBossHealth)
+            bossStatus.TextColor3 = Color3.fromRGB(220, 202, 255)
+        end
     elseif isCrystal then
         trialDescription.Text = completed and "Хранитель повержен! Путь к Древним высотам открыт. Осталось достичь 50 уровня."
             or (count >= 3 and "Три луча соединены! Атакуй Хранителя и уклоняйся от призматической волны."
@@ -6797,6 +6830,8 @@ for _, attribute in ipairs({
     "ForgottenHeartBossHealth", "ForgottenHeartBossPhase", "ForgottenHeartBossCompleted",
     "ForgottenHeartBossUnlocked", "ForgottenHeartBossWindup", "ForgottenHeartBossAttackType",
     "ForgottenHeartBossRewardReveal",
+    "VoidTrialProgress", "VoidTrialCompleted", "VoidBossHealth", "VoidBossPhase",
+    "VoidBossCompleted", "VoidBossUnlocked", "VoidBossWindup", "VoidBossAttackType", "VoidBossRewardReveal",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
@@ -7592,7 +7627,8 @@ end)
 updateForgottenBossPhaseVisual()
 
 local function filterForgottenBossWarning(instance)
-    if instance:IsA("BasePart") and instance.Name == "ForgottenHeartAttackWarning" then
+    if instance:IsA("BasePart") and (instance.Name == "ForgottenHeartAttackWarning"
+        or instance.Name == "VoidBossAttackWarning") then
         local function updateVisibility()
             if instance.Parent then
                 instance.LocalTransparencyModifier = instance:GetAttribute("TargetUserId") == player.UserId and 0 or 1
