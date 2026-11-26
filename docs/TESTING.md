@@ -1329,3 +1329,18 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Equip and unequip each item; verify the corresponding gather, research and hatch bonus is reflected by the existing bonus services.
 - [ ] Verify existing Ancient Heights random artifact crafting and artifact merging still work.
 - [ ] Check forge prompt, recipe controls and scrolling on desktop, tablet and mobile.
+
+
+## Sprint 4.93 — Voidwalker equipment
+- [ ] Open the Void Forge prompt; verify the equipment panel opens and all four recipes appear only in Void Frontier.
+- [ ] Craft Riftblade, Voidplate, Starhelm and Nebula Cloak; verify exact resource/coin costs and one-copy-per-item restriction.
+- [ ] Attempt crafting with missing materials, insufficient coins, wrong biome and excessive distance; verify no resources are deducted.
+- [ ] Equip each item; verify the correct slot, character visual and stat attributes update.
+- [ ] Equip a second item in the same slot if test data is injected; verify it replaces the previous item without duplicating visuals.
+- [ ] Unequip each slot; verify the model disappears and stats return to the expected baseline.
+- [ ] Equip all four pieces; verify the Voidwalker set bonus appears and adds +10% damage, +10% defense and +20 max health.
+- [ ] Reset the character; verify visuals, attributes, MaxHealth and WalkSpeed restore from the saved loadout.
+- [ ] Attack Void, Ancient Temple and Forgotten Heart bosses; verify gear damage increases boss damage and gear defense reduces incoming attacks.
+- [ ] Test raid combat with two players; verify each player's damage/defense stats are applied only to the correct player.
+- [ ] Rejoin a published private test server; verify gear collection and equipped slots persist.
+- [ ] Check the gear panel, cards, buttons and scrolling on desktop, tablet and mobile.
