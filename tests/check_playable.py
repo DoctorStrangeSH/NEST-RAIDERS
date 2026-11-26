@@ -2129,3 +2129,31 @@ for token in (
     'for key in pairs(sharedTreasureCooldowns) do',
 ):
     assert token in companion_service, token
+
+
+# Sprint 4.90 — Star Eater three-phase endgame boss.
+void_boss = Path("src/ServerScriptService/Server/Services/VoidBossService.lua").read_text()
+void_boss_world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
+void_boss_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
+void_boss_client = Path("src/StarterPlayer/StarterPlayerScripts/ClientBootstrap.client.lua").read_text()
+void_boss_companion = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+void_boss_catalog = Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+assert '"VoidBossService"' in server and 'function VoidBossService:Init()' in void_boss
+assert 'VoidBossHealth = 540' in profile_template and 'VoidBossHealth' in void_boss
+assert 'profile.CompletedQuests.void_trial ~= true' in void_boss
+assert 'profile.CompletedQuests.void_boss = true' in void_boss
+assert 'MAX_HEALTH = 540' in void_boss and 'HIT_DAMAGE = 36' in void_boss
+assert 'return ratio <= 0.3 and 3 or (ratio <= 0.65 and 2 or 1)' in void_boss
+for attack in ('RiftSlam', 'VoidPulse', 'Starfall', 'Collapse'):
+    assert attack in void_boss
+assert 'VoidBossAttackWarning' in void_boss and 'TargetUserId' in void_boss
+assert 'REWARD_COMPANION_ID = "StarEater"' in void_boss
+assert 'REWARD_COINS = 1800' in void_boss and 'REWARD_XP = 1200' in void_boss
+assert 'REWARD_STARSHARDS = 12' in void_boss
+assert 'StarEater = {' in void_boss_catalog and 'BossExclusive = true' in void_boss_catalog
+assert 'Kind = "StarEater"' in void_boss_companion and 'definition.Kind == "StarEater"' in void_boss_companion
+assert 'VoidBossArena' in void_boss_world and 'VoidBossPrompt' in void_boss_world
+assert 'VoidArenaPylon_' in void_boss_world and 'StarEaterCore' in void_boss_world
+assert 'VoidBossPrompt' in void_boss_health and 'VoidArenaPylon_' in void_boss_health
+assert 'VoidBossHealth' in void_boss_client and 'VoidBossWindup' in void_boss_client
+assert 'VoidBossAttackWarning' in void_boss_client and 'VoidBossCompleted' in void_boss_client
