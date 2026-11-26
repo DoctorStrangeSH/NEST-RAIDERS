@@ -233,6 +233,28 @@ function WorldHealthCheck:Check()
     if not ancient or not ancient:FindFirstChild("AncientLanding") then fail("Нет стартовой площадки Древних высот") end
     if not ancient or not ancient:FindFirstChild("AncientReturnPortal") then fail("Нет обратного портала с Древних высот") end
     if not crystal or not crystal:FindFirstChild("AncientHeightsPortal") then fail("Нет портала к Древним высотам") end
+    local void = world and world:FindFirstChild("VoidFrontier")
+    if not void or not void:FindFirstChild("VoidLanding") then
+        fail("Нет стартовой площадки Границы пустоты")
+    end
+    if not void or not void:FindFirstChild("VoidReturnPortal") then
+        fail("Нет обратного портала с Границы пустоты")
+    end
+    if not ancient or not ancient:FindFirstChild("VoidFrontierPortal") then
+        fail("Нет портала с Древних высот к Границе пустоты")
+    end
+    if void then
+        local bridge = void:FindFirstChild("VoidCauseway")
+        local bridgeCount = 0
+        for _, segment in ipairs(bridge and bridge:GetChildren() or {}) do
+            if segment:IsA("BasePart") and segment.Name:match("^VoidBridgeSegment_") then
+                bridgeCount += 1
+            end
+        end
+        if bridgeCount < 18 then fail(string.format("Мост Границы пустоты: %d из 18 секций", bridgeCount)) end
+        if not void:FindFirstChild("VoidBeacon") then fail("Нет маяка Границы пустоты") end
+        if not void:FindFirstChild("VoidWelcomeSign") then fail("Нет приветственной таблички Границы пустоты") end
+    end
     if ancient then
         local ancientEggs = ancient:FindFirstChild("EggSpawnPoints")
         local ancientEggCount = 0
