@@ -907,3 +907,11 @@ The first playable Void Frontier objective is a persistent three-rune sequence: 
 - Attacks: Rift Slam (targeted ground mark), Void Pulse (boss-centered radius), Starfall (three marked impact zones) and Collapse (large boss-centered danger zone). Every attack has a telegraph and a dodge window; only the targeted player's warning is visible.
 - A first victory sets `CompletedQuests.void_boss` and grants the Mythic `StarEater` companion, 1,800 coins, 1,200 XP and 12 Starshards exactly once.
 - Studio acceptance is required for combat balance, visual readability and multiplayer isolation.
+
+
+## Void Frontier ecosystem — Sprint 4.91
+- The island now has a dedicated Mythic Void Egg. Its hatch pool is Riftling (60%), Echo Wisp (30%) and Nebula Drake (10%). These are normal collectible species and use the existing hatch, collection and companion systems.
+- Three physical eggs rotate among nine safe island spawn positions through EggService. Collection still requires the player to be in VoidFrontier and have access to the biome.
+- Six Starshard outcrops use stable node IDs and a 180-second cooldown per player and node. Harvesting grants 1–3 Starshards before artifact bonuses. An active Star Eater has a 30% chance to add one extra shard.
+- Starshard totals reuse the existing resource display. Node cooldowns are persisted in `Materials.VoidNodeCooldowns`.
+- Studio acceptance is required for pickup/hatching, cooldowns, resource balance and multiplayer isolation.
