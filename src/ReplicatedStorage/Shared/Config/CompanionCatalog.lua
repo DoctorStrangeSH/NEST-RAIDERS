@@ -390,6 +390,19 @@ local CompanionCatalog = {
         FavoriteFood = "Светящийся желудь", FavoriteToy = "CozyPlush",
         PetMoodBonus = 12, PlayMoodBonus = 10,
     },
+    StarEater = {
+        Id = "StarEater", Name = "Звёздный Пожиратель", Rarity = "Мифический",
+        Income = 320, Weight = 0, BossExclusive = true,
+        AcquisitionLabel = "Только за победу над Пожирателем звёзд",
+        AcquisitionBiome = "Граница пустоты",
+        Description = "Крошечный дух пустоты, который хранит внутри свет далёких звёзд и защищает своего друга.",
+        Personality = "Загадочный", PersonalityDescription = "Любит наблюдать за ночным небом и собирает упавшие звёздные искры.",
+        ActivityPeriod = "Night", NightGlowColor = Color3.fromRGB(183, 143, 255),
+        FavoritePlace = "Crystals", WeatherPreference = "Clear",
+        FavoriteFood = "Звёздный нектар", FavoriteToy = "CozyPlush",
+        PetMoodBonus = 14, PlayMoodBonus = 11,
+        Ability = { Id = "VoidStardust", Name = "Звёздная пыль", Description = "Повышает шанс найти редкие материалы во время исследования.", UnlockLevel = 7, CooldownSeconds = 480 },
+    },
 }
 
 return CompanionCatalog
