@@ -156,6 +156,12 @@ local DEFINITIONS = {
         Detail = Color3.fromRGB(79, 105, 65),
         Kind = "HeartwoodGuardian",
     },
+    StarEater = {
+        Body = Color3.fromRGB(65, 53, 102),
+        Accent = Color3.fromRGB(190, 145, 255),
+        Detail = Color3.fromRGB(113, 120, 190),
+        Kind = "StarEater",
+    },
 }
 
 local function makeShape(model, name, size, offset, color, shape)
@@ -818,6 +824,19 @@ local function buildPet(parent, companion, index)
         makeShape(model, "LeftFin", Vector3.new(0.5, 1.0, 1.4), Vector3.new(-1.05, 1.45, -0.2), definition.Detail, Enum.PartType.Wedge)
         makeShape(model, "RightFin", Vector3.new(0.5, 1.0, 1.4), Vector3.new(1.05, 1.45, -0.2), definition.Detail, Enum.PartType.Wedge)
         makeShape(model, "CloudTail", Vector3.new(0.65, 0.65, 1.5), Vector3.new(0, 1.0, -1.3), definition.Accent)
+    elseif definition.Kind == "StarEater" then
+        makeShape(model, "StarEaterCore", Vector3.new(0.9, 0.9, 0.55), Vector3.new(0, 1.55, 0.95), definition.Accent)
+        makeShape(model, "StarEaterHalo", Vector3.new(1.9, 0.22, 1.9), Vector3.new(0, 2.75, 0), definition.Detail, Enum.PartType.Cylinder)
+        for index = 1, 3 do
+            local angle = index * math.pi * 2 / 3
+            makeShape(model, "StarEaterShard", Vector3.new(0.32, 0.95, 0.32),
+                Vector3.new(math.cos(angle) * 0.9, 2.3, math.sin(angle) * 0.9), definition.Accent, Enum.PartType.Wedge)
+        end
+        local starLight = Instance.new("PointLight")
+        starLight.Color = definition.Accent
+        starLight.Range = 13
+        starLight.Brightness = 1.6
+        starLight.Parent = body
     elseif definition.Kind == "HeartwoodGuardian" then
         makeShape(model, "HeartwoodMuzzle", Vector3.new(0.8, 0.55, 0.65),
             Vector3.new(0, 1.55, 1.15), definition.Accent)
