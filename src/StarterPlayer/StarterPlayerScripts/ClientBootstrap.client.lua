@@ -6616,11 +6616,11 @@ local function updateBiomeTrialPanel()
     local countAttribute = isVoid and "VoidTrialProgress"
         or (isAncient and "AncientTempleProgress"
         or (isCrystal and "CrystalTrialProgress"
-        or (isFrost and "FrostTrialProgress" or (isEmber and "EmberTrialProgress" or "EmeraldTrialProgress")))
+        or (isFrost and "FrostTrialProgress" or (isEmber and "EmberTrialProgress" or "EmeraldTrialProgress"))))
     local completeAttribute = isVoid and "VoidTrialCompleted"
         or (isAncient and "AncientTempleCompleted"
         or (isCrystal and "CrystalTrialCompleted"
-        or (isFrost and "FrostTrialCompleted" or (isEmber and "EmberTrialCompleted" or "EmeraldTrialCompleted")))
+        or (isFrost and "FrostTrialCompleted" or (isEmber and "EmberTrialCompleted" or "EmeraldTrialCompleted"))))
     local count = math.clamp(tonumber(player:GetAttribute(countAttribute)) or 0, 0, 3)
     local completed = player:GetAttribute(completeAttribute) == true
     local bossCompleted = isAncient and player:GetAttribute("AncientTempleBossCompleted") == true
@@ -6642,20 +6642,22 @@ local function updateBiomeTrialPanel()
     local secretRows = (showGroveSecret and 1 or 0) + (showCaveSecret and 1 or 0)
     trialPanel.Size = UDim2.fromOffset(236,
         secretRows > 0 and (142 + secretRows * 20)
-            or (((isEmber or isCrystal) or ancientBossActive or caveBossUnlocked) and 142 or 112))
-    trialPanel.BackgroundColor3 = isAncient and Color3.fromRGB(42, 61, 43)
+            or ((isVoid or isEmber or isCrystal or ancientBossActive or caveBossUnlocked) and 142 or 112))
+    trialPanel.BackgroundColor3 = isVoid and Color3.fromRGB(39, 32, 62)
+        or (isAncient and Color3.fromRGB(42, 61, 43)
         or (isCrystal and Color3.fromRGB(48, 39, 76)
-        or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51)))
+        or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51))))
 
     trialTitle.Text = isVoid and "ГРАНИЦА ПУСТОТЫ"
         or (isAncient and "ХРАМ ДРЕВНЕГО ДРЕВА"
         or (isCrystal and "ИСПЫТАНИЕ ПРИЗМЫ"
         or (isEmber and "ИСПЫТАНИЕ ОГНЕННОГО СЕРДЦА"
-        or (isFrost and "ИСПЫТАНИЕ СЕРДЦА ЗИМЫ" or "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ")))
-    trialTitle.TextColor3 = isAncient and Color3.fromRGB(220, 239, 179)
+        or (isFrost and "ИСПЫТАНИЕ СЕРДЦА ЗИМЫ" or "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ"))))
+    trialTitle.TextColor3 = isVoid and Color3.fromRGB(211, 187, 255)
+        or (isAncient and Color3.fromRGB(220, 239, 179)
         or (isCrystal and Color3.fromRGB(216, 190, 255)
         or (isEmber and Color3.fromRGB(255, 183, 125)
-        or (isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202))))
+        or (isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202)))))
 
     if isAncient then
         if bossCompleted then
