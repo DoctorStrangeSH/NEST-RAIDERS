@@ -981,7 +981,7 @@ egg_tables = re.findall(
     biome_catalog,
     re.S,
 )
-assert len(egg_tables) == 7, f"Expected seven natural biome egg tables, found {len(egg_tables)}"
+assert len(egg_tables) == 8, f"Expected eight natural biome egg tables, found {len(egg_tables)}"
 for egg_id, weight_source in egg_tables:
     weights = {species: int(weight) for species, weight in re.findall(r'(\w+)\s*=\s*(\d+)', weight_source)}
     assert weights, f"No species weights found for {egg_id}"
