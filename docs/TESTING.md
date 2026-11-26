@@ -1276,3 +1276,12 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Remove one pet, lower its needs, start sleep or change weather to storm during the event; verify cancellation without discovery.
 - [ ] Check 10-second timeout and 90-second cooldown, no additional currency or items, and no overlap with ball, toy or hide-and-seek.
 - [ ] Check multiple owners, display refresh, mobile readability and performance.
+
+
+## Sprint 4.88 — Void Frontier destination foundation
+- [ ] At level 74, or without `ancient_temple_boss`, attempt the Ancient Heights portal; confirm Void Frontier travel is denied.
+- [ ] In a disposable test profile, set level 75 and complete `ancient_temple_boss`; confirm the Void Frontier portal accepts travel.
+- [ ] Walk the full 18-segment causeway in both directions; check gaps, collision, edge safety and respawn.
+- [ ] Confirm VoidFrontier is the current biome after arrival and AncientHeights after return.
+- [ ] Test two players with different unlock states; one player's unlock must not affect the other.
+- [ ] Check beacon/pillar visibility and bridge performance on desktop, tablet and mobile.
