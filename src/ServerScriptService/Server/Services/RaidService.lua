@@ -792,7 +792,8 @@ local function applyRaidCombatDamage(self, match, target, amount, sourceName)
     local timestamp = os.clock()
     local incomingDamage = math.max(0, tonumber(amount) or 0)
     local synergy = match.RaidPetSynergy and match.RaidPetSynergy[target] or nil
-    local damageReduction = math.clamp(tonumber(synergy and synergy.DamageReduction) or 0, 0, 0.2)
+    local gearDefense = math.clamp(tonumber(target:GetAttribute("GearDefenseBonus")) or 0, 0, 0.5)
+    local damageReduction = math.clamp((tonumber(synergy and synergy.DamageReduction) or 0) + gearDefense, 0, 0.55)
     local reducedDamage = math.max(0, math.floor(incomingDamage * (1 - damageReduction) + 0.5))
     local remainingDamage = reducedDamage
     local absorbed = 0
@@ -1274,7 +1275,8 @@ function RaidService:UsePetAbility(player)
             or math.abs(opponentRoot.Position.Y - root.Position.Y) > 10 then
             return { Ok = false, Message = "Охотник должен видеть соперника в пределах дальности способности." }
         end
-        local damage = power
+        local gearDamage = math.clamp(tonumber(player:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)
+        local damage = math.max(1, math.floor(power * (1 + gearDamage) + 0.5))
         match.PetAbilityReadyAt[player] = timestamp + cooldown
         pulseRaidCompanions(match, player, "ABILITY")
         local petModel = match.RaidPetModels and match.RaidPetModels[player]
