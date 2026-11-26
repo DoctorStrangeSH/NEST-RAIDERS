@@ -1294,3 +1294,14 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Leave and rejoin after activating one or two runes; verify the sequence is retained.
 - [ ] Test two players independently; one player's runes must not change the other's progress.
 - [ ] Try interacting from another biome, while dead, and outside prompt range; verify no progress or rewards.
+
+
+## Sprint 4.90 — Star Eater boss
+- [ ] Complete Void Trial, enter the arena and confirm the boss becomes attackable; without the trial it must reject interaction.
+- [ ] Reduce health through 540 → 351 → 162 and confirm phases I, II and III activate at the intended thresholds.
+- [ ] Verify Rift Slam, Void Pulse, Starfall and Collapse show the correct danger markers and damage only players who remain in marked zones.
+- [ ] Dodge every pattern successfully; verify no damage after leaving the warning zones before impact.
+- [ ] Leave and rejoin mid-fight; verify boss health persists for that player.
+- [ ] Defeat the boss twice; verify exactly one Star Eater companion, 1,800 coins, 1,200 XP and 12 Starshards are awarded.
+- [ ] Test two players with different health/completion states; their boss progress and warning markers must remain isolated.
+- [ ] Verify HUD, attack text and arena readability on desktop, tablet and mobile.
