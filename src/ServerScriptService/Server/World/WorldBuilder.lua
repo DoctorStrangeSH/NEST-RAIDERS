@@ -612,6 +612,7 @@ function WorldBuilder:Build()
             Emberlands = "Пепельные земли · уровень 22 + испытание",
             CrystalRealm = "Хрустальное королевство · уровень 35 + испытание",
             AncientHeights = "Древние высоты · уровень 50 + испытание",
+            VoidFrontier = "Граница пустоты · уровень 75 + Страж Древнего древа",
             StarterIsland = "Стартовый остров",
         }
         prompt.ObjectText = zoneLabels[zoneId] or "Неизвестная область"
@@ -2208,6 +2209,336 @@ function WorldBuilder:Build()
     caveChestPrompt.MaxActivationDistance = 10
     caveChestPrompt.RequiresLineOfSight = false
     caveChestPrompt.Parent = caveChest
+
+    -- Void Frontier: first endgame destination slice, unlocked only after the
+    -- Ancient Tree Guardian trial and level 75. The bridge is physically walkable.
+    local void = Instance.new("Folder")
+    void.Name = "VoidFrontier"
+    void.Parent = world
+
+    part(void, "VoidFloatingFoundation", Vector3.new(190, 30, 190),
+        Vector3.new(0, -3, 3300), Color3.fromRGB(37, 43, 68), Enum.Material.Slate, Enum.PartType.Ball)
+    local voidTop = part(void, "VoidLanding", Vector3.new(7, 200, 200),
+        Vector3.new(0, 14, 3300), Color3.fromRGB(53, 61, 91), Enum.Material.Basalt, Enum.PartType.Cylinder)
+    voidTop.CFrame = CFrame.new(0, 14, 3300) * CFrame.Angles(0, 0, math.rad(90))
+    part(void, "VoidArrivalPad", Vector3.new(30, 1.2, 30),
+        Vector3.new(0, 18.2, 3300), Color3.fromRGB(105, 104, 151), Enum.Material.Slate)
+
+    local voidBridge = Instance.new("Folder")
+    voidBridge.Name = "VoidCauseway"
+    voidBridge.Parent = void
+    for index = 1, 18 do
+        local z = 2665 + (index - 1) * 30
+        local segment = part(voidBridge, "VoidBridgeSegment_" .. index,
+            Vector3.new(13, 1.5, 50), Vector3.new(0, 18.5, z),
+            index % 3 == 0 and Color3.fromRGB(119, 105, 171) or Color3.fromRGB(76, 83, 120),
+            Enum.Material.Slate)
+        segment:SetAttribute("BridgeIndex", index)
+        if index % 3 == 0 then
+            local rune = part(voidBridge, "VoidBridgeRune_" .. index,
+                Vector3.new(0.5, 0.12, 5), Vector3.new(0, 19.32, z),
+                Color3.fromRGB(167, 137, 255), Enum.Material.Neon)
+            rune.CanCollide = false
+            local runeLight = Instance.new("PointLight")
+            runeLight.Color = rune.Color
+            runeLight.Range = 8
+            runeLight.Brightness = 0.35
+            runeLight.Parent = rune
+        end
+    end
+
+    for index = 1, 6 do
+        local angle = math.rad((index - 1) * 60)
+        local position = Vector3.new(math.cos(angle) * 59, 20, 3300 + math.sin(angle) * 59)
+        local pillar = part(void, "VoidPillar_" .. index, Vector3.new(4, 16 + (index % 3) * 3, 4),
+            position, Color3.fromRGB(68, 72, 112), Enum.Material.Basalt)
+        local cap = part(void, "VoidPillarCap_" .. index, Vector3.new(5.5, 1.2, 5.5),
+            position + Vector3.new(0, pillar.Size.Y / 2 + 0.5, 0),
+            Color3.fromRGB(153, 130, 235), Enum.Material.Neon)
+        cap.CanCollide = false
+        local light = Instance.new("PointLight")
+        light.Color = cap.Color
+        light.Range = 12
+        light.Brightness = 0.55
+        light.Parent = cap
+    end
+
+    local voidCore = part(void, "VoidBeacon", Vector3.new(5, 13, 5),
+        Vector3.new(0, 27, 3300), Color3.fromRGB(169, 139, 255), Enum.Material.Neon, Enum.PartType.Ball)
+    voidCore.CanCollide = false
+    local voidLight = Instance.new("PointLight")
+    voidLight.Color = voidCore.Color
+    voidLight.Range = 30
+    voidLight.Brightness = 2
+    voidLight.Parent = voidCore
+
+    makeBiomePortal(ancient, "VoidFrontierPortal", Vector3.new(0, 23, 2670),
+        Color3.fromRGB(165, 132, 255), "VoidFrontier", Vector3.new(0, 21, 3300))
+    makeBiomePortal(void, "VoidReturnPortal", Vector3.new(0, 23, 3225),
+        Color3.fromRGB(255, 219, 143), "AncientHeights", Vector3.new(0, 21, 2600))
+
+    local voidSign = part(void, "VoidWelcomeSign", Vector3.new(34, 10, 1),
+        Vector3.new(0, 30, 3374), Color3.fromRGB(31, 35, 58), Enum.Material.Metal)
+    voidSign.CanCollide = false
+    local voidGui = Instance.new("SurfaceGui")
+    voidGui.Face = Enum.NormalId.Front
+    voidGui.Parent = voidSign
+    local voidText = Instance.new("TextLabel")
+    voidText.Size = UDim2.fromScale(1, 1)
+    voidText.BackgroundTransparency = 1
+    voidText.Text = "ГРАНИЦА ПУСТОТЫ\\nУровень 75 · Страж Древнего древа\\nИсследование продолжается"
+    voidText.TextColor3 = Color3.fromRGB(218, 208, 255)
+    voidText.TextScaled = true
+    voidText.TextWrapped = true
+    voidText.Font = Enum.Font.GothamBlack
+    voidText.Parent = voidGui
+
+    -- Void Trial: awaken the Rift, Echo and Star runes in the displayed order.
+    local voidTrial = Instance.new("Folder")
+    voidTrial.Name = "VoidTrial"
+    voidTrial.Parent = void
+    local voidRunes = Instance.new("Folder")
+    voidRunes.Name = "VoidTrialRunes"
+    voidRunes.Parent = voidTrial
+    local voidRuneDefinitions = {
+        { Id = "Rift", Name = "Руна Разлома", Position = Vector3.new(-58, 20, 3270), Color = Color3.fromRGB(185, 119, 255) },
+        { Id = "Echo", Name = "Руна Эха", Position = Vector3.new(-72, 20, 3300), Color = Color3.fromRGB(117, 190, 255) },
+        { Id = "Star", Name = "Руна Звезды", Position = Vector3.new(-58, 20, 3330), Color = Color3.fromRGB(255, 220, 145) },
+    }
+    for index, definition in ipairs(voidRuneDefinitions) do
+        local pedestal = part(voidRunes, definition.Id .. "RunePedestal",
+            Vector3.new(6, 2, 6), definition.Position - Vector3.new(0, 1.2, 0),
+            Color3.fromRGB(48, 48, 75), Enum.Material.Basalt)
+        pedestal:SetAttribute("VoidRuneId", definition.Id)
+        local rune = part(voidRunes, definition.Id .. "RuneStone",
+            Vector3.new(2.2, 4.5, 2.2), definition.Position,
+            definition.Color, Enum.Material.Neon, Enum.PartType.Ball)
+        rune.CanCollide = false
+        rune:SetAttribute("VoidRuneId", definition.Id)
+        local light = Instance.new("PointLight")
+        light.Color = definition.Color
+        light.Range = 13
+        light.Brightness = 0.9
+        light.Parent = rune
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "VoidTrialRunePrompt"
+        prompt.ActionText = "Пробудить"
+        prompt.ObjectText = definition.Name
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 0.45
+        prompt.MaxActivationDistance = 10
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = rune
+    end
+
+    local voidAltar = part(voidTrial, "VoidTrialAltar", Vector3.new(8, 3, 8),
+        Vector3.new(-35, 20, 3300), Color3.fromRGB(64, 56, 92), Enum.Material.Slate)
+    local altarCore = part(voidTrial, "VoidTrialAltarCore", Vector3.new(2.5, 5, 2.5),
+        Vector3.new(-35, 23, 3300), Color3.fromRGB(181, 139, 255), Enum.Material.Neon, Enum.PartType.Ball)
+    altarCore.CanCollide = false
+    local altarLight = Instance.new("PointLight")
+    altarLight.Color = altarCore.Color
+    altarLight.Range = 18
+    altarLight.Brightness = 1.2
+    altarLight.Parent = altarCore
+    local altarPrompt = Instance.new("ProximityPrompt")
+    altarPrompt.Name = "VoidTrialAltarPrompt"
+    altarPrompt.ActionText = "Завершить испытание"
+    altarPrompt.ObjectText = "Алтарь трёх рун"
+    altarPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    altarPrompt.HoldDuration = 0.8
+    altarPrompt.MaxActivationDistance = 11
+    altarPrompt.RequiresLineOfSight = false
+    altarPrompt.Parent = voidAltar
+
+    local voidClue = part(voidTrial, "VoidTrialClueSign", Vector3.new(22, 8, 1),
+        Vector3.new(-35, 27, 3320), Color3.fromRGB(31, 35, 58), Enum.Material.Metal)
+    voidClue.CanCollide = false
+    local clueGui = Instance.new("SurfaceGui")
+    clueGui.Face = Enum.NormalId.Front
+    clueGui.Parent = voidClue
+    local clueText = Instance.new("TextLabel")
+    clueText.Size = UDim2.fromScale(1, 1)
+    clueText.BackgroundTransparency = 1
+    clueText.Text = "ИСПЫТАНИЕ ПУСТОТЫ\\nРазлом → Эхо → Звезда\\nЗатем коснись алтаря"
+    clueText.TextColor3 = Color3.fromRGB(226, 215, 255)
+    clueText.TextScaled = true
+    clueText.TextWrapped = true
+    clueText.Font = Enum.Font.GothamBlack
+    clueText.Parent = clueGui
+
+    -- Star Eater endgame arena: a raised circular platform, rune pylons and a
+    -- distinct three-phase boss silhouette. The encounter is per-player/server-owned.
+    local bossArena = Instance.new("Folder")
+    bossArena.Name = "VoidBossArena"
+    bossArena.Parent = void
+    local arenaFloor = part(bossArena, "VoidBossArenaFloor", Vector3.new(82, 3, 82),
+        Vector3.new(40, 20, 3300), Color3.fromRGB(35, 34, 58), Enum.Material.Basalt)
+    arenaFloor.TopSurface = Enum.SurfaceType.Smooth
+    local arenaTrim = part(bossArena, "VoidBossArenaTrim", Vector3.new(88, 1, 88),
+        Vector3.new(40, 18.2, 3300), Color3.fromRGB(113, 78, 175), Enum.Material.Neon)
+    arenaTrim.CanCollide = false
+    for index = 1, 8 do
+        local angle = math.rad((index - 1) * 45)
+        local position = Vector3.new(40 + math.cos(angle) * 38, 24, 3300 + math.sin(angle) * 38)
+        local pylon = part(bossArena, "VoidArenaPylon_" .. index,
+            Vector3.new(3.5, 12 + (index % 3) * 2, 3.5), position,
+            Color3.fromRGB(64, 54, 94), Enum.Material.Slate)
+        local pylonCore = part(bossArena, "VoidArenaPylonCore_" .. index,
+            Vector3.new(1.2, 4, 1.2), position + Vector3.new(0, 2, 0),
+            Color3.fromRGB(168, 118, 255), Enum.Material.Neon)
+        pylonCore.CanCollide = false
+        local pylonLight = Instance.new("PointLight")
+        pylonLight.Color = pylonCore.Color
+        pylonLight.Range = 12
+        pylonLight.Brightness = 0.6
+        pylonLight.Parent = pylonCore
+    end
+
+    local starEater = Instance.new("Model")
+    starEater.Name = "StarEater"
+    starEater.Parent = bossArena
+    local bossBody = part(starEater, "StarEaterBody", Vector3.new(15, 18, 13),
+        Vector3.new(40, 31, 3300), Color3.fromRGB(36, 34, 57), Enum.Material.Slate, Enum.PartType.Ball)
+    local bossHead = part(starEater, "StarEaterHead", Vector3.new(11, 10, 10),
+        Vector3.new(40, 43, 3301), Color3.fromRGB(52, 45, 82), Enum.Material.Basalt, Enum.PartType.Ball)
+    local bossCore = part(starEater, "StarEaterCore", Vector3.new(6, 6, 5),
+        Vector3.new(40, 31, 3307), Color3.fromRGB(184, 128, 255), Enum.Material.Neon, Enum.PartType.Ball)
+    bossCore.CanCollide = false
+    local coreLight = Instance.new("PointLight")
+    coreLight.Color = bossCore.Color
+    coreLight.Range = 28
+    coreLight.Brightness = 2.2
+    coreLight.Parent = bossCore
+    for side = -1, 1, 2 do
+        local arm = part(starEater, "StarEaterArm_" .. side, Vector3.new(5, 14, 5),
+            Vector3.new(40 + side * 10, 29, 3300), Color3.fromRGB(44, 39, 69), Enum.Material.Slate, Enum.PartType.Ball)
+        local claw = part(starEater, "StarEaterClaw_" .. side, Vector3.new(4, 5, 4),
+            Vector3.new(40 + side * 10, 21, 3302), Color3.fromRGB(167, 112, 255), Enum.Material.Neon, Enum.PartType.Ball)
+        claw.CanCollide = false
+    end
+    for index = 1, 5 do
+        local angle = math.rad((index - 1) * 72)
+        local spike = part(starEater, "StarEaterCrown_" .. index, Vector3.new(2.8, 9, 2.8),
+            Vector3.new(40 + math.cos(angle) * 5.8, 49, 3301 + math.sin(angle) * 5.8),
+            Color3.fromRGB(168, 119, 255), Enum.Material.Neon, Enum.PartType.Wedge)
+        spike.CanCollide = false
+    end
+    for _, descendant in ipairs(starEater:GetDescendants()) do
+        if descendant:IsA("BasePart") then
+            descendant.CanCollide = false
+            descendant.CanTouch = false
+            descendant.CanQuery = false
+        end
+    end
+    local bossPrompt = Instance.new("ProximityPrompt")
+    bossPrompt.Name = "VoidBossPrompt"
+    bossPrompt.ActionText = "Атаковать"
+    bossPrompt.ObjectText = "Пожиратель звёзд"
+    bossPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    bossPrompt.HoldDuration = 0.35
+    bossPrompt.MaxActivationDistance = 12
+    bossPrompt.RequiresLineOfSight = false
+    bossPrompt.Parent = bossCore
+
+    local bossSign = part(bossArena, "VoidBossSign", Vector3.new(26, 8, 1),
+        Vector3.new(40, 29, 3345), Color3.fromRGB(28, 27, 48), Enum.Material.Metal)
+    bossSign.CanCollide = false
+    local bossSignGui = Instance.new("SurfaceGui")
+    bossSignGui.Face = Enum.NormalId.Front
+    bossSignGui.Parent = bossSign
+    local bossSignText = Instance.new("TextLabel")
+    bossSignText.Size = UDim2.fromScale(1, 1)
+    bossSignText.BackgroundTransparency = 1
+    bossSignText.Text = "ПОЖИРАТЕЛЬ ЗВЁЗД\\nТри фазы · 540 здоровья\\nСначала заверши испытание пустоты"
+    bossSignText.TextColor3 = Color3.fromRGB(222, 202, 255)
+    bossSignText.TextScaled = true
+    bossSignText.TextWrapped = true
+    bossSignText.Font = Enum.Font.GothamBlack
+    bossSignText.Parent = bossSignGui
+
+    -- Void biome egg pool: three visible world eggs rotate across nine safe slots.
+    local voidEggs = Instance.new("Folder")
+    voidEggs.Name = "EggSpawnPoints"
+    voidEggs.Parent = void
+    makeEgg(voidEggs, Vector3.new(-28, 21, 3245), Color3.fromRGB(167, 112, 255))
+    makeEgg(voidEggs, Vector3.new(0, 21, 3240), Color3.fromRGB(167, 112, 255))
+    makeEgg(voidEggs, Vector3.new(28, 21, 3245), Color3.fromRGB(167, 112, 255))
+
+    -- The Void Forge turns gathered endgame materials into deterministic artifacts.
+    local voidForge = Instance.new("Folder")
+    voidForge.Name = "VoidForge"
+    voidForge.Parent = void
+    local forgeFloor = part(voidForge, "VoidForgeFloor", Vector3.new(22, 1.5, 22),
+        Vector3.new(88, 18.8, 3300), Color3.fromRGB(44, 39, 72), Enum.Material.Slate)
+    local forgeBase = part(voidForge, "VoidForgeBase", Vector3.new(10, 5, 10),
+        Vector3.new(88, 22, 3300), Color3.fromRGB(55, 48, 88), Enum.Material.Basalt)
+    local forgeAnvil = part(voidForge, "VoidForgeAnvil", Vector3.new(7, 2, 6),
+        Vector3.new(88, 25.5, 3300), Color3.fromRGB(115, 105, 151), Enum.Material.Metal)
+    local forgeCore = part(voidForge, "VoidForgeCore", Vector3.new(3.2, 5, 3.2),
+        Vector3.new(88, 29, 3300), Color3.fromRGB(185, 137, 255), Enum.Material.Neon, Enum.PartType.Ball)
+    forgeCore.CanCollide = false
+    local forgeLight = Instance.new("PointLight")
+    forgeLight.Color = forgeCore.Color
+    forgeLight.Range = 24
+    forgeLight.Brightness = 1.8
+    forgeLight.Parent = forgeCore
+    local forgePrompt = Instance.new("ProximityPrompt")
+    forgePrompt.Name = "OpenVoidForgePrompt"
+    forgePrompt.ActionText = "Открыть рецепты"
+    forgePrompt.ObjectText = "Кузница пустоты"
+    forgePrompt.KeyboardKeyCode = Enum.KeyCode.E
+    forgePrompt.HoldDuration = 0.35
+    forgePrompt.MaxActivationDistance = 12
+    forgePrompt.RequiresLineOfSight = false
+    forgePrompt.Parent = forgeAnvil
+    local forgeSign = part(voidForge, "VoidForgeSign", Vector3.new(16, 6, 1),
+        Vector3.new(88, 25, 3314), Color3.fromRGB(29, 27, 49), Enum.Material.Metal)
+    forgeSign.CanCollide = false
+    local forgeGui = Instance.new("SurfaceGui")
+    forgeGui.Face = Enum.NormalId.Front
+    forgeGui.Parent = forgeSign
+    local forgeText = Instance.new("TextLabel")
+    forgeText.Size = UDim2.fromScale(1, 1)
+    forgeText.BackgroundTransparency = 1
+    forgeText.Text = "КУЗНИЦА ПУСТОТЫ\\nТри рецепта · Выбор без случайности"
+    forgeText.TextColor3 = Color3.fromRGB(224, 207, 255)
+    forgeText.TextScaled = true
+    forgeText.TextWrapped = true
+    forgeText.Font = Enum.Font.GothamBlack
+    forgeText.Parent = forgeGui
+
+    -- Starshard outcrops are placed around the safe outer rim, away from the trial
+    -- altar and the Star Eater arena. Each node has a stable ID and server prompt.
+    local voidNodes = Instance.new("Folder")
+    voidNodes.Name = "VoidStarshardNodes"
+    voidNodes.Parent = void
+    local voidNodePositions = {
+        Vector3.new(-82, 21.5, 3255), Vector3.new(-82, 21.5, 3345),
+        Vector3.new(-35, 21.5, 3215), Vector3.new(0, 21.5, 3390),
+        Vector3.new(35, 21.5, 3390), Vector3.new(80, 21.5, 3345),
+    }
+    for index, position in ipairs(voidNodePositions) do
+        local color = index % 2 == 0 and Color3.fromRGB(121, 179, 255) or Color3.fromRGB(183, 132, 255)
+        local node = part(voidNodes, "VoidStarshardNode_" .. index,
+            Vector3.new(4.5, 6 + (index % 3), 4.5), position, color, Enum.Material.Neon, Enum.PartType.Wedge)
+        node.CanCollide = false
+        node:SetAttribute("VoidShardNodeId", "VoidRim_" .. index)
+        local glow = Instance.new("PointLight")
+        glow.Color = color
+        glow.Range = 14
+        glow.Brightness = 0.8
+        glow.Parent = node
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "MineVoidShardPrompt"
+        prompt.ActionText = "Добыть"
+        prompt.ObjectText = "Звёздная жила"
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 1.1
+        prompt.MaxActivationDistance = 11
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = node
+    end
 
     return world
 end

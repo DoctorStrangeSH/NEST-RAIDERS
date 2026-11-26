@@ -486,6 +486,19 @@ assert 'PrismTrial' in world and '"PrismGem_" .. definition.Id' in world and 'Id
 assert '"PrismLightBeam_" .. index' in world and 'for index = 1, 2 do' in world and 'PrismGuardian' in world
 assert 'CrystalTrialBossPrompt' in world and 'Лазурный → Розовый → Золотой' in world
 assert 'AncientHeights' in game_config and 'RequiredLevel = 50, RequiredQuest = "crystal_trial"' in game_config
+assert 'VoidFrontier' in game_config and 'RequiredLevel = 75, RequiredQuest = "ancient_temple_boss"' in game_config
+assert 'VoidFrontierPortal' in world and 'VoidReturnPortal' in world
+assert 'VoidBridgeSegment_' in world and 'VoidLanding' in world
+assert 'local z = 2665 + (index - 1) * 30' in world
+assert 'Vector3.new(13, 1.5, 50)' in world
+assert 'Vector3.new(7, 200, 200)' in world
+assert 'VoidFrontier' in world_health and 'VoidCauseway' in world_health
+assert 'VoidTrialService' in server and 'function VoidTrialService:Init()' in Path("src/ServerScriptService/Server/Services/VoidTrialService.lua").read_text()
+assert 'VoidTrialRunes = {}' in profile_template
+assert 'SEQUENCE = { "Rift", "Echo", "Star" }' in Path("src/ServerScriptService/Server/Services/VoidTrialService.lua").read_text()
+assert 'profile.CompletedQuests.void_trial = true' in Path("src/ServerScriptService/Server/Services/VoidTrialService.lua").read_text()
+assert 'VoidTrialRunePrompt' in world and 'VoidTrialAltarPrompt' in world
+assert 'VoidTrialRunePrompt' in world_health and 'VoidTrialAltarPrompt' in world_health
 assert 'AncientHeightsPortal' in world and 'AncientReturnPortal' in world
 assert 'AncientLanding' in world and 'AncientWelcomeSign' in world
 assert 'CrystalTrialProgress' in client and 'CrystalTrialBossWindup' in client
@@ -688,7 +701,7 @@ assert 'BOSS_MAX_HEALTH = 240' in ancient_boss and 'PLAYER_HIT_DAMAGE = 24' in a
 assert 'Id = "VineSlam"' in ancient_boss and 'Id = "RootWave"' in ancient_boss
 assert 'Damage = 30' in ancient_boss and 'Damage = 18' in ancient_boss
 assert 'WindupSeconds = 1.8' in ancient_boss and 'WindupSeconds = 1.25' in ancient_boss
-assert 'humanoid:TakeDamage(attack.Damage)' in ancient_boss and 'AncientTempleBossWindup' in ancient_boss
+assert 'GearDefenseBonus' in ancient_boss and 'AncientTempleBossWindup' in ancient_boss
 assert 'CompletedQuests.ancient_temple_trial' in ancient_boss
 assert 'CompletedQuests.ancient_temple_boss = true' in ancient_boss
 assert 'REWARD_COMPANION_ID = "HeartwoodGuardian"' in ancient_boss
@@ -819,7 +832,7 @@ assert 'TweenInfo.new(0.28, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)' in
 assert 'Size = UDim2.fromScale(caveBossHealth / 360, 1)' in client
 
 # Unified material inventory: profile load publishes every saved resource and UI binds all balances.
-assert 'MaterialsInventoryButton' in client and 'materialsButton, artifactsButton, profileButton' in client
+assert 'MaterialsInventoryButton' in client and 'local menuButtons = {' in client and 'materialsButton, artifactsButton, gearButton, bondJournalButton, profileButton' in client
 assert 'MaterialsInventoryPanel' in client and 'local materialDefinitions = {' in client
 for material_attribute in ("Elderwood", "Moonpetal", "Starshard", "CrystalShards", "AshCrystals"):
     assert f'Attribute = "{material_attribute}"' in client
@@ -968,7 +981,7 @@ egg_tables = re.findall(
     biome_catalog,
     re.S,
 )
-assert len(egg_tables) == 7, f"Expected seven natural biome egg tables, found {len(egg_tables)}"
+assert len(egg_tables) == 8, f"Expected eight natural biome egg tables, found {len(egg_tables)}"
 for egg_id, weight_source in egg_tables:
     weights = {species: int(weight) for species, weight in re.findall(r'(\w+)\s*=\s*(\d+)', weight_source)}
     assert weights, f"No species weights found for {egg_id}"
@@ -1234,7 +1247,8 @@ assert 'match.LastStrikeAt = {}' in raid_service
 assert 'match.GuardUntil = {}' in raid_service and 'match.GuardCooldownUntil = {}' in raid_service
 assert 'if targetGuardUntil > timestamp then' in raid_service
 assert 'applyRaidCombatDamage(self, match, opponent, strikeDamage, "Удар соперника")' in raid_service
-assert 'applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE' in raid_service
+assert 'applyRaidCombatDamage(self, match, player, counterDamage, "Контрудар парирования")' in raid_service
+assert 'local counterBonus = math.clamp(tonumber(opponent:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)' in raid_service
 assert 'finishMatch(self, match, target == match.Attacker and "DEFENDER" or "ATTACKER"' in raid_service
 assert 'function RaidService:RaiseGuard(player)' in raid_service
 assert 'match.GuardUntil[player] = guardUntil' in raid_service
@@ -1349,7 +1363,8 @@ assert 'remainingDamage -= absorbed' in raid_service
 assert 'return applyRaidCombatDamage(self, match, target, amount, sourceName)' in raid_service
 assert 'applyDefenseDamage(self, match, match.Attacker, defense.Damage' in raid_service
 assert 'applyRaidCombatDamage(self, match, opponent, strikeDamage, "Удар соперника")' in raid_service
-assert 'applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE' in raid_service
+assert 'applyRaidCombatDamage(self, match, player, counterDamage, "Контрудар парирования")' in raid_service
+assert 'local counterBonus = math.clamp(tonumber(opponent:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)' in raid_service
 assert 'payload.Action == "UsePetAbility"' in raid_service and 'self:UsePetAbility(player)' in raid_service
 assert 'participant:SetAttribute("RaidArenaPetAbilityName", nil)' in raid_service
 assert 'participant:SetAttribute("RaidArenaPetShield", nil)' in raid_service
@@ -1387,7 +1402,8 @@ assert 'power = math.clamp(power, 8, maximum)' in raid_service
 assert 'power = math.clamp(power, 5, maximum)' in raid_service
 assert 'power = math.clamp(power, 10, maximum)' in raid_service
 assert 'local petLevel, power = getRaidPetProgression(primary, synergy)' in raid_service
-assert 'local damage = power' in raid_service
+assert 'local gearDamage = math.clamp(tonumber(player:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)' in raid_service
+assert 'local damage = math.max(1, math.floor(power * (1 + gearDamage) + 0.5))' in raid_service
 assert 'local heal = power' in raid_service
 assert 'local shieldAmount = power' in raid_service
 assert 'participant:SetAttribute("RaidArenaPetLevel", ability and petLevel or 0)' in raid_service
@@ -1419,7 +1435,8 @@ assert raid_service.index('if roleCount == 3 then') < raid_service.index('if rol
 assert 'match.RaidPetSynergy = {}' in raid_service
 assert 'match.RaidPetSynergy[participant] = getRaidPetSynergy(followers)' in raid_service
 assert 'local synergy = match.RaidPetSynergy and match.RaidPetSynergy[target] or nil' in raid_service
-assert 'local damageReduction = math.clamp(tonumber(synergy and synergy.DamageReduction) or 0, 0, 0.2)' in raid_service
+assert 'local gearDefense = math.clamp(tonumber(target:GetAttribute("GearDefenseBonus")) or 0, 0, 0.5)' in raid_service
+assert 'local damageReduction = math.clamp((tonumber(synergy and synergy.DamageReduction) or 0) + gearDefense, 0, 0.55)' in raid_service
 assert 'local reducedDamage = math.max(0, math.floor(incomingDamage * (1 - damageReduction) + 0.5))' in raid_service
 assert 'local strikeMultiplier = math.clamp(tonumber(synergy and synergy.DuelDamageMultiplier) or 1, 1, 1.15)' in raid_service
 assert 'participant:SetAttribute("RaidArenaSynergyName", synergy and synergy.Name or "")' in raid_service
@@ -1622,10 +1639,10 @@ assert 'behavior = "PlayingWithToy"' in companion_service
 assert 'toyPart:SetAttribute("ToyState", "InUse")' in companion_service
 assert 'toyPart:SetAttribute("ToyState", "Waiting")' in companion_service
 assert 'while model.Parent == folder and folder.Parent do' in companion_service
-assert 'behavior = targetIsTreasure and "Searching" or (targetIsShelter and "SeekingShelter" or (targetIsInterest and "Exploring" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering"))))' in companion_service
+assert 'behavior = targetIsChase and "ChasingFriend" or (targetIsTreasure and "Searching"' in companion_service
 assert 'model:SetAttribute("Behavior", behavior)' in companion_service
 assert 'model:SetAttribute("Personality"' in companion_service
-assert 'model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset, 0))' in companion_service
+assert 'model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset + reactionYaw + habitYaw, reactionRoll + habitRoll))' in companion_service
 assert 'while model.Parent == folder and folder.Parent do' in companion_service
 assert 'function DisplayPetService:RefreshPlayer(player)' in display_pet_service
 assert 'CompanionService:RefreshDisplayedPets(player, plot' in display_pet_service
@@ -1651,7 +1668,7 @@ assert 'petDefinition.FavoriteToy' in companion_service
 assert 'model:SetAttribute("FavoriteToy"' in companion_service
 assert 'model:SetAttribute("DisplaySlot", slot)' in companion_service
 assert 'model:SetAttribute("NestHomePosition", home)' in companion_service
-assert 'moodLabel.Text = isSleeping and "Zzz"' in companion_service
+assert '(isSleeping and "Zzz")' in companion_service
 
 # Sprint 4.67 — persistent friendship between displayed companions.
 assert 'CompanionBonds = {}' in profile_template
@@ -1684,7 +1701,7 @@ assert 'TreasureChance = 0.24' in companion_service
 assert 'TreasureChance = 0.04' in companion_service
 assert 'local canSearch = not giftCache and not treasureSearchOwner' in companion_service
 assert 'targetIsTreasure = true' in companion_service
-assert 'behavior = targetIsTreasure and "Searching"' in companion_service
+assert 'behavior = targetIsChase and "ChasingFriend" or (targetIsTreasure and "Searching"' in companion_service
 assert 'cache.Name = "CompanionGiftCache"' in companion_service
 assert 'prompt.Name = "CollectCompanionGift"' in companion_service
 assert 'prompt.ActionText = "Забрать подарок"' in companion_service
@@ -1724,3 +1741,502 @@ assert 'targetIsInterest and "Exploring"' in companion_service
 assert 'behavior = "VisitingInterest"' in companion_service
 assert 'model:SetAttribute("LastDiscovery", discovery)' in companion_service
 assert 'player:SetAttribute("LastNotice", companion.Name .. " заметил кое-что интересное: "' in companion_service
+
+
+# Sprint 4.72 — paired companion adventures and mutual aid.
+adventure_service = Path("src/ServerScriptService/Server/Services/CompanionAdventureService.lua").read_text()
+assert '"CompanionAdventureService"' in server
+assert 'CompanionAdventureCooldowns = {}' in profile_template
+assert 'local function getPairKey(firstId, secondId)' in adventure_service
+assert 'local function findCompanionModels(player)' in adventure_service
+assert 'local function createAdventureMarker(player, firstModel, secondModel, pairKey, rare)' in adventure_service
+assert 'local function tryStartAdventure(player)' in adventure_service
+assert 'local PAIR_COOLDOWN = 300' in adventure_service
+assert 'local MIN_BOND = 10' in adventure_service
+assert 'bond >= MIN_BOND' in adventure_service
+assert 'local rareChance = choice.Bond >= 90 and 0.20' in adventure_service
+assert 'or choice.Bond >= 60 and 0.16' in adventure_service
+assert 'or choice.Bond >= 30 and 0.12' in adventure_service
+assert 'local rare = random:NextNumber() <= rareChance' in adventure_service
+assert 'prompt.Triggered:Connect(function(collector)' in adventure_service
+assert 'if claimed or collector ~= player or not player.Parent then return end' in adventure_service
+assert '(root.Position - marker.Position).Magnitude > 13' in adventure_service
+assert 'profile.Nest.CompanionAdventureCooldowns[choice.Key] = os.time() + PAIR_COOLDOWN' in adventure_service
+assert 'profile.Nest.CompanionBonds[pairKey] = score' in adventure_service
+assert 'profile.Nest.CompanionMood[firstId]' in adventure_service
+assert 'profile.Nest.CompanionMood[secondId]' in adventure_service
+assert 'local beam = Instance.new("Beam")' in adventure_service
+assert 'firstAttachment:Destroy()' in adventure_service and 'secondAttachment:Destroy()' in adventure_service
+assert 'Debris:AddItem(marker, 90)' in adventure_service
+
+
+# Cross-system companion mood synchronization: adventure rewards must survive the
+# CompanionService follower loop and owner disconnect must always remove markers.
+assert 'local savedMood = profile.Nest and profile.Nest.CompanionMood' in companion_service
+assert 'mood = math.clamp(math.floor(tonumber(savedMood) or mood), 0, 100)' in companion_service
+assert 'for _, child in ipairs(Workspace:GetChildren()) do' in adventure_service
+assert 'child:GetAttribute("OwnerUserId") == player.UserId' in adventure_service
+
+
+# Sprint 4.73 — friendship milestone celebrations.
+assert 'local BOND_MILESTONES = {' in companion_service
+assert '[10] = { Title = "Первые друзья!"' in companion_service
+assert '[30] = { Title = "Крепкая дружба!"' in companion_service
+assert '[60] = { Title = "Неразлучная команда!"' in companion_service
+assert '[90] = { Title = "Друзья навсегда!"' in companion_service
+assert 'local function showBondMilestone(player, firstModel, secondModel, milestone)' in companion_service
+assert 'glow.Name = "FriendshipMilestoneGlow"' in companion_service
+assert 'banner.Name = "FriendshipMilestoneBanner"' in companion_service
+assert 'local milestone = BOND_MILESTONES[bondScore]' in companion_service
+assert 'if milestone then' in companion_service
+
+
+# Sprint 4.73 — friendship milestone celebrations.
+assert 'local BOND_MILESTONES = {' in companion_service
+assert '[10] = { Title = "Первые друзья!"' in companion_service
+assert '[30] = { Title = "Крепкая дружба!"' in companion_service
+assert '[60] = { Title = "Неразлучная команда!"' in companion_service
+assert '[90] = { Title = "Друзья навсегда!"' in companion_service
+assert 'local function showBondMilestone(player, firstModel, secondModel, milestone)' in companion_service
+assert 'glow.Name = "FriendshipMilestoneGlow"' in companion_service
+assert 'banner.Name = "FriendshipMilestoneBanner"' in companion_service
+assert 'local milestone = BOND_MILESTONES[bondScore]' in companion_service
+assert 'if milestone then' in companion_service
+
+
+# Sprint 4.74 — visible shared heart emote during completed-pair social play.
+assert 'local socialMomentCooldowns = {}' in companion_service
+assert 'local function showSharedHeartMoment(firstModel, secondModel)' in companion_service
+assert 'bubble.Name = "SharedFriendshipHeart"' in companion_service
+assert 'heart.Text = "♥"' in companion_service
+assert 'task.delay(1.6, function()' in companion_service
+assert 'if slot < partnerSlot and partnerModel then' in companion_service
+assert 'socialMomentCooldowns[momentKey] = now + 18' in companion_service
+assert 'showSharedHeartMoment(model, partnerModel)' in companion_service
+assert 'local cooldownPrefix = tostring(player.UserId) .. ":"' in companion_service
+assert 'if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then' in companion_service
+
+
+# Sprint 4.75 — personality and familiarity influence social behavior.
+assert 'local partnerPersonality = partnerModel and partnerModel:GetAttribute("Personality") or ""' in companion_service
+assert 'local pairBondScore = pairBondKey and profile.Nest and profile.Nest.CompanionBonds' in companion_service
+assert 'local isCautious = personality == "Осторожный"' in companion_service
+assert 'local isSocialLeader = personality == "Дружелюбный" or personality == "Добродушный"' in companion_service
+assert 'model:SetAttribute("FriendshipStyle", friendshipStyle)' in companion_service
+assert 'local cautiousCanApproach = not isCautious or pairBondScore >= 10' in companion_service
+assert 'or partnerPersonality == "Дружелюбный" or partnerPersonality == "Добродушный"' in companion_service
+assert 'or random:NextNumber() < 0.035' in companion_service
+assert 'local bondSocialBonus = math.min(pairBondScore / 100, 1) * 0.18' in companion_service
+assert 'local outgoingBonus = isSocialLeader and 0.12 or 0' in companion_service
+assert 'random:NextNumber() < effectiveSocialChance' in companion_service
+
+
+# Sprint 4.76 — established friends can trigger a short shared chase.
+assert 'local socialChaseCooldowns = {}' in companion_service
+assert 'local targetIsChase = false' in companion_service
+assert 'if slot < partnerSlot and partnerModel and pairBondScore >= 30' in companion_service
+assert 'socialChaseCooldowns[chaseKey] = now + 35' in companion_service
+assert 'local chaseUntil = now + 4.5' in companion_service
+assert 'model:SetAttribute("CompanionChaseUntil", chaseUntil)' in companion_service
+assert 'partnerModel:SetAttribute("CompanionChaseUntil", chaseUntil)' in companion_service
+assert 'local partnerPositionForChase = partnerModel and partnerModel:GetPivot().Position' in companion_service
+assert 'local chaseRadius = 2.4' in companion_service
+assert 'targetIsChase and "ChasingFriend"' in companion_service
+assert 'and not isSleeping and not partnerSleeping and mood >= 25 and energy >= 15 then' in companion_service
+assert 'for key in pairs(socialChaseCooldowns) do' in companion_service
+
+
+# Sprint 4.77 — bonded companion can quietly rest beside a sleeping friend.
+assert 'local sharedRestCooldowns = {}' in companion_service
+assert 'local targetIsRestingTogether = false' in companion_service
+assert 'local restingTogetherUntil = 0' in companion_service
+assert 'local canRestTogether = partnerModel and partnerSleeping and not isSleeping' in companion_service
+assert 'and pairBondScore >= 30 and (isNight or energy <= 35)' in companion_service
+assert 'targetIsRestingTogether = true' in companion_service
+assert 'restingTogetherUntil = now + random:NextNumber(4.5, 6.5)' in companion_service
+assert 'model:SetAttribute("RestingWithFriend", true)' in companion_service
+assert 'behavior = "RestingWithFriend"' in companion_service
+assert 'model:SetAttribute("RestingWithFriend", nil)' in companion_service
+assert 'if targetIsRestingTogether and (not partnerModel or not partnerSleeping) then' in companion_service
+assert 'for key in pairs(sharedRestCooldowns) do' in companion_service
+
+
+# Sprint 4.78 — personality-specific greetings and reunion presentation.
+assert 'local pairGreetingLastAt = {}' in companion_service
+assert 'local GREETING_STYLES = {' in companion_service
+assert '["Дружелюбный"] = { Icon = "♥"' in companion_service
+assert '["Игривый"] = { Icon = "✦"' in companion_service
+assert '["Осторожный"] = { Icon = "…"' in companion_service
+assert 'local function showPersonalityGreeting(firstModel, secondModel, firstPersonality, secondPersonality, reunion)' in companion_service
+assert 'bubble.Name = reunion and "FriendshipReunionGreeting" or "PersonalityGreeting"' in companion_service
+assert 'local isReunion = lastGreeting > 0 and (now - lastGreeting) >= 120' in companion_service
+assert 'showPersonalityGreeting(' in companion_service
+assert 'glow.Name = "FriendshipReunionGlow"' in companion_service
+assert 'for key in pairs(pairGreetingLastAt) do' in companion_service
+
+
+# Sprint 4.79 — species-specific friendship moments and persistent discoveries.
+assert 'local speciesMomentCooldowns = {}' in companion_service
+assert 'local SPECIES_BOND_MOMENTS = {' in companion_service
+assert '["Fox|Turtle"] = { Title = "Лесные хранители"' in companion_service
+assert '["Dragon|Owl"] = { Title = "Искра мудрости"' in companion_service
+assert '["EmberFox|MagmaDragon"] = { Title = "Тёплое пламя"' in companion_service
+assert '["AncientStag|RootSprite"] = { Title = "Древний союз"' in companion_service
+assert 'model:SetAttribute("CompanionKind", definition.Kind or companion.Id)' in companion_service
+assert 'local function getSpeciesMomentKey(firstKind, secondKind)' in companion_service
+assert 'local function showSpeciesBondMoment(firstModel, secondModel, moment)' in companion_service
+assert 'local speciesMoment = speciesKey and SPECIES_BOND_MOMENTS[speciesKey]' in companion_service
+assert 'if speciesMoment and pairBondScore >= 30 then' in companion_service
+assert 'and random:NextNumber() < 0.35 then' in companion_service
+assert 'profile.Nest.DiscoveredBondMoments = profile.Nest.DiscoveredBondMoments or {}' in companion_service
+assert 'profile.Nest.DiscoveredBondMoments[speciesKey] = true' in companion_service
+assert 'model:SetAttribute("SpeciesBondMoment", moment.Title)' in companion_service
+assert 'model:SetAttribute("SpeciesBondMomentUntil", os.clock() + 3.4)' in companion_service
+assert 'for key in pairs(speciesMomentCooldowns) do' in companion_service
+
+
+# Sprint 4.80 — persistent friendship discovery journal.
+bond_journal_service = Path("src/ServerScriptService/Server/Services/BondJournalService.lua").read_text()
+profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+assert '"BondJournal"' in server
+assert '"BondJournalService"' in server
+assert 'local bondJournalRemote = waitRemote("BondJournal")' in client
+assert 'bondJournalRemote and nestRemote' in client
+assert 'local bondJournalButton = Instance.new("TextButton")' in client
+assert 'artifactsButton, gearButton, bondJournalButton, profileButton' in client
+assert 'Kind = "heart"' in client and 'kind == "heart"' in client
+assert 'local bondJournalPanel = Instance.new("Frame")' in client
+assert 'local function invokeBondJournal()' in client
+assert 'local function renderBondJournal(data)' in client
+assert 'bondJournalButton.Activated:Connect(openBondJournal)' in client
+assert 'DiscoveredBondMoments = {},' in profile_template
+assert 'local function buildSnapshot(profile)' in bond_journal_service
+assert 'profile.Nest.DiscoveredBondMoments' in bond_journal_service
+assert 'CompletionPercent = math.floor(discoveredCount / total * 100 + 0.5)' in bond_journal_service
+assert 'Title = discovered and definition.Title or "???"' in bond_journal_service
+assert 'Hint = discovered and "Секрет уже открыт.' in bond_journal_service
+
+
+# Sprint 4.81 — visible friendship tiers and tier-based adventure rewards.
+adventure_service = Path("src/ServerScriptService/Server/Services/CompanionAdventureService.lua").read_text()
+assert 'local friendshipBillboard = Instance.new("BillboardGui")' in companion_service
+assert 'friendshipBillboard.Enabled = bondKey ~= nil and bondScore > 0' in companion_service
+assert 'friendshipText.Text = string.format("♥ %s  ·  %d/100", bondLevel, bondScore)' in companion_service
+assert 'friendshipFill.Size = UDim2.new(bondScore / 100, 0, 1, 0)' in companion_service
+assert 'local bondLevel = getBondLevel(score)' in adventure_service
+assert 'Bond = bond' in adventure_service
+assert 'local rareChance = choice.Bond >= 90 and 0.20' in adventure_service
+assert 'or choice.Bond >= 60 and 0.16' in adventure_service
+assert 'or choice.Bond >= 30 and 0.12' in adventure_service
+assert 'or 0.08' in adventure_service
+assert 'firstModel:SetAttribute("FriendshipLevel", bondLevel)' in adventure_service
+assert 'secondModel:SetAttribute("FriendshipLevel", bondLevel)' in adventure_service
+
+
+# Sprint 4.82 — companion gifts, personality odds and memory collection.
+companion_service = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+gift_journal = Path("src/ServerScriptService/Server/Services/BondJournalService.lua").read_text()
+profile_template = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+assert 'local BIOME_GIFTS = {' in companion_service
+for egg_id in ("MeadowEgg", "EmeraldEgg", "FrostEgg", "EmberEgg", "CrystalEgg", "AncientEgg", "ForgottenCaveEgg", "LineageEgg"):
+    assert egg_id + ' = {' in companion_service
+assert 'local PERSONALITY_GIFT_BONUS = {' in companion_service
+assert 'local function tryGiveCompanionGift(' in companion_service
+assert 'local chance = bondScore >= 90 and 0.30' in companion_service
+assert 'or bondScore >= 60 and 0.22' in companion_service
+assert 'or bondScore >= 30 and 0.14' in companion_service
+assert 'or bondScore >= 10 and 0.08' in companion_service
+assert 'GIFT_COOLDOWNS[cooldownKey] = now + 90' in companion_service
+assert 'profile.Nest.DiscoveredCompanionGifts[giftKey] = true' in companion_service
+assert 'profile.Nest.CompanionGiftCount' in companion_service
+assert 'receiverModel:SetAttribute("Mood", receiverMood)' in companion_service
+assert 'giverModel:SetAttribute("Mood", giverMood)' in companion_service
+assert 'showCompanionGift(giverModel, receiverModel, gift, isRare)' in companion_service
+assert 'tryGiveCompanionGift(' in companion_service
+assert 'DiscoveredCompanionGifts = {},' in profile_template
+assert 'CompanionGiftCount = 0,' in profile_template
+assert 'local GIFT_COLLECTION = {' in gift_journal
+assert 'profile.Nest.DiscoveredCompanionGifts' in gift_journal
+assert 'local giftTotal = 0' in gift_journal
+assert 'Id = "gift:" .. key' in gift_journal
+assert 'local total = #MOMENTS + pairTotal + giftTotal' in gift_journal
+
+assert 'local partnerDefinition = CompanionCatalog[partnerModel:GetAttribute("CompanionId")] or {}' in companion_service
+assert 'if random:NextNumber() < 0.5 then' in companion_service
+assert 'player, profile, partnerModel, model, partnerDefinition' in companion_service
+assert 'local giftKey = tostring(giverDefinition.EggId or "MeadowEgg") .. ":" .. gift.Name' in companion_service
+assert 'giftDiscoveries[key] == true' in gift_journal
+assert 'Открыто воспоминаний: %d / %d  ·  %d%%' in client
+
+assert 'local RARITY_SPECIAL_GIFT_BONUS = {' in companion_service
+assert '["Редкий"] = 0.04' in companion_service
+assert '["Эпический"] = 0.07' in companion_service
+assert '["Легендарный"] = 0.10' in companion_service
+assert '["Мифический"] = 0.14' in companion_service
+assert 'rareChance = math.clamp(rareChance + (RARITY_SPECIAL_GIFT_BONUS[giverDefinition.Rarity or ""] or 0), 0.02, 0.35)' in companion_service
+
+
+# Sprint 4.83 — personality-driven gift reactions and paired pet emotes.
+assert 'local GIFT_RECEIVER_REACTIONS = {' in companion_service
+assert 'local GIFT_GIVER_REACTIONS = {' in companion_service
+assert 'local function setGiftReaction(model, reaction, duration, rare)' in companion_service
+assert 'model:SetAttribute("GiftReaction", reaction.Animation)' in companion_service
+assert 'model:SetAttribute("GiftReactionUntil", os.clock() + duration)' in companion_service
+assert 'receiverReaction = { Animation = "Amazed", Text = "Невероятный подарок!" }' in companion_service
+assert 'giverReaction = { Animation = "Proud", Text = "Я нашёл нечто особенное!" }' in companion_service
+assert 'setGiftReaction(receiverModel, receiverReaction, duration, isRare)' in companion_service
+assert 'setGiftReaction(giverModel, giverReaction, duration * 0.9, isRare)' in companion_service
+assert 'local reactionActive = giftReaction ~= nil and now < reactionUntil and not isSleeping' in companion_service
+assert 'giftReaction == "Jump" or giftReaction == "Bounce"' in companion_service
+assert 'giftReaction == "Spin"' in companion_service
+assert 'giftReaction == "Hug"' in companion_service
+assert 'giftReaction == "Amazed"' in companion_service
+assert 'local hugOffset = Vector3.zero' in companion_service
+assert 'hugOffset = towardFriend.Unit * 0.38' in companion_service
+assert 'behavior = giftReaction == "Hug" and "HuggingFriend" or "CelebratingGift"' in companion_service
+assert 'model:SetAttribute("GiftReaction", nil)' in companion_service
+
+
+# Sprint 4.84 — autonomous personality habits in quiet nest moments.
+assert 'local COMPANION_HABITS = {' in companion_service
+for personality, habit_id in (
+    ("Любопытный", "SniffAround"),
+    ("Любознательный", "Inspect"),
+    ("Игривый", "PlayfulHop"),
+    ("Энергичный", "Stretch"),
+    ("Спокойный", "Groom"),
+    ("Осторожный", "LookAround"),
+    ("Мечтательный", "Daydream"),
+    ("Наблюдательный", "WatchSky"),
+    ("Добродушный", "Sway"),
+    ("Дружелюбный", "Wave"),
+    ("Заботливый", "Care"),
+    ("Гордый", "Proud"),
+):
+    assert f'["{personality}"] = {{ Id = "{habit_id}"' in companion_service
+assert 'local activeHabit = nil' in companion_service
+assert 'local nextHabitAt = os.clock() + random:NextNumber(8, 16)' in companion_service
+assert 'activeHabitUntil = now + random:NextNumber(2.2, 4.0)' in companion_service
+assert 'nextHabitAt = now + random:NextNumber(28, 52)' in companion_service
+assert 'model:SetAttribute("PersonalHabit", habit.Id)' in companion_service
+assert 'model:SetAttribute("PersonalHabitText", habit.Text)' in companion_service
+assert 'local habitActive = activeHabit ~= nil and now < activeHabitUntil and isAtTarget and not isSleeping' in companion_service
+assert 'behavior = "PersonalHabit"' in companion_service
+assert 'model:SetAttribute("PersonalHabit", nil)' in companion_service
+assert 'activeHabit = nil' in companion_service
+assert 'local habitPhase = now * 2.4 + phase' in companion_service
+assert 'local habitBob, habitYaw, habitRoll = 0, 0, 0' in companion_service
+assert 'or (habitActive and model:GetAttribute("PersonalHabitText"))' in companion_service
+
+
+# Sprint 4.85 — pair-specific friendship milestones and persistent shared memories.
+assert '[80] = { Title = "Дружба без границ!"' in companion_service
+assert '[100] = { Title = "Вместе навеки!"' in companion_service
+assert 'local PAIR_BOND_MEMORIES = {' in companion_service
+assert '[60] = { Id = "TrustedPact"' in companion_service
+assert '[80] = { Id = "UnbreakablePromise"' in companion_service
+assert '[100] = { Id = "ForeverTogether"' in companion_service
+assert 'local memoryKey = "Pair:" .. bondKey .. ":" .. pairMemory.Id' in companion_service
+assert 'profile.Nest.DiscoveredBondMoments[memoryKey] = true' in companion_service
+assert 'showSharedHeartMoment(model, partnerModel)' in companion_service
+assert 'Новое воспоминание дружбы:' in companion_service
+assert 'Новое воспоминание дружбы:' in companion_service
+assert 'local PAIR_MEMORIES = {' in gift_journal
+assert 'RequiredBond = 60, Id = "TrustedPact"' in gift_journal
+assert 'RequiredBond = 80, Id = "UnbreakablePromise"' in gift_journal
+assert 'RequiredBond = 100, Id = "ForeverTogether"' in gift_journal
+assert 'local companionBonds = type(profile.Nest.CompanionBonds) == "table"' in gift_journal
+assert 'local key = "Pair:" .. tostring(bondKey) .. ":" .. memory.Id' in gift_journal
+assert 'local total = #MOMENTS + pairTotal + giftTotal' in gift_journal
+
+
+# Sprint 4.86 — bonded companions comfort friends and explore together.
+assert 'local companionCareCooldowns = {}' in companion_service
+assert 'local sharedDiscoveryCooldowns = {}' in companion_service
+assert 'local targetIsCaring = false' in companion_service
+assert 'local careUntil = 0' in companion_service
+assert 'partnerMood <= 35 and mood >= 45' in companion_service
+assert 'pairBondScore >= 10 and socialApproach' in companion_service
+assert 'personality == "Заботливый" and 0.72 or 0.28' in companion_service
+assert 'partnerModel:SetAttribute("BeingComfortedUntil", careUntil)' in companion_service
+assert 'profile.Nest.CompanionMood[partnerId] = updatedPartnerMood' in companion_service
+assert 'profile.Nest.CompanionMood[instanceId] = mood' in companion_service
+assert 'beingComforted and "Друг рядом, всё хорошо ♥"' in companion_service
+assert 'careUntil > now and "Утешает друга ♥"' in companion_service
+assert 'partnerModel:SetAttribute("SharedDiscoveryTargetPosition", point.Position)' in companion_service
+assert 'partnerModel:SetAttribute("SharedDiscoveryLeader", instanceId)' in companion_service
+assert 'local followingSharedDiscovery = typeof(sharedTarget) == "Vector3"' in companion_service
+assert 'if followingSharedDiscovery then' in companion_service
+assert 'model:SetAttribute("SharedDiscoveryArrived", true)' in companion_service
+assert 'partnerModel:GetAttribute("SharedDiscoveryArrived") == true' in companion_service
+assert 'partnerModel:GetPivot().Position - currentPosition).Magnitude <= 6' in companion_service
+assert 'model:SetAttribute("LastDiscovery", "Открытие вместе: "' in companion_service
+assert 'showSharedHeartMoment(model, partnerModel)' in companion_service
+assert 'sharedDiscoveryCooldowns[sharedKey] = now + 90' in companion_service
+
+assert 'if careUntil > 0 and partnerModel' in companion_service
+assert 'partnerModel:GetAttribute("BeingComfortedBy") == instanceId' in companion_service
+assert 'model:GetAttribute("SharedDiscoveryArrived") ~= true and partnerModel' in companion_service
+assert 'partnerModel:SetAttribute("SharedDiscoveryArrived", nil)' in companion_service
+
+assert 'local sharedDiscoveryLeaderUntil = 0' in companion_service
+assert 'sharedDiscoveryLeaderUntil = now + 18' in companion_service
+assert '(currentPosition - sharedDiscoveryLeaderTarget).Magnitude <= 6' in companion_service
+assert 'sharedDiscoveryLeaderUntil = 0' in companion_service
+
+
+# Sprint 4.87 — bonded companions can play a short server-owned ball-passing game.
+assert 'local pairedBallCooldowns = {}' in companion_service
+assert 'local function showPairedBallGame(firstModel, secondModel, ownerUserId, pairKey, personality, now)' in companion_service
+assert 'ball.Name = "CompanionFriendshipBall"' in companion_service
+assert 'ball:SetAttribute("OwnerUserId", ownerUserId)' in companion_service
+assert 'ball:SetAttribute("PairKey", pairKey)' in companion_service
+assert 'ball.CanCollide = false' in companion_service
+assert 'TweenService:Create(' in companion_service
+assert 'TweenInfo.new(0.34, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)' in companion_service
+assert 'if pairBondScore >= 10 then' in companion_service
+assert 'local ballChance = (personality == "Игривый" or personality == "Энергичный"' in companion_service
+assert 'pairedBallCooldowns[ballGameKey] = now + 45' in companion_service
+assert 'for key in pairs(pairedBallCooldowns) do' in companion_service
+
+
+# Sprint 4.87 — hide and seek and cooperative toy play.
+for token in (
+    'local hideSeekCooldowns = {}',
+    'local function clearHideSeek(model)',
+    'partnerModel:GetAttribute("HideSeekPartner") == instanceId',
+    'pet:SetAttribute("HideSeekUntil", now + 12)',
+    'hideSeekCooldowns[hideKey] = now + 60',
+    'behavior = hideRole == "Hider" and "HidingFromFriend"',
+    'local sharedToyCooldowns = {}',
+    'partnerModel:GetAttribute("SharedToyPartner") == instanceId',
+    'pet:SetAttribute("SharedToyUntil", now + 10)',
+    'sharedToyCooldowns[sharedToyKey] = now + 60',
+    'behavior = "PlayingSharedToy"',
+    'sharedToy:SetAttribute("ToyState", "InUse")',
+    'for key in pairs(sharedToyCooldowns) do',
+    'for key in pairs(hideSeekCooldowns) do',
+):
+    assert token in companion_service, token
+
+
+# Sprint 4.87 — shared treasure hunt.
+for token in (
+    'local sharedTreasureCooldowns = {}',
+    'partnerModel:GetAttribute("PairTreasurePartner") == instanceId',
+    'pet:SetAttribute("PairTreasureUntil", now + 10)',
+    'sharedTreasureCooldowns[treasureKey] = now + 90',
+    'behavior = "SearchingTogether"',
+    'if slot < partnerSlot and (currentPosition - targetPosition).Magnitude <= 0.5',
+    'crystal.Name = "SharedTreasureDiscovery"',
+    'Debris:AddItem(crystal, 3)',
+    'for key in pairs(sharedTreasureCooldowns) do',
+):
+    assert token in companion_service, token
+
+
+# Sprint 4.90 — Star Eater three-phase endgame boss.
+void_boss = Path("src/ServerScriptService/Server/Services/VoidBossService.lua").read_text()
+void_boss_world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
+void_boss_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
+void_boss_client = Path("src/StarterPlayer/StarterPlayerScripts/ClientBootstrap.client.lua").read_text()
+void_boss_companion = Path("src/ServerScriptService/Server/Services/CompanionService.lua").read_text()
+void_boss_catalog = Path("src/ReplicatedStorage/Shared/Config/CompanionCatalog.lua").read_text()
+assert '"VoidBossService"' in server and 'function VoidBossService:Init()' in void_boss
+assert 'VoidBossHealth = 540' in profile_template and 'VoidBossHealth' in void_boss
+assert 'profile.CompletedQuests.void_trial ~= true' in void_boss
+assert 'profile.CompletedQuests.void_boss = true' in void_boss
+assert 'MAX_HEALTH = 540' in void_boss and 'HIT_DAMAGE = 36' in void_boss
+assert 'return ratio <= 0.3 and 3 or (ratio <= 0.65 and 2 or 1)' in void_boss
+for attack in ('RiftSlam', 'VoidPulse', 'Starfall', 'Collapse'):
+    assert attack in void_boss
+assert 'VoidBossAttackWarning' in void_boss and 'TargetUserId' in void_boss
+assert 'REWARD_COMPANION_ID = "StarEater"' in void_boss
+assert 'REWARD_COINS = 1800' in void_boss and 'REWARD_XP = 1200' in void_boss
+assert 'REWARD_STARSHARDS = 12' in void_boss
+assert 'StarEater = {' in void_boss_catalog and 'BossExclusive = true' in void_boss_catalog
+assert 'Kind = "StarEater"' in void_boss_companion and 'definition.Kind == "StarEater"' in void_boss_companion
+assert 'VoidBossArena' in void_boss_world and 'VoidBossPrompt' in void_boss_world
+assert 'VoidArenaPylon_' in void_boss_world and 'StarEaterCore' in void_boss_world
+assert 'VoidBossPrompt' in void_boss_health and 'VoidArenaPylon_' in void_boss_health
+assert 'VoidBossHealth' in void_boss_client and 'VoidBossWindup' in void_boss_client
+assert 'VoidBossAttackWarning' in void_boss_client and 'VoidBossCompleted' in void_boss_client
+
+
+# Sprint 4.91 — Void Frontier egg pool and Starshard gathering.
+void_harvest = Path("src/ServerScriptService/Server/Services/VoidHarvestService.lua").read_text()
+void_egg_service = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
+void_biome_catalog = Path("src/ReplicatedStorage/Shared/Config/BiomeCatalog.lua").read_text()
+assert '"VoidHarvestService"' in server and 'function VoidHarvestService:Init()' in void_harvest
+assert 'VoidNodeCooldowns = {}' in profile_template and 'VoidNodeCooldowns' in void_harvest
+assert 'NODE_COOLDOWN_SECONDS = 180' in void_harvest
+assert 'VoidShardNodeId' in void_harvest and 'MineVoidShardPrompt' in void_harvest
+assert 'materials.Starshard' in void_harvest and 'StarEater' in void_harvest
+assert 'VoidFrontier = {' in void_biome_catalog and 'DefaultEggId = "VoidEgg"' in void_biome_catalog
+assert 'Riftling = 60' in void_biome_catalog and 'EchoWisp = 30' in void_biome_catalog and 'NebulaDrake = 10' in void_biome_catalog
+assert 'Riftling = {' in companion_catalog and 'EchoWisp = {' in companion_catalog and 'NebulaDrake = {' in companion_catalog
+assert 'VoidFrontier = {' in void_egg_service and 'Vector3.new(-28, 19.6, 3245)' in void_egg_service
+assert 'makeEgg(voidEggs' in world and 'VoidStarshardNodes' in world
+assert 'MineVoidShardPrompt' in world and 'VoidShardNodeId' in world
+assert 'VoidFrontier' in world_health and 'VoidStarshardNodes' in world_health and 'EggSpawnPoints' in world_health
+assert 'Пещера и Граница пустоты' in client
+
+
+# Sprint 4.92 — deterministic Void Forge crafting.
+void_forge_catalog = Path("src/ReplicatedStorage/Shared/Config/ArtifactCatalog.lua").read_text()
+void_forge_inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
+void_forge_world = Path("src/ServerScriptService/Server/World/WorldBuilder.lua").read_text()
+void_forge_health = Path("src/ServerScriptService/Server/World/WorldHealthCheck.lua").read_text()
+void_forge_client = Path("src/StarterPlayer/StarterPlayerScripts/ClientBootstrap.client.lua").read_text()
+assert 'VoidHarvester = {' in void_forge_catalog and 'RiftCompass = {' in void_forge_catalog
+assert 'NebulaCharm = {' in void_forge_catalog
+assert 'GatherBonus = 0.18' in void_forge_catalog and 'ResearchBonus = 0.15' in void_forge_catalog
+assert 'HatchBonus = 0.12' in void_forge_catalog
+assert 'payload.Action == "CraftVoidArtifact"' in void_forge_inventory
+assert 'player:GetAttribute("CurrentBiome") ~= "VoidFrontier"' in void_forge_inventory
+assert 'ProgressionService:CanEnterZone(player, "VoidFrontier")' in void_forge_inventory
+assert 'VoidForgeAnvil' in void_forge_inventory and '#profile.Artifacts >= 40' in void_forge_inventory
+for recipe in ('VoidHarvester', 'RiftCompass', 'NebulaCharm'):
+    assert recipe in void_forge_inventory and recipe in void_forge_client
+assert 'profile.Artifacts' in void_forge_inventory and 'Origin = "VoidForge"' in void_forge_inventory
+assert 'voidForge = Instance.new("Folder")' in void_forge_world
+assert 'OpenVoidForgePrompt' in void_forge_world and 'VoidForgeCore' in void_forge_world
+assert 'VoidForgeFloor' in void_forge_health and 'OpenVoidForgePrompt' in void_forge_health
+assert 'ProximityPromptService.PromptTriggered' in void_forge_client
+assert 'updateVoidForgeButtons' in void_forge_client and 'CurrentBiome' in void_forge_client
+
+
+# Sprint 4.93 — persistent Voidwalker gear and combat stat integration.
+gear_catalog = Path("src/ReplicatedStorage/Shared/Config/GearCatalog.lua").read_text()
+gear_service = Path("src/ServerScriptService/Server/Services/GearService.lua").read_text()
+gear_profile = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+gear_inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
+gear_void_boss = Path("src/ServerScriptService/Server/Services/VoidBossService.lua").read_text()
+gear_ancient_boss = Path("src/ServerScriptService/Server/Services/AncientTempleBossService.lua").read_text()
+gear_heart_boss = Path("src/ServerScriptService/Server/Services/ForgottenHeartBossService.lua").read_text()
+gear_raid = Path("src/ServerScriptService/Server/Services/RaidService.lua").read_text()
+gear_client = Path("src/StarterPlayer/StarterPlayerScripts/ClientBootstrap.client.lua").read_text()
+assert '"GearService"' in server and '"GearInventory"' in server
+assert 'GearInventory = {}' in gear_profile and 'EquippedGear = {}' in gear_profile
+for item_id in ('Riftblade', 'Voidplate', 'Starhelm', 'NebulaCloak'):
+    assert item_id + ' = {' in gear_catalog and item_id in gear_client
+assert 'GearCatalog[itemId]' in gear_service
+for slot in ('Weapon', 'Armor', 'Helmet', 'Accessory'):
+    assert slot in gear_catalog and slot in gear_service and slot in gear_client
+assert 'payload.Action == "Craft"' in gear_service and 'payload.Action == "Equip"' in gear_service
+assert 'payload.Action == "Unequip"' in gear_service
+assert 'VoidForgeAnvil' in gear_service and 'CurrentBiome' in gear_service
+assert 'ProgressionService:CanEnterZone(player, "VoidFrontier")' in gear_service
+assert 'GearDamageBonus' in gear_service and 'GearDefenseBonus' in gear_service
+assert 'GearMaxHealthBonus' in gear_service and 'GearWalkSpeedBonus' in gear_service
+assert 'VoidGearVisuals' in gear_service and 'WeldConstraint' in gear_service
+assert 'GearSetBonus' in gear_service and 'stats.SetBonus = true' in gear_service
+assert 'GearDamageBonus' in gear_void_boss and 'GearDefenseBonus' in gear_void_boss
+assert 'GearDamageBonus' in gear_ancient_boss and 'GearDefenseBonus' in gear_ancient_boss
+assert 'GearDamageBonus' in gear_heart_boss and 'GearDefenseBonus' in gear_heart_boss
+assert 'GearDefenseBonus' in gear_raid and 'GearDamageBonus' in gear_raid
+assert 'GearEquipmentPanel' in gear_client and 'GearInventory' in gear_client
+assert 'CraftRiftblade' in gear_client and 'CraftVoidplate' in gear_client
+assert 'CraftStarhelm' in gear_client and 'CraftNebulaCloak' in gear_client
+assert 'renderGear' in gear_client and 'OpenVoidForgePrompt' in gear_client
+assert 'VoidForgeAnvil' in gear_inventory

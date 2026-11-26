@@ -59,5 +59,20 @@ local ArtifactCatalog = {
         Description = "Значительно увеличивает шанс вылупить питомца высшей редкости из яйца.",
         HatchBonus = 0.15, Weight = 1,
     },
+    VoidHarvester = {
+        Id = "VoidHarvester", Name = "Жезл звёздной жилы", Rarity = "Эпический",
+        Description = "Увеличивает шанс получить дополнительные материалы при добыче на всех островах.",
+        GatherBonus = 0.18, Weight = 0,
+    },
+    RiftCompass = {
+        Id = "RiftCompass", Name = "Компас разлома", Rarity = "Легендарный",
+        Description = "Увеличивает получаемый опыт за исследования и задания.",
+        ResearchBonus = 0.15, Weight = 0,
+    },
+    NebulaCharm = {
+        Id = "NebulaCharm", Name = "Амулет туманности", Rarity = "Легендарный",
+        Description = "Повышает шанс вылупить питомца высшей редкости из яйца.",
+        HatchBonus = 0.12, Weight = 0,
+    },
 }
 return ArtifactCatalog

@@ -40,9 +40,9 @@ Status legend: [x] done · [ ] not done · [~] in progress
 
 ## Milestone 2 — Open-world progression
 - [ ] Seamless connected biomes with no mandatory world portals.
-- [~] Server-enforced gates implemented for Starter Island → Emerald Wilds, Emerald trial → Frost Highlands, and Frost trial → Emberlands; remaining late-game biome trials still need their gameplay flows.
+- [~] Server-enforced gates implemented through Ancient Heights; Void Frontier is gated by level 75 + the existing Ancient Tree Guardian victory. Its endgame trial and full biome content remain to be built.
 - [ ] Server-side zone checks for egg collection and interactions.
-- [~] Starter Island, Emerald Wilds, Frost Highlands, and Emberlands have scripted playable slices; the expansion islands are linked by walkable causeways. Heat gameplay still needs Studio acceptance; Crystal Realm, Ancient Heights, and Void Frontier remain to be built.
+- [~] Starter Island, Emerald Wilds, Frost Highlands, Emberlands, Crystal Realm, and Ancient Heights have scripted playable slices. Void Frontier now has its first connected destination slice; its gameplay content remains outstanding.
 - [ ] World landmarks, secrets, caves, traversal routes, and discovery rewards.
 
 ## Milestone 3 — Nest, companions, and economy
@@ -1386,3 +1386,308 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [ ] Test pets with low energy, hunger, sleep and storm shelter needs; urgent needs must take priority.
 
 **Acceptance:** favorite-place preferences, autonomous exploration and rare owner notices are integrated and statically checked; visual, multiplayer, placement and behavior-priority acceptance remain open.
+
+
+### Sprint 4.72 — Paired companion adventures
+- [x] Add a server-owned paired-adventure loop for two active companions.
+- [x] Require both companions to be awake, nearby, and sufficiently happy before an adventure starts.
+- [x] Create a shared secret marker with a visible bond beam and a proximity interaction.
+- [x] Add a rare golden-secret variant with a distinct presentation and owner notification.
+- [x] Reward both companions with saved mood; the companion with lower mood receives a larger mutual-aid boost.
+- [x] Increase the pair's persistent friendship score after the owner claims the discovery.
+- [x] Persist per-pair adventure cooldowns and validate owner, pair identity, and interaction distance on the server.
+- [ ] Verify paired events, visual cleanup, profile persistence, multiplayer isolation, and mobile prompt behavior in Roblox Studio.
+
+
+### Sprint 4.73 — Friendship milestone celebrations
+- [x] Add four distinct friendship milestones at 10, 30, 60 and 90 pair-bond points.
+- [x] Celebrate both companions together with a temporary color-coded glow and a readable shared milestone banner.
+- [x] Send a single owner notification only when a new milestone is reached; ordinary friendship points do not spam notices.
+- [x] Keep milestone presentation cosmetic and server-triggered from the existing completed social-session reward.
+- [x] Add static regression checks for all milestone thresholds, effects and reward integration.
+- [ ] Roblox Studio: verify milestone effects appear on both pets, remain readable at different camera zoom levels and clean up after 2.4 seconds.
+- [ ] Verify milestones trigger exactly once at each threshold and persist correctly after rejoin.
+- [ ] Verify multiple display pairs and multiple players do not share banners, highlights or notifications.
+
+
+### Sprint 4.74 — Shared friendship emotes
+- [x] Add a synchronized heart emote above both companions when a pair begins a completed social-play session.
+- [x] Trigger the visual once from the lower display slot so the two independent behavior loops do not duplicate it.
+- [x] Add an 18-second per-player/per-pair visual cooldown to keep the nest readable.
+- [x] Keep the emote cosmetic: no extra mood, friendship, currency or XP reward is added.
+- [x] Add static regression checks for the paired visual, trigger ownership and cooldown.
+- [ ] Roblox Studio: verify both pets show the heart together, the emote cleans up after 1.6 seconds and repeated play respects the cooldown.
+- [ ] Test both display pairs, four pets, multiple players, pet removal during the emote and mobile camera readability.
+
+
+### Sprint 4.75 — Personality-aware relationships
+- [x] Read the active pair's saved friendship score during companion behavior updates.
+- [x] Give cautious companions a gradual trust rule: they initiate/accept ordinary social approaches after reaching 10 bond, or sooner when approached by a friendly/good-natured companion; two cautious pets retain a small 3.5% first-contact chance so they cannot become permanently isolated.
+- [x] Make Friendly and Good-natured personalities more likely to initiate social contact.
+- [x] Let growing pair friendship increase the social approach chance for both companions.
+- [x] Publish a readable FriendshipStyle state for UI/animation layers: cautious pets show gradual trust, outgoing pets seek friends, playful pets enjoy shared games.
+- [x] Add static regression assertions for pair-bond gating and personality modifiers.
+- [ ] Roblox Studio: test cautious+cautious, cautious+friendly, friendly+friendly and playful pairs; verify approaches feel distinct and no pair becomes permanently isolated.
+- [ ] Verify bond growth changes social frequency without resetting needs, mood, or existing cooldowns.
+- [ ] Verify behavior labels remain correct after respawn/rejoin and across both display pairs.
+
+
+### Sprint 4.76 — Friendship chase games
+- [x] Let established pairs (30+ bond) occasionally turn a completed social session into a short shared chase.
+- [x] Replicate a shared 4.5-second chase window to both companions; both orbit/chase around the moving partner target instead of only changing a text label.
+- [x] Require both companions to remain awake and above minimum mood/energy thresholds during the chase.
+- [x] Add a 35-second per-player/per-pair cooldown and clear cooldown memory when the owner leaves.
+- [x] Publish the ChasingFriend behavior state for future animation/UI presentation.
+- [x] Add static regression checks for trigger ownership, shared timing, movement target and cooldown cleanup.
+- [ ] Roblox Studio: verify both pets move visibly together, do not collide or jitter, and return to normal routines after 4.5 seconds.
+- [ ] Test bond thresholds, both display pairs, pet removal/sleep during play, multiplayer isolation and mobile readability.
+
+
+### Sprint 4.77 — Resting beside a friend
+- [x] Allow an awake companion with 30+ pair bond to occasionally approach a sleeping partner and rest nearby.
+- [x] Prefer the interaction at night or when the awake companion has low energy; require minimum mood and energy.
+- [x] Use a side offset so the awake pet settles beside, not directly on top of, its sleeping friend.
+- [x] Hold a calm 4.5–6.5 second rest pose and publish RestingWithFriend / RestingWithFriend attribute for presentation.
+- [x] Stop the shared-rest state if the partner wakes or the resting companion itself goes to sleep.
+- [x] Add a 55-second per-player/per-pair cooldown and clean it up on owner departure.
+- [x] Add static regression assertions and Studio acceptance checklist.
+- [ ] Roblox Studio: verify the pet visibly approaches and settles beside the sleeping friend without overlap, jitter or interrupting the sleeper.
+- [ ] Test day/night, energy thresholds, bond thresholds, both display pairs, wake-up interruption, multiplayer isolation and mobile readability.
+
+
+### Sprint 4.78 — Personality greetings and reunion moments
+- [x] Add distinct greeting styles for Friendly, Good-natured, Playful, Energetic, Cautious, Calm, Wise and Dreamy personalities.
+- [x] Show a short readable speech bubble above both companions when their social session begins.
+- [x] Track the last greeting per owner/pair and show a special reunion banner plus warm glow after 120 seconds without a greeting.
+- [x] Keep the existing shared heart emote and 18-second visual cooldown; reunion styling is presentation-only.
+- [x] Clear per-pair greeting timestamps when the owner leaves.
+- [x] Add static regression assertions for personality styles, paired presentation, reunion threshold and cleanup.
+- [ ] Roblox Studio: verify each personality's greeting text/icon, readability and cleanup on both pets.
+- [ ] Verify reunion styling appears only after 120 seconds, not during ordinary repeated greetings.
+- [ ] Test both display pairs, all personalities, pet removal during an effect, multiplayer isolation and mobile camera scaling.
+
+
+### Sprint 4.79 — Species-specific friendship discoveries
+- [x] Add four rare pair-specific moments: Fox + Turtle, Dragon + Owl, EmberFox + MagmaDragon, and AncientStag + RootSprite.
+- [x] Derive species identity from each companion model's server-authored CompanionKind attribute.
+- [x] Require 30+ pair bond and a 35% roll when the pair begins a social session; use a 180-second per-owner/pair/species cooldown.
+- [x] Present each moment with its own title, icon, color, paired speech bubble and temporary glow.
+- [x] Publish SpeciesBondMoment and SpeciesBondMomentUntil attributes for future animation/presentation hooks.
+- [x] Persist first-time discoveries in profile.Nest.DiscoveredBondMoments and notify the owner once per species combination.
+- [x] Clear runtime cooldown entries when the owner leaves; add static regression checks.
+- [ ] Roblox Studio: verify all four pair combinations, visual readability, discovery notification exactly once, persistence after rejoin and no repeat spam.
+- [ ] Test pair order reversal, both display pairs, multiple players, pet removal during effect and mobile scaling.
+
+
+### Sprint 4.80 — Friendship discovery journal
+- [x] Add BondJournalService with a read-only server snapshot of the four known species moments.
+- [x] Persist discovered moment IDs under Nest.DiscoveredBondMoments in ProfileTemplate.
+- [x] Keep undiscovered titles hidden and provide non-spoiler hints; reveal title/icon and completion status only after discovery.
+- [x] Register the BondJournal RemoteFunction and service in server bootstrap.
+- [x] Add a responsive in-game journal panel, progress count, four discovery cards, close control and dedicated navigation icon.
+- [x] Add static regression assertions for server endpoint, profile persistence and UI wiring.
+- [ ] Roblox Studio: verify first-time discovery appears after refresh/reopen and remains after leave/rejoin.
+- [ ] Verify locked entries never leak species names, all four discovered entries display correctly, and 0/4–4/4 progress is accurate.
+- [ ] Test mobile/tablet/desktop scaling, scrolling, close behavior, simultaneous panels, and profile-not-loaded handling.
+
+
+### Sprint 4.81 — Visible friendship tiers
+- [x] Surface each active companion pair's relationship level and 0–100 score above the pets in the live world.
+- [x] Add a compact progress bar with tier-specific color: acquaintance, companions, friends, best friends, inseparable.
+- [x] Hide the relationship badge until a pair has earned its first bond point; keep the HUD free of unrelated/empty badges.
+- [x] Update both companion models immediately when a paired adventure is claimed.
+- [x] Scale rare shared-adventure odds by relationship tier: 8% (10–29), 12% (30–59), 16% (60–89), 20% (90–100).
+- [x] Add static regression assertions for live UI updates, progress math, and server-side tier rewards.
+- [ ] Roblox Studio: verify visible progress updates after social sessions and paired adventures.
+- [ ] Verify all five tier labels/colors at boundary scores 0, 10, 30, 60 and 90.
+- [ ] Verify rare adventure chance is tier-scaled without increasing the base adventure frequency.
+- [ ] Test readability and overlap on mobile/tablet/desktop with 1–3 active companions.
+
+
+### Sprint 4.82 — Gifts and caring moments
+- [x] Add biome-themed gift pools for Meadow, Emerald, Frost, Ember, Crystal, Ancient, Forgotten Cave and Lineage origins.
+- [x] Let either companion initiate a gift after a completed shared social session.
+- [x] Adjust gift likelihood using the giver's personality and the pair's saved friendship tier.
+- [x] Add a rarer special-gift variant whose chance improves with friendship and giver rarity.
+- [x] Show the gift above the receiver with a temporary glow and a readable Russian message.
+- [x] Persist discovered gifts and total gift count in the player nest profile.
+- [x] Give both pets a small mood response; do not grant coins, XP, materials or combat power.
+- [x] Add all 48 normal/special gift variants to the friendship memory journal with spoiler-safe hints.
+- [x] Add a 90-second per-pair runtime cooldown and clear it when the player leaves.
+- [x] Add static regression assertions for biome pools, personality modifiers, reward safety and journal wiring.
+- [ ] Roblox Studio: observe both gift directions with two or three active pets.
+- [ ] Verify discoveries survive leave/rejoin and the journal reveals only gifts actually received.
+- [ ] Verify 90-second cooldown and that gift moments do not overlap other overhead UI excessively.
+- [ ] Check journal scrolling and layout on phone, tablet and desktop.
+
+
+### Sprint 4.82 — Gifts and caring moments
+- [x] Add biome-themed gift pools for Meadow, Emerald, Frost, Ember, Crystal, Ancient, Forgotten Cave and Lineage origins.
+- [x] Let either companion initiate a gift after a completed shared social session.
+- [x] Adjust gift likelihood using the giver's personality and the pair's saved friendship tier.
+- [x] Add a rarer special-gift variant whose chance also improves with friendship.
+- [x] Show the gift above the receiver with a temporary glow and a readable Russian message.
+- [x] Persist discovered gifts and total gift count in the player nest profile.
+- [x] Give both pets a small mood response; do not grant coins, XP, materials or combat power.
+- [x] Add all 48 normal/special gift variants to the friendship memory journal with spoiler-safe hints.
+- [x] Add a 90-second per-pair runtime cooldown and clear it when the player leaves.
+- [x] Add static regression assertions for biome pools, personality modifiers, reward safety and journal wiring.
+- [ ] Roblox Studio: observe both gift directions with two or three active pets.
+- [ ] Verify discoveries survive leave/rejoin and the journal reveals only gifts actually received.
+- [ ] Verify 90-second cooldown and that gift moments do not overlap other overhead UI excessively.
+- [ ] Check journal scrolling and layout on phone, tablet and desktop.
+
+
+### Sprint 4.83 — Emotional gift reactions
+- [x] Add personality-specific receiver reactions: jump, spin, hug, shy sway, calm sway, dreamy sway and proud pose.
+- [x] Add independent giver reactions so the presenting companion also celebrates or reacts modestly.
+- [x] Rare gifts trigger a special amazed receiver reaction and a proud giver reaction with a longer presentation window.
+- [x] Drive reactions through server-owned model attributes and the existing companion movement loop; no separate client animation controller is required.
+- [x] Add paired approach offsets and face-to-face orientation for hug reactions.
+- [x] Show each pet's reaction phrase in its existing overhead mood label.
+- [x] Clear reaction attributes automatically when the reaction expires; sleeping companions do not perform active gift emotes.
+- [x] Add regression assertions for personality maps, rare reactions, paired hug offsets and cleanup.
+- [ ] Roblox Studio: verify emotes read naturally with the current low-poly companion models.
+- [ ] Check that two companions do not clip into each other during hugs and that movement resumes smoothly afterwards.
+- [ ] Verify rare gift presentation is visually distinct and reaction text remains readable on mobile/tablet/desktop.
+
+
+### Sprint 4.84 — Autonomous personality habits
+- [x] Add 12 personality-specific idle habits: sniffing, inspecting, playful hopping, stretching, grooming, looking around, daydreaming, sky watching, swaying, waving, caring checks and proud poses.
+- [x] Give each habit its own short movement signature using the existing companion follower loop.
+- [x] Show a Russian overhead caption while a habit is active.
+- [x] Keep habits occasional with personality-specific trigger chances, an initial delay and a per-companion cooldown.
+- [x] Restrict habits to quiet idle moments with sufficient mood, energy and hunger; do not interrupt social play, sleep, chase, shared rest or gift reactions.
+- [x] Clear habit state automatically on expiry and immediately when the companion starts sleeping.
+- [x] Add static regression assertions for all 12 mappings, cooldowns, movement hooks and cleanup.
+- [ ] Roblox Studio: verify every habit is visibly distinct on the current low-poly models.
+- [ ] Verify habits do not interrupt pathing, social sessions, toy play, treasure searches or gift reactions.
+- [ ] Check captions and subtle movement at phone, tablet and desktop camera distances.
+
+
+### Sprint 4.85 — Special friendship memories
+- [x] Add distinct friendship milestone celebrations at 60, 80 and 100 bond.
+- [x] Create pair-specific memories: Trusted Pact, Unbreakable Promise and Friends Forever.
+- [x] Unlock each memory exactly once when its pair reaches the corresponding bond threshold.
+- [x] Persist discoveries under the existing DiscoveredBondMoments profile collection using a stable pair key.
+- [x] Show a shared species-style banner/glow on both companions and notify the player on first discovery.
+- [x] Extend the friendship journal with three milestone records for every pair that has established a bond; undiscovered entries remain hidden with threshold hints.
+- [x] Include pair memories in the journal's completion count.
+- [x] Add static regression assertions for threshold unlocks, pair-specific keys and journal wiring.
+- [ ] Roblox Studio: raise a pair through 60, 80 and 100 bond and verify each celebration happens once.
+- [ ] Verify two different pairs unlock separate memories and do not overwrite each other.
+- [ ] Verify all three memories remain discovered after leaving and rejoining.
+- [ ] Verify journal entries update after each milestone and layout remains readable on mobile/tablet/desktop.
+
+
+### Sprint 4.86 — Cooperative companion life
+- [x] Add comfort behavior: a bonded companion can notice a sad friend (mood <= 35), approach and stay beside them for a short comforting interaction.
+- [x] Caring personalities initiate comfort more often than other personalities.
+- [x] A completed comfort interaction raises the receiver's mood by 6 (9 for a caring companion) and the initiator's mood by 2; both values are persisted in the profile.
+- [x] Show distinct overhead captions and gentle paired sway while the interaction is active.
+- [x] Add cooperative exploration: when a bonded pair (20+ bond) has a safe idle window, one companion can invite the other to the same point of interest.
+- [x] Keep the invited companion's shared destination ahead of solo idle choices and require both pets to arrive within 6 studs before completing the discovery.
+- [x] Shared discoveries raise both moods by 3, show a shared-heart effect and notify the player; pair cooldown prevents repeated prompts for 90 seconds.
+- [x] Expire abandoned shared invitations and clear their transient attributes.
+- [x] Add static regression assertions for comfort thresholds/rewards, invitation routing, arrival checks and cleanup.
+- [ ] Roblox Studio: verify comfort starts only for genuinely low-mood companions and does not interrupt sleep or needs.
+- [ ] Verify both pets arrive at the same discovery point and the shared reward/notice occurs once if either arrives first.
+- [ ] Verify a partner who cannot join (sleeping, busy, or out of range) does not receive a false shared-discovery reward.
+- [ ] Verify the new overhead captions remain legible and do not collide with gift/friendship billboards on mobile/tablet/desktop.
+
+
+### Sprint 4.87 — Shared ball play (first playable slice)
+- [x] Add an occasional ball-passing moment when an established companion pair (10+ friendship) begins a social session.
+- [x] Give playful and energetic personalities a higher chance to initiate the shared game.
+- [x] Create a short-lived, non-colliding server-owned ball with a readable Russian pass cue and a soft species-neutral glow.
+- [x] Animate five alternating passes between the two live companion models; stop and clean up if either model disappears.
+- [x] Add a 45-second per-owner/pair cooldown and clear its entries when the owner leaves.
+- [x] Add static regression assertions for eligibility, presentation, animation, ownership metadata, cleanup and cooldown.
+- [ ] Roblox Studio: verify the ball visibly travels between both pets without clipping through terrain or UI.
+- [ ] Verify sleeping, busy, removed and distant companions never start or receive a ball game.
+- [ ] Verify cooldown isolation across pairs and players; test desktop, tablet and mobile camera distances.
+
+**Scope:** this is the first playable shared-game slice. All four shared games are implemented in source and tracked below; Studio acceptance remains outstanding; do not mark Sprint 4.87 complete until the Studio acceptance cases pass.
+
+
+### Sprint 4.87 — Hide and seek and cooperative toys
+- [x] Integrate hide and seek with existing nest landmark positions, reciprocal pair roles, delayed seeking, 12-second timeout and 60-second cooldown.
+- [x] Integrate cooperative play with an existing equipped toy, reciprocal pair identity, separate approach positions, 10-second timeout and 60-second cooldown.
+- [x] Cancel both activities on missing partner, sleep, insufficient needs or unsafe weather; do not add currency or XP rewards.
+- [x] Add source regression assertions for both games.
+- [ ] Roblox Studio: verify movement, arrival, captions, toy animation, cleanup and multiplayer isolation.
+- [x] Complete shared treasure hunt (see below).
+- [ ] Complete final Sprint 4.87 Studio acceptance.
+
+
+### Sprint 4.87 — Cooperative treasure hunt
+- [x] Add a shared landmark search for pairs at 30+ friendship with adequate needs.
+- [x] Require both pets to reach separate approach positions before the lower slot completes the event.
+- [x] Show a temporary golden discovery effect and a single owner notice; no inventory or economy reward.
+- [x] Add a 10-second deadline, 90-second pair cooldown and cleanup on cancellation.
+- [x] Add source regression checks.
+- [ ] Complete Roblox Studio acceptance of all four shared games before release.
+
+
+### Sprint 4.88 — Void Frontier destination foundation
+- [x] Correct the endgame gate to use the existing persisted `ancient_temple_boss` completion flag (not the nonexistent `ancient_trial` key).
+- [x] Add a level-75 + Ancient Tree Guardian victory gate to the biome progression catalog.
+- [x] Build a distinct Void Frontier landing island with a beacon, six rune pillars, welcome sign and return route.
+- [x] Connect Ancient Heights to the new island with an 18-segment physical causeway and server-gated travel prompts.
+- [x] Add world-health diagnostics and regression checks for the new destination and both travel portals.
+- [ ] Roblox Studio: test locked and unlocked travel, return travel, bridge collision, respawn and multiplayer isolation.
+- [ ] Add the Void Frontier trial, egg/species catalog, resource loop and endgame reward before calling the biome complete.
+
+
+### Sprint 4.89 — Void Trial (first playable endgame objective)
+- [x] Add a persistent, per-player Rift → Echo → Star rune sequence in Void Frontier.
+- [x] Add server-side validation for biome, unlocked access, living character and interaction distance.
+- [x] Reset the sequence on an incorrect rune; keep valid progress across rejoin.
+- [x] Add a one-time altar claim with 900 coins, 650 XP and 25 Starshards.
+- [x] Add world-health checks for all three rune prompts, altar prompt and clue sign.
+- [x] Add regression checks and bootstrap registration.
+- [ ] Roblox Studio: test correct/wrong order, rejoin persistence, duplicate reward prevention and multiplayer isolation.
+
+
+### Sprint 4.90 — Star Eater, three-phase endgame boss
+- [x] Build a raised Void Frontier boss arena with eight illuminated pylons and a distinct Star Eater model.
+- [x] Add a server-authoritative, per-player boss fight gated by the completed Void Trial.
+- [x] Persist 540 boss health per player and unlock three combat phases at 65% and 30% health.
+- [x] Add Rift Slam, Void Pulse, Starfall and Collapse attacks with visible, player-targeted ground warnings and dodge windows.
+- [x] Add a one-time Mythic Star Eater companion, 1,800 coins, 1,200 XP and 12 Starshards.
+- [x] Add the unique companion's catalogue entry and low-poly follower appearance.
+- [x] Add Void Frontier trial/boss HUD state, attack warning visibility and world-health/regression checks.
+- [ ] Roblox Studio: verify all three phases, attack telegraphs, dodge damage, persistence, multiplayer isolation and one-time rewards.
+
+
+### Sprint 4.91 — Void Frontier ecosystem
+- [x] Add the Mythic Void Egg with Riftling (60%), Echo Wisp (30%) and Nebula Drake (10%).
+- [x] Add three world egg shells and nine safe spawn slots managed by the existing EggService.
+- [x] Add six Starshard outcrops around the island rim with stable IDs and a 180-second per-player/per-node cooldown.
+- [x] Persist Void node cooldowns and Starshard balances; reuse the existing resource HUD.
+- [x] Give an active Star Eater a 30% chance to discover one extra Starshard per harvest.
+- [x] Register VoidHarvestService and add world-health/regression checks.
+- [ ] Roblox Studio: test egg collection/hatching, rarity odds, cooldowns, inventory full state, and two-player isolation.
+
+
+### Sprint 4.92 — Void Forge
+- [x] Build an interactive Void Forge station on the Void Frontier island with a proximity prompt and illuminated core.
+- [x] Add three deterministic recipes that create existing equippable artifact instances: Void Harvester (gather), Rift Compass (research XP), Nebula Charm (hatch).
+- [x] Validate biome access, physical station distance, recipe ID, collection capacity and all resource balances on the server before spending anything.
+- [x] Persist crafted artifacts in the existing artifact collection and preserve compatibility with the two equipment slots, bonuses and artifact merging.
+- [x] Add a forge interaction that opens the existing artifact UI and shows recipes only while in Void Frontier.
+- [x] Add world-health and source regression checks.
+- [ ] Roblox Studio: test each recipe, insufficient materials, full collection, remote spoofing, rejoin persistence, equip/unequip and actual bonus effects.
+
+
+### Sprint 4.93 — Voidwalker equipment
+- [x] Add four persistent gear slots: weapon, armor, helmet and accessory.
+- [x] Add a complete four-piece Voidwalker set with deterministic forge recipes and one item per slot.
+- [x] Validate biome access, forge distance, item identity, duplicate ownership and all resource balances server-side before spending.
+- [x] Persist gear inventory and equipped slot mapping in the reconciled player profile.
+- [x] Apply gear visuals to the character with welded parts and restore them after respawn.
+- [x] Apply damage, defense, max-health and movement bonuses to player attributes and Humanoid stats.
+- [x] Add a four-piece set bonus; integrate gear damage/defense with Void, Ancient Temple, Forgotten Heart and raid combat.
+- [x] Add a responsive gear panel and open it from the Void Forge prompt.
+- [x] Fix the Void Forge station lookup to match the actual world anvil.
+- [ ] Roblox Studio: verify R6/R15 visuals, respawn persistence, all four crafting recipes, equip replacement, set bonus, boss damage and incoming damage reduction.

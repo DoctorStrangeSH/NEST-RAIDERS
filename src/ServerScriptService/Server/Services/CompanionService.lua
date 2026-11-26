@@ -1,6 +1,8 @@
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
+local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -15,6 +17,17 @@ CompanionService._displayFolders = {}
 CompanionService._generations = {}
 local MAX_VISIBLE_COMPANIONS = 3
 local FOLLOW_INTERVAL = 0.1
+local socialMomentCooldowns = {}
+local pairGreetingLastAt = {}
+local socialChaseCooldowns = {}
+local sharedRestCooldowns = {}
+local speciesMomentCooldowns = {}
+local companionCareCooldowns = {}
+local sharedDiscoveryCooldowns = {}
+local pairedBallCooldowns = {}
+local hideSeekCooldowns = {}
+local sharedToyCooldowns = {}
+local sharedTreasureCooldowns = {}
 
 local DEFINITIONS = {
     MeadowFox = {
@@ -143,6 +156,30 @@ local DEFINITIONS = {
         Detail = Color3.fromRGB(79, 105, 65),
         Kind = "HeartwoodGuardian",
     },
+    StarEater = {
+        Body = Color3.fromRGB(65, 53, 102),
+        Accent = Color3.fromRGB(190, 145, 255),
+        Detail = Color3.fromRGB(113, 120, 190),
+        Kind = "StarEater",
+    },
+    Riftling = {
+        Body = Color3.fromRGB(73, 55, 117),
+        Accent = Color3.fromRGB(193, 130, 255),
+        Detail = Color3.fromRGB(107, 84, 171),
+        Kind = "Riftling",
+    },
+    EchoWisp = {
+        Body = Color3.fromRGB(73, 104, 148),
+        Accent = Color3.fromRGB(137, 207, 255),
+        Detail = Color3.fromRGB(167, 146, 231),
+        Kind = "EchoWisp",
+    },
+    NebulaDrake = {
+        Body = Color3.fromRGB(112, 67, 128),
+        Accent = Color3.fromRGB(255, 167, 220),
+        Detail = Color3.fromRGB(111, 112, 191),
+        Kind = "NebulaDrake",
+    },
 }
 
 local function makeShape(model, name, size, offset, color, shape)
@@ -170,6 +207,185 @@ local function getBondKey(firstId, secondId)
     return first .. "|" .. second
 end
 
+local GIFT_COOLDOWNS = {}
+
+local BIOME_GIFTS = {
+    MeadowEgg = { { Name = "Букет луговых цветов", Icon = "🌼" }, { Name = "Корзинка сладких ягод", Icon = "🫐" }, { Name = "Резной желудь", Icon = "🌰" } },
+    EmeraldEgg = { { Name = "Светящийся лист", Icon = "🍃" }, { Name = "Лесной кристалл", Icon = "💎" }, { Name = "Живой росток", Icon = "🌱" } },
+    FrostEgg = { { Name = "Снежная брошь", Icon = "❄️" }, { Name = "Ледяная звезда", Icon = "⭐" }, { Name = "Морозная ракушка", Icon = "🐚" } },
+    EmberEgg = { { Name = "Тёплый уголь-сердечко", Icon = "🔥" }, { Name = "Солнечная бусина", Icon = "☀️" }, { Name = "Янтарный осколок", Icon = "🟠" } },
+    CrystalEgg = { { Name = "Призматический осколок", Icon = "💠" }, { Name = "Лунная груша", Icon = "🍐" }, { Name = "Звёздный нектар", Icon = "✨" } },
+    AncientEgg = { { Name = "Золотой желудь", Icon = "🌰" }, { Name = "Семя древнего дерева", Icon = "🌳" }, { Name = "Лепесток вечности", Icon = "🌸" } },
+    ForgottenCaveEgg = { { Name = "Светящийся гриб", Icon = "🍄" }, { Name = "Камень эха", Icon = "🔮" }, { Name = "Осколок сердца пещеры", Icon = "💜" } },
+    LineageEgg = { { Name = "Реликвия рода", Icon = "🏵️" }, { Name = "Семя предков", Icon = "🌿" }, { Name = "Семейный талисман", Icon = "🧿" } },
+}
+local PERSONALITY_GIFT_BONUS = {
+    ["Заботливый"] = 0.10, ["Добродушный"] = 0.08, ["Дружелюбный"] = 0.08,
+    ["Мечтательный"] = 0.05, ["Гордый"] = -0.04, ["Независимый"] = -0.05,
+    ["Осторожный"] = -0.03,
+}
+local RARITY_SPECIAL_GIFT_BONUS = {
+    ["Необычный"] = 0.02,
+    ["Редкий"] = 0.04,
+    ["Эпический"] = 0.07,
+    ["Легендарный"] = 0.10,
+    ["Мифический"] = 0.14,
+}
+local COMPANION_HABITS = {
+    ["Любопытный"] = { Id = "SniffAround", Text = "Обнюхивает всё вокруг", Chance = 0.22 },
+    ["Любознательный"] = { Id = "Inspect", Text = "Изучает интересную находку", Chance = 0.24 },
+    ["Игривый"] = { Id = "PlayfulHop", Text = "Придумывает себе игру", Chance = 0.24 },
+    ["Энергичный"] = { Id = "Stretch", Text = "Разминается перед приключением", Chance = 0.20 },
+    ["Спокойный"] = { Id = "Groom", Text = "Умывается и приводит себя в порядок", Chance = 0.20 },
+    ["Осторожный"] = { Id = "LookAround", Text = "Осторожно осматривается", Chance = 0.22 },
+    ["Мечтательный"] = { Id = "Daydream", Text = "Мечтает о дальних островах", Chance = 0.22 },
+    ["Наблюдательный"] = { Id = "WatchSky", Text = "Наблюдает за небом", Chance = 0.20 },
+    ["Добродушный"] = { Id = "Sway", Text = "Довольно покачивается", Chance = 0.18 },
+    ["Дружелюбный"] = { Id = "Wave", Text = "Ищет взглядом друзей", Chance = 0.20 },
+    ["Заботливый"] = { Id = "Care", Text = "Проверяет, всё ли в порядке", Chance = 0.18 },
+    ["Гордый"] = { Id = "Proud", Text = "Демонстрирует свою осанку", Chance = 0.18 },
+}
+
+local GIFT_RECEIVER_REACTIONS = {
+    ["Игривый"] = { Animation = "Spin", Text = "Ура! Спасибо!" },
+    ["Энергичный"] = { Animation = "Jump", Text = "Вау! Как здорово!" },
+    ["Дружелюбный"] = { Animation = "Hug", Text = "Как мило! Спасибо!" },
+    ["Добродушный"] = { Animation = "Hug", Text = "Ты такой хороший друг!" },
+    ["Заботливый"] = { Animation = "Hug", Text = "Обнимашки!" },
+    ["Осторожный"] = { Animation = "Shy", Text = "Ой… это мне?" },
+    ["Спокойный"] = { Animation = "Sway", Text = "Как приятно…" },
+    ["Мечтательный"] = { Animation = "Dream", Text = "Настоящее чудо!" },
+    ["Гордый"] = { Animation = "Proud", Text = "Хм… мне нравится!" },
+    ["Независимый"] = { Animation = "Shy", Text = "Спасибо, друг." },
+    ["Любопытный"] = { Animation = "Spin", Text = "Что же это?" },
+    ["Любознательный"] = { Animation = "Spin", Text = "Надо рассмотреть!" },
+}
+local GIFT_GIVER_REACTIONS = {
+    ["Игривый"] = { Animation = "Bounce", Text = "Сюрприз!" },
+    ["Энергичный"] = { Animation = "Jump", Text = "Я нашёл это для тебя!" },
+    ["Заботливый"] = { Animation = "Proud", Text = "Я хотел тебя порадовать." },
+    ["Дружелюбный"] = { Animation = "Sway", Text = "Рад поделиться!" },
+    ["Добродушный"] = { Animation = "Sway", Text = "Это тебе, дружок!" },
+    ["Осторожный"] = { Animation = "Shy", Text = "Я… приготовил кое-что." },
+    ["Мечтательный"] = { Animation = "Dream", Text = "Маленькое чудо для тебя." },
+}
+local function setGiftReaction(model, reaction, duration, rare)
+    if not model or not model.Parent then return end
+    model:SetAttribute("GiftReaction", reaction.Animation)
+    model:SetAttribute("GiftReactionText", rare and "Невероятно!" or reaction.Text)
+    model:SetAttribute("GiftReactionUntil", os.clock() + duration)
+    model:SetAttribute("GiftReactionRare", rare == true)
+end
+
+local function showCompanionGift(giverModel, receiverModel, gift, isRare)
+    if not giverModel or not giverModel.Parent or not receiverModel or not receiverModel.Parent then return end
+    receiverModel:SetAttribute("LastGiftReceived", gift.Name)
+    receiverModel:SetAttribute("GiftReceivedAt", os.time())
+    local adornee = receiverModel:FindFirstChild("Head") or receiverModel.PrimaryPart
+    if not adornee then return end
+
+    local bubble = Instance.new("BillboardGui")
+    bubble.Name = "CompanionGiftMoment"
+    bubble.Adornee = adornee
+    bubble.Size = UDim2.fromOffset(204, 54)
+    bubble.StudsOffset = Vector3.new(0, 1.8, 0)
+    bubble.AlwaysOnTop = false
+    bubble.Parent = receiverModel
+
+    local card = Instance.new("TextLabel")
+    card.Size = UDim2.fromScale(1, 1)
+    card.BackgroundColor3 = Color3.fromRGB(35, 43, 55)
+    card.BackgroundTransparency = 0.08
+    card.BorderSizePixel = 0
+    card.Font = Enum.Font.GothamBold
+    card.TextSize = 12
+    card.TextWrapped = true
+    card.TextColor3 = isRare and Color3.fromRGB(255, 211, 125) or Color3.fromRGB(222, 245, 225)
+    card.Text = gift.Icon .. " " .. (isRare and "Особенный подарок! " or "Подарок другу! ") .. gift.Name
+    card.Parent = bubble
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = card
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = card.TextColor3
+    stroke.Transparency = 0.25
+    stroke.Thickness = 1.3
+    stroke.Parent = card
+
+    local light = Instance.new("PointLight")
+    light.Name = "GiftMomentGlow"
+    light.Color = isRare and Color3.fromRGB(255, 205, 112) or Color3.fromRGB(142, 226, 173)
+    light.Range = 5
+    light.Brightness = 0.8
+    light.Parent = adornee
+    task.delay(2.8, function()
+        if bubble.Parent then bubble:Destroy() end
+        if light.Parent then light:Destroy() end
+    end)
+end
+
+local function tryGiveCompanionGift(player, profile, giverModel, receiverModel, giverDefinition, pairKey, bondScore, now, random)
+    if not pairKey or not giverDefinition or not receiverModel then return end
+    local cooldownKey = tostring(player.UserId) .. ":" .. pairKey
+    if (GIFT_COOLDOWNS[cooldownKey] or 0) > now then return end
+
+    local chance = bondScore >= 90 and 0.30
+        or bondScore >= 60 and 0.22
+        or bondScore >= 30 and 0.14
+        or bondScore >= 10 and 0.08
+        or 0.03
+    chance = math.clamp(chance + (PERSONALITY_GIFT_BONUS[giverDefinition.Personality or ""] or 0), 0.02, 0.40)
+    if random:NextNumber() > chance then return end
+
+    local gifts = BIOME_GIFTS[giverDefinition.EggId] or BIOME_GIFTS.MeadowEgg
+    local gift = gifts[random:NextInteger(1, #gifts)]
+    local rareChance = bondScore >= 90 and 0.20
+        or bondScore >= 60 and 0.14
+        or bondScore >= 30 and 0.09
+        or 0.04
+    rareChance = math.clamp(rareChance + (RARITY_SPECIAL_GIFT_BONUS[giverDefinition.Rarity or ""] or 0), 0.02, 0.35)
+    local isRare = random:NextNumber() <= rareChance
+    if isRare then
+        gift = { Name = "Особенный дар: " .. gift.Name, Icon = "💖" }
+    end
+
+    GIFT_COOLDOWNS[cooldownKey] = now + 90
+    profile.Nest.DiscoveredCompanionGifts = profile.Nest.DiscoveredCompanionGifts or {}
+    profile.Nest.CompanionGiftCount = math.max(0, math.floor(tonumber(profile.Nest.CompanionGiftCount) or 0)) + 1
+    local giftKey = tostring(giverDefinition.EggId or "MeadowEgg") .. ":" .. gift.Name
+    local isNewDiscovery = profile.Nest.DiscoveredCompanionGifts[giftKey] ~= true
+    profile.Nest.DiscoveredCompanionGifts[giftKey] = true
+
+    local receiverId = receiverModel:GetAttribute("CompanionInstanceId")
+    local giverId = giverModel:GetAttribute("CompanionInstanceId")
+    profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
+    local receiverMood = math.clamp(math.floor(tonumber(profile.Nest.CompanionMood[receiverId])
+        or tonumber(receiverModel:GetAttribute("Mood")) or 50) + 5, 0, 100)
+    local giverMood = math.clamp(math.floor(tonumber(profile.Nest.CompanionMood[giverId])
+        or tonumber(giverModel:GetAttribute("Mood")) or 50) + 2, 0, 100)
+    profile.Nest.CompanionMood[receiverId] = receiverMood
+    profile.Nest.CompanionMood[giverId] = giverMood
+    receiverModel:SetAttribute("Mood", receiverMood)
+    giverModel:SetAttribute("Mood", giverMood)
+
+    showCompanionGift(giverModel, receiverModel, gift, isRare)
+    local duration = isRare and 3.6 or 2.8
+    local receiverPersonality = receiverModel:GetAttribute("Personality") or ""
+    local giverPersonality = giverModel:GetAttribute("Personality") or ""
+    local receiverReaction = GIFT_RECEIVER_REACTIONS[receiverPersonality]
+        or { Animation = "Jump", Text = "Спасибо за подарок!" }
+    local giverReaction = GIFT_GIVER_REACTIONS[giverPersonality]
+        or { Animation = "Proud", Text = "Это для тебя!" }
+    if isRare then
+        receiverReaction = { Animation = "Amazed", Text = "Невероятный подарок!" }
+        giverReaction = { Animation = "Proud", Text = "Я нашёл нечто особенное!" }
+    end
+    setGiftReaction(receiverModel, receiverReaction, duration, isRare)
+    setGiftReaction(giverModel, giverReaction, duration * 0.9, isRare)
+    player:SetAttribute("LastNotice", isNewDiscovery and ("Новое воспоминание: " .. gift.Name)
+        or ("Питомец подарил другу: " .. gift.Name))
+end
+
 local function getBondLevel(score)
     if score >= 90 then return "Неразлучные" end
     if score >= 60 then return "Лучшие друзья" end
@@ -178,12 +394,341 @@ local function getBondLevel(score)
     return "Знакомство"
 end
 
+local BOND_MILESTONES = {
+    [10] = { Title = "Первые друзья!", Color = Color3.fromRGB(116, 222, 174) },
+    [30] = { Title = "Крепкая дружба!", Color = Color3.fromRGB(104, 194, 255) },
+    [60] = { Title = "Неразлучная команда!", Color = Color3.fromRGB(194, 139, 255) },
+    [80] = { Title = "Дружба без границ!", Color = Color3.fromRGB(225, 157, 255) },
+    [90] = { Title = "Друзья навсегда!", Color = Color3.fromRGB(255, 205, 112) },
+    [100] = { Title = "Вместе навеки!", Color = Color3.fromRGB(255, 225, 145) },
+}
+local PAIR_BOND_MEMORIES = {
+    [60] = { Id = "TrustedPact", Title = "Тайный знак дружбы", Icon = "🤝", Color = Color3.fromRGB(194, 139, 255), Text = "Питомцы придумали собственный знак дружбы" },
+    [80] = { Id = "UnbreakablePromise", Title = "Обещание неразлучности", Icon = "💞", Color = Color3.fromRGB(225, 157, 255), Text = "Друзья обещают всегда поддерживать друг друга" },
+    [100] = { Id = "ForeverTogether", Title = "Друзья навеки", Icon = "🌟", Color = Color3.fromRGB(255, 225, 145), Text = "Их дружба стала по-настоящему особенной" },
+}
+
+local function showBondMilestone(player, firstModel, secondModel, milestone)
+    if not firstModel or not secondModel or not milestone then return end
+    for _, model in ipairs({ firstModel, secondModel }) do
+        model:SetAttribute("BondMoment", milestone.Title)
+        model:SetAttribute("BondMomentUntil", os.clock() + 2.4)
+        local glow = Instance.new("Highlight")
+        glow.Name = "FriendshipMilestoneGlow"
+        glow.Adornee = model
+        glow.FillColor = milestone.Color
+        glow.OutlineColor = milestone.Color
+        glow.FillTransparency = 0.48
+        glow.OutlineTransparency = 0.05
+        glow.DepthMode = Enum.HighlightDepthMode.Occluded
+        glow.Parent = model
+        task.delay(2.4, function()
+            if glow.Parent then glow:Destroy() end
+            if model.Parent and model:GetAttribute("BondMoment") == milestone.Title then
+                model:SetAttribute("BondMoment", nil)
+                model:SetAttribute("BondMomentUntil", nil)
+            end
+        end)
+    end
+
+    local root = firstModel.PrimaryPart
+    if root then
+        local banner = Instance.new("BillboardGui")
+        banner.Name = "FriendshipMilestoneBanner"
+        banner.Adornee = root
+        banner.Size = UDim2.fromOffset(220, 42)
+        banner.StudsOffset = Vector3.new(0, 4.1, 0)
+        banner.AlwaysOnTop = true
+        banner.Parent = firstModel
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.fromScale(1, 1)
+        label.BackgroundColor3 = Color3.fromRGB(28, 37, 49)
+        label.BackgroundTransparency = 0.08
+        label.BorderSizePixel = 0
+        label.Font = Enum.Font.GothamBold
+        label.TextSize = 15
+        label.TextColor3 = milestone.Color
+        label.Text = "✦ " .. milestone.Title .. " ✦"
+        label.Parent = banner
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 12)
+        corner.Parent = label
+        task.delay(2.4, function()
+            if banner.Parent then banner:Destroy() end
+        end)
+    end
+    player:SetAttribute("LastNotice", "Новый этап дружбы: " .. milestone.Title)
+end
+
+local function showSharedHeartMoment(firstModel, secondModel)
+    for _, model in ipairs({ firstModel, secondModel }) do
+        if model and model.Parent then
+            local head = model:FindFirstChild("Head")
+            local adornee = head or model.PrimaryPart
+            if adornee then
+                local bubble = Instance.new("BillboardGui")
+                bubble.Name = "SharedFriendshipHeart"
+                bubble.Adornee = adornee
+                bubble.Size = UDim2.fromOffset(42, 42)
+                bubble.StudsOffset = Vector3.new(0, 1.05, 0)
+                bubble.AlwaysOnTop = true
+                bubble.Parent = model
+                local heart = Instance.new("TextLabel")
+                heart.Name = "Heart"
+                heart.Size = UDim2.fromScale(1, 1)
+                heart.BackgroundTransparency = 1
+                heart.Font = Enum.Font.GothamBold
+                heart.Text = "♥"
+                heart.TextColor3 = Color3.fromRGB(255, 112, 153)
+                heart.TextStrokeColor3 = Color3.fromRGB(75, 35, 54)
+                heart.TextStrokeTransparency = 0.25
+                heart.TextScaled = true
+                heart.Parent = bubble
+                task.delay(1.6, function()
+                    if bubble.Parent then bubble:Destroy() end
+                end)
+            end
+        end
+    end
+end
+
+local function clearHideSeek(model)
+    if not model or not model.Parent then return end
+    for _, attribute in ipairs({"HideSeekRole", "HideSeekUntil", "HideSeekStart", "HideSeekTarget", "HideSeekPartner"}) do
+        model:SetAttribute(attribute, nil)
+    end
+end
+
+local function showPairedBallGame(firstModel, secondModel, ownerUserId, pairKey, personality, now)
+    if not firstModel or not secondModel or not firstModel.Parent or not secondModel.Parent then return false end
+    if firstModel.Parent ~= secondModel.Parent then return false end
+    local firstPosition = firstModel:GetPivot().Position
+    local secondPosition = secondModel:GetPivot().Position
+    if (firstPosition - secondPosition).Magnitude > 12 then return false end
+
+    local ballColor = (personality == "Энергичный" or personality == "Игривый")
+        and Color3.fromRGB(255, 205, 91)
+        or personality == "Дружелюбный" and Color3.fromRGB(255, 132, 174)
+        or personality == "Спокойный" and Color3.fromRGB(133, 221, 184)
+        or Color3.fromRGB(117, 205, 245)
+
+    local ball = Instance.new("Part")
+    ball.Name = "CompanionFriendshipBall"
+    ball.Shape = Enum.PartType.Ball
+    ball.Size = Vector3.new(0.62, 0.62, 0.62)
+    ball.Material = Enum.Material.Neon
+    ball.Color = ballColor
+    ball.Anchored = true
+    ball.CanCollide = false
+    ball.CanTouch = false
+    ball.CanQuery = false
+    ball.CastShadow = false
+    ball:SetAttribute("OwnerUserId", ownerUserId)
+    ball:SetAttribute("PairKey", pairKey)
+    ball.Parent = Workspace
+
+    local light = Instance.new("PointLight")
+    light.Color = ballColor
+    light.Brightness = 0.7
+    light.Range = 7
+    light.Parent = ball
+
+    local bubble = Instance.new("BillboardGui")
+    bubble.Name = "CompanionBallGameLabel"
+    bubble.Size = UDim2.fromOffset(76, 22)
+    bubble.StudsOffset = Vector3.new(0, 0.72, 0)
+    bubble.AlwaysOnTop = false
+    bubble.Adornee = ball
+    bubble.Parent = ball
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.fromScale(1, 1)
+    label.BackgroundTransparency = 1
+    label.Font = Enum.Font.GothamBold
+    label.Text = "ПАС!"
+    label.TextColor3 = Color3.fromRGB(255, 255, 244)
+    label.TextStrokeColor3 = Color3.fromRGB(38, 54, 65)
+    label.TextStrokeTransparency = 0.2
+    label.TextScaled = true
+    label.Parent = bubble
+
+    local initial = (firstPosition + secondPosition) * 0.5 + Vector3.new(0, 1.25, 0)
+    ball.Position = initial
+    Debris:AddItem(ball, 4.5)
+
+    task.spawn(function()
+        for pass = 1, 5 do
+            if not ball.Parent or not firstModel.Parent or not secondModel.Parent then break end
+            local receiver = pass % 2 == 1 and secondModel or firstModel
+            local targetPosition = receiver:GetPivot().Position + Vector3.new(0, 1.25, 0)
+            local tween = TweenService:Create(
+                ball,
+                TweenInfo.new(0.34, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+                { Position = targetPosition }
+            )
+            tween:Play()
+            local playbackState = tween.Completed:Wait()
+            if playbackState ~= Enum.PlaybackState.Completed then break end
+        end
+        if ball.Parent then ball:Destroy() end
+    end)
+    return true
+end
+
+local GREETING_STYLES = {
+    ["Дружелюбный"] = { Icon = "♥", Color = Color3.fromRGB(255, 125, 166), Text = "Рад тебя видеть!" },
+    ["Добродушный"] = { Icon = "♥", Color = Color3.fromRGB(255, 174, 120), Text = "Привет, друг!" },
+    ["Игривый"] = { Icon = "✦", Color = Color3.fromRGB(255, 218, 112), Text = "Поиграем?" },
+    ["Энергичный"] = { Icon = "★", Color = Color3.fromRGB(255, 205, 105), Text = "Ура, ты здесь!" },
+    ["Осторожный"] = { Icon = "…", Color = Color3.fromRGB(153, 205, 224), Text = "Привет…" },
+    ["Спокойный"] = { Icon = "❀", Color = Color3.fromRGB(155, 213, 175), Text = "Рад встрече" },
+    ["Мудрый"] = { Icon = "✧", Color = Color3.fromRGB(183, 177, 235), Text = "Снова вместе" },
+    ["Мечтательный"] = { Icon = "☾", Color = Color3.fromRGB(173, 180, 255), Text = "Как хорошо…" },
+}
+
+local function showPersonalityGreeting(firstModel, secondModel, firstPersonality, secondPersonality, reunion)
+    local models = {
+        { Model = firstModel, Personality = firstPersonality },
+        { Model = secondModel, Personality = secondPersonality },
+    }
+    for _, entry in ipairs(models) do
+        local model = entry.Model
+        if model and model.Parent then
+            local style = GREETING_STYLES[entry.Personality] or {
+                Icon = "♥", Color = Color3.fromRGB(255, 150, 175), Text = "Привет!"
+            }
+            local adornee = model:FindFirstChild("Head") or model.PrimaryPart
+            if adornee then
+                local bubble = Instance.new("BillboardGui")
+                bubble.Name = reunion and "FriendshipReunionGreeting" or "PersonalityGreeting"
+                bubble.Adornee = adornee
+                bubble.Size = UDim2.fromOffset(154, reunion and 48 or 40)
+                bubble.StudsOffset = Vector3.new(0, reunion and 1.45 or 1.15, 0)
+                bubble.AlwaysOnTop = false
+                bubble.Parent = model
+
+                local label = Instance.new("TextLabel")
+                label.Size = UDim2.fromScale(1, 1)
+                label.BackgroundColor3 = Color3.fromRGB(28, 37, 49)
+                label.BackgroundTransparency = 0.12
+                label.BorderSizePixel = 0
+                label.Font = Enum.Font.GothamBold
+                label.TextScaled = true
+                label.TextWrapped = true
+                label.TextColor3 = style.Color
+                label.Text = reunion and ("✦ " .. style.Text .. " ✦") or (style.Icon .. " " .. style.Text)
+                label.Parent = bubble
+                local corner = Instance.new("UICorner")
+                corner.CornerRadius = UDim.new(0, 10)
+                corner.Parent = label
+                local stroke = Instance.new("UIStroke")
+                stroke.Color = style.Color
+                stroke.Transparency = 0.35
+                stroke.Thickness = 1.2
+                stroke.Parent = label
+                task.delay(reunion and 3.2 or 2.1, function()
+                    if bubble.Parent then bubble:Destroy() end
+                end)
+            end
+        end
+    end
+
+    if reunion then
+        for _, model in ipairs({ firstModel, secondModel }) do
+            if model and model.Parent then
+                local glow = Instance.new("Highlight")
+                glow.Name = "FriendshipReunionGlow"
+                glow.Adornee = model
+                glow.FillColor = Color3.fromRGB(255, 211, 137)
+                glow.OutlineColor = Color3.fromRGB(255, 230, 175)
+                glow.FillTransparency = 0.72
+                glow.OutlineTransparency = 0.12
+                glow.DepthMode = Enum.HighlightDepthMode.Occluded
+                glow.Parent = model
+                task.delay(3.2, function()
+                    if glow.Parent then glow:Destroy() end
+                end)
+            end
+        end
+    end
+end
+
+local SPECIES_BOND_MOMENTS = {
+    ["Fox|Turtle"] = { Title = "Лесные хранители", Icon = "🍃", Color = Color3.fromRGB(151, 207, 119), Text = "Лис показывает черепахе тайную тропу" },
+    ["Dragon|Owl"] = { Title = "Искра мудрости", Icon = "✨", Color = Color3.fromRGB(157, 190, 255), Text = "Дракон делится искоркой с мудрой совой" },
+    ["EmberFox|MagmaDragon"] = { Title = "Тёплое пламя", Icon = "🔥", Color = Color3.fromRGB(255, 157, 91), Text = "Два огненных друга создают общий вихрь искр" },
+    ["AncientStag|RootSprite"] = { Title = "Древний союз", Icon = "🌿", Color = Color3.fromRGB(177, 208, 125), Text = "Духи леса пробуждают маленький росток" },
+}
+
+local function getSpeciesMomentKey(firstKind, secondKind)
+    if not firstKind or not secondKind then return nil end
+    if firstKind > secondKind then firstKind, secondKind = secondKind, firstKind end
+    return firstKind .. "|" .. secondKind
+end
+
+local function showSpeciesBondMoment(firstModel, secondModel, moment)
+    for _, model in ipairs({ firstModel, secondModel }) do
+        if model and model.Parent then
+            model:SetAttribute("SpeciesBondMoment", moment.Title)
+            model:SetAttribute("SpeciesBondMomentUntil", os.clock() + 3.4)
+            local adornee = model:FindFirstChild("Head") or model.PrimaryPart
+            if adornee then
+                local bubble = Instance.new("BillboardGui")
+                bubble.Name = "SpeciesBondMoment"
+                bubble.Adornee = adornee
+                bubble.Size = UDim2.fromOffset(178, 52)
+                bubble.StudsOffset = Vector3.new(0, 1.65, 0)
+                bubble.AlwaysOnTop = false
+                bubble.Parent = model
+                local label = Instance.new("TextLabel")
+                label.Size = UDim2.fromScale(1, 1)
+                label.BackgroundColor3 = Color3.fromRGB(27, 39, 48)
+                label.BackgroundTransparency = 0.08
+                label.BorderSizePixel = 0
+                label.Font = Enum.Font.GothamBold
+                label.TextScaled = true
+                label.TextWrapped = true
+                label.TextColor3 = moment.Color
+                label.Text = moment.Icon .. " " .. moment.Title
+                label.Parent = bubble
+                local corner = Instance.new("UICorner")
+                corner.CornerRadius = UDim.new(0, 10)
+                corner.Parent = label
+                local stroke = Instance.new("UIStroke")
+                stroke.Color = moment.Color
+                stroke.Transparency = 0.25
+                stroke.Thickness = 1.4
+                stroke.Parent = label
+                task.delay(3.4, function()
+                    if bubble.Parent then bubble:Destroy() end
+                end)
+            end
+            local glow = Instance.new("Highlight")
+            glow.Name = "SpeciesBondGlow"
+            glow.Adornee = model
+            glow.FillColor = moment.Color
+            glow.OutlineColor = moment.Color
+            glow.FillTransparency = 0.78
+            glow.OutlineTransparency = 0.15
+            glow.DepthMode = Enum.HighlightDepthMode.Occluded
+            glow.Parent = model
+            task.delay(3.4, function()
+                if glow.Parent then glow:Destroy() end
+                if model.Parent and model:GetAttribute("SpeciesBondMoment") == moment.Title then
+                    model:SetAttribute("SpeciesBondMoment", nil)
+                    model:SetAttribute("SpeciesBondMomentUntil", nil)
+                end
+            end)
+        end
+    end
+end
 local function buildPet(parent, companion, index)
     local definition = DEFINITIONS[companion.Id] or DEFINITIONS.MeadowFox
     local model = Instance.new("Model")
     model.Name = string.format("%s_%d", companion.Id, index)
     model:SetAttribute("CompanionId", companion.Id)
     model:SetAttribute("CompanionInstanceId", companion.InstanceId or "")
+    model:SetAttribute("CompanionKind", definition.Kind or companion.Id)
     model:SetAttribute("Rarity", companion.Rarity or "Обычный")
     model:SetAttribute("Stars", companion.Stars or 1)
     model.Parent = parent
@@ -297,6 +842,37 @@ local function buildPet(parent, companion, index)
         makeShape(model, "LeftFin", Vector3.new(0.5, 1.0, 1.4), Vector3.new(-1.05, 1.45, -0.2), definition.Detail, Enum.PartType.Wedge)
         makeShape(model, "RightFin", Vector3.new(0.5, 1.0, 1.4), Vector3.new(1.05, 1.45, -0.2), definition.Detail, Enum.PartType.Wedge)
         makeShape(model, "CloudTail", Vector3.new(0.65, 0.65, 1.5), Vector3.new(0, 1.0, -1.3), definition.Accent)
+    elseif definition.Kind == "Riftling" then
+        makeShape(model, "RiftlingCore", Vector3.new(0.85, 0.85, 0.55), Vector3.new(0, 1.55, 0.95), definition.Accent)
+        makeShape(model, "RiftHornLeft", Vector3.new(0.3, 0.9, 0.3), Vector3.new(-0.5, 2.55, 0.1), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "RiftHornRight", Vector3.new(0.3, 0.9, 0.3), Vector3.new(0.5, 2.55, 0.1), definition.Detail, Enum.PartType.Wedge)
+        local riftGlow = Instance.new("PointLight")
+        riftGlow.Color = definition.Accent
+        riftGlow.Range = 11
+        riftGlow.Brightness = 1.3
+        riftGlow.Parent = body
+    elseif definition.Kind == "EchoWisp" then
+        makeShape(model, "EchoHalo", Vector3.new(1.8, 0.22, 1.8), Vector3.new(0, 2.7, 0), definition.Accent, Enum.PartType.Cylinder)
+        makeShape(model, "EchoCore", Vector3.new(0.8, 1.0, 0.8), Vector3.new(0, 1.75, 0.1), definition.Detail)
+        makeShape(model, "EchoTail", Vector3.new(0.45, 1.0, 0.45), Vector3.new(0, 0.65, -0.8), definition.Accent, Enum.PartType.Wedge)
+    elseif definition.Kind == "NebulaDrake" then
+        makeShape(model, "NebulaSnout", Vector3.new(0.75, 0.45, 0.9), Vector3.new(0, 1.6, 1.15), definition.Accent)
+        makeShape(model, "NebulaWingLeft", Vector3.new(0.35, 1.2, 1.35), Vector3.new(-1.15, 1.45, -0.1), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "NebulaWingRight", Vector3.new(0.35, 1.2, 1.35), Vector3.new(1.15, 1.45, -0.1), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "NebulaCrest", Vector3.new(0.35, 0.9, 0.35), Vector3.new(0, 2.65, 0.2), definition.Accent, Enum.PartType.Wedge)
+    elseif definition.Kind == "StarEater" then
+        makeShape(model, "StarEaterCore", Vector3.new(0.9, 0.9, 0.55), Vector3.new(0, 1.55, 0.95), definition.Accent)
+        makeShape(model, "StarEaterHalo", Vector3.new(1.9, 0.22, 1.9), Vector3.new(0, 2.75, 0), definition.Detail, Enum.PartType.Cylinder)
+        for index = 1, 3 do
+            local angle = index * math.pi * 2 / 3
+            makeShape(model, "StarEaterShard", Vector3.new(0.32, 0.95, 0.32),
+                Vector3.new(math.cos(angle) * 0.9, 2.3, math.sin(angle) * 0.9), definition.Accent, Enum.PartType.Wedge)
+        end
+        local starLight = Instance.new("PointLight")
+        starLight.Color = definition.Accent
+        starLight.Range = 13
+        starLight.Brightness = 1.6
+        starLight.Parent = body
     elseif definition.Kind == "HeartwoodGuardian" then
         makeShape(model, "HeartwoodMuzzle", Vector3.new(0.8, 0.55, 0.65),
             Vector3.new(0, 1.55, 1.15), definition.Accent)
@@ -607,6 +1183,58 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             bubbleCorner.CornerRadius = UDim.new(0, 8)
             bubbleCorner.Parent = moodLabel
 
+            -- Always-visible pair progress makes friendship a readable gameplay system.
+            local friendshipBillboard = Instance.new("BillboardGui")
+            friendshipBillboard.Name = "FriendshipProgress"
+            friendshipBillboard.Adornee = model.PrimaryPart
+            friendshipBillboard.Size = UDim2.fromOffset(148, 30)
+            friendshipBillboard.StudsOffset = Vector3.new(0, 3.55, 0)
+            friendshipBillboard.AlwaysOnTop = false
+            friendshipBillboard.Enabled = false
+            friendshipBillboard.Parent = model
+
+            local friendshipCard = Instance.new("Frame")
+            friendshipCard.Size = UDim2.fromScale(1, 1)
+            friendshipCard.BackgroundColor3 = Color3.fromRGB(29, 39, 51)
+            friendshipCard.BackgroundTransparency = 0.1
+            friendshipCard.BorderSizePixel = 0
+            friendshipCard.Parent = friendshipBillboard
+            local friendshipCardCorner = Instance.new("UICorner")
+            friendshipCardCorner.CornerRadius = UDim.new(0, 8)
+            friendshipCardCorner.Parent = friendshipCard
+            local friendshipCardStroke = Instance.new("UIStroke")
+            friendshipCardStroke.Thickness = 1
+            friendshipCardStroke.Transparency = 0.3
+            friendshipCardStroke.Parent = friendshipCard
+
+            local friendshipText = Instance.new("TextLabel")
+            friendshipText.BackgroundTransparency = 1
+            friendshipText.Position = UDim2.fromOffset(7, 1)
+            friendshipText.Size = UDim2.new(1, -14, 0, 19)
+            friendshipText.Font = Enum.Font.GothamBold
+            friendshipText.TextSize = 10
+            friendshipText.TextXAlignment = Enum.TextXAlignment.Center
+            friendshipText.TextColor3 = Color3.fromRGB(214, 224, 234)
+            friendshipText.Parent = friendshipCard
+
+            local friendshipTrack = Instance.new("Frame")
+            friendshipTrack.Position = UDim2.new(0, 8, 1, -7)
+            friendshipTrack.Size = UDim2.new(1, -16, 0, 3)
+            friendshipTrack.BackgroundColor3 = Color3.fromRGB(69, 79, 91)
+            friendshipTrack.BorderSizePixel = 0
+            friendshipTrack.Parent = friendshipCard
+            local friendshipTrackCorner = Instance.new("UICorner")
+            friendshipTrackCorner.CornerRadius = UDim.new(1, 0)
+            friendshipTrackCorner.Parent = friendshipTrack
+            local friendshipFill = Instance.new("Frame")
+            friendshipFill.Size = UDim2.fromScale(0, 1)
+            friendshipFill.BackgroundColor3 = Color3.fromRGB(116, 222, 174)
+            friendshipFill.BorderSizePixel = 0
+            friendshipFill.Parent = friendshipTrack
+            local friendshipFillCorner = Instance.new("UICorner")
+            friendshipFillCorner.CornerRadius = UDim.new(1, 0)
+            friendshipFillCorner.Parent = friendshipFill
+
             profile.Nest.CompanionBonds = profile.Nest.CompanionBonds or {}
             local petDefinition = CompanionCatalog[companion.Id] or {}
             local activityPeriod = petDefinition.ActivityPeriod or "Any"
@@ -652,6 +1280,15 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local toyPlayUntil = 0
             local socialPlayUntil = 0
             local socialRewarded = false
+            local targetIsCaring = false
+            local careUntil = 0
+            local careRewarded = false
+            local isSharedDiscoveryFollower = false
+            local sharedDiscoveryLeaderUntil = 0
+            local sharedDiscoveryLeaderTarget = nil
+            local targetIsChase = false
+            local targetIsRestingTogether = false
+            local restingTogetherUntil = 0
             local targetIsTreasure = false
             local targetIsShelter = false
             local shelterUntil = 0
@@ -660,6 +1297,9 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             local lastInterestId = nil
             local nextDiscoveryAt = 0
             local interestLabel = nil
+            local activeHabit = nil
+            local activeHabitUntil = 0
+            local nextHabitAt = os.clock() + random:NextNumber(8, 16)
             local partnerSlot = slot % 2 == 1 and slot + 1 or slot - 1
             local behavior = sleeping and "Sleeping"
                 or (hunger <= 20 and "Hungry")
@@ -674,6 +1314,13 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
             task.spawn(function()
                 local previousTime = os.clock()
                 while model.Parent == folder and folder.Parent do
+                    -- Read back profile-side mood changes made by other server systems
+                    -- (for example paired adventures) before publishing the pet state.
+                    local savedMood = profile.Nest and profile.Nest.CompanionMood
+                        and profile.Nest.CompanionMood[instanceId]
+                    if savedMood ~= nil then
+                        mood = math.clamp(math.floor(tonumber(savedMood) or mood), 0, 100)
+                    end
                     local now = os.clock()
                     local delta = math.clamp(now - previousTime, 0, 0.25)
                     if now - interestPointsUpdatedAt >= 5 and plot.Model and plot.Model.Parent then
@@ -701,7 +1348,51 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         end
                     end
                     local partnerBehavior = partnerModel and partnerModel:GetAttribute("Behavior")
+                    local partnerPersonality = partnerModel and partnerModel:GetAttribute("Personality") or ""
                     local partnerSleeping = partnerModel and partnerModel:GetAttribute("IsSleeping") == true
+                    if slot < partnerSlot and sharedDiscoveryLeaderUntil > now and typeof(sharedDiscoveryLeaderTarget) == "Vector3"
+                        and (currentPosition - sharedDiscoveryLeaderTarget).Magnitude <= 6 and partnerModel
+                        and partnerModel:GetAttribute("SharedDiscoveryLeader") == instanceId
+                        and partnerModel:GetAttribute("SharedDiscoveryArrived") == true
+                        and (partnerModel:GetPivot().Position - currentPosition).Magnitude <= 6 then
+                        local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                        profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
+                        local selfMood = math.clamp(mood + 3, 0, 100)
+                        local partnerCurrentMood = math.clamp(
+                            math.floor(tonumber(profile.Nest.CompanionMood[partnerId])
+                                or tonumber(partnerModel:GetAttribute("Mood")) or 50), 0, 100
+                        )
+                        local partnerMoodAfter = math.clamp(partnerCurrentMood + 3, 0, 100)
+                        mood = selfMood
+                        profile.Nest.CompanionMood[instanceId] = selfMood
+                        profile.Nest.CompanionMood[partnerId] = partnerMoodAfter
+                        model:SetAttribute("Mood", selfMood)
+                        partnerModel:SetAttribute("Mood", partnerMoodAfter)
+                        local sharedLabel = tostring(model:GetAttribute("InterestTargetLabel") or "тайное место")
+                        model:SetAttribute("LastDiscovery", "Открытие вместе: " .. sharedLabel)
+                        partnerModel:SetAttribute("LastDiscovery", "Открытие вместе: " .. sharedLabel)
+                        showSharedHeartMoment(model, partnerModel)
+                        player:SetAttribute("LastNotice", "Вместе питомцы открыли: " .. sharedLabel .. "!")
+                        partnerModel:SetAttribute("SharedDiscoveryTargetPosition", nil)
+                        partnerModel:SetAttribute("SharedDiscoveryTargetUntil", nil)
+                        partnerModel:SetAttribute("SharedDiscoveryTargetLabel", nil)
+                        partnerModel:SetAttribute("SharedDiscoveryLeader", nil)
+                        partnerModel:SetAttribute("SharedDiscoveryArrived", nil)
+                        sharedDiscoveryLeaderUntil = 0
+                        sharedDiscoveryLeaderTarget = nil
+                    end
+                    local pairBondKey = partnerModel and getBondKey(instanceId, partnerModel:GetAttribute("CompanionInstanceId"))
+                    local pairBondScore = pairBondKey and profile.Nest and profile.Nest.CompanionBonds
+                        and math.clamp(math.floor(tonumber(profile.Nest.CompanionBonds[pairBondKey]) or 0), 0, 100) or 0
+                    local isCautious = personality == "Осторожный"
+                    local isSocialLeader = personality == "Дружелюбный" or personality == "Добродушный"
+                    local friendshipStyle = isCautious and (pairBondScore < 10 and "Привыкает постепенно" or "Доверяет другу")
+                        or isSocialLeader and "Сам ищет друзей"
+                        or personality == "Игривый" and "Любит совместные игры"
+                        or "Спокойное общение"
+                    if model:GetAttribute("FriendshipStyle") ~= friendshipStyle then
+                        model:SetAttribute("FriendshipStyle", friendshipStyle)
+                    end
                     local isSleeping = (tonumber(needs.RestingUntil) or 0) > os.time()
                     local clockTime = Lighting.ClockTime
                     local isNight = clockTime >= 19 or clockTime < 6
@@ -725,12 +1416,116 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     end
                     model:SetAttribute("IsSleeping", isSleeping)
 
+                    local hideRole = model:GetAttribute("HideSeekRole")
+                    local hideUntil = tonumber(model:GetAttribute("HideSeekUntil")) or 0
+                    local hideStart = tonumber(model:GetAttribute("HideSeekStart")) or 0
+                    local hideTarget = model:GetAttribute("HideSeekTarget")
+                    local partnerIdForGame = partnerModel and partnerModel:GetAttribute("CompanionInstanceId")
+                    local liveNeeds = profile.Nest.CompanionNeeds or {}
+                    local selfNeeds = liveNeeds[instanceId] or {}
+                    local otherNeeds = partnerIdForGame and liveNeeds[partnerIdForGame] or {}
+                    local hideActive = hideRole ~= nil and hideUntil > now and partnerModel
+                        and model:GetAttribute("HideSeekPartner") == partnerIdForGame
+                        and partnerModel:GetAttribute("HideSeekPartner") == instanceId
+                        and partnerModel:GetAttribute("HideSeekUntil") == hideUntil
+                        and typeof(hideTarget) == "Vector3"
+                        and not isSleeping and not partnerSleeping and not seeksShelter
+                        and (tonumber(selfNeeds.Energy) or energy) >= 25
+                        and (tonumber(otherNeeds.Energy) or 100) >= 25
+                        and (tonumber(selfNeeds.Hunger) or hunger) >= 25
+                        and (tonumber(otherNeeds.Hunger) or 100) >= 25
+                        and (tonumber(otherNeeds.RestingUntil) or 0) <= os.time()
+                    if hideRole and not hideActive then
+                        if partnerModel and partnerModel:GetAttribute("HideSeekPartner") == instanceId then
+                            clearHideSeek(partnerModel)
+                        end
+                        clearHideSeek(model)
+                        targetPosition = currentPosition
+                        isAtTarget = true
+                        idleUntil = now + 0.5
+                    end
+
+                    local sharedToyUntil = tonumber(model:GetAttribute("SharedToyUntil")) or 0
+                    local sharedToySlot = tonumber(model:GetAttribute("SharedToySlot"))
+                    local sharedToy = sharedToySlot and folder:FindFirstChild("NestToy_" .. tostring(sharedToySlot))
+                    local sharedToyActive = sharedToyUntil > now and partnerModel and sharedToy and sharedToy:IsA("BasePart")
+                        and model:GetAttribute("SharedToyPartner") == partnerIdForGame
+                        and partnerModel:GetAttribute("SharedToyPartner") == instanceId
+                        and partnerModel:GetAttribute("SharedToyUntil") == sharedToyUntil
+                        and not hideActive and not isSleeping and not partnerSleeping and not seeksShelter
+                        and (tonumber(selfNeeds.RestingUntil) or 0) <= os.time()
+                        and (tonumber(otherNeeds.RestingUntil) or 0) <= os.time()
+                        and (tonumber(selfNeeds.Energy) or energy) >= 25
+                        and (tonumber(otherNeeds.Energy) or 100) >= 25
+                        and (tonumber(selfNeeds.Hunger) or hunger) >= 25
+                        and (tonumber(otherNeeds.Hunger) or 100) >= 25
+                    if sharedToyUntil > 0 and not sharedToyActive then
+                        for _, pet in ipairs({model, partnerModel}) do
+                            if pet and pet:GetAttribute("SharedToyUntil") == sharedToyUntil then
+                                pet:SetAttribute("SharedToyUntil", nil)
+                                pet:SetAttribute("SharedToySlot", nil)
+                                pet:SetAttribute("SharedToyPartner", nil)
+                            end
+                        end
+                        if sharedToy then sharedToy:SetAttribute("ToyState", "Waiting") end
+                        targetPosition = currentPosition
+                        isAtTarget = true
+                        idleUntil = now + 0.5
+                    end
+
+                    local treasureUntil = tonumber(model:GetAttribute("PairTreasureUntil")) or 0
+                    local treasureTarget = model:GetAttribute("PairTreasureTarget")
+                    local treasureActive = treasureUntil > now and partnerModel
+                        and typeof(treasureTarget) == "Vector3"
+                        and model:GetAttribute("PairTreasurePartner") == partnerIdForGame
+                        and partnerModel:GetAttribute("PairTreasurePartner") == instanceId
+                        and partnerModel:GetAttribute("PairTreasureUntil") == treasureUntil
+                        and not hideActive and not sharedToyActive and not isSleeping and not partnerSleeping
+                        and weatherState ~= "Storm"
+                        and (tonumber(selfNeeds.RestingUntil) or 0) <= os.time()
+                        and (tonumber(otherNeeds.RestingUntil) or 0) <= os.time()
+                        and (tonumber(selfNeeds.Energy) or energy) >= 35
+                        and (tonumber(otherNeeds.Energy) or 100) >= 35
+                        and (tonumber(selfNeeds.Hunger) or hunger) >= 25
+                        and (tonumber(otherNeeds.Hunger) or 100) >= 25
+                    local function clearPairTreasure()
+                        for _, pet in ipairs({model, partnerModel}) do
+                            if pet:GetAttribute("PairTreasureUntil") == treasureUntil then
+                                pet:SetAttribute("PairTreasureUntil", nil)
+                                pet:SetAttribute("PairTreasureTarget", nil)
+                                pet:SetAttribute("PairTreasurePartner", nil)
+                            end
+                        end
+                    end
+                    if treasureUntil > 0 and not treasureActive then
+                        clearPairTreasure()
+                        targetPosition = currentPosition
+                        isAtTarget = true
+                        idleUntil = now + 0.5
+                    end
+
                     if isSleeping then
+                        if careUntil > 0 and partnerModel
+                            and partnerModel:GetAttribute("BeingComfortedBy") == instanceId then
+                            partnerModel:SetAttribute("BeingComfortedUntil", nil)
+                            partnerModel:SetAttribute("BeingComfortedBy", nil)
+                        end
+                        activeHabit = nil
+                        activeHabitUntil = 0
+                        model:SetAttribute("PersonalHabit", nil)
+                        model:SetAttribute("PersonalHabitText", nil)
+                        model:SetAttribute("PersonalHabitUntil", nil)
                         behavior = "Sleeping"
                         targetPosition = currentPosition
                         isAtTarget = true
                         targetIsToy = false
                         targetIsSocial = false
+                        targetIsCaring = false
+                        careUntil = 0
+                        isSharedDiscoveryFollower = false
+                        targetIsRestingTogether = false
+                        restingTogetherUntil = 0
+                        model:SetAttribute("RestingWithFriend", nil)
                         targetIsShelter = false
                         shelterUntil = 0
                         targetIsInterest = false
@@ -743,7 +1538,142 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         idleUntil = math.max(idleUntil, now + 0.2)
                         bob = math.sin(now * 1.2 + phase) * 0.025
                         yawOffset = math.sin(now * 0.35 + phase) * 0.025
+                    elseif treasureActive then
+                        targetIsSocial = false
+                        targetIsToy = false
+                        targetIsInterest = false
+                        targetIsShelter = false
+                        targetIsChase = false
+                        if targetIsTreasure and treasureSearchOwner == instanceId then treasureSearchOwner = nil end
+                        targetIsTreasure = false
+                        socialPlayUntil = 0
+                        toyPlayUntil = 0
+                        activeHabit = nil
+                        local side = slot < partnerSlot and -1.25 or 1.25
+                        targetPosition = treasureTarget + Vector3.new(side, 0, 0)
+                        local direction = targetPosition - currentPosition
+                        if direction.Magnitude > 0.2 then
+                            currentPosition += direction.Unit * math.min(direction.Magnitude, 3.2 * delta)
+                            facing = math.atan2(direction.X, direction.Z)
+                            bob = math.abs(math.sin(now * 9 + phase)) * 0.1
+                        else
+                            local toward = treasureTarget - currentPosition
+                            facing = math.atan2(toward.X, toward.Z)
+                            bob = math.abs(math.sin(now * 6 + phase)) * 0.12
+                        end
+                        behavior = "SearchingTogether"
+                        local partnerTarget = treasureTarget + Vector3.new(-side, 0, 0)
+                        if slot < partnerSlot and (currentPosition - targetPosition).Magnitude <= 0.5
+                            and (partnerModel:GetPivot().Position - partnerTarget).Magnitude <= 0.8 then
+                            clearPairTreasure()
+                            local crystal = Instance.new("Part")
+                            crystal.Name = "SharedTreasureDiscovery"
+                            crystal.Shape = Enum.PartType.Ball
+                            crystal.Size = Vector3.new(0.85, 0.85, 0.85)
+                            crystal.Material = Enum.Material.Neon
+                            crystal.Color = Color3.fromRGB(255, 212, 104)
+                            crystal.Anchored = true
+                            crystal.CanCollide = false
+                            crystal.CanTouch = false
+                            crystal.CanQuery = false
+                            crystal.Position = treasureTarget + Vector3.new(0, 0.7, 0)
+                            crystal.Parent = folder
+                            Debris:AddItem(crystal, 3)
+                            showSharedHeartMoment(model, partnerModel)
+                            player:SetAttribute("LastNotice", "Питомцы вместе нашли сокровище!")
+                        end
+                        isAtTarget = true
+                        idleUntil = now + 0.5
+                    elseif sharedToyActive then
+                        targetIsSocial = false
+                        targetIsToy = false
+                        targetIsInterest = false
+                        targetIsShelter = false
+                        targetIsChase = false
+                        socialPlayUntil = 0
+                        toyPlayUntil = 0
+                        activeHabit = nil
+                        local center = Vector3.new(sharedToy.Position.X, home.Y, sharedToy.Position.Z)
+                        local offset = slot < partnerSlot and -1.3 or 1.3
+                        targetPosition = center + Vector3.new(0, 0, offset)
+                        local direction = targetPosition - currentPosition
+                        if direction.Magnitude > 0.2 then
+                            currentPosition += direction.Unit * math.min(direction.Magnitude, 3.2 * delta)
+                            facing = math.atan2(direction.X, direction.Z)
+                            bob = math.abs(math.sin(now * 9 + phase)) * 0.1
+                            behavior = "SeekingSharedToy"
+                        else
+                            local towardToy = center - currentPosition
+                            facing = math.atan2(towardToy.X, towardToy.Z)
+                            bob = math.abs(math.sin(now * 7 + phase)) * 0.18
+                            yawOffset = math.sin(now * 5 + phase) * 0.2
+                            behavior = "PlayingSharedToy"
+                            if (partnerModel:GetPivot().Position - center).Magnitude <= 2.2 then
+                                sharedToy:SetAttribute("ToyState", "InUse")
+                            end
+                        end
+                        if toyPart == sharedToy and toyPosition then
+                            local toyBob = sharedToy:GetAttribute("ToyState") == "InUse" and math.abs(math.sin(now * 7)) * 0.22 or 0
+                            toyPart.CFrame = CFrame.new(toyPosition + Vector3.new(0, toyBob, 0)) * CFrame.Angles(0, now * 2, 0)
+                        end
+                        isAtTarget = true
+                        idleUntil = now + 0.5
+                    elseif hideActive then
+                        -- Use the same movement state, never a second PivotTo loop.
+                        targetIsSocial = false
+                        targetIsToy = false
+                        targetIsInterest = false
+                        targetIsShelter = false
+                        targetIsChase = false
+                        socialPlayUntil = 0
+                        toyPlayUntil = 0
+                        activeHabit = nil
+                        targetPosition = hideRole == "Hider" and hideTarget
+                            or (now < hideStart + 2.5 and currentPosition or hideTarget)
+                        local direction = targetPosition - currentPosition
+                        if direction.Magnitude > 0.2 then
+                            currentPosition += direction.Unit * math.min(direction.Magnitude, 3.2 * delta)
+                            facing = math.atan2(direction.X, direction.Z)
+                            bob = math.abs(math.sin(now * 9 + phase)) * 0.1
+                        else
+                            bob = math.abs(math.sin(now * 3 + phase)) * 0.06
+                        end
+                        behavior = hideRole == "Hider" and "HidingFromFriend"
+                            or (now < hideStart + 2.5 and "CountingForFriend" or "FindingFriend")
+                        if hideRole == "Seeker" and now >= hideStart + 2.5
+                            and (currentPosition - hideTarget).Magnitude <= 1.5
+                            and (partnerModel:GetPivot().Position - hideTarget).Magnitude <= 1.8 then
+                            clearHideSeek(model)
+                            clearHideSeek(partnerModel)
+                            showSharedHeartMoment(model, partnerModel)
+                            player:SetAttribute("LastNotice", "Питомцы сыграли в прятки!")
+                        end
+                        isAtTarget = true
+                        idleUntil = now + 0.5
                     else
+                        if careUntil > 0 and now >= careUntil then
+                            if not careRewarded and partnerModel and partnerModel.Parent
+                                and (partnerModel:GetPivot().Position - currentPosition).Magnitude <= 8 then
+                                local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                                profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
+                                local savedPartnerMood = math.clamp(
+                                    math.floor(tonumber(profile.Nest.CompanionMood[partnerId]) or tonumber(partnerModel:GetAttribute("Mood")) or 50), 0, 100
+                                )
+                                local comfortBoost = personality == "Заботливый" and 9 or 6
+                                local updatedPartnerMood = math.clamp(savedPartnerMood + comfortBoost, 0, 100)
+                                profile.Nest.CompanionMood[partnerId] = updatedPartnerMood
+                                partnerModel:SetAttribute("Mood", updatedPartnerMood)
+                                partnerModel:SetAttribute("BeingComfortedUntil", nil)
+                                partnerModel:SetAttribute("BeingComfortedBy", nil)
+                                mood = math.clamp(mood + 2, 0, 100)
+                                profile.Nest.CompanionMood[instanceId] = mood
+                                model:SetAttribute("Mood", mood)
+                                player:SetAttribute("LastNotice", companion.Name .. " утешил друга: настроение +" .. comfortBoost .. "!")
+                            end
+                            careRewarded = true
+                            careUntil = 0
+                            idleUntil = now + random:NextNumber(2, 4)
+                        end
                         if socialPlayUntil > 0 and now >= socialPlayUntil then
                             if not socialRewarded and partnerModel and not partnerSleeping
                                 and (partnerModel:GetPivot().Position - currentPosition).Magnitude <= 10 then
@@ -762,17 +1692,70 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                         model:SetAttribute("FriendshipLevel", bondLevel)
                                         partnerModel:SetAttribute("FriendshipScore", bondScore)
                                         partnerModel:SetAttribute("FriendshipLevel", bondLevel)
+                                        local milestone = BOND_MILESTONES[bondScore]
+                                        if milestone then
+                                            showBondMilestone(player, model, partnerModel, milestone)
+                                        end
+                                        local pairMemory = PAIR_BOND_MEMORIES[bondScore]
+                                        if pairMemory then
+                                            profile.Nest.DiscoveredBondMoments = profile.Nest.DiscoveredBondMoments or {}
+                                            local memoryKey = "Pair:" .. bondKey .. ":" .. pairMemory.Id
+                                            if profile.Nest.DiscoveredBondMoments[memoryKey] ~= true then
+                                                profile.Nest.DiscoveredBondMoments[memoryKey] = true
+                                                showSharedHeartMoment(model, partnerModel)
+                                                player:SetAttribute("LastNotice", "Новое воспоминание дружбы: " .. pairMemory.Title)
+                                            end
+                                        end
+                                        local partnerDefinition = CompanionCatalog[partnerModel:GetAttribute("CompanionId")] or {}
+                                        if random:NextNumber() < 0.5 then
+                                            tryGiveCompanionGift(
+                                                player, profile, model, partnerModel, petDefinition,
+                                                bondKey, bondScore, now, random
+                                            )
+                                        else
+                                            tryGiveCompanionGift(
+                                                player, profile, partnerModel, model, partnerDefinition,
+                                                bondKey, bondScore, now, random
+                                            )
+                                        end
                                     end
                                 end
                             end
                             socialRewarded = true
                             socialPlayUntil = 0
                             targetIsSocial = false
+                            -- Established friends sometimes turn a finished greeting into a short chase.
+                            if slot < partnerSlot and partnerModel and pairBondScore >= 30
+                                and mood >= 55 and energy >= 30 then
+                                local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                                local pairId = getBondKey(instanceId, partnerId)
+                                local chaseKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                if pairId and (socialChaseCooldowns[chaseKey] or 0) <= now then
+                                    socialChaseCooldowns[chaseKey] = now + 35
+                                    local chaseUntil = now + 4.5
+                                    model:SetAttribute("CompanionChaseUntil", chaseUntil)
+                                    partnerModel:SetAttribute("CompanionChaseUntil", chaseUntil)
+                                end
+                            end
                             idleUntil = now + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
                         elseif socialPlayUntil > 0 and (not partnerModel or partnerSleeping) then
                             socialPlayUntil = 0
                             targetIsSocial = false
                             idleUntil = now + random:NextNumber(personalityProfile.IdleMin, personalityProfile.IdleMax)
+                        end
+
+                        if sharedDiscoveryLeaderUntil > 0 and sharedDiscoveryLeaderUntil <= now then
+                            sharedDiscoveryLeaderUntil = 0
+                            sharedDiscoveryLeaderTarget = nil
+                        end
+                        local sharedUntil = tonumber(model:GetAttribute("SharedDiscoveryTargetUntil")) or 0
+                        if sharedUntil > 0 and sharedUntil <= now then
+                            model:SetAttribute("SharedDiscoveryTargetPosition", nil)
+                            model:SetAttribute("SharedDiscoveryTargetUntil", nil)
+                            model:SetAttribute("SharedDiscoveryTargetLabel", nil)
+                            model:SetAttribute("SharedDiscoveryLeader", nil)
+                            model:SetAttribute("SharedDiscoveryArrived", nil)
+                            isSharedDiscoveryFollower = false
                         end
 
                         if partnerBehavior == "SeekingFriend" and socialApproach and not targetIsSocial
@@ -787,7 +1770,21 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         if not isAtTarget and (targetPosition - currentPosition).Magnitude < 0.2 then
                             currentPosition = targetPosition
                             isAtTarget = true
-                            if targetIsToy then
+                            if targetIsCaring then
+                                targetIsCaring = false
+                                careUntil = now + random:NextNumber(2.8, 3.8)
+                                careRewarded = false
+                                idleUntil = careUntil
+                                if partnerModel and partnerModel.Parent then
+                                    partnerModel:SetAttribute("BeingComfortedUntil", careUntil)
+                                    partnerModel:SetAttribute("BeingComfortedBy", instanceId)
+                                end
+                            elseif targetIsRestingTogether then
+                                targetIsRestingTogether = false
+                                restingTogetherUntil = now + random:NextNumber(4.5, 6.5)
+                                idleUntil = restingTogetherUntil
+                                model:SetAttribute("RestingWithFriend", true)
+                            elseif targetIsToy then
                                 targetIsToy = false
                                 toyPlayUntil = now + random:NextNumber(2.8, 4.2)
                                 idleUntil = toyPlayUntil
@@ -857,6 +1854,41 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 lastInterestId = model:GetAttribute("InterestTargetId")
                                 interestUntil = now + random:NextNumber(2.4, 4.2)
                                 idleUntil = interestUntil
+                                if isSharedDiscoveryFollower then
+                                    model:SetAttribute("SharedDiscoveryArrived", true)
+                                    isSharedDiscoveryFollower = false
+                                elseif slot < partnerSlot and sharedDiscoveryLeaderUntil > now and typeof(sharedDiscoveryLeaderTarget) == "Vector3"
+                                    and (currentPosition - sharedDiscoveryLeaderTarget).Magnitude <= 6
+                                    and partnerModel and partnerModel:GetAttribute("SharedDiscoveryLeader") == instanceId then
+                                    local partnerPosition = partnerModel:GetPivot().Position
+                                    if (partnerPosition - currentPosition).Magnitude <= 6
+                                        and partnerModel:GetAttribute("SharedDiscoveryArrived") == true then
+                                        local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                                        profile.Nest.CompanionMood = profile.Nest.CompanionMood or {}
+                                        local selfMood = math.clamp(mood + 3, 0, 100)
+                                        local partnerCurrentMood = math.clamp(
+                                            math.floor(tonumber(profile.Nest.CompanionMood[partnerId])
+                                                or tonumber(partnerModel:GetAttribute("Mood")) or 50), 0, 100
+                                        )
+                                        local partnerMoodAfter = math.clamp(partnerCurrentMood + 3, 0, 100)
+                                        mood = selfMood
+                                        profile.Nest.CompanionMood[instanceId] = selfMood
+                                        profile.Nest.CompanionMood[partnerId] = partnerMoodAfter
+                                        model:SetAttribute("Mood", selfMood)
+                                        partnerModel:SetAttribute("Mood", partnerMoodAfter)
+                                        model:SetAttribute("LastDiscovery", "Открытие вместе: " .. tostring(interestLabel or "тайное место"))
+                                        partnerModel:SetAttribute("LastDiscovery", "Открытие вместе: " .. tostring(interestLabel or "тайное место"))
+                                        showSharedHeartMoment(model, partnerModel)
+                                        player:SetAttribute("LastNotice", "Вместе питомцы открыли: " .. tostring(interestLabel or "тайное место") .. "!")
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetPosition", nil)
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetUntil", nil)
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetLabel", nil)
+                                        partnerModel:SetAttribute("SharedDiscoveryLeader", nil)
+                                        partnerModel:SetAttribute("SharedDiscoveryArrived", nil)
+                                        sharedDiscoveryLeaderUntil = 0
+                                        sharedDiscoveryLeaderTarget = nil
+                                    end
+                                end
                                 if now >= nextDiscoveryAt and random:NextNumber() < 0.14 then
                                     nextDiscoveryAt = now + 90
                                     local discovery = interestLabel or "необычный след"
@@ -878,10 +1910,40 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         end
 
                         if isAtTarget and now >= idleUntil and socialPlayUntil <= now and not targetIsSocial then
+                            local habit = COMPANION_HABITS[personality]
+                            local canShowHabit = habit and now >= nextHabitAt and mood >= 25 and energy >= 20
+                                and hunger >= 20 and not isSleeping and not targetIsRestingTogether
+                                and not targetIsChase and (tonumber(model:GetAttribute("GiftReactionUntil")) or 0) <= now
+                            if canShowHabit and random:NextNumber() < habit.Chance then
+                                activeHabit = habit.Id
+                                activeHabitUntil = now + random:NextNumber(2.2, 4.0)
+                                nextHabitAt = now + random:NextNumber(28, 52)
+                                idleUntil = activeHabitUntil
+                                model:SetAttribute("PersonalHabit", habit.Id)
+                                model:SetAttribute("PersonalHabitText", habit.Text)
+                                model:SetAttribute("PersonalHabitUntil", activeHabitUntil)
+                            else
+                                nextHabitAt = math.max(nextHabitAt, now + 5)
+                            end
+                            if not (activeHabit and now < activeHabitUntil) then
+                            local cautiousCanApproach = not isCautious or pairBondScore >= 10
+                                or partnerPersonality == "Дружелюбный" or partnerPersonality == "Добродушный"
+                                or random:NextNumber() < 0.035
                             local canSocialize = partnerModel and socialApproach and not partnerSleeping
-                                and mood >= 45 and energy >= 20
+                                and mood >= 45 and energy >= 20 and cautiousCanApproach
+                            -- Familiarity makes cautious pets more willing to socialize,
+                            -- while outgoing personalities are more likely to initiate first contact.
+                            local bondSocialBonus = math.min(pairBondScore / 100, 1) * 0.18
+                            local outgoingBonus = isSocialLeader and 0.12 or 0
+                            local effectiveSocialChance = math.clamp(
+                                (personalityProfile.SocialChance or 0.16) + bondSocialBonus + outgoingBonus,
+                                0.03, 0.72
+                            )
                             local socialTrigger = partnerBehavior == "SeekingFriend"
-                                or random:NextNumber() < personalityProfile.SocialChance
+                                or random:NextNumber() < effectiveSocialChance
+                            local canRestTogether = partnerModel and partnerSleeping and not isSleeping
+                                and pairBondScore >= 30 and (isNight or energy <= 35)
+                                and mood >= 20 and energy >= 10
                             local canPlay = toyPart and mood >= 35
                                 and energy >= math.max(0, math.floor(tonumber(toyDefinition.EnergyCost) or 0))
                             local favoriteToy = toyId ~= nil and toyId == petDefinition.FavoriteToy
@@ -895,7 +1957,61 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 and os.time() >= nextTreasureAt and energy >= 35 and hunger >= 25
                             local canExplore = #interestPoints > 0 and energy >= 25 and hunger >= 25 and mood >= 30
                             local explorationChance = (personality == "Любопытный" or personality == "Любознательный") and 0.34 or 0.2
-                            if seeksShelter then
+                            local restKey = pairBondKey and (tostring(player.UserId) .. ":" .. tostring(pairBondKey))
+                            local sharedTarget = model:GetAttribute("SharedDiscoveryTargetPosition")
+                            local sharedTargetUntil = tonumber(model:GetAttribute("SharedDiscoveryTargetUntil")) or 0
+                            local followingSharedDiscovery = typeof(sharedTarget) == "Vector3"
+                                and sharedTargetUntil > now
+                                and model:GetAttribute("SharedDiscoveryArrived") ~= true and partnerModel
+                                and model:GetAttribute("SharedDiscoveryLeader")
+                                    == partnerModel:GetAttribute("CompanionInstanceId")
+                            if followingSharedDiscovery
+                                and partnerModel and model:GetAttribute("SharedDiscoveryLeader")
+                                    == partnerModel:GetAttribute("CompanionInstanceId") then
+                                targetPosition = sharedTarget
+                                interestLabel = tostring(model:GetAttribute("SharedDiscoveryTargetLabel") or "секретное место")
+                                targetIsInterest = true
+                                targetIsSocial = false
+                                targetIsToy = false
+                                targetIsTreasure = false
+                                targetIsShelter = false
+                                isSharedDiscoveryFollower = true
+                                model:SetAttribute("InterestTargetLabel", interestLabel)
+                                model:SetAttribute("InterestTargetId", "Shared:" .. interestLabel)
+                            end
+                            local partnerMood = partnerModel and math.clamp(
+                                math.floor(tonumber(partnerModel:GetAttribute("Mood")) or 50), 0, 100
+                            ) or 100
+                            local careKey = restKey
+                            local canComfortFriend = slot < partnerSlot and partnerModel and not partnerSleeping
+                                and partnerMood <= 35 and mood >= 45 and energy >= 20 and hunger >= 20
+                                and pairBondScore >= 10 and socialApproach
+                                and careKey and (companionCareCooldowns[careKey] or 0) <= now
+                            if followingSharedDiscovery then
+                                -- Keep the partner's shared destination; do not replace it with a solo activity.
+                            elseif canComfortFriend and random:NextNumber() < (personality == "Заботливый" and 0.72 or 0.28) then
+                                targetPosition = socialApproach
+                                targetIsCaring = true
+                                targetIsToy = false
+                                targetIsSocial = false
+                                targetIsTreasure = false
+                                targetIsInterest = false
+                                targetIsShelter = false
+                                companionCareCooldowns[careKey] = now + 75
+                            elseif canRestTogether and restKey and (sharedRestCooldowns[restKey] or 0) <= now
+                                and random:NextNumber() < 0.32 then
+                                local sleepingPosition = partnerModel:GetPivot().Position
+                                local towardHome = home - sleepingPosition
+                                local side = towardHome.Magnitude > 0.1 and towardHome.Unit or Vector3.new(1, 0, 0)
+                                targetPosition = sleepingPosition + side * 1.8
+                                targetIsRestingTogether = true
+                                targetIsToy = false
+                                targetIsSocial = false
+                                targetIsTreasure = false
+                                targetIsInterest = false
+                                targetIsShelter = false
+                                sharedRestCooldowns[restKey] = now + 55
+                            elseif seeksShelter then
                                 targetPosition = home + Vector3.new(random:NextNumber(-1.2, 1.2), 0, random:NextNumber(-1.2, 1.2))
                                 targetIsShelter = true
                                 targetIsToy = false
@@ -924,6 +2040,21 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                     model:SetAttribute("InterestTargetId", point.Id)
                                     model:SetAttribute("InterestTargetLabel", point.Label)
                                     model:SetAttribute("FavoritePlace", favoritePlace)
+                                    local sharedKey = pairBondKey and (tostring(player.UserId) .. ":" .. tostring(pairBondKey))
+                                    local partnerCanJoin = slot < partnerSlot and partnerModel and not partnerSleeping
+                                        and pairBondScore >= 20 and partnerBehavior ~= "Searching"
+                                        and partnerBehavior ~= "PlayingWithToy" and sharedKey
+                                        and (sharedDiscoveryCooldowns[sharedKey] or 0) <= now
+                                    if partnerCanJoin and random:NextNumber() < 0.28 then
+                                        sharedDiscoveryCooldowns[sharedKey] = now + 90
+                                        sharedDiscoveryLeaderUntil = now + 18
+                                        sharedDiscoveryLeaderTarget = point.Position
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetPosition", point.Position)
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetUntil", now + 18)
+                                        partnerModel:SetAttribute("SharedDiscoveryTargetLabel", point.Label)
+                                        partnerModel:SetAttribute("SharedDiscoveryLeader", instanceId)
+                                        partnerModel:SetAttribute("SharedDiscoveryArrived", false)
+                                    end
                                 else
                                     targetPosition = home
                                     targetIsInterest = false
@@ -946,8 +2077,37 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                 targetIsInterest = false
                             end
                             isAtTarget = false
+                            end
                         end
 
+                        if targetIsRestingTogether and (not partnerModel or not partnerSleeping) then
+                            targetIsRestingTogether = false
+                            targetPosition = currentPosition
+                            isAtTarget = true
+                            model:SetAttribute("RestingWithFriend", nil)
+                        end
+                        local chaseUntil = tonumber(model:GetAttribute("CompanionChaseUntil")) or 0
+                        local partnerChaseUntil = partnerModel and (tonumber(partnerModel:GetAttribute("CompanionChaseUntil")) or 0) or 0
+                        local partnerPositionForChase = partnerModel and partnerModel:GetPivot().Position
+                        if chaseUntil > now and partnerChaseUntil > now and partnerPositionForChase
+                            and not isSleeping and not partnerSleeping and mood >= 25 and energy >= 15 then
+                            local orbitAngle = now * 2.8 + phase
+                            local chaseRadius = 2.4
+                            targetPosition = partnerPositionForChase
+                                + Vector3.new(math.cos(orbitAngle) * chaseRadius, 0, math.sin(orbitAngle) * chaseRadius)
+                            targetIsChase = true
+                            targetIsSocial = false
+                            targetIsToy = false
+                            targetIsInterest = false
+                            targetIsTreasure = false
+                            targetIsShelter = false
+                            isAtTarget = false
+                        else
+                            targetIsChase = false
+                            if model:GetAttribute("CompanionChaseUntil") ~= nil and chaseUntil <= now then
+                                model:SetAttribute("CompanionChaseUntil", nil)
+                            end
+                        end
                         local moving = not isAtTarget and (targetPosition - currentPosition).Magnitude >= 0.2
                         if moving then
                             local direction = targetPosition - currentPosition
@@ -967,13 +2127,25 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                             local step = math.min(direction.Magnitude, speed * delta)
                             currentPosition += direction.Unit * step
                             facing = math.atan2(direction.X, direction.Z)
-                            behavior = targetIsTreasure and "Searching" or (targetIsShelter and "SeekingShelter" or (targetIsInterest and "Exploring" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering"))))
+                            behavior = targetIsChase and "ChasingFriend" or (targetIsTreasure and "Searching" or (targetIsShelter and "SeekingShelter" or (targetIsInterest and "Exploring" or (targetIsSocial and "SeekingFriend" or (mood >= 80 and "Playful" or "Wandering")))))
                             bob = math.abs(math.sin(now * 9 + phase)) * 0.1
                         else
                             local nearToy = toyPart and (currentPosition - toyApproach).Magnitude < 0.55
                             local partnerPosition = partnerModel and partnerModel:GetPivot().Position
                             local nearPartner = partnerPosition and (partnerPosition - currentPosition).Magnitude <= 10
-                            if socialPlayUntil > now and nearPartner then
+                            if restingTogetherUntil > now and partnerSleeping and pairBondScore >= 30 then
+                                behavior = "RestingWithFriend"
+                                model:SetAttribute("RestingWithFriend", true)
+                                local towardFriend = partnerPosition - currentPosition
+                                if towardFriend.Magnitude > 0.05 then
+                                    facing = math.atan2(towardFriend.X, towardFriend.Z)
+                                end
+                                bob = math.abs(math.sin(now * 1.5 + phase)) * 0.025
+                            elseif restingTogetherUntil > 0 then
+                                restingTogetherUntil = 0
+                                model:SetAttribute("RestingWithFriend", nil)
+                                idleUntil = now + 0.2
+                            elseif socialPlayUntil > now and nearPartner then
                                 behavior = "Socializing"
                                 local towardFriend = partnerPosition - currentPosition
                                 facing = math.atan2(towardFriend.X, towardFriend.Z)
@@ -987,6 +2159,150 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                                     idleUntil = socialPlayUntil
                                     local towardFriend = partnerPosition - currentPosition
                                     facing = math.atan2(towardFriend.X, towardFriend.Z)
+                                    if slot < partnerSlot and partnerModel then
+                                        local partnerId = partnerModel:GetAttribute("CompanionInstanceId")
+                                        local pairId = getBondKey(instanceId, partnerId)
+                                        local momentKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                        if pairId and (socialMomentCooldowns[momentKey] or 0) <= now then
+                                            socialMomentCooldowns[momentKey] = now + 18
+                                            local lastGreeting = pairGreetingLastAt[momentKey] or 0
+                                            local isReunion = lastGreeting > 0 and (now - lastGreeting) >= 120
+                                            pairGreetingLastAt[momentKey] = now
+                                            showSharedHeartMoment(model, partnerModel)
+                                            showPersonalityGreeting(
+                                                model,
+                                                partnerModel,
+                                                personality,
+                                                partnerPersonality,
+                                                isReunion
+                                            )
+                                            -- Choose a bounded hiding spot from existing island landmarks.
+                                            local hideKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                            local otherNeeds = profile.Nest.CompanionNeeds and profile.Nest.CompanionNeeds[partnerId] or {}
+                                            local curious = personality == "Любопытный" or personality == "Любознательный"
+                                                or partnerPersonality == "Любопытный" or partnerPersonality == "Любознательный"
+                                            local hideStarted = false
+                                            if pairBondScore >= 20 and not partnerSleeping and not seeksShelter
+                                                and mood >= 45 and energy >= 25 and hunger >= 25
+                                                and (tonumber(otherNeeds.Energy) or 100) >= 25
+                                                and (tonumber(otherNeeds.Hunger) or 100) >= 25
+                                                and (tonumber(otherNeeds.RestingUntil) or 0) <= os.time()
+                                                and (partnerBehavior == "Socializing" or partnerBehavior == "SeekingFriend")
+                                                and (tonumber(partnerModel:GetAttribute("SharedDiscoveryTargetUntil")) or 0) <= now
+                                                and sharedDiscoveryLeaderUntil <= now
+                                                and (hideSeekCooldowns[hideKey] or 0) <= now
+                                                and random:NextNumber() < (curious and 0.45 or 0.24) then
+                                                local spots = {}
+                                                for _, point in ipairs(interestPoints) do
+                                                    if (point.Category == "Trees" or point.Category == "Flowers" or point.Category == "Shelter")
+                                                        and (point.Position - currentPosition).Magnitude <= 8
+                                                        and (point.Position - currentPosition).Magnitude >= 3 then
+                                                        table.insert(spots, point.Position)
+                                                    end
+                                                end
+                                                if #spots > 0 then
+                                                    local spot = spots[random:NextInteger(1, #spots)]
+                                                    local hider = random:NextNumber() < 0.5 and model or partnerModel
+                                                    for _, pet in ipairs({model, partnerModel}) do
+                                                        pet:SetAttribute("HideSeekRole", pet == hider and "Hider" or "Seeker")
+                                                        pet:SetAttribute("HideSeekStart", now)
+                                                        pet:SetAttribute("HideSeekUntil", now + 12)
+                                                        pet:SetAttribute("HideSeekTarget", spot)
+                                                        pet:SetAttribute("HideSeekPartner", pet == model and partnerId or instanceId)
+                                                    end
+                                                    hideSeekCooldowns[hideKey] = now + 60
+                                                    hideStarted = true
+                                                end
+                                            end
+                                            local toyStarted = false
+                                            local sharedToyKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                            local availableToy = toyPart or folder:FindFirstChild("NestToy_" .. tostring(partnerSlot))
+                                            if not hideStarted and pairBondScore >= 20 and availableToy and availableToy:IsA("BasePart")
+                                                and not partnerSleeping and not seeksShelter
+                                                and mood >= 45 and energy >= 25 and hunger >= 25
+                                                and (tonumber(otherNeeds.Energy) or 100) >= 25
+                                                and (tonumber(otherNeeds.Hunger) or 100) >= 25
+                                                and (tonumber(otherNeeds.RestingUntil) or 0) <= os.time()
+                                                and (partnerBehavior == "Socializing" or partnerBehavior == "SeekingFriend")
+                                                and sharedDiscoveryLeaderUntil <= now
+                                                and (tonumber(partnerModel:GetAttribute("SharedDiscoveryTargetUntil")) or 0) <= now
+                                                and (availableToy.Position - currentPosition).Magnitude <= 9
+                                                and (availableToy.Position - partnerModel:GetPivot().Position).Magnitude <= 9
+                                                and (sharedToyCooldowns[sharedToyKey] or 0) <= now
+                                                and random:NextNumber() < 0.4 then
+                                                local chosenSlot = toyPart and slot or partnerSlot
+                                                for _, pet in ipairs({model, partnerModel}) do
+                                                    pet:SetAttribute("SharedToyUntil", now + 10)
+                                                    pet:SetAttribute("SharedToySlot", chosenSlot)
+                                                    pet:SetAttribute("SharedToyPartner", pet == model and partnerId or instanceId)
+                                                end
+                                                sharedToyCooldowns[sharedToyKey] = now + 60
+                                                toyStarted = true
+                                            end
+                                            local treasureStarted = false
+                                            local treasureKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                            if not hideStarted and not toyStarted and pairBondScore >= 30
+                                                and not partnerSleeping and weatherState ~= "Storm"
+                                                and mood >= 45 and energy >= 35 and hunger >= 25
+                                                and (tonumber(otherNeeds.Energy) or 100) >= 35
+                                                and (tonumber(otherNeeds.Hunger) or 100) >= 25
+                                                and (tonumber(otherNeeds.RestingUntil) or 0) <= os.time()
+                                                and (partnerBehavior == "Socializing" or partnerBehavior == "SeekingFriend")
+                                                and not treasureSearchOwner and not giftCache
+                                                and sharedDiscoveryLeaderUntil <= now
+                                                and (tonumber(partnerModel:GetAttribute("SharedDiscoveryTargetUntil")) or 0) <= now
+                                                and (sharedTreasureCooldowns[treasureKey] or 0) <= now
+                                                and random:NextNumber() < (curious and 0.4 or 0.2) then
+                                                local spots = {}
+                                                for _, point in ipairs(interestPoints) do
+                                                    if (point.Position - currentPosition).Magnitude <= 7
+                                                        and (point.Position - currentPosition).Magnitude >= 3
+                                                        and (point.Position - partnerModel:GetPivot().Position).Magnitude <= 7 then
+                                                        table.insert(spots, point.Position)
+                                                    end
+                                                end
+                                                if #spots > 0 then
+                                                    local spot = spots[random:NextInteger(1, #spots)]
+                                                    for _, pet in ipairs({model, partnerModel}) do
+                                                        pet:SetAttribute("PairTreasureUntil", now + 10)
+                                                        pet:SetAttribute("PairTreasureTarget", spot)
+                                                        pet:SetAttribute("PairTreasurePartner", pet == model and partnerId or instanceId)
+                                                    end
+                                                    sharedTreasureCooldowns[treasureKey] = now + 90
+                                                    treasureStarted = true
+                                                end
+                                            end
+                                            -- Established pairs occasionally turn a normal reunion into a visible ball-passing game.
+                                            if pairBondScore >= 10 then
+                                                local ballGameKey = tostring(player.UserId) .. ":" .. tostring(pairId)
+                                                local ballChance = (personality == "Игривый" or personality == "Энергичный"
+                                                    or partnerPersonality == "Игривый" or partnerPersonality == "Энергичный") and 0.42 or 0.22
+                                                if not hideStarted and not toyStarted and not treasureStarted and (pairedBallCooldowns[ballGameKey] or 0) <= now
+                                                    and random:NextNumber() < ballChance
+                                                    and showPairedBallGame(model, partnerModel, player.UserId, pairId, personality, now) then
+                                                    pairedBallCooldowns[ballGameKey] = now + 45
+                                                end
+                                            end
+                                            local firstKind = model:GetAttribute("CompanionKind")
+                                            local secondKind = partnerModel:GetAttribute("CompanionKind")
+                                            local speciesKey = getSpeciesMomentKey(firstKind, secondKind)
+                                            local speciesMoment = speciesKey and SPECIES_BOND_MOMENTS[speciesKey]
+                                            if speciesMoment and pairBondScore >= 30 then
+                                                local speciesCooldownKey = momentKey .. ":" .. speciesKey
+                                                if not hideStarted and not toyStarted and not treasureStarted and (speciesMomentCooldowns[speciesCooldownKey] or 0) <= now
+                                                    and random:NextNumber() < 0.35 then
+                                                    speciesMomentCooldowns[speciesCooldownKey] = now + 180
+                                                    showSpeciesBondMoment(model, partnerModel, speciesMoment)
+                                                    profile.Nest.DiscoveredBondMoments = profile.Nest.DiscoveredBondMoments or {}
+                                                    local isNewDiscovery = profile.Nest.DiscoveredBondMoments[speciesKey] ~= true
+                                                    profile.Nest.DiscoveredBondMoments[speciesKey] = true
+                                                    if isNewDiscovery then
+                                                        player:SetAttribute("LastNotice", "Открыто особое взаимодействие: " .. speciesMoment.Title)
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
                                 end
                                 bob = math.sin(now * 2 + phase) * 0.045
                             elseif nearToy and toyPlayUntil > now and energy > 10 then
@@ -1035,9 +2351,115 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                     local partnerId = partnerModel and partnerModel:GetAttribute("CompanionInstanceId")
                     local bondKey = getBondKey(instanceId, partnerId)
                     local bondScore = bondKey and math.clamp(math.floor(tonumber(profile.Nest.CompanionBonds[bondKey]) or 0), 0, 100) or 0
+                    local bondLevel = getBondLevel(bondScore)
                     model:SetAttribute("FriendshipScore", bondScore)
-                    model:SetAttribute("FriendshipLevel", getBondLevel(bondScore))
-                    moodLabel.Text = isSleeping and "Zzz"
+                    model:SetAttribute("FriendshipLevel", bondLevel)
+                    friendshipBillboard.Enabled = bondKey ~= nil and bondScore > 0
+                    local bondColor = bondScore >= 90 and Color3.fromRGB(255, 205, 112)
+                        or bondScore >= 60 and Color3.fromRGB(194, 139, 255)
+                        or bondScore >= 30 and Color3.fromRGB(104, 194, 255)
+                        or bondScore >= 10 and Color3.fromRGB(116, 222, 174)
+                        or Color3.fromRGB(160, 177, 194)
+                    friendshipText.Text = string.format("♥ %s  ·  %d/100", bondLevel, bondScore)
+                    friendshipText.TextColor3 = bondColor
+                    friendshipCardStroke.Color = bondColor
+                    friendshipFill.BackgroundColor3 = bondColor
+                    friendshipFill.Size = UDim2.new(bondScore / 100, 0, 1, 0)
+                    local habitActive = activeHabit ~= nil and now < activeHabitUntil and isAtTarget and not isSleeping
+                    if activeHabit ~= nil and not habitActive then
+                        activeHabit = nil
+                        model:SetAttribute("PersonalHabit", nil)
+                        model:SetAttribute("PersonalHabitText", nil)
+                        model:SetAttribute("PersonalHabitUntil", nil)
+                    end
+                    local beingComfortedUntil = tonumber(model:GetAttribute("BeingComfortedUntil")) or 0
+                    local beingComforted = beingComfortedUntil > now and not isSleeping
+                    if beingComforted then
+                        behavior = "BeingComforted"
+                    elseif beingComfortedUntil > 0 then
+                        model:SetAttribute("BeingComfortedUntil", nil)
+                        model:SetAttribute("BeingComfortedBy", nil)
+                    end
+                    if careUntil > now and not isSleeping then
+                        behavior = "ComfortingFriend"
+                    end
+                    local reactionUntil = tonumber(model:GetAttribute("GiftReactionUntil")) or 0
+                    local giftReaction = model:GetAttribute("GiftReaction")
+                    local reactionActive = giftReaction ~= nil and now < reactionUntil and not isSleeping
+                    local reactionBob, reactionYaw, reactionRoll = 0, 0, 0
+                    if beingComforted or careUntil > now then
+                        local comfortPhase = now * 2.2 + phase
+                        reactionBob = math.sin(comfortPhase) * 0.035
+                        reactionRoll = math.sin(comfortPhase * 0.6) * 0.09
+                    end
+                    local habitBob, habitYaw, habitRoll = 0, 0, 0
+                    if habitActive and not reactionActive then
+                        local habitPhase = now * 2.4 + phase
+                        if activeHabit == "PlayfulHop" then
+                            habitBob = math.abs(math.sin(now * 4.8 + phase)) * 0.22
+                        elseif activeHabit == "Stretch" then
+                            habitBob = math.abs(math.sin(habitPhase)) * 0.08
+                            habitRoll = math.sin(habitPhase * 0.5) * 0.12
+                        elseif activeHabit == "Groom" or activeHabit == "Care" then
+                            habitBob = math.sin(habitPhase * 0.8) * 0.035
+                            habitRoll = math.sin(habitPhase) * 0.13
+                        elseif activeHabit == "LookAround" or activeHabit == "WatchSky" or activeHabit == "Inspect" then
+                            habitYaw = math.sin(habitPhase * 0.65) * 0.32
+                            habitBob = math.sin(habitPhase) * 0.025
+                        elseif activeHabit == "Daydream" or activeHabit == "Sway" then
+                            habitBob = math.sin(habitPhase * 0.7) * 0.07
+                            habitRoll = math.sin(habitPhase * 0.45) * 0.08
+                        elseif activeHabit == "Wave" then
+                            habitYaw = math.sin(habitPhase * 1.4) * 0.22
+                            habitBob = math.abs(math.sin(habitPhase)) * 0.05
+                        elseif activeHabit == "Proud" then
+                            habitBob = math.abs(math.sin(habitPhase * 0.7)) * 0.08
+                            habitRoll = math.sin(habitPhase * 0.5) * 0.035
+                        elseif activeHabit == "SniffAround" then
+                            habitBob = math.sin(habitPhase * 1.8) * 0.035
+                            habitYaw = math.sin(habitPhase * 1.2) * 0.24
+                        end
+                        behavior = "PersonalHabit"
+                    end
+                    if reactionActive and not hideActive and not sharedToyActive and not treasureActive then
+                        local reactionPhase = now * 8 + phase
+                        if giftReaction == "Jump" or giftReaction == "Bounce" then
+                            reactionBob = math.abs(math.sin(reactionPhase)) * (giftReaction == "Jump" and 0.58 or 0.34)
+                        elseif giftReaction == "Spin" then
+                            reactionBob = math.abs(math.sin(reactionPhase)) * 0.2
+                            reactionYaw = math.sin(reactionPhase * 0.55) * 0.75
+                        elseif giftReaction == "Hug" then
+                            reactionBob = math.sin(reactionPhase * 0.55) * 0.07
+                            reactionRoll = math.sin(reactionPhase * 0.55) * 0.11
+                        elseif giftReaction == "Shy" then
+                            reactionBob = math.sin(reactionPhase * 0.7) * 0.035
+                            reactionRoll = math.sin(reactionPhase * 0.6) * 0.16
+                            reactionYaw = math.sin(reactionPhase * 0.45) * 0.12
+                        elseif giftReaction == "Sway" or giftReaction == "Dream" then
+                            reactionBob = math.sin(reactionPhase * 0.65) * 0.09
+                            reactionRoll = math.sin(reactionPhase * 0.5) * 0.09
+                        elseif giftReaction == "Proud" then
+                            reactionBob = math.abs(math.sin(reactionPhase * 0.8)) * 0.12
+                            reactionRoll = math.sin(reactionPhase * 0.5) * 0.06
+                        elseif giftReaction == "Amazed" then
+                            reactionBob = math.abs(math.sin(reactionPhase * 1.25)) * 0.62
+                            reactionYaw = math.sin(reactionPhase * 0.35) * 0.3
+                        end
+                        behavior = giftReaction == "Hug" and "HuggingFriend" or "CelebratingGift"
+                    elseif giftReaction ~= nil then
+                        model:SetAttribute("GiftReaction", nil)
+                        model:SetAttribute("GiftReactionText", nil)
+                        model:SetAttribute("GiftReactionUntil", nil)
+                        model:SetAttribute("GiftReactionRare", nil)
+                    end
+                    moodLabel.Text = (treasureActive and "Ищут сокровище вместе!")
+                        or (sharedToyActive and (behavior == "PlayingSharedToy" and "Играют вместе!" or "Идёт к игрушке"))
+                        or (hideActive and (behavior == "HidingFromFriend" and "Прячется!" or behavior == "CountingForFriend" and "Считает..." or "Ищет друга!"))
+                        or (reactionActive and model:GetAttribute("GiftReactionText"))
+                        or (beingComforted and "Друг рядом, всё хорошо ♥")
+                        or (careUntil > now and "Утешает друга ♥")
+                        or (habitActive and model:GetAttribute("PersonalHabitText"))
+                        or (isSleeping and "Zzz")
                         or (behavior == "Searching" and "Ищет сокровище")
                         or (behavior == "FoundGift" and "Нашёл подарок!")
                         or (behavior == "Exploring" and ("Исследует: " .. tostring(interestLabel or "остров")))
@@ -1052,8 +2474,17 @@ function CompanionService:RefreshDisplayedPets(player, plot, displayedIds, slotO
                         or string.format("♥%d  🍖%d  ⚡%d", mood, hunger, energy)
                     model:SetAttribute("Mood", mood)
                     model:SetAttribute("Behavior", behavior)
-                    local position = currentPosition + Vector3.new(0, bob, 0)
-                    model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset, 0))
+                    local hugOffset = Vector3.zero
+                    if reactionActive and giftReaction == "Hug" and partnerModel and partnerModel.Parent then
+                        local partnerPosition = partnerModel:GetPivot().Position
+                        local towardFriend = partnerPosition - currentPosition
+                        if towardFriend.Magnitude > 0.1 then
+                            hugOffset = towardFriend.Unit * 0.38
+                            facing = math.atan2(towardFriend.X, towardFriend.Z)
+                        end
+                    end
+                    local position = currentPosition + hugOffset + Vector3.new(0, bob + reactionBob + habitBob, 0)
+                    model:PivotTo(CFrame.new(position) * CFrame.Angles(0, facing + yawOffset + reactionYaw + habitYaw, reactionRoll + habitRoll))
                     task.wait(0.12)
                 end
             end)
@@ -1270,6 +2701,51 @@ function CompanionService:Init()
     Players.PlayerAdded:Connect(bindPlayer)
     Players.PlayerRemoving:Connect(function(player)
         boundPlayers[player] = nil
+        local cooldownPrefix = tostring(player.UserId) .. ":"
+        for key in pairs(socialMomentCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                socialMomentCooldowns[key] = nil
+            end
+        end
+        for key in pairs(pairGreetingLastAt) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                pairGreetingLastAt[key] = nil
+            end
+        end
+        for key in pairs(speciesMomentCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                speciesMomentCooldowns[key] = nil
+            end
+        end
+        for key in pairs(GIFT_COOLDOWNS) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                GIFT_COOLDOWNS[key] = nil
+            end
+        end
+        for key in pairs(socialChaseCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                socialChaseCooldowns[key] = nil
+            end
+        end
+        for key in pairs(sharedRestCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                sharedRestCooldowns[key] = nil
+            end
+        end
+        for key in pairs(pairedBallCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then
+                pairedBallCooldowns[key] = nil
+            end
+        end
+        for key in pairs(sharedTreasureCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then sharedTreasureCooldowns[key] = nil end
+        end
+        for key in pairs(sharedToyCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then sharedToyCooldowns[key] = nil end
+        end
+        for key in pairs(hideSeekCooldowns) do
+            if string.sub(key, 1, #cooldownPrefix) == cooldownPrefix then hideSeekCooldowns[key] = nil end
+        end
         self._generations[player] = nil
         self:ClearPlayer(player)
         local displayFolder = self._displayFolders[player]

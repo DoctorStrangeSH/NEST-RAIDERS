@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local ProximityPromptService = game:GetService("ProximityPromptService")
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
 local player = Players.LocalPlayer
@@ -64,6 +65,7 @@ end
 local inventoryRemote = waitRemote("CompanionInventory")
 local shopRemote = waitRemote("EggShop")
 local collectionRemote = waitRemote("CollectionBook")
+local bondJournalRemote = waitRemote("BondJournal")
 local nestRemote = waitRemote("NestUpgrade")
 local displayRemote = waitRemote("DisplayPets")
 local decorRemote = waitRemote("NestDecor")
@@ -74,7 +76,7 @@ local publicProfileRemote = waitRemote("PublicProfile")
 local raidRemote = waitRemote("RaidBoard")
 local hatchRevealRemote = remotes:WaitForChild("HatchReveal", 20)
 
-if not (inventoryRemote and shopRemote and collectionRemote and nestRemote and displayRemote
+if not (inventoryRemote and shopRemote and collectionRemote and bondJournalRemote and nestRemote and displayRemote
     and decorRemote and buildRemote and visitRemote and contestRemote and publicProfileRemote and raidRemote
     and hatchRevealRemote and hatchRevealRemote:IsA("RemoteEvent")) then
     bootText.Text = "NEST RAIDERS\nНе запущена система вылупления питомцев. Проверь EggService в ServerScriptService."
@@ -362,6 +364,19 @@ collectionButton.Font = Enum.Font.GothamBlack
 collectionButton.Parent = gui
 addCorner(collectionButton, 12)
 addStroke(collectionButton, Color3.fromRGB(167, 190, 238), 1.5)
+
+local bondJournalButton = Instance.new("TextButton")
+bondJournalButton.Name = "BondJournalButton"
+bondJournalButton.Position = UDim2.fromOffset(18, 324)
+bondJournalButton.Size = UDim2.fromOffset(250, 46)
+bondJournalButton.BackgroundColor3 = Color3.fromRGB(92, 116, 91)
+bondJournalButton.Text = "ДНЕВНИК ДРУЖБЫ"
+bondJournalButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+bondJournalButton.TextSize = 14
+bondJournalButton.Font = Enum.Font.GothamBlack
+bondJournalButton.Parent = gui
+addCorner(bondJournalButton, 12)
+addStroke(bondJournalButton, Color3.fromRGB(178, 211, 145), 1.5)
 
 local nestButton = Instance.new("TextButton")
 nestButton.Name = "NestUpgradeButton"
@@ -1218,6 +1233,7 @@ addStroke(hallButton, Color3.fromRGB(171, 184, 230), 1.5)
 
 local materialsPanel
 local artifactsPanel
+local gearPanel
 local materialsButton = Instance.new("TextButton")
 materialsButton.Name = "MaterialsInventoryButton"
 materialsButton.Position = UDim2.fromOffset(18, 644)
@@ -1243,6 +1259,18 @@ artifactsButton.Parent = gui
 addCorner(artifactsButton, 12)
 addStroke(artifactsButton, Color3.fromRGB(210, 180, 255), 1.5)
 
+local gearButton = Instance.new("TextButton")
+gearButton.Name = "GearEquipmentButton"
+gearButton.Size = UDim2.fromOffset(250, 42)
+gearButton.BackgroundColor3 = Color3.fromRGB(91, 104, 151)
+gearButton.Text = "СНАРЯЖЕНИЕ"
+gearButton.TextColor3 = Color3.fromRGB(255, 255, 245)
+gearButton.TextSize = 13
+gearButton.Font = Enum.Font.GothamBlack
+gearButton.Parent = gui
+addCorner(gearButton, 12)
+addStroke(gearButton, Color3.fromRGB(177, 190, 255), 1.5)
+
 local profileButton = Instance.new("TextButton")
 profileButton.Name = "MyPublicProfileButton"
 profileButton.Position = UDim2.fromOffset(18, 692)
@@ -1260,7 +1288,7 @@ addStroke(profileButton, Color3.fromRGB(160, 220, 192), 1.5)
 -- Previously the last buttons were fixed at Y=692 and disappeared off small screens.
 local menuButtons = {
     inventoryButton, shopButton, collectionButton, nestButton, displayButton,
-    decorButton, buildButton, visitButton, raidButton, contestButton, hallButton, materialsButton, artifactsButton, profileButton,
+    decorButton, buildButton, visitButton, raidButton, contestButton, hallButton, materialsButton, artifactsButton, gearButton, bondJournalButton, profileButton,
 }
 local navToggle = Instance.new("TextButton")
 navToggle.Name = "MenuToggle"
@@ -1361,6 +1389,8 @@ local menuIconStyles = {
     { Color = Color3.fromRGB(112, 129, 180), Kind = "podium" },
     { Color = Color3.fromRGB(91, 139, 173), Kind = "gem" },
     { Color = Color3.fromRGB(145, 111, 185), Kind = "crystal" },
+    { Color = Color3.fromRGB(125, 139, 192), Kind = "armor" },
+    { Color = Color3.fromRGB(116, 164, 113), Kind = "heart" },
     { Color = Color3.fromRGB(90, 151, 130), Kind = "profile" },
 }
 
@@ -1395,6 +1425,18 @@ local function drawMenuIcon(parent, kind)
         addIconShape(parent, "BookLeft", 9, 14, 9, 16, -5, white, 3)
         addIconShape(parent, "BookRight", 19, 14, 9, 16, 5, white, 3)
         addIconShape(parent, "BookSpine", 14, 14, 2, 17, 0, Color3.fromRGB(115, 137, 196))
+    elseif kind == "heart" then
+        local heart = Instance.new("TextLabel")
+        heart.Name = "FriendshipHeart"
+        heart.BackgroundTransparency = 1
+        heart.Position = UDim2.fromOffset(1, 0)
+        heart.Size = UDim2.fromOffset(26, 27)
+        heart.Font = Enum.Font.GothamBlack
+        heart.Text = "♥"
+        heart.TextColor3 = white
+        heart.TextSize = 22
+        heart.ZIndex = parent.ZIndex + 1
+        heart.Parent = parent
     elseif kind == "nest" then
         addIconShape(parent, "NestRimTop", 14, 13, 19, 3, -12, white)
         addIconShape(parent, "NestRimMid", 14, 17, 21, 3, 0, white)
@@ -1437,6 +1479,11 @@ local function drawMenuIcon(parent, kind)
     elseif kind == "crystal" then
         addIconShape(parent, "ArtifactCrystal", 14, 14, 11, 17, 45, white)
         addIconShape(parent, "ArtifactCrystalCore", 14, 14, 3, 13, 0, Color3.fromRGB(145, 111, 185))
+    elseif kind == "armor" then
+        addIconShape(parent, "ArmorChest", 14, 17, 15, 17, 0, white, 3)
+        addIconShape(parent, "ArmorShoulderA", 5, 11, 8, 7, -24, white, 3)
+        addIconShape(parent, "ArmorShoulderB", 23, 11, 8, 7, 24, white, 3)
+        addIconShape(parent, "ArmorCore", 14, 17, 5, 7, 0, Color3.fromRGB(125, 139, 192), 2)
     elseif kind == "profile" then
         addIconShape(parent, "ProfileHead", 14, 9, 8, 8, 0, white)
         addIconShape(parent, "ProfileBody", 14, 21, 17, 10, 0, white)
@@ -1447,6 +1494,7 @@ local sectionLabels = {
     { Text = "МОЙ ОСТРОВ", Order = 1 },
     { Text = "ПРИКЛЮЧЕНИЯ", Order = 55 },
     { Text = "КОЛЛЕКЦИЯ И ПРОФИЛЬ", Order = 120 },
+    { Text = "ПЕРСОНАЖ", Order = 135 },
 }
 for _, section in ipairs(sectionLabels) do
     local label = Instance.new("TextLabel")
@@ -2075,6 +2123,82 @@ bookLayout.Padding = UDim.new(0, 8)
 bookLayout.SortOrder = Enum.SortOrder.LayoutOrder
 bookLayout.Parent = bookList
 
+local bondJournalPanel = Instance.new("Frame")
+bondJournalPanel.Name = "BondJournalPanel"
+bondJournalPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+bondJournalPanel.Position = UDim2.fromScale(0.5, 0.5)
+bondJournalPanel.Size = UDim2.new(0.9, 0, 0.76, 0)
+bondJournalPanel.BackgroundColor3 = Color3.fromRGB(29, 43, 47)
+bondJournalPanel.BorderSizePixel = 0
+bondJournalPanel.Visible = false
+bondJournalPanel.Parent = gui
+addCorner(bondJournalPanel, 18)
+addStroke(bondJournalPanel, Color3.fromRGB(157, 194, 139), 2)
+local bondJournalSize = Instance.new("UISizeConstraint")
+bondJournalSize.MinSize = Vector2.new(290, 320)
+bondJournalSize.MaxSize = Vector2.new(480, 590)
+bondJournalSize.Parent = bondJournalPanel
+
+local bondJournalTitle = Instance.new("TextLabel")
+bondJournalTitle.BackgroundTransparency = 1
+bondJournalTitle.Position = UDim2.fromOffset(18, 12)
+bondJournalTitle.Size = UDim2.new(1, -76, 0, 30)
+bondJournalTitle.Font = Enum.Font.GothamBlack
+bondJournalTitle.Text = "ДНЕВНИК ДРУЖБЫ"
+bondJournalTitle.TextColor3 = Color3.fromRGB(215, 238, 184)
+bondJournalTitle.TextSize = 17
+bondJournalTitle.TextXAlignment = Enum.TextXAlignment.Left
+bondJournalTitle.Parent = bondJournalPanel
+
+local bondJournalClose = Instance.new("TextButton")
+bondJournalClose.AnchorPoint = Vector2.new(1, 0)
+bondJournalClose.Position = UDim2.new(1, -12, 0, 10)
+bondJournalClose.Size = UDim2.fromOffset(38, 34)
+bondJournalClose.BackgroundColor3 = Color3.fromRGB(74, 91, 83)
+bondJournalClose.Text = "✕"
+bondJournalClose.TextColor3 = Color3.new(1, 1, 1)
+bondJournalClose.TextSize = 18
+bondJournalClose.Font = Enum.Font.GothamBold
+bondJournalClose.Parent = bondJournalPanel
+addCorner(bondJournalClose, 10)
+
+local bondJournalProgress = Instance.new("TextLabel")
+bondJournalProgress.BackgroundTransparency = 1
+bondJournalProgress.Position = UDim2.fromOffset(18, 48)
+bondJournalProgress.Size = UDim2.new(1, -36, 0, 24)
+bondJournalProgress.Font = Enum.Font.GothamBold
+bondJournalProgress.TextColor3 = Color3.fromRGB(197, 218, 183)
+bondJournalProgress.TextSize = 13
+bondJournalProgress.TextXAlignment = Enum.TextXAlignment.Left
+bondJournalProgress.Parent = bondJournalPanel
+
+local bondJournalHint = Instance.new("TextLabel")
+bondJournalHint.BackgroundTransparency = 1
+bondJournalHint.Position = UDim2.fromOffset(18, 74)
+bondJournalHint.Size = UDim2.new(1, -36, 0, 34)
+bondJournalHint.Font = Enum.Font.GothamMedium
+bondJournalHint.Text = "Знакомь питомцев, наблюдай за их дружбой и открывай редкие моменты."
+bondJournalHint.TextColor3 = Color3.fromRGB(171, 193, 171)
+bondJournalHint.TextSize = 11
+bondJournalHint.TextWrapped = true
+bondJournalHint.TextXAlignment = Enum.TextXAlignment.Left
+bondJournalHint.Parent = bondJournalPanel
+
+local bondJournalList = Instance.new("ScrollingFrame")
+bondJournalList.Name = "BondJournalEntries"
+bondJournalList.Position = UDim2.fromOffset(12, 112)
+bondJournalList.Size = UDim2.new(1, -24, 1, -124)
+bondJournalList.BackgroundTransparency = 1
+bondJournalList.BorderSizePixel = 0
+bondJournalList.ScrollBarThickness = 5
+bondJournalList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+bondJournalList.CanvasSize = UDim2.new()
+bondJournalList.Parent = bondJournalPanel
+local bondJournalLayout = Instance.new("UIListLayout")
+bondJournalLayout.Padding = UDim.new(0, 8)
+bondJournalLayout.SortOrder = Enum.SortOrder.LayoutOrder
+bondJournalLayout.Parent = bondJournalList
+
 local inventoryPanel = Instance.new("Frame")
 inventoryPanel.Name = "CompanionInventory"
 inventoryPanel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -2285,7 +2409,7 @@ local materialRows = {}
 local materialDefinitions = {
     { Id = "Elderwood", Attribute = "Elderwood", Name = "Древесная эссенция", Detail = "Древние корни и мастерская", Color = Color3.fromRGB(173, 218, 145) },
     { Id = "Moonpetal", Attribute = "Moonpetal", Name = "Лунные лепестки", Detail = "Секретные тайники Шепчущей рощи", Color = Color3.fromRGB(211, 186, 255) },
-    { Id = "Starshard", Attribute = "Starshard", Name = "Звёздные осколки", Detail = "Сокровища и испытания Пещеры", Color = Color3.fromRGB(255, 218, 143) },
+    { Id = "Starshard", Attribute = "Starshard", Name = "Звёздные осколки", Detail = "Пещера и Граница пустоты", Color = Color3.fromRGB(255, 218, 143) },
     { Id = "CrystalShard", Attribute = "CrystalShards", Name = "Кристальные осколки", Detail = "Жилы Хрустального королевства", Color = Color3.fromRGB(151, 222, 255) },
     { Id = "AshCrystal", Attribute = "AshCrystals", Name = "Пепельные кристаллы", Detail = "Последствия извержений Эмберлендс", Color = Color3.fromRGB(255, 177, 126) },
 }
@@ -2347,7 +2471,7 @@ updateMaterialsInventory()
 
 -- Artifact collection and two-slot equipment. Crafting is server-validated at the Ancient Heights workshop.
 -- Forward declarations: UI callbacks below run after these helpers are assigned.
-local showNotice, invokeInventory, renderArtifacts
+local showNotice, invokeInventory, renderArtifacts, renderGear
 artifactsPanel = Instance.new("Frame")
 artifactsPanel.Name = "ArtifactsPanel"
 artifactsPanel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -2402,7 +2526,7 @@ local artifactsCraft = Instance.new("TextButton")
 artifactsCraft.Position = UDim2.fromOffset(16, 100)
 artifactsCraft.Size = UDim2.new(1, -32, 0, 40)
 artifactsCraft.BackgroundColor3 = Color3.fromRGB(112, 78, 157)
-artifactsCraft.Text = "СОЗДАТЬ АРТЕФАКТ · 4 ЛЕПЕСТКА · 2 ЗВЁЗДНЫХ · 2 КРИСТАЛЬНЫХ · 1 ПЕПЕЛЬНЫЙ · 250 МОНЕТ"
+artifactsCraft.Text = "МАСТЕРСКАЯ ДРЕВНИХ ВЫСОТ · СЛУЧАЙНЫЙ АРТЕФАКТ"
 artifactsCraft.TextColor3 = Color3.fromRGB(255, 248, 255)
 artifactsCraft.TextSize = 10
 artifactsCraft.TextWrapped = true
@@ -2410,11 +2534,41 @@ artifactsCraft.Font = Enum.Font.GothamBlack
 artifactsCraft.Parent = artifactsPanel
 addCorner(artifactsCraft, 10)
 
+local voidForgeButtons = {}
+local function makeVoidForgeButton(name, recipeId, y, label, color)
+    local button = Instance.new("TextButton")
+    button.Name = name
+    button.Position = UDim2.fromOffset(16, y)
+    button.Size = UDim2.new(1, -32, 0, 32)
+    button.BackgroundColor3 = color
+    button.Text = label
+    button.TextColor3 = Color3.fromRGB(250, 246, 255)
+    button.TextSize = 9
+    button.TextWrapped = true
+    button.Font = Enum.Font.GothamBlack
+    button.Visible = false
+    button.Parent = artifactsPanel
+    addCorner(button, 9)
+    button.Activated:Connect(function()
+        local data = invokeInventory({ Action = "CraftVoidArtifact", RecipeId = recipeId })
+        if data then
+            renderArtifacts(data)
+            showNotice("Кузница создала выбранный артефакт!")
+        end
+    end)
+    table.insert(voidForgeButtons, button)
+end
 
+makeVoidForgeButton("VoidHarvesterRecipe", "VoidHarvester", 144,
+    "ЖЕЗЛ ЖИЛЫ · 24 ОСКОЛКА · 6 КРИСТАЛЛОВ · 1 200 МОНЕТ", Color3.fromRGB(85, 91, 143))
+makeVoidForgeButton("RiftCompassRecipe", "RiftCompass", 179,
+    "КОМПАС РАЗЛОМА · 18 ОСКОЛКОВ · 4 ПЕПЕЛЬНЫХ · 1 000 МОНЕТ", Color3.fromRGB(92, 79, 139))
+makeVoidForgeButton("NebulaCharmRecipe", "NebulaCharm", 214,
+    "АМУЛЕТ ТУМАННОСТИ · 30 ОСКОЛКОВ · 8 ЛЕПЕСТКОВ · 1 600 МОНЕТ", Color3.fromRGB(124, 79, 143))
 
 local artifactsSlots = Instance.new("TextLabel")
 artifactsSlots.BackgroundTransparency = 1
-artifactsSlots.Position = UDim2.fromOffset(18, 146)
+artifactsSlots.Position = UDim2.fromOffset(146, 146)
 artifactsSlots.Size = UDim2.new(1, -36, 0, 42)
 artifactsSlots.Font = Enum.Font.GothamBold
 artifactsSlots.Text = "СЛОТЫ: 0 / 2"
@@ -2427,7 +2581,7 @@ artifactsSlots.Parent = artifactsPanel
 
 local artifactsList = Instance.new("ScrollingFrame")
 artifactsList.Name = "ArtifactList"
-artifactsList.Position = UDim2.fromOffset(14, 192)
+artifactsList.Position = UDim2.fromOffset(192, 192)
 artifactsList.Size = UDim2.new(1, -28, 1, -206)
 artifactsList.BackgroundTransparency = 1
 artifactsList.BorderSizePixel = 0
@@ -2764,6 +2918,25 @@ local function refreshArtifacts()
     local data = invokeInventory({ Action = "Get" })
     if data then renderArtifacts(data) end
 end
+local function updateVoidForgeButtons()
+    local visible = player:GetAttribute("CurrentBiome") == "VoidFrontier"
+    artifactsCraft.Visible = not visible
+    artifactsHint.Text = visible
+        and "Кузница пустоты: выбери рецепт. Все материалы проверяются сервером до списания."
+        or "Экипируй до 2 артефактов: они усиливают доход, добычу, опыт и шанс питомца высшей редкости. Создание доступно у мастерской Древних высот."
+    for _, button in ipairs(voidForgeButtons) do button.Visible = visible end
+    if visible then
+        artifactsSlots.Position = UDim2.fromOffset(18, 250)
+        artifactsList.Position = UDim2.fromOffset(14, 296)
+        artifactsList.Size = UDim2.new(1, -28, 1, -310)
+    else
+        artifactsSlots.Position = UDim2.fromOffset(18, 146)
+        artifactsList.Position = UDim2.fromOffset(14, 192)
+        artifactsList.Size = UDim2.new(1, -28, 1, -206)
+    end
+end
+player:GetAttributeChangedSignal("CurrentBiome"):Connect(updateVoidForgeButtons)
+updateVoidForgeButtons()
 artifactsButton.Activated:Connect(function()
     refreshArtifacts()
     artifactsPanel.Visible = true
@@ -2780,11 +2953,263 @@ player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
     if artifactsPanel.Visible then refreshArtifacts() end
 end)
 
+-- Character equipment: four persistent slots, crafted at the Void Forge.
+gearPanel = Instance.new("Frame")
+gearPanel.Name = "GearEquipmentPanel"
+gearPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+gearPanel.Position = UDim2.fromScale(0.5, 0.5)
+gearPanel.Size = UDim2.new(0.92, 0, 0.82, 0)
+gearPanel.BackgroundColor3 = Color3.fromRGB(29, 34, 57)
+gearPanel.BorderSizePixel = 0
+gearPanel.Visible = false
+gearPanel.Parent = gui
+addCorner(gearPanel, 18)
+addStroke(gearPanel, Color3.fromRGB(157, 169, 232), 2)
+local gearPanelSize = Instance.new("UISizeConstraint")
+gearPanelSize.MinSize = Vector2.new(280, 350)
+gearPanelSize.MaxSize = Vector2.new(540, 650)
+gearPanelSize.Parent = gearPanel
+
+local gearTitle = Instance.new("TextLabel")
+gearTitle.BackgroundTransparency = 1
+gearTitle.Position = UDim2.fromOffset(18, 12)
+gearTitle.Size = UDim2.new(1, -76, 0, 30)
+gearTitle.Font = Enum.Font.GothamBlack
+gearTitle.Text = "ЭКИПИРОВКА ПУСТОТЫ"
+gearTitle.TextColor3 = Color3.fromRGB(226, 229, 255)
+gearTitle.TextSize = 17
+gearTitle.TextXAlignment = Enum.TextXAlignment.Left
+gearTitle.Parent = gearPanel
+
+local gearClose = Instance.new("TextButton")
+gearClose.Position = UDim2.new(1, -48, 0, 10)
+gearClose.Size = UDim2.fromOffset(36, 36)
+gearClose.BackgroundColor3 = Color3.fromRGB(143, 68, 88)
+gearClose.Text = "×"
+gearClose.TextColor3 = Color3.fromRGB(255, 255, 255)
+gearClose.TextSize = 24
+gearClose.Font = Enum.Font.GothamBold
+gearClose.Parent = gearPanel
+addCorner(gearClose, 10)
+
+local gearHint = Instance.new("TextLabel")
+gearHint.BackgroundTransparency = 1
+gearHint.Position = UDim2.fromOffset(18, 48)
+gearHint.Size = UDim2.new(1, -36, 0, 38)
+gearHint.Font = Enum.Font.Gotham
+gearHint.Text = "Четыре слота персонажа. Надетые предметы меняют характеристики и внешний вид."
+gearHint.TextColor3 = Color3.fromRGB(190, 196, 224)
+gearHint.TextSize = 11
+gearHint.TextWrapped = true
+gearHint.TextXAlignment = Enum.TextXAlignment.Left
+gearHint.Parent = gearPanel
+
+local gearCraftButtons = {}
+local function makeGearCraftButton(name, itemId, position, label, color)
+    local button = Instance.new("TextButton")
+    button.Name = name
+    button.Position = position
+    button.Size = UDim2.new(0.5, -22, 0, 42)
+    button.BackgroundColor3 = color
+    button.Text = label
+    button.TextColor3 = Color3.fromRGB(250, 247, 255)
+    button.TextSize = 9
+    button.TextWrapped = true
+    button.Font = Enum.Font.GothamBlack
+    button.Visible = false
+    button.Parent = gearPanel
+    addCorner(button, 9)
+    button.Activated:Connect(function()
+        local remotes = ReplicatedStorage:FindFirstChild("NestRaidersRemotes")
+        local remote = remotes and remotes:FindFirstChild("GearInventory")
+        if not remote then showNotice("Система экипировки ещё загружается."); return end
+        local ok, response = pcall(function() return remote:InvokeServer({ Action = "Craft", ItemId = itemId }) end)
+        if not ok then showNotice("Не удалось связаться с кузницей."); return end
+        if not response or response.Ok ~= true then
+            showNotice(response and response.Message or "Не удалось создать предмет.")
+            return
+        end
+        renderGear(response.Data)
+        showNotice(response.Message or "Снаряжение создано!")
+    end)
+    table.insert(gearCraftButtons, button)
+end
+
+makeGearCraftButton("CraftRiftblade", "Riftblade", UDim2.fromOffset(16, 92),
+    "КЛИНОК · 20 ОСКОЛКОВ · 8 КРИСТАЛЛОВ · 1 200", Color3.fromRGB(95, 78, 143))
+makeGearCraftButton("CraftVoidplate", "Voidplate", UDim2.new(0.5, 6, 0, 92),
+    "ДОСПЕХ · 28 ОСКОЛКОВ · 8 ПЕПЕЛЬНЫХ · 1 600", Color3.fromRGB(75, 88, 139))
+makeGearCraftButton("CraftStarhelm", "Starhelm", UDim2.fromOffset(16, 140),
+    "ШЛЕМ · 16 ОСКОЛКОВ · 8 ЛЕПЕСТКОВ · 900", Color3.fromRGB(132, 105, 73))
+makeGearCraftButton("CraftNebulaCloak", "NebulaCloak", UDim2.new(0.5, 6, 0, 140),
+    "ПЛАЩ · 24 ОСКОЛКА · 10 ДРЕВЕСИНЫ · 1 400", Color3.fromRGB(119, 78, 139))
+
+local gearStats = Instance.new("TextLabel")
+gearStats.BackgroundColor3 = Color3.fromRGB(41, 47, 76)
+gearStats.BorderSizePixel = 0
+gearStats.Position = UDim2.fromOffset(16, 190)
+gearStats.Size = UDim2.new(1, -32, 0, 58)
+gearStats.Font = Enum.Font.GothamBold
+gearStats.Text = "ОРУЖИЕ · БРОНЯ · ШЛЕМ · АКСЕССУАР"
+gearStats.TextColor3 = Color3.fromRGB(226, 220, 255)
+gearStats.TextSize = 10
+gearStats.TextWrapped = true
+gearStats.Parent = gearPanel
+addCorner(gearStats, 10)
+
+local gearList = Instance.new("ScrollingFrame")
+gearList.Name = "GearCollection"
+gearList.Position = UDim2.fromOffset(14, 258)
+gearList.Size = UDim2.new(1, -28, 1, -272)
+gearList.BackgroundTransparency = 1
+gearList.BorderSizePixel = 0
+gearList.ScrollBarThickness = 5
+gearList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+gearList.CanvasSize = UDim2.new()
+gearList.Parent = gearPanel
+local gearLayout = Instance.new("UIListLayout")
+gearLayout.Padding = UDim.new(0, 8)
+gearLayout.SortOrder = Enum.SortOrder.LayoutOrder
+gearLayout.Parent = gearList
+
+local function invokeGear(payload)
+    local remotes = ReplicatedStorage:FindFirstChild("NestRaidersRemotes")
+    local remote = remotes and remotes:FindFirstChild("GearInventory")
+    if not remote then showNotice("Система экипировки ещё загружается."); return nil end
+    local ok, response = pcall(function() return remote:InvokeServer(payload) end)
+    if not ok or not response then showNotice("Не удалось получить данные экипировки."); return nil end
+    if response.Ok ~= true then showNotice(response.Message or "Действие с экипировкой не выполнено."); return nil end
+    return response.Data, response.Message
+end
+
+renderGear = function(data)
+    for _, child in ipairs(gearList:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+    local stats = data and data.Stats or {}
+    gearStats.Text = string.format(
+        "СЛОТЫ: %d / 4%s\nУРОН +%d%% · ЗАЩИТА +%d%% · ЗДОРОВЬЕ +%d · СКОРОСТЬ +%d",
+        stats.SetPieces or 0, stats.SetBonus and " · КОМПЛЕКТ АКТИВЕН" or "",
+        math.floor((stats.DamageBonus or 0) * 100 + 0.5),
+        math.floor((stats.DefenseBonus or 0) * 100 + 0.5),
+        stats.MaxHealthBonus or 0, stats.WalkSpeedBonus or 0)
+    local items = data and data.Items or {}
+    if #items == 0 then
+        local empty = Instance.new("TextLabel")
+        empty.Size = UDim2.new(1, -8, 0, 70)
+        empty.BackgroundTransparency = 1
+        empty.Text = "Снаряжения пока нет. Создай первые предметы в Кузнице пустоты."
+        empty.TextColor3 = Color3.fromRGB(195, 195, 218)
+        empty.TextSize = 13
+        empty.TextWrapped = true
+        empty.Font = Enum.Font.GothamMedium
+        empty.Parent = gearList
+        return
+    end
+    local slotNames = { Weapon = "ОРУЖИЕ", Armor = "БРОНЯ", Helmet = "ШЛЕМ", Accessory = "АКСЕССУАР" }
+    for index, item in ipairs(items) do
+        local card = Instance.new("Frame")
+        card.Name = "Gear_" .. tostring(item.InstanceId)
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 96)
+        card.BackgroundColor3 = item.Equipped and Color3.fromRGB(58, 68, 103) or Color3.fromRGB(43, 48, 76)
+        card.BorderSizePixel = 0
+        card.Parent = gearList
+        addCorner(card, 11)
+        local name = Instance.new("TextLabel")
+        name.BackgroundTransparency = 1
+        name.Position = UDim2.fromOffset(12, 8)
+        name.Size = UDim2.new(1, -128, 0, 21)
+        name.Font = Enum.Font.GothamBlack
+        name.Text = item.Name .. " · " .. item.Rarity
+        name.TextColor3 = item.Equipped and Color3.fromRGB(255, 224, 161) or Color3.fromRGB(232, 232, 255)
+        name.TextSize = 12
+        name.TextXAlignment = Enum.TextXAlignment.Left
+        name.TextTruncate = Enum.TextTruncate.AtEnd
+        name.Parent = card
+        local detail = Instance.new("TextLabel")
+        detail.BackgroundTransparency = 1
+        detail.Position = UDim2.fromOffset(12, 32)
+        detail.Size = UDim2.new(1, -132, 0, 52)
+        detail.Font = Enum.Font.Gotham
+        detail.Text = slotNames[item.Slot] .. " · " .. item.Description
+            .. string.format("\nУрон +%d%% · Защита +%d%% · Здоровье +%d · Скорость +%d",
+                math.floor((item.DamageBonus or 0) * 100 + 0.5),
+                math.floor((item.DefenseBonus or 0) * 100 + 0.5),
+                item.MaxHealthBonus or 0, item.WalkSpeedBonus or 0)
+        detail.TextColor3 = Color3.fromRGB(190, 198, 222)
+        detail.TextSize = 9
+        detail.TextWrapped = true
+        detail.TextXAlignment = Enum.TextXAlignment.Left
+        detail.Parent = card
+        local action = Instance.new("TextButton")
+        action.AnchorPoint = Vector2.new(1, 0.5)
+        action.Position = UDim2.new(1, -10, 0.5, 0)
+        action.Size = UDim2.fromOffset(104, 34)
+        action.BackgroundColor3 = item.Equipped and Color3.fromRGB(123, 82, 89) or Color3.fromRGB(83, 123, 111)
+        action.Text = item.Equipped and "СНЯТЬ" or "НАДЕТЬ"
+        action.TextColor3 = Color3.fromRGB(255, 255, 255)
+        action.TextSize = 10
+        action.Font = Enum.Font.GothamBlack
+        action.Parent = card
+        addCorner(action, 8)
+        action.Activated:Connect(function()
+            local updated = invokeGear({
+                Action = item.Equipped and "Unequip" or "Equip",
+                Slot = item.Slot, InstanceId = item.InstanceId,
+            })
+            if updated then renderGear(updated); showNotice(item.Equipped and "Предмет снят." or "Предмет надет.") end
+        end)
+    end
+end
+
+local function updateGearLayout()
+    local inVoid = player:GetAttribute("CurrentBiome") == "VoidFrontier"
+    for _, button in ipairs(gearCraftButtons) do button.Visible = inVoid end
+    if inVoid then
+        gearStats.Position = UDim2.fromOffset(16, 190)
+        gearList.Position = UDim2.fromOffset(14, 258)
+        gearList.Size = UDim2.new(1, -28, 1, -272)
+        gearHint.Text = "Кузница пустоты создаёт четыре уникальных предмета. Каждый слот можно заменить отдельно."
+    else
+        gearStats.Position = UDim2.fromOffset(16, 96)
+        gearList.Position = UDim2.fromOffset(14, 164)
+        gearList.Size = UDim2.new(1, -28, 1, -178)
+        gearHint.Text = "Четыре слота персонажа. Надетые предметы меняют характеристики и внешний вид. Крафт доступен у Кузницы пустоты."
+    end
+end
+
+local function refreshGear()
+    local data = invokeGear({ Action = "Get" })
+    if data then renderGear(data) end
+end
+
+gearClose.Activated:Connect(function() gearPanel.Visible = false end)
+gearButton.Activated:Connect(function()
+    updateGearLayout()
+    refreshGear()
+    gearPanel.Visible = true
+end)
+player:GetAttributeChangedSignal("CurrentBiome"):Connect(updateGearLayout)
+player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
+    if gearPanel.Visible then refreshGear() end
+end)
+updateGearLayout()
+
+ProximityPromptService.PromptTriggered:Connect(function(prompt)
+    if prompt and prompt.Name == "OpenVoidForgePrompt"
+        and player:GetAttribute("CurrentBiome") == "VoidFrontier" then
+        updateGearLayout()
+        refreshGear()
+        gearPanel.Visible = true
+        showNotice("Кузница пустоты открыта. Здесь можно создать экипировку.")
+    end
+end)
 -- Keep panels mutually exclusive regardless of which gameplay action opens them.
 -- Picker is the sole nested dialog and retains its companion display underneath.
 local modalPanels = {
     shopPanel, nestPanel, displayPanel, buildPanel, visitPanel,
-    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel, artifactsPanel, raidPanel,
+    profilePanel, contestPanel, decorPanel, pickerPanel, bookPanel, inventoryPanel, materialsPanel, artifactsPanel, gearPanel, raidPanel,
 }
 local closingOtherPanels = false
 local closeAllButton = Instance.new("TextButton")
@@ -6232,6 +6657,100 @@ end
 collectionButton.Activated:Connect(openCollectionBook)
 bookClose.Activated:Connect(function() bookPanel.Visible = false end)
 
+local function invokeBondJournal()
+    local success, response = pcall(function()
+        return bondJournalRemote:InvokeServer({ Action = "Get" })
+    end)
+    if not success or type(response) ~= "table" then
+        showNotice("Не удалось открыть дневник дружбы.")
+        return nil
+    end
+    if not response.Ok then
+        showNotice(response.Message or "Дневник дружбы временно недоступен.")
+        return nil
+    end
+    return response.Data
+end
+
+local function renderBondJournal(data)
+    if type(data) ~= "table" then return end
+    bondJournalProgress.Text = string.format(
+        "Открыто воспоминаний: %d / %d  ·  %d%%",
+        data.Discovered or 0, data.Total or 0, data.CompletionPercent or 0
+    )
+    for _, child in ipairs(bondJournalList:GetChildren()) do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+    for index, entry in ipairs(data.Entries or {}) do
+        local card = Instance.new("Frame")
+        card.Name = "BondMoment_" .. tostring(index)
+        card.LayoutOrder = index
+        card.Size = UDim2.new(1, -8, 0, 94)
+        card.BackgroundColor3 = entry.Discovered and Color3.fromRGB(47, 73, 59) or Color3.fromRGB(39, 53, 55)
+        card.BorderSizePixel = 0
+        card.Parent = bondJournalList
+        addCorner(card, 11)
+        local accent = Instance.new("Frame")
+        accent.Size = UDim2.new(0, 4, 1, -16)
+        accent.Position = UDim2.fromOffset(5, 8)
+        accent.BackgroundColor3 = entry.Color or Color3.fromRGB(112, 126, 145)
+        accent.BorderSizePixel = 0
+        accent.Parent = card
+        addCorner(accent, 3)
+        local icon = Instance.new("TextLabel")
+        icon.BackgroundTransparency = 1
+        icon.Position = UDim2.fromOffset(15, 13)
+        icon.Size = UDim2.fromOffset(42, 42)
+        icon.Font = Enum.Font.GothamBlack
+        icon.Text = entry.Icon or "🔒"
+        icon.TextSize = 25
+        icon.Parent = card
+        local title = Instance.new("TextLabel")
+        title.BackgroundTransparency = 1
+        title.Position = UDim2.fromOffset(62, 9)
+        title.Size = UDim2.new(1, -74, 0, 23)
+        title.Font = Enum.Font.GothamBold
+        title.Text = entry.Discovered and entry.Title or "???  ·  Секрет не открыт"
+        title.TextColor3 = entry.Discovered and (entry.Color or Color3.fromRGB(215, 238, 184)) or Color3.fromRGB(165, 177, 169)
+        title.TextSize = 13
+        title.TextXAlignment = Enum.TextXAlignment.Left
+        title.TextTruncate = Enum.TextTruncate.AtEnd
+        title.Parent = card
+        local rarity = Instance.new("TextLabel")
+        rarity.BackgroundTransparency = 1
+        rarity.Position = UDim2.fromOffset(62, 32)
+        rarity.Size = UDim2.new(1, -74, 0, 16)
+        rarity.Font = Enum.Font.GothamBlack
+        rarity.Text = string.upper(tostring(entry.Rarity or "Секрет"))
+        rarity.TextColor3 = entry.Color or Color3.fromRGB(145, 159, 148)
+        rarity.TextSize = 9
+        rarity.TextXAlignment = Enum.TextXAlignment.Left
+        rarity.Parent = card
+        local hint = Instance.new("TextLabel")
+        hint.BackgroundTransparency = 1
+        hint.Position = UDim2.fromOffset(62, 51)
+        hint.Size = UDim2.new(1, -74, 0, 34)
+        hint.Font = Enum.Font.GothamMedium
+        hint.Text = entry.Hint or "Продолжай знакомить питомцев."
+        hint.TextColor3 = Color3.fromRGB(189, 203, 188)
+        hint.TextSize = 10
+        hint.TextWrapped = true
+        hint.TextXAlignment = Enum.TextXAlignment.Left
+        hint.TextYAlignment = Enum.TextYAlignment.Top
+        hint.Parent = card
+    end
+end
+
+local function openBondJournal()
+    bookPanel.Visible = false
+    bondJournalPanel.Visible = true
+    local data = invokeBondJournal()
+    if data then renderBondJournal(data) end
+end
+
+bondJournalButton.Activated:Connect(openBondJournal)
+bondJournalClose.Activated:Connect(function() bondJournalPanel.Visible = false end)
+
 local function openInventory()
     inventoryPanel.Visible = true
     local data = invokeInventory({ Action = "Get" })
@@ -6412,15 +6931,18 @@ local function updateBiomeTrialPanel()
     local isEmber = biomeId == "Emberlands"
     local isCrystal = biomeId == "CrystalRealm"
     local isAncient = biomeId == "AncientHeights"
-    trialPanel.Visible = isEmerald or isFrost or isEmber or isCrystal or isAncient
+    local isVoid = biomeId == "VoidFrontier"
+    trialPanel.Visible = isEmerald or isFrost or isEmber or isCrystal or isAncient or isVoid
     if not trialPanel.Visible then return end
 
-    local countAttribute = isAncient and "AncientTempleProgress"
+    local countAttribute = isVoid and "VoidTrialProgress"
+        or (isAncient and "AncientTempleProgress"
         or (isCrystal and "CrystalTrialProgress"
-        or (isFrost and "FrostTrialProgress" or (isEmber and "EmberTrialProgress" or "EmeraldTrialProgress")))
-    local completeAttribute = isAncient and "AncientTempleCompleted"
+        or (isFrost and "FrostTrialProgress" or (isEmber and "EmberTrialProgress" or "EmeraldTrialProgress"))))
+    local completeAttribute = isVoid and "VoidTrialCompleted"
+        or (isAncient and "AncientTempleCompleted"
         or (isCrystal and "CrystalTrialCompleted"
-        or (isFrost and "FrostTrialCompleted" or (isEmber and "EmberTrialCompleted" or "EmeraldTrialCompleted")))
+        or (isFrost and "FrostTrialCompleted" or (isEmber and "EmberTrialCompleted" or "EmeraldTrialCompleted"))))
     local count = math.clamp(tonumber(player:GetAttribute(countAttribute)) or 0, 0, 3)
     local completed = player:GetAttribute(completeAttribute) == true
     local bossCompleted = isAncient and player:GetAttribute("AncientTempleBossCompleted") == true
@@ -6435,25 +6957,29 @@ local function updateBiomeTrialPanel()
     local showCaveSecret = isAncient and (caveCrystalProgress > 0 or caveCacheOpened)
     local caveBossUnlocked = isAncient and player:GetAttribute("ForgottenHeartBossUnlocked") == true
     local caveBossCompleted = isAncient and player:GetAttribute("ForgottenHeartBossCompleted") == true
+    local voidBossCompleted = isVoid and player:GetAttribute("VoidBossCompleted") == true
 
     trialPanel.Position = (isEmber or isCrystal) and UDim2.new(1, -12, 0, 286)
         or (isAncient and UDim2.new(1, -12, 0, 196) or UDim2.new(1, -12, 0, 184))
     local secretRows = (showGroveSecret and 1 or 0) + (showCaveSecret and 1 or 0)
     trialPanel.Size = UDim2.fromOffset(236,
         secretRows > 0 and (142 + secretRows * 20)
-            or (((isEmber or isCrystal) or ancientBossActive or caveBossUnlocked) and 142 or 112))
-    trialPanel.BackgroundColor3 = isAncient and Color3.fromRGB(42, 61, 43)
+            or ((isVoid or isEmber or isCrystal or ancientBossActive or caveBossUnlocked) and 142 or 112))
+    trialPanel.BackgroundColor3 = isVoid and Color3.fromRGB(39, 32, 62)
+        or (isAncient and Color3.fromRGB(42, 61, 43)
         or (isCrystal and Color3.fromRGB(48, 39, 76)
-        or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51)))
+        or (isEmber and Color3.fromRGB(62, 39, 34) or Color3.fromRGB(30, 57, 51))))
 
-    trialTitle.Text = isAncient and "ХРАМ ДРЕВНЕГО ДРЕВА"
+    trialTitle.Text = isVoid and "ГРАНИЦА ПУСТОТЫ"
+        or (isAncient and "ХРАМ ДРЕВНЕГО ДРЕВА"
         or (isCrystal and "ИСПЫТАНИЕ ПРИЗМЫ"
         or (isEmber and "ИСПЫТАНИЕ ОГНЕННОГО СЕРДЦА"
-        or (isFrost and "ИСПЫТАНИЕ СЕРДЦА ЗИМЫ" or "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ")))
-    trialTitle.TextColor3 = isAncient and Color3.fromRGB(220, 239, 179)
+        or (isFrost and "ИСПЫТАНИЕ СЕРДЦА ЗИМЫ" or "ИСПЫТАНИЕ ДРЕВНЕЙ РОЩИ"))))
+    trialTitle.TextColor3 = isVoid and Color3.fromRGB(211, 187, 255)
+        or (isAncient and Color3.fromRGB(220, 239, 179)
         or (isCrystal and Color3.fromRGB(216, 190, 255)
         or (isEmber and Color3.fromRGB(255, 183, 125)
-        or (isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202))))
+        or (isFrost and Color3.fromRGB(190, 231, 255) or Color3.fromRGB(188, 255, 202)))))
 
     if isAncient then
         if bossCompleted then
@@ -6534,6 +7060,34 @@ local function updateBiomeTrialPanel()
                 bossStatus.TextColor3 = Color3.fromRGB(185, 232, 255)
             end
         end
+    elseif isVoid then
+        trialTitle.TextColor3 = Color3.fromRGB(211, 187, 255)
+        trialDescription.Text = voidBossCompleted
+            and "Пожиратель звёзд повержен! Звёздный Пожиратель уже добавлен в твою коллекцию."
+            or (completed and "Три руны пробуждены. Войди на арену и победи Пожирателя звёзд."
+                or "Пробуди руны по порядку: Разлом → Эхо → Звезда. Ошибка сбросит цепочку.")
+        trialBarFill.BackgroundColor3 = Color3.fromRGB(181, 139, 255)
+        trialBarFill.Size = UDim2.fromScale(completed and 1 or count / 3, 1)
+        trialStatus.Text = voidBossCompleted and "ПОЖИРАТЕЛЬ ПОВЕРЖЕН"
+            or (completed and "АРЕНА ОТКРЫТА" or string.format("ПРОБУЖДЕНО РУН: %d / 3", count))
+        local voidBossHealth = math.clamp(tonumber(player:GetAttribute("VoidBossHealth")) or 540, 0, 540)
+        local voidBossPhase = tonumber(player:GetAttribute("VoidBossPhase")) or 1
+        bossBarBack.Visible = completed and not voidBossCompleted
+        bossStatus.Visible = completed
+        bossBarFill.Size = UDim2.fromScale(voidBossHealth / 540, 1)
+        bossBarFill.BackgroundColor3 = voidBossPhase == 3 and Color3.fromRGB(255, 104, 164)
+            or (voidBossPhase == 2 and Color3.fromRGB(183, 125, 255) or Color3.fromRGB(124, 166, 255))
+        if player:GetAttribute("VoidBossWindup") == true then
+            local attackType = player:GetAttribute("VoidBossAttackType")
+            bossStatus.Text = attackType == "Collapse" and "КОЛЛАПС ПУСТОТЫ! БЕГИ!"
+                or (attackType == "Starfall" and "ЗВЁЗДНЫЙ ДОЖДЬ! УХОДИ С МЕТОК!"
+                or (attackType == "VoidPulse" and "ПУСТОТНАЯ ВОЛНА! ОТОЙДИ!" or "РАЗЛОМНЫЙ УДАР! УКЛОНЯЙСЯ!"))
+            bossStatus.TextColor3 = Color3.fromRGB(220, 185, 255)
+        else
+            bossStatus.Text = voidBossCompleted and "НАГРАДА ПОЛУЧЕНА"
+                or string.format("ПОЖИРАТЕЛЬ ЗВЁЗД · ФАЗА %d / III · %d / 540", voidBossPhase, voidBossHealth)
+            bossStatus.TextColor3 = Color3.fromRGB(220, 202, 255)
+        end
     elseif isCrystal then
         trialDescription.Text = completed and "Хранитель повержен! Путь к Древним высотам открыт. Осталось достичь 50 уровня."
             or (count >= 3 and "Три луча соединены! Атакуй Хранителя и уклоняйся от призматической волны."
@@ -6600,6 +7154,8 @@ for _, attribute in ipairs({
     "ForgottenHeartBossHealth", "ForgottenHeartBossPhase", "ForgottenHeartBossCompleted",
     "ForgottenHeartBossUnlocked", "ForgottenHeartBossWindup", "ForgottenHeartBossAttackType",
     "ForgottenHeartBossRewardReveal",
+    "VoidTrialProgress", "VoidTrialCompleted", "VoidBossHealth", "VoidBossPhase",
+    "VoidBossCompleted", "VoidBossUnlocked", "VoidBossWindup", "VoidBossAttackType", "VoidBossRewardReveal",
 }) do
     player:GetAttributeChangedSignal(attribute):Connect(updateBiomeTrialPanel)
 end
@@ -7395,7 +7951,8 @@ end)
 updateForgottenBossPhaseVisual()
 
 local function filterForgottenBossWarning(instance)
-    if instance:IsA("BasePart") and instance.Name == "ForgottenHeartAttackWarning" then
+    if instance:IsA("BasePart") and (instance.Name == "ForgottenHeartAttackWarning"
+        or instance.Name == "VoidBossAttackWarning") then
         local function updateVisibility()
             if instance.Parent then
                 instance.LocalTransparencyModifier = instance:GetAttribute("TargetUserId") == player.UserId and 0 or 1

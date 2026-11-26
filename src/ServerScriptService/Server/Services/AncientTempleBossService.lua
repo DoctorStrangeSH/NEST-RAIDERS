@@ -347,8 +347,9 @@ function AncientTempleBossService:Init()
             if lastHit and now - lastHit < PLAYER_HIT_COOLDOWN then return end
             self._lastPlayerHit[player] = now
 
-            progress.AncientTempleBossHealth = math.max(
-                0, progress.AncientTempleBossHealth - PLAYER_HIT_DAMAGE)
+            local gearDamage = math.clamp(tonumber(player:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)
+            local dealtDamage = math.max(1, math.floor(PLAYER_HIT_DAMAGE * (1 + gearDamage) + 0.5))
+            progress.AncientTempleBossHealth = math.max(0, progress.AncientTempleBossHealth - dealtDamage)
             player:SetAttribute("AncientTempleBossHealth", progress.AncientTempleBossHealth)
             player:SetAttribute("AncientTempleBossPhase",
                 progress.AncientTempleBossHealth > 0
@@ -405,7 +406,8 @@ function AncientTempleBossService:Init()
                     if player:GetAttribute("CurrentBiome") == "AncientHeights"
                         and root and humanoid and humanoid.Health > 0
                         and (root.Position - core.Position).Magnitude <= attack.Radius then
-                        humanoid:TakeDamage(attack.Damage)
+                        local gearDefense = math.clamp(tonumber(player:GetAttribute("GearDefenseBonus")) or 0, 0, 0.5)
+                        humanoid:TakeDamage(math.max(1, math.floor(attack.Damage * (1 - gearDefense) + 0.5)))
                         player:SetAttribute("LastNotice", attack.Id == "VineSlam"
                             and "Корни обрушились на тебя! В следующий раз уклонись от тяжёлого удара."
                             or (attack.Id == "ThornBurst"

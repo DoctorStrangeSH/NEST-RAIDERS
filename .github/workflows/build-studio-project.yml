@@ -3,7 +3,7 @@ name: Build Roblox Studio project
 on:
   push:
     branches:
-      - feature/first-playable-loop
+      - 'feature/**'
     paths:
       - "src/**"
       - "default.project.json"

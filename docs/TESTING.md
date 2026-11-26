@@ -1061,3 +1061,286 @@ Static checks verify weather configuration, environmental objects, state attribu
 11. Run with two players and compare notices, pets and destination attributes. Each player must only receive discoveries from their own companions.
 
 Static regression checks cover species preferences, destination collection, weighted selection, exploration states and owner notices. Visual, multiplayer, placement and behavior-priority checks remain required in Roblox Studio.
+
+
+## Sprint 4.72 — Paired companion adventures
+- [ ] Equip at least two companions and verify an eligible pair can start an adventure only while both are awake, sufficiently happy, and nearby.
+- [ ] Confirm the paired secret appears near the two companions with a visible connecting beam and readable Russian label.
+- [ ] Confirm the rare golden-secret variant is visually distinct and sends the correct owner notification.
+- [ ] Claim the secret as the owner; verify both companions receive mood, the lower-mood companion receives the larger assistance bonus, and pair friendship increases.
+- [ ] Attempt to claim another player's marker and verify rejection.
+- [ ] Attempt to claim outside prompt range and verify no profile changes.
+- [ ] Verify per-pair cooldown prevents immediate repeat events and persists after reconnect.
+- [ ] Verify claim, timeout, respawn, and disconnect clean up the marker, beam, and attachments.
+- [ ] After claiming, watch both pets for at least 10 seconds; rewarded mood must remain visible and must not snap back on the next follower update.
+- [ ] Test with two players in the same server; ensure events and rewards remain isolated by owner.
+- [ ] Test prompt readability and interaction on desktop and mobile.
+
+
+## Sprint 4.73 — Friendship milestone celebrations
+- [ ] Raise a display pair from 9 to 10 friendship; verify both pets glow and the banner says "Первые друзья!".
+- [ ] Repeat for 30, 60 and 90; verify each milestone has its own color and title.
+- [ ] Continue social sessions between milestones; verify no milestone banner or owner notification appears.
+- [ ] Verify glow and banner clean up after approximately 2.4 seconds, including if a pet is removed during the effect.
+- [ ] Verify milestone score/title remains after rejoin and no celebration replays just for loading the profile.
+- [ ] Test both display pairs and two players in one server; verify visual effects and notices stay owner/pair scoped.
+- [ ] Check banner readability on desktop and mobile at minimum and maximum camera zoom.
+
+
+## Sprint 4.74 — Shared friendship emotes
+- [ ] Display two awake companions with enough mood to socialize; wait for a shared social session and verify a heart appears above both pets at the same time.
+- [ ] Verify each heart disappears after approximately 1.6 seconds.
+- [ ] Keep the pair together through several social sessions; verify the emote does not repeat inside the 18-second pair cooldown.
+- [ ] Verify the emote does not grant extra mood, friendship, coins or XP beyond the existing social-session reward.
+- [ ] Test display pairs 1–2 and 3–4, four pets, two players, pet removal during the effect and mobile camera readability.
+
+
+## Sprint 4.75 — Personality-aware relationships
+- [ ] Test Осторожный + Осторожный at bond 0–9; verify approaches are rare but possible at zero bond, so the pair can gradually earn its first bond points without becoming permanently isolated.
+- [ ] Test Осторожный + Дружелюбный and Осторожный + Добродушный at bond 0; verify the outgoing pet can initiate and the cautious pet can accept.
+- [ ] Raise a cautious pair to 10 bond; verify social approaches become possible without a personality change.
+- [ ] Compare Дружелюбный / Добродушный against Спокойный / Мудрый; verify outgoing pets initiate more often over a comparable observation window.
+- [ ] Verify increasing bond raises social chance gradually but does not create constant movement or interrupt sleep, shelter, hunger, or energy rules.
+- [ ] Verify FriendshipStyle is correct on both display pairs and remains correct after respawn/rejoin.
+- [ ] Confirm no additional mood, bond, currency or XP is granted by the new personality modifiers.
+
+
+## Sprint 4.76 — Friendship chase games
+- [ ] With pair bond below 30, complete several social sessions; verify the new chase does not start.
+- [ ] With pair bond 30+, complete social sessions; verify an occasional chase begins for both pets at the same time.
+- [ ] Verify both companions move around the partner target for approximately 4.5 seconds and publish ChasingFriend while moving.
+- [ ] Verify both pets return to normal wandering/social routines when the shared window ends.
+- [ ] Put either pet to sleep, remove it from display, or lower its mood/energy below the guard during a chase; verify the behavior stops safely.
+- [ ] Verify the same pair cannot trigger another chase inside the 35-second cooldown, and another pair/player has an independent cooldown.
+- [ ] Test display pairs 1–2 and 3–4, multiple players, low-end graphics and mobile camera readability.
+- [ ] Confirm chase behavior grants no extra mood, bond, currency or XP.
+
+
+## Sprint 4.77 — Resting beside a friend
+- [ ] With bond below 30, put one companion to sleep; verify its partner does not trigger shared rest.
+- [ ] With bond 30+, put one companion to sleep at night; verify the awake partner may approach and settle beside it.
+- [ ] Repeat during daytime with awake companion energy at 35 or below; verify eligibility.
+- [ ] Verify the awake pet stops about 1.8 studs to the side, does not overlap or move the sleeping pet, and holds the calm state for approximately 4.5–6.5 seconds.
+- [ ] Verify Behavior and RestingWithFriend attribute appear during the rest and clear afterwards.
+- [ ] Wake the sleeping pet during the interaction; verify the shared-rest state ends safely.
+- [ ] Let the resting pet fall asleep; verify its own sleep state takes priority and the shared-rest marker clears.
+- [ ] Verify the same pair respects its 55-second cooldown, while another pair/player has an independent cooldown.
+- [ ] Test both display pairs, multiplayer, low-end graphics and mobile camera readability; confirm no needs or rewards are changed.
+
+
+## Sprint 4.78 — Personality greetings and reunion moments
+- [ ] Trigger a social session with each supported personality; verify the matching icon, color and phrase appears above the correct companion.
+- [ ] Pair two different personalities; verify each pet displays its own greeting style at the same time.
+- [ ] Verify ordinary greeting bubbles disappear after approximately 2.1 seconds.
+- [ ] Trigger another greeting for the same pair within 120 seconds; verify no reunion glow/banner appears.
+- [ ] Wait at least 120 seconds after the previous greeting; trigger a new social session and verify both pets receive the reunion greeting and warm glow.
+- [ ] Verify reunion visuals clean up after approximately 3.2 seconds and the existing 18-second spam cooldown remains effective.
+- [ ] Test both display pairs, all personality styles, pet removal during an effect, two players, and mobile camera readability.
+- [ ] Confirm greetings do not grant extra bond, mood, needs, currency or XP.
+
+
+## Sprint 4.79 — Species-specific friendship discoveries
+- [ ] Raise Fox + Turtle bond to 30+; trigger social sessions until Лесные хранители appears.
+- [ ] Repeat with Dragon + Owl, EmberFox + MagmaDragon, and AncientStag + RootSprite; verify the correct unique title/icon/color.
+- [ ] Reverse each pair's display order; verify the same species interaction is selected.
+- [ ] Verify the moment only has a chance to occur at 30+ bond and never occurs for an unsupported species combination.
+- [ ] Verify both models receive SpeciesBondMoment / SpeciesBondMomentUntil and that attributes, bubbles and highlights clear after approximately 3.4 seconds.
+- [ ] Verify first-time discovery notification appears once and profile.Nest.DiscoveredBondMoments survives leaving/rejoining.
+- [ ] Trigger repeated sessions inside 180 seconds; verify no repeated species moment for the same owner/pair/species. Verify a different pair has an independent cooldown.
+- [ ] Test both display pairs, multiple players, pet removal during the effect and mobile readability.
+- [ ] Confirm species moments grant no additional bond, mood, needs, currency or XP.
+
+
+## Sprint 4.80 — Friendship discovery journal
+- [ ] Open Дневник дружбы with no discoveries; verify 0/4 and 0% progress.
+- [ ] Verify all four locked entries show ??? and broad hints only; exact species combinations and titles remain hidden.
+- [ ] Discover one species moment, close/reopen the journal, and verify 1/4 and 25% with its correct title/icon/rarity.
+- [ ] Discover all four moments and verify 4/4 and 100%.
+- [ ] Leave and rejoin; verify discovered entries remain unlocked.
+- [ ] Open the journal before profile load completes; verify a friendly error notice and no client error.
+- [ ] Verify the close button works, cards scroll, the journal navigation icon is present, and the panel fits phone, tablet and desktop viewports.
+- [ ] Open the collector's book then the friendship journal; verify the journal takes focus without overlapping the previous panel.
+- [ ] Confirm the client cannot submit or alter discovery IDs; only server-side companion events write the saved discovery table.
+
+
+## Sprint 4.81 — Visible friendship tiers
+- [ ] Pair two active companions and complete a social interaction; verify both show the correct tier, score and progress bar.
+- [ ] Verify badge is absent before the first friendship point and appears after the first successful interaction.
+- [ ] Check thresholds at 9/10, 29/30, 59/60 and 89/90 points; confirm label, color and progress width.
+- [ ] Claim a paired adventure; verify both models update without requiring a re-equip or respawn.
+- [ ] Verify the saved relationship score survives leave/rejoin and the badge reconstructs from saved profile data.
+- [ ] Verify tiers affect only rare paired-adventure variant odds (8/12/16/20%); base spawn cadence and five-minute pair cooldown remain unchanged.
+- [ ] Test with one, two and three active pets on narrow phone, tablet and desktop viewports; confirm overhead labels do not obscure names or needs.
+
+
+## Sprint 4.82 — Companion gifts
+- [ ] Start a shared social session with two active pets; verify a gift can be initiated by either pet over repeated sessions.
+- [ ] Verify each of the eight origin egg pools selects only its own biome gift set.
+- [ ] Compare personality types; confirm caring/friendly personalities receive their configured chance modifier and independent/proud personalities their reduction.
+- [ ] Check friendship chance bands at 9/10, 29/30, 59/60 and 89/90; confirm final chance stays within 2–40%.
+- [ ] Confirm special gift base odds follow friendship tiers (4%, 9%, 14%, 20%), then rarity adds 2%, 4%, 7%, 10% or 14% and final chance never exceeds 35%; no currency, XP, materials or combat power are created.
+- [ ] Verify receiver mood increases by 5 and giver mood by 2, both capped at 100 and retained by the companion simulation.
+- [ ] Verify the same pair cannot trigger another gift within 90 seconds; another pair remains eligible.
+- [ ] Verify first-time discoveries persist after leave/rejoin and only discovered gift titles/icons are revealed in the friendship journal.
+- [ ] Verify gift cards/glows clean up after 2.8 seconds and do not accumulate in the world.
+- [ ] Check the 52-entry friendship journal scrolls smoothly and remains usable on phone, tablet and desktop.
+
+
+## Sprint 4.82 — Companion gifts
+- [ ] Start a shared social session with two active pets; verify a gift can be initiated by either pet over repeated sessions.
+- [ ] Verify each of the eight origin egg pools selects only its own biome gift set.
+- [ ] Compare personality types; confirm caring/friendly personalities receive their configured chance modifier and independent/proud personalities their reduction.
+- [ ] Check friendship chance bands at 9/10, 29/30, 59/60 and 89/90; confirm final chance stays within 2–40%.
+- [ ] Confirm special gift roll follows the tier values (4%, 9%, 14%, 20%) and does not create currency, XP, materials or combat power.
+- [ ] Verify receiver mood increases by 5 and giver mood by 2, both capped at 100 and retained by the companion simulation.
+- [ ] Verify the same pair cannot trigger another gift within 90 seconds; another pair remains eligible.
+- [ ] Verify first-time discoveries persist after leave/rejoin and only discovered gift titles/icons are revealed in the friendship journal.
+- [ ] Verify gift cards/glows clean up after 2.8 seconds and do not accumulate in the world.
+- [ ] Check the 52-entry friendship journal scrolls smoothly and remains usable on phone, tablet and desktop.
+
+
+## Sprint 4.83 — Emotional gift reactions
+- [ ] Trigger ordinary gifts for each personality and verify receiver reaction matches the personality map.
+- [ ] Verify giver reacts independently and does not display the receiver's reaction by mistake.
+- [ ] Trigger a special gift and verify Amazed receiver + Proud giver reactions, longer duration and gold presentation.
+- [ ] Verify Jump/Bounce, Spin, Hug, Shy, Sway/Dream, Proud and Amazed movements are visible without abrupt snapping.
+- [ ] During Hug, verify both pets move slightly toward each other, face one another and do not clip through their bodies.
+- [ ] Verify overhead reaction phrases fit without covering the friendship badge or gift card for too long.
+- [ ] Verify reaction attributes clear after 2.8 seconds (ordinary) / 3.6 seconds (special), and movement returns to normal.
+- [ ] Verify a sleeping pet does not perform active movement; reaction resumes/clears safely after the timer.
+- [ ] Test with three active pets to ensure one pair's gift reaction does not animate the unrelated third pet.
+- [ ] Check readability and movement on phone, tablet and desktop camera distances.
+
+
+## Sprint 4.84 — Autonomous personality habits
+- [ ] Observe all 12 supported personalities and verify their intended idle habit appears.
+- [ ] Verify habits last 2.2–4.0 seconds and repeat no more often than the 28–52 second cooldown permits.
+- [ ] Verify habits require sufficient mood, energy and hunger; exhausted or hungry pets should prioritize needs.
+- [ ] Verify habits do not interrupt sleep, shared rest, social play, chasing, toy use, exploration, treasure searches or gift reactions.
+- [ ] Trigger sleep during a habit and verify the habit state clears immediately.
+- [ ] Verify overhead Russian captions fit on screen and do not collide with friendship/gift billboards.
+- [ ] Verify the third displayed pet can perform its own habit independently of the paired pets.
+- [ ] Check movement readability and performance on phone, tablet and desktop.
+
+
+## Sprint 4.85 — Special friendship memories
+- [ ] Raise one pair from 59 to 60 bond and verify Trusted Pact unlocks once with a shared celebration.
+- [ ] Raise the same pair from 79 to 80 and verify Unbreakable Promise unlocks once.
+- [ ] Raise the same pair from 99 to 100 and verify Friends Forever unlocks once.
+- [ ] Verify existing 10, 30 and 90 milestones still trigger as before.
+- [ ] Create a second pair and verify its pair-specific memory keys are independent of the first pair.
+- [ ] Verify the journal lists three locked entries per bonded pair, with correct threshold hints and hidden titles.
+- [ ] Verify discovered pair memories reveal their title/icon and increase the completion count exactly once.
+- [ ] Leave/rejoin and verify all unlocked memories persist and are not re-announced.
+- [ ] Check banners/glows do not overlap gift/reaction billboards excessively on phone, tablet and desktop.
+
+
+## Sprint 4.86 — Cooperative companion life
+- [ ] Set one bonded pet's mood to 35 or lower while its awake partner has mood >= 45, energy >= 20 and hunger >= 20; verify the partner may approach and comfort it.
+- [ ] Verify Caring personality initiates more often than other personalities over repeated controlled trials.
+- [ ] Verify receiver gains 6 mood (9 for Caring initiator) and initiator gains 2 only after reaching the friend and completing the interaction.
+- [ ] Verify the receiver shows “Друг рядом, всё хорошо ♥” and the initiator shows “Утешает друга ♥” during the interaction.
+- [ ] Verify sleep, low energy, hunger, or a missing partner cancels/blocks comfort safely.
+- [ ] With a pair at 20+ bond, trigger cooperative exploration and verify the invited pet follows the exact same interest point.
+- [ ] Verify the discovery completes whether the leader or invited pet arrives first, but only once, and only when both are within 6 studs.
+- [ ] Verify both pets receive +3 mood and the player receives one shared-discovery notice.
+- [ ] Verify invitations expire after 18 seconds and do not grant rewards if one pet never arrives.
+- [ ] Verify 75-second comfort and 90-second discovery cooldowns prevent spam during the session.
+- [ ] Test with three active pets; unrelated third pet must not join or receive rewards.
+- [ ] Check captions, movement, billboards and performance on phone, tablet and desktop.
+
+
+## Sprint 4.87 — Shared ball play
+- [ ] Build a pair with at least 10 saved friendship points and observe repeated social sessions; verify ball play can occur but does not trigger every time.
+- [ ] Verify Playful/Energetic pairs trigger more often than other personality combinations over controlled repeated trials.
+- [ ] Verify the ball appears between the correct two companions, passes alternately five times, displays "ПАС!" and cleans up within 4.5 seconds.
+- [ ] Verify the ball has no collision/touch/query behavior and cannot block players, pets, prompts or building placement.
+- [ ] Remove either pet during the animation; verify the ball is destroyed without errors.
+- [ ] Put either pet to sleep or make it unavailable before social play; verify no ball game starts.
+- [ ] Verify the 45-second cooldown is isolated by owner and pair, and is cleared when the owner leaves.
+- [ ] Test visibility and label readability at desktop, tablet and mobile camera distances.
+
+
+## Sprint 4.87 — Hide and seek and cooperative toys
+- [ ] With a 20+ bond pair, observe hide and seek near a tree, flower bed or shelter. Confirm randomized roles, seeker delay, arrival and one completion notice.
+- [ ] Verify no eligible landmark means no hide-and-seek session; timeout clears both roles.
+- [ ] Equip a toy on either display slot and verify both pets approach opposite sides of the same toy, with visible play captions and animation.
+- [ ] Verify both games cancel when a pet sleeps, is removed, has low needs or seeks storm shelter.
+- [ ] Verify separate 60-second cooldowns, no additional currency/XP and no simultaneous ball game.
+- [ ] Verify normal pet behavior and toy state resume after expiry; test multiple owners and mobile readability.
+
+
+## Sprint 4.87 — Shared treasure hunt
+- [ ] Observe a 30+ friendship pair searching a nearby landmark and reaching separate positions.
+- [ ] Confirm discovery requires both pets to arrive and produces exactly one notice and golden visual, removed after three seconds.
+- [ ] Remove one pet, lower its needs, start sleep or change weather to storm during the event; verify cancellation without discovery.
+- [ ] Check 10-second timeout and 90-second cooldown, no additional currency or items, and no overlap with ball, toy or hide-and-seek.
+- [ ] Check multiple owners, display refresh, mobile readability and performance.
+
+
+## Sprint 4.88 — Void Frontier destination foundation
+- [ ] At level 74, or without `ancient_temple_boss`, attempt the Ancient Heights portal; confirm Void Frontier travel is denied.
+- [ ] In a disposable test profile, set level 75 and complete `ancient_temple_boss`; confirm the Void Frontier portal accepts travel.
+- [ ] Walk the full 18-segment causeway in both directions; check gaps, collision, edge safety and respawn.
+- [ ] Confirm VoidFrontier is the current biome after arrival and AncientHeights after return.
+- [ ] Test two players with different unlock states; one player's unlock must not affect the other.
+- [ ] Check beacon/pillar visibility and bridge performance on desktop, tablet and mobile.
+
+
+## Sprint 4.89 — Void Trial
+- [ ] Activate Rift, Echo, Star in order; verify progress reaches 3/3 and the altar accepts the claim.
+- [ ] Activate a wrong rune mid-sequence; verify progress resets to 0/3.
+- [ ] Claim the altar twice; verify coins, XP and Starshards are granted only once.
+- [ ] Leave and rejoin after activating one or two runes; verify the sequence is retained.
+- [ ] Test two players independently; one player's runes must not change the other's progress.
+- [ ] Try interacting from another biome, while dead, and outside prompt range; verify no progress or rewards.
+
+
+## Sprint 4.90 — Star Eater boss
+- [ ] Complete Void Trial, enter the arena and confirm the boss becomes attackable; without the trial it must reject interaction.
+- [ ] Reduce health through 540 → 351 → 162 and confirm phases I, II and III activate at the intended thresholds.
+- [ ] Verify Rift Slam, Void Pulse, Starfall and Collapse show the correct danger markers and damage only players who remain in marked zones.
+- [ ] Dodge every pattern successfully; verify no damage after leaving the warning zones before impact.
+- [ ] Leave and rejoin mid-fight; verify boss health persists for that player.
+- [ ] Defeat the boss twice; verify exactly one Star Eater companion, 1,800 coins, 1,200 XP and 12 Starshards are awarded.
+- [ ] Test two players with different health/completion states; their boss progress and warning markers must remain isolated.
+- [ ] Verify HUD, attack text and arena readability on desktop, tablet and mobile.
+
+
+## Sprint 4.91 — Void Frontier ecosystem
+- [ ] Collect each of the three active Void eggs; verify the hatch inventory stores `VoidEgg` and `VoidFrontier`.
+- [ ] Hatch a large controlled sample and confirm the weighted pool uses Riftling 60%, Echo Wisp 30%, Nebula Drake 10%.
+- [ ] Fill egg inventory and verify world egg collection is rejected without consuming the world egg.
+- [ ] Harvest all six Starshard nodes; verify 1–3 base shards, artifact bonus behavior and the active Star Eater 30% extra-shard chance.
+- [ ] Re-harvest a node immediately; verify the remaining cooldown is shown and no extra shards are granted.
+- [ ] Leave and rejoin; verify node cooldowns and Starshard totals persist.
+- [ ] Test two players on the same node; each player's cooldown and reward must be independent.
+- [ ] Verify egg and node placement is clear of the rune puzzle, return portal and boss arena on desktop/tablet/mobile.
+
+
+## Sprint 4.92 — Void Forge crafting
+- [ ] Reach Void Frontier and use the physical forge prompt; confirm the artifact panel opens and shows all three recipes.
+- [ ] Craft Void Harvester, Rift Compass and Nebula Charm separately; verify each recipe creates the correct deterministic artifact.
+- [ ] Verify exact resource and coin deductions for all three recipes.
+- [ ] Attempt each recipe with one missing material and with insufficient coins; verify no resource is deducted.
+- [ ] Attempt crafting from another biome, while locked, and while standing away from the forge; verify rejection.
+- [ ] Fill the artifact collection to 40; verify crafting is rejected without spending resources.
+- [ ] Rejoin and confirm all crafted items remain in the collection.
+- [ ] Equip and unequip each item; verify the corresponding gather, research and hatch bonus is reflected by the existing bonus services.
+- [ ] Verify existing Ancient Heights random artifact crafting and artifact merging still work.
+- [ ] Check forge prompt, recipe controls and scrolling on desktop, tablet and mobile.
+
+
+## Sprint 4.93 — Voidwalker equipment
+- [ ] Open the Void Forge prompt; verify the equipment panel opens and all four recipes appear only in Void Frontier.
+- [ ] Craft Riftblade, Voidplate, Starhelm and Nebula Cloak; verify exact resource/coin costs and one-copy-per-item restriction.
+- [ ] Attempt crafting with missing materials, insufficient coins, wrong biome and excessive distance; verify no resources are deducted.
+- [ ] Equip each item; verify the correct slot, character visual and stat attributes update.
+- [ ] Equip a second item in the same slot if test data is injected; verify it replaces the previous item without duplicating visuals.
+- [ ] Unequip each slot; verify the model disappears and stats return to the expected baseline.
+- [ ] Equip all four pieces; verify the Voidwalker set bonus appears and adds +10% damage, +10% defense and +20 max health.
+- [ ] Reset the character; verify visuals, attributes, MaxHealth and WalkSpeed restore from the saved loadout.
+- [ ] Attack Void, Ancient Temple and Forgotten Heart bosses; verify gear damage increases boss damage and gear defense reduces incoming attacks.
+- [ ] Test raid combat with two players; verify each player's damage/defense stats are applied only to the correct player.
+- [ ] Rejoin a published private test server; verify gear collection and equipped slots persist.
+- [ ] Check the gear panel, cards, buttons and scrolling on desktop, tablet and mobile.

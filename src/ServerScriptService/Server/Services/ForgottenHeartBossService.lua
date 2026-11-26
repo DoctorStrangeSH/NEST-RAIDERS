@@ -222,7 +222,9 @@ function ForgottenHeartBossService:Init()
                 hit = (root.Position - targetPosition).Magnitude <= attack.Radius
             end
             if hit then
-                humanoid:TakeDamage(attack.Damage + (phase == 2 and 5 or 0))
+                local gearDefense = math.clamp(tonumber(player:GetAttribute("GearDefenseBonus")) or 0, 0, 0.5)
+                local incomingDamage = attack.Damage + (phase == 2 and 5 or 0)
+                humanoid:TakeDamage(math.max(1, math.floor(incomingDamage * (1 - gearDefense) + 0.5)))
                 player:SetAttribute("ForgottenHeartBossDamagePulse", (player:GetAttribute("ForgottenHeartBossDamagePulse") or 0) + 1)
                 player:SetAttribute("LastNotice", "Кристальная атака задела тебя! Следи за метками на земле.")
             else
@@ -254,7 +256,9 @@ function ForgottenHeartBossService:Init()
             if self._windups[player] then return end
             if self._lastHit[player] and now - self._lastHit[player] < HIT_COOLDOWN then return end
             self._lastHit[player] = now
-            progress.ForgottenHeartBossHealth = math.max(0, progress.ForgottenHeartBossHealth - HIT_DAMAGE)
+            local gearDamage = math.clamp(tonumber(player:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)
+            local dealtDamage = math.max(1, math.floor(HIT_DAMAGE * (1 + gearDamage) + 0.5))
+            progress.ForgottenHeartBossHealth = math.max(0, progress.ForgottenHeartBossHealth - dealtDamage)
             player:SetAttribute("ForgottenHeartBossHitPulse", (player:GetAttribute("ForgottenHeartBossHitPulse") or 0) + 1)
             publish(player, profile, progress)
 

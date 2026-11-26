@@ -1,7 +1,7 @@
 local GameConfig = {}
 
 GameConfig.DataStoreName = "NestRaiders_PlayerData_v1"
-GameConfig.DataSchemaVersion = 1
+GameConfig.DataSchemaVersion = 2
 GameConfig.AutosaveIntervalSeconds = 60
 -- Keep false for instant local Studio testing without publishing or API access.
 -- Set true only in a private published test experience with Studio API access enabled.
@@ -18,7 +18,7 @@ GameConfig.Progression = {
         { Id = "Emberlands", DisplayName = "Пепельные земли", RequiredLevel = 22, RequiredQuest = "frost_trial" },
         { Id = "CrystalRealm", DisplayName = "Хрустальное королевство", RequiredLevel = 35, RequiredQuest = "ember_trial" },
         { Id = "AncientHeights", DisplayName = "Древние высоты", RequiredLevel = 50, RequiredQuest = "crystal_trial" },
-        { Id = "VoidFrontier", DisplayName = "Граница пустоты", RequiredLevel = 75, RequiredQuest = "ancient_trial" },
+        { Id = "VoidFrontier", DisplayName = "Граница пустоты", RequiredLevel = 75, RequiredQuest = "ancient_temple_boss" },
     },
 }
 

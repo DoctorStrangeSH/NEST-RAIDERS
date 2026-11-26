@@ -120,5 +120,22 @@ local BiomeCatalog = {
             },
         },
     },
+    VoidFrontier = {
+        Id = "VoidFrontier",
+        Name = "Граница пустоты",
+        DefaultEggId = "VoidEgg",
+        Eggs = {
+            VoidEgg = {
+                Id = "VoidEgg",
+                Name = "Яйцо звёздной бездны",
+                Rarity = "Мифическое",
+                SpeciesWeights = {
+                    Riftling = 60,
+                    EchoWisp = 30,
+                    NebulaDrake = 10,
+                },
+            },
+        },
+    },
 }
 return BiomeCatalog

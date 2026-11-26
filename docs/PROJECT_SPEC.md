@@ -712,3 +712,227 @@ The Starter Island now rotates through Clear, Rain, Fog and Storm weather states
 
 ### Favorite Places and Autonomous Exploration — Sprint 4.71
 Displayed companions can discover destinations in their owner's personal nest. The destination list is built from nearby permanent garden landmarks (trees, flower beds and path stones), player-built structures and placed decorations. Each species may define a `FavoritePlace` category; matching destinations receive a higher selection weight, and the last visited point is temporarily discouraged to reduce repetitive loops. When mood, hunger and energy permit, pets autonomously explore a nearby point, pause there, and display a short Russian activity label above their model. Rarely, a pet notices something unusual and sends an owner notification. This is a discovery event only and does not grant an economy reward. Exploration is local to the personal nest and remains lower priority than urgent needs, sleep, storm shelter, treasure, socializing and toy play. Roblox Studio acceptance is required for movement boundaries, object overlap, placed-decoration refresh and notification cadence.
+
+
+## 12. Paired companion adventures — Sprint 4.72
+- Two active companions may autonomously discover a shared secret when both are awake, close enough, and have sufficient mood.
+- The server owns pair selection, cooldowns, secret creation, interaction validation, and rewards.
+- The shared discovery is represented by a visible world marker and a temporary beam linking the two companions.
+- The rare variant uses a golden presentation and a distinct notification; it does not grant currency or competitive power.
+- Claiming a discovery increases persistent pair friendship and restores mood for both companions. The companion with lower mood receives the larger assistance bonus.
+- Per-pair cooldowns are stored in the player's nest profile. Only the owner may claim the marker, and server-side range and pair-identity checks are mandatory.
+- Expired or claimed events must remove their visual links and temporary world objects.
+- Mood changes written by the adventure service must be read back by the companion behavior loop, so an independent system cannot overwrite a reward on the next update.
+- Owner disconnect cleanup must remove owned markers even if the companion folder is already being destroyed.
+
+
+### Friendship Milestone Celebrations — Sprint 4.73
+- Completed social sessions continue to award the existing pair friendship point. When the score reaches 10, 30, 60 or 90 for the first time, both companions receive a short shared celebration.
+- Milestone titles are respectively Первые друзья!, Крепкая дружба!, Неразлучная команда! and Друзья навсегда!.
+- The celebration uses a temporary color-coded Highlight on both companion models, a readable BillboardGui banner and one owner notification.
+- The milestone is cosmetic only: it does not grant currency, XP, combat power or extra friendship points. Ordinary social sessions do not produce milestone notifications.
+- Effects self-clean after 2.4 seconds. The milestone is derived from the persistent pair score, so no extra profile field or migration is needed.
+- Roblox Studio verification is required for readability, cleanup, threshold behavior, multiplayer isolation and persistence after rejoin.
+
+
+### Shared Friendship Emotes — Sprint 4.74
+- When two displayed companions reach one another and begin a social-play session, both receive a small heart emote above their heads.
+- The lower display slot is the sole trigger owner, preventing duplicate effects from the two independent companion behavior loops.
+- A per-player/per-pair 18-second cooldown prevents visual spam. Each BillboardGui removes itself after 1.6 seconds.
+- The emote is cosmetic only and does not change mood, friendship, currency or XP.
+- Studio acceptance must cover simultaneous display, cleanup, cooldown, both display pairs, multiplayer isolation, pet removal and mobile readability.
+
+
+### Personality-aware Relationships — Sprint 4.75
+- Companion social behavior is influenced by the pet's existing Personality and the saved bond score with its displayed partner.
+- Cautious (Осторожный) companions need at least 10 pair-bond points before ordinary social approaches, but may accept an approach earlier from a Friendly (Дружелюбный) or Good-natured (Добродушный) partner. A small 3.5% first-contact chance remains even for two cautious companions, preventing a deadlock where neither can ever earn the first bond point. This gives cautious pairs a path into friendship without forcing instant trust.
+- Friendly and Good-natured companions receive a higher social-initiation chance. Increasing pair bond gradually raises the social approach chance for both pets, capped to prevent constant interruptions.
+- The server publishes FriendshipStyle for presentation: Привыкает постепенно / Доверяет другу, Сам ищет друзей, Любит совместные игры, or Спокойное общение.
+- This sprint changes behavior selection only; it adds no currency, XP, mood or friendship rewards. Existing social-session rewards and cooldowns remain authoritative.
+- Studio acceptance must verify all personality pairings, avoid permanent isolation, preserve needs, and confirm both display pairs and rejoin behavior.
+
+
+### Friendship Chase Games — Sprint 4.76
+- Pairs with at least 30 saved bond points may occasionally start a short chase after a completed social-play session.
+- The lower display slot owns the trigger and writes the same CompanionChaseUntil timestamp to both pet models, preventing duplicate starts.
+- During the shared 4.5-second window, each awake companion continuously updates a moving target around its partner and publishes Behavior = ChasingFriend. The chase stops if either pet is sleeping or falls below the minimum mood/energy threshold.
+- A 35-second per-player/per-pair cooldown prevents repeated interruptions. The cooldown is runtime-only and cleared on player departure.
+- The interaction is cosmetic and grants no extra mood, friendship, currency or XP. Existing social-session rewards remain unchanged.
+- Studio acceptance must verify visible movement, no jitter/collision, clean return to routine, both display pairs, interruptions, multiplayer isolation and mobile readability.
+
+
+### Resting Beside a Friend — Sprint 4.77
+- An awake companion may seek a quiet rest spot beside its sleeping partner when their saved bond is at least 30.
+- The interaction is more likely to be eligible at night or when the awake pet has 35 energy or less; minimum mood 20 and energy 10 prevent exhausted/low-mood edge cases from being treated as social play.
+- The awake companion moves to a side-offset position 1.8 studs from the sleeping pet, then rests calmly for 4.5–6.5 seconds. The sleeper is not moved or woken.
+- During the rest the server publishes Behavior = RestingWithFriend and the RestingWithFriend model attribute. The state clears when the rest ends, the partner wakes, or the resting pet itself falls asleep.
+- A 55-second per-player/per-pair runtime cooldown prevents repeated approaches. It is cleared when the owner leaves.
+- This is a cosmetic interaction only: it does not change sleep timers, energy, mood, bond, currency or XP. Studio acceptance must verify position, no overlap, wake interruption, thresholds, both pairs and multiplayer isolation.
+
+
+### Personality Greetings and Reunion Moments — Sprint 4.78
+- When a displayed pair begins a social session, each companion shows a short greeting above its head. The greeting's icon, color and phrase are selected from that pet's Personality, so the two pets may react differently to the same meeting.
+- Supported styles include Friendly (Дружелюбный), Good-natured (Добродушный), Playful (Игривый), Energetic (Энергичный), Cautious (Осторожный), Calm (Спокойный), Wise (Мудрый) and Dreamy (Мечтательный). Unknown personalities use a neutral friendly fallback.
+- The server tracks the last greeting timestamp per owner/pair. If at least 120 seconds have passed since the pair's previous greeting, both receive a longer reunion greeting and a warm temporary Highlight.
+- Normal greeting bubbles last 2.1 seconds; reunion bubbles and glow last 3.2 seconds. The existing 18-second shared visual cooldown still prevents spam.
+- Greeting timestamps are runtime-only and cleared on owner departure. This system does not change bond, mood, needs, currency or XP.
+- Studio acceptance must verify paired presentation, all personalities, reunion timing, cleanup, both display pairs, multiplayer isolation and mobile readability.
+
+
+### Species-specific Friendship Discoveries — Sprint 4.79
+- Four rare pair interactions are defined by the species Kind values, independent of which display slot contains each pet:
+  - Fox + Turtle: Лесные хранители.
+  - Dragon + Owl: Искра мудрости.
+  - EmberFox + MagmaDragon: Тёплое пламя.
+  - AncientStag + RootSprite: Древний союз.
+- A pair must have at least 30 saved bond points. When a social session begins, a matching pair has a 35% chance to perform its special moment, subject to a 180-second per-owner/pair/species runtime cooldown.
+- Both companions show a species-specific title/icon/color bubble and temporary glow for 3.4 seconds. Server-authored SpeciesBondMoment and SpeciesBondMomentUntil attributes are exposed for animation/presentation layers.
+- First-time combinations are stored in profile.Nest.DiscoveredBondMoments and notify the owner once. The discovery is account/profile progress; subsequent activations remain possible after cooldown.
+- Unknown combinations continue using ordinary personality greetings and social play. No additional bond, mood, needs, currency or XP is granted.
+- Studio acceptance must verify order-independent matching, all four interactions, save/rejoin persistence, notification deduplication, visual cleanup, multiplayer isolation and mobile readability.
+
+
+### Friendship Discovery Journal — Sprint 4.80
+- The player can open a dedicated Дневник дружбы panel from the main navigation.
+- The server returns the four supported species-specific bond moments and whether each ID exists in Nest.DiscoveredBondMoments.
+- Undiscovered entries show a locked icon, hidden title and broad non-spoiler hint. They must not expose the exact species pair. Discovered entries show their title, rarity, icon and a confirmation hint.
+- The panel displays discovered count, total count and percentage completion. It is read-only; discoveries are earned only through in-world companion interactions.
+- BondJournalService handles the RemoteFunction request and checks ProfileLoaded. Discovery IDs are persisted in the profile template under Nest.DiscoveredBondMoments.
+- The UI uses the existing responsive HUD scaling, scrollable card list, dedicated menu entry and close button.
+- Studio acceptance must verify discovery refresh/rejoin persistence, hidden-data privacy, completion math, viewport scaling and safe handling while profile data loads.
+
+
+### Friendship Tiers — Sprint 4.81
+- Pair friendship is a persistent score from 0 to 100, stored by the server under Nest.CompanionBonds using a stable, order-independent pair key.
+- Tier thresholds: 0–9 Знакомство; 10–29 Приятели; 30–59 Друзья; 60–89 Лучшие друзья; 90–100 Неразлучные.
+- Each active companion displays its current pair tier and score in a compact overhead badge with a 0–100 progress bar. The badge is hidden when there is no active pair or no earned bond score.
+- The badge uses a consistent tier color and updates during the companion simulation loop. Server-side profile data remains authoritative.
+- Paired adventures improve rare discovery odds by tier: 8%, 12%, 16%, and 20% for the four earned tiers (10+, 30+, 60+, 90+). This changes only the rare variant probability, not the event's base spawn frequency or cooldown.
+- Paired adventure claims update both companions' FriendshipScore and FriendshipLevel attributes immediately.
+- No paid boosts, currency multipliers, XP rewards, or direct combat power are granted by friendship tiers.
+
+
+### Companion Gifts — Sprint 4.82
+- A completed social session may trigger one gift moment for the pair. Either companion may be the giver; the receiver is the other active companion.
+- Gift pools are associated with the giver's origin egg/biome: MeadowEgg, EmeraldEgg, FrostEgg, EmberEgg, CrystalEgg, AncientEgg, ForgottenCaveEgg and LineageEgg. Each pool contains three named gifts.
+- The giver's personality adjusts the gift roll. Pair friendship tiers also increase the chance: 3% below 10 bond, 8% at 10–29, 14% at 30–59, 22% at 60–89, and 30% at 90–100, before personality adjustment. The final chance is clamped to 2–40%.
+- Special gift variants start at 4%, 9%, 14% or 20% by friendship tier (below 30, 30+, 60+, 90+), then receive a giver-rarity bonus: +2% Uncommon, +4% Rare, +7% Epic, +10% Legendary or +14% Mythic. The final chance is clamped to 2–35%.
+- A successful gift has a 90-second per-pair runtime cooldown. It produces a short overhead gift card and glow on the receiver. The event is cosmetic and emotional: receiver mood +5 and giver mood +2, capped at 100. It grants no currency, XP, materials, progression or combat power.
+- Gift discoveries and total received-gift count are persisted under Nest.DiscoveredCompanionGifts and Nest.CompanionGiftCount.
+- The friendship memory journal includes the four species moments and 48 biome gift variants (24 normal, 24 special). Undiscovered titles remain hidden and show only a biome-level hint.
+
+
+### Companion Gifts — Sprint 4.82
+- A completed social session may trigger one gift moment for the pair. Either companion may be the giver; the receiver is the other active companion.
+- Gift pools are associated with the giver's origin egg/biome: MeadowEgg, EmeraldEgg, FrostEgg, EmberEgg, CrystalEgg, AncientEgg, ForgottenCaveEgg and LineageEgg. Each pool contains three named gifts.
+- The giver's personality adjusts the gift roll. Pair friendship tiers also increase the chance: 3% below 10 bond, 8% at 10–29, 14% at 30–59, 22% at 60–89, and 30% at 90–100, before personality adjustment. The final chance is clamped to 2–40%.
+- Special gift variants have a separate 4%, 9%, 14% or 20% roll by friendship tier (10+, 30+, 60+, 90+).
+- A successful gift has a 90-second per-pair runtime cooldown. It produces a short overhead gift card and glow on the receiver. The event is cosmetic and emotional: receiver mood +5 and giver mood +2, capped at 100. It grants no currency, XP, materials, progression or combat power.
+- Gift discoveries and total gift count are persisted under Nest.DiscoveredCompanionGifts and Nest.CompanionGiftCount.
+- The friendship memory journal includes the four species moments and 48 biome gift variants (24 normal, 24 special). Undiscovered titles remain hidden and show only a biome-level hint.
+
+
+### Gift Emotion Reactions — Sprint 4.83
+- A successful gift triggers a reaction on both active companions. The receiver reaction is selected from the receiver's personality; the giver independently reacts based on the giver's personality.
+- Receiver reactions include playful spin, energetic jump, friendly/caring hug, cautious shy sway, calm sway, dreamy sway, curious spin and proud pose. Unknown personalities use a friendly jump fallback.
+- Giver reactions include playful bounce, energetic jump, caring proud pose, friendly/calm sway, cautious shy sway and dreamy sway. Unknown personalities use a proud fallback.
+- Rare/special gifts override the receiver reaction with Amazed and the giver reaction with Proud, use a gold-themed gift presentation and last longer than ordinary gift reactions.
+- The current anchored low-poly companion models are animated by the existing server follower loop using small vertical, yaw and roll offsets. Hug reactions gently move both companions 0.38 studs toward one another and orient them face-to-face.
+- Reaction phrases appear in the existing overhead mood label. Reaction state is server-authored through GiftReaction, GiftReactionText, GiftReactionUntil and GiftReactionRare attributes, then cleared automatically on expiry.
+- Reactions are cosmetic/emotional only and do not add currency, XP, items, bond points or combat power. Sleeping companions do not play active emotes.
+
+
+### Autonomous Personality Habits — Sprint 4.84
+- Companions may perform short, personality-specific idle habits while remaining at a safe idle position in the nest.
+- Supported habits: Curious — sniff around; Inquisitive — inspect; Playful — hop; Energetic — stretch; Calm — groom; Cautious — look around; Dreamy — daydream; Observant — watch the sky; Good-natured — sway; Friendly — look for friends/wave; Caring — check surroundings; Proud — hold a proud pose.
+- Each habit has a personality-specific trigger chance, lasts 2.2–4.0 seconds, starts after an initial 8–16 second delay, and then has a 28–52 second personal cooldown.
+- Habits require mood >= 25, energy >= 20 and hunger >= 20. They do not interrupt sleeping, shared resting, chase, social play, gift reactions or active travel.
+- Habits use small bob/yaw/roll offsets in the existing companion follower loop and display a short Russian caption in the overhead mood label.
+- Habit state is transient presentation, not a progression reward or saved collectible. It clears on expiry and immediately when sleep begins.
+
+
+### Special Friendship Memories — Sprint 4.85
+- Pair friendship has additional milestone celebrations at 60, 80 and 100 bond. Existing 10/30/90 milestones remain intact.
+- At 60, a pair discovers **Тайный знак дружбы** (Trusted Pact); at 80, **Обещание неразлучности** (Unbreakable Promise); at 100, **Друзья навеки** (Friends Forever).
+- Each memory is pair-specific. Its persistent key is `Pair:<bondKey>:<memoryId>` in `Nest.DiscoveredBondMoments`, so one pair's progress never unlocks another pair's record.
+- The first unlock displays a shared banner/glow on both companions and a player notification. Repeated social sessions do not repeat the first-discovery notification.
+- The friendship journal adds three entries for each pair with a bond score above zero. Undiscovered titles remain hidden and show the required bond threshold; discovered entries show the memory title and icon.
+- Pair memories contribute to journal completion percentage and are persistent profile discoveries, not a currency/XP reward.
+
+
+### Cooperative Companion Life — Sprint 4.86
+- **Comforting a friend:** during a safe idle window, the lower-slot companion may approach its paired friend when the friend's mood is 35 or lower, its own mood is at least 45, energy and hunger are at least 20, and pair bond is at least 10. A caring personality has a higher initiation chance (72% vs 28%). The friend must be awake.
+- The comfort interaction lasts approximately 2.8–3.8 seconds. On completion within 8 studs, the receiver gains 6 mood (9 when the initiator is Caring), and the initiator gains 2 mood. Both values are written to the profile mood map. The pair has a 75-second server-session cooldown.
+- The receiver displays “Друг рядом, всё хорошо ♥”; the initiator displays “Утешает друга ♥”. Both companions use a gentle sway while the interaction is active.
+- **Cooperative discovery:** when a pair has at least 20 bond and one companion selects an exploration point, the leader may invite its paired companion to the same point. The invitation is transient server-authored model attributes and expires after 18 seconds.
+- The invited companion prioritizes the shared target over solo activities. A shared discovery completes only when both companions have arrived within 6 studs. Both gain 3 mood, both receive a discovery label, a shared-heart effect is shown, and the player receives a notice. The pair has a 90-second session cooldown.
+- An abandoned invitation expires and is cleared without a reward. These are cosmetic/social world events and do not grant currency, items, XP or permanent collection unlocks.
+
+
+### Shared Companion Games — Sprint 4.87 foundation
+- An established display pair (persistent bond 10+) may occasionally turn a normal social session into a short ball-passing game.
+- The lower display slot owns the trigger, so the pair creates only one ball. Playful or Energetic personalities increase the chance; all other personalities retain a lower chance.
+- The server creates a temporary anchored Neon ball between the two live companion models. The ball is non-colliding, non-touching and non-queryable, carries owner/pair metadata, and performs five alternating eased passes between the companions.
+- The presentation lasts at most 4.5 seconds and is destroyed early if either companion disappears. A 45-second per-owner/pair cooldown prevents repeated effects; entries are cleared on owner departure.
+- The event is cosmetic: it does not change mood, friendship, needs, currency, XP, inventory or progression.
+- This is the first shared-game slice. Hide-and-seek and shared toy play are described below; cooperative treasure hunts are described in the subsequent section.
+
+
+### Shared Companion Games — hide and seek and equipped toys
+- Pairs at 20+ bond may use existing nearby tree, flower and shelter landmarks for hide and seek. Curious personalities raise the selection chance. Roles are randomized; the seeker waits 2.5 seconds, and the game ends on arrival or after 12 seconds.
+- When an equipped toy is nearby, an eligible pair may instead approach opposite sides of that toy for a brief cooperative session. The toy animates while both are near it. The session expires after 10 seconds.
+- Both games use reciprocal server-authored pair attributes, current need checks, the existing movement loop, and separate 60-second per-pair cooldowns. Neither grants extra currency or XP. Shared treasure hunt is described below.
+
+
+### Shared Companion Games — treasure hunt
+- A pair at 30+ bond may search a nearby landmark, with curious personalities more likely to initiate. Both pets must be awake, have at least 35 energy and 25 hunger, and not be in a storm.
+- Both approach opposite sides of a shared point. Only the lower display slot can complete the event, after both reach their positions. The discovery spawns a temporary golden visual and owner notice without additional currency, XP or items.
+- Reciprocal partner attributes, a 10-second deadline and a 90-second pair cooldown bound the interaction. This is a cosmetic shared activity, not a replacement for the existing claimable solo treasure.
+
+
+## Void Frontier — Sprint 4.88 destination foundation
+- Void Frontier is the first endgame destination slice, gated by level 75 and the existing persisted `ancient_temple_boss` completion flag.
+- Ancient Heights connects to Void Frontier by an 18-segment physical causeway. The travel prompt remains server-authoritative through ProgressionService:CanEnterZone.
+- The island contains a landing pad, six illuminated rune pillars, a central beacon, a welcome sign and a return portal to Ancient Heights.
+- This is a destination foundation only. The Void trial, unique egg/species, resource economy and final boss are not yet implemented.
+
+
+## Void Trial — Sprint 4.89
+The first playable Void Frontier objective is a persistent three-rune sequence: Rift → Echo → Star. A wrong rune resets the sequence. After all three runes are awakened, the player can claim the Void Altar once for 900 coins, 650 XP and 25 Starshards. All interactions are server-validated against current biome, zone access, character health and distance. Studio acceptance is still required.
+
+
+## Star Eater — Sprint 4.90
+- The Void Frontier boss arena contains eight illuminated pylons and the Star Eater model. The fight unlocks only after `void_trial` is completed.
+- Boss health is per-player and persisted in `QuestProgress.VoidBossHealth` (540 HP). Phase II begins at 65%; phase III begins at 30%.
+- Attacks: Rift Slam (targeted ground mark), Void Pulse (boss-centered radius), Starfall (three marked impact zones) and Collapse (large boss-centered danger zone). Every attack has a telegraph and a dodge window; only the targeted player's warning is visible.
+- A first victory sets `CompletedQuests.void_boss` and grants the Mythic `StarEater` companion, 1,800 coins, 1,200 XP and 12 Starshards exactly once.
+- Studio acceptance is required for combat balance, visual readability and multiplayer isolation.
+
+
+## Void Frontier ecosystem — Sprint 4.91
+- The island now has a dedicated Mythic Void Egg. Its hatch pool is Riftling (60%), Echo Wisp (30%) and Nebula Drake (10%). These are normal collectible species and use the existing hatch, collection and companion systems.
+- Three physical eggs rotate among nine safe island spawn positions through EggService. Collection still requires the player to be in VoidFrontier and have access to the biome.
+- Six Starshard outcrops use stable node IDs and a 180-second cooldown per player and node. Harvesting grants 1–3 Starshards before artifact bonuses. An active Star Eater has a 30% chance to add one extra shard.
+- Starshard totals reuse the existing resource display. Node cooldowns are persisted in `Materials.VoidNodeCooldowns`.
+- Studio acceptance is required for pickup/hatching, cooldowns, resource balance and multiplayer isolation.
+
+
+## Void Forge — Sprint 4.92
+- A physical Void Forge station is located on the Void Frontier island and can be opened with its ProximityPrompt.
+- Crafting is deterministic: the player chooses one of three recipes. The server verifies Void Frontier access, the player's distance to the forge, recipe identity, artifact collection capacity and all resource balances before deducting anything.
+- Void Harvester: 24 Starshards + 6 Crystal Shards + 1,200 coins; grants 18% gathering bonus.
+- Rift Compass: 18 Starshards + 4 Ash Crystals + 1,000 coins; grants 15% research XP bonus.
+- Nebula Charm: 30 Starshards + 8 Moonpetals + 1,600 coins; grants 12% highest-rarity hatch bonus.
+- Crafted items are normal artifact instances. They persist in the existing profile, can occupy either of the two artifact slots, and use the established artifact bonus and merge systems. Collection capacity remains 40.
+- Studio acceptance is required for crafting, inventory persistence, equipment behavior and real bonus effects.
+
+
+## Voidwalker equipment — Sprint 4.93
+- The player profile now persists `GearInventory` and `EquippedGear` with four fixed slots: Weapon, Armor, Helmet and Accessory. Existing saves receive these fields through profile reconciliation; schema version is incremented.
+- The Void Forge produces four unique pieces: Riftblade, Voidplate, Starhelm and Nebula Cloak. A player can own one copy of each piece; the server checks Void Frontier access, distance to the actual forge anvil, inventory capacity, ownership and all resource balances before charging.
+- Equipping a piece replaces the currently equipped item in the same slot. Unequipping leaves the item in the collection.
+- Gear visuals are attached to the character with welded, non-colliding parts and are rebuilt after respawn.
+- Gear contributes to attack damage, incoming damage reduction, maximum health and movement speed. The four-piece Voidwalker set grants an additional 10% damage, 10% defense and 20 maximum health.
+- Gear attributes are consumed by the Void, Ancient Temple and Forgotten Heart boss encounters and by raid combat. They are server-owned and cannot be set by the client.
+- The Void Forge prompt opens the equipment panel; the artifact collection remains available separately.
+- Studio acceptance is required for R6/R15 appearance, respawn, persistence, combat balance and multiplayer.

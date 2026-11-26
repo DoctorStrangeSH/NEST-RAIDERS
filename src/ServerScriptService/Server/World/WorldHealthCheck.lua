@@ -233,6 +233,87 @@ function WorldHealthCheck:Check()
     if not ancient or not ancient:FindFirstChild("AncientLanding") then fail("Нет стартовой площадки Древних высот") end
     if not ancient or not ancient:FindFirstChild("AncientReturnPortal") then fail("Нет обратного портала с Древних высот") end
     if not crystal or not crystal:FindFirstChild("AncientHeightsPortal") then fail("Нет портала к Древним высотам") end
+    local void = world and world:FindFirstChild("VoidFrontier")
+    if not void or not void:FindFirstChild("VoidLanding") then
+        fail("Нет стартовой площадки Границы пустоты")
+    end
+    if not void or not void:FindFirstChild("VoidReturnPortal") then
+        fail("Нет обратного портала с Границы пустоты")
+    end
+    if not ancient or not ancient:FindFirstChild("VoidFrontierPortal") then
+        fail("Нет портала с Древних высот к Границе пустоты")
+    end
+    if void then
+        local trial = void:FindFirstChild("VoidTrial")
+        local runeFolder = trial and trial:FindFirstChild("VoidTrialRunes")
+        local runeCount = 0
+        for _, descendant in ipairs(runeFolder and runeFolder:GetDescendants() or {}) do
+            if descendant:IsA("ProximityPrompt") and descendant.Name == "VoidTrialRunePrompt" then
+                runeCount += 1
+            end
+        end
+        if runeCount < 3 then fail(string.format("Руны Испытания пустоты: %d из 3", runeCount)) end
+        local altar = trial and trial:FindFirstChild("VoidTrialAltar")
+        local altarPrompt = altar and altar:FindFirstChild("VoidTrialAltarPrompt")
+        if not altarPrompt or not altarPrompt:IsA("ProximityPrompt") then
+            fail("Нет алтаря Испытания пустоты")
+        end
+        if not trial or not trial:FindFirstChild("VoidTrialClueSign") then
+            fail("Нет подсказки к последовательности Испытания пустоты")
+        end
+        local arena = void:FindFirstChild("VoidBossArena")
+        local boss = arena and arena:FindFirstChild("StarEater")
+        local core = boss and boss:FindFirstChild("StarEaterCore")
+        local bossPrompt = core and core:FindFirstChild("VoidBossPrompt")
+        if not arena or not arena:FindFirstChild("VoidBossArenaFloor") then
+            fail("Нет арены Пожирателя звёзд")
+        end
+        if not boss or not boss:IsA("Model") or not core or not bossPrompt
+            or not bossPrompt:IsA("ProximityPrompt") then
+            fail("Нет Пожирателя звёзд или его точки атаки")
+        end
+        local pylonCount = 0
+        for index = 1, 8 do
+            if arena and arena:FindFirstChild("VoidArenaPylon_" .. index)
+                and arena:FindFirstChild("VoidArenaPylonCore_" .. index) then pylonCount += 1 end
+        end
+        if pylonCount < 8 then fail(string.format("Пилоны арены Пустоты: %d из 8", pylonCount)) end
+        if not arena or not arena:FindFirstChild("VoidBossSign") then fail("Нет таблички Пожирателя звёзд") end
+        local voidEggs = void:FindFirstChild("EggSpawnPoints")
+        local voidEggCount = 0
+        for _, egg in ipairs(voidEggs and voidEggs:GetChildren() or {}) do
+            if egg:IsA("BasePart") and egg:GetAttribute("WorldEgg")
+                and egg:FindFirstChild("CollectEggPrompt") then voidEggCount += 1 end
+        end
+        if voidEggCount < 3 then fail(string.format("Яйца Границы пустоты: %d из 3", voidEggCount)) end
+        local voidNodes = void:FindFirstChild("VoidStarshardNodes")
+        local voidNodeCount = 0
+        for _, node in ipairs(voidNodes and voidNodes:GetChildren() or {}) do
+            if node:IsA("BasePart") and type(node:GetAttribute("VoidShardNodeId")) == "string"
+                and node:FindFirstChild("MineVoidShardPrompt") then voidNodeCount += 1 end
+        end
+        if voidNodeCount < 6 then fail(string.format("Звёздные жилы: %d из 6", voidNodeCount)) end
+        local voidForge = void:FindFirstChild("VoidForge")
+        local forgeStation = voidForge and voidForge:FindFirstChild("VoidForgeAnvil")
+        local forgePrompt = forgeStation and forgeStation:FindFirstChild("OpenVoidForgePrompt")
+        if not voidForge or not voidForge:FindFirstChild("VoidForgeFloor")
+            or not voidForge:FindFirstChild("VoidForgeCore") then
+            fail("Нет физической Кузницы пустоты")
+        end
+        if not forgeStation or not forgePrompt or not forgePrompt:IsA("ProximityPrompt") then
+            fail("Нет взаимодействия с Кузницей пустоты")
+        end
+        local bridge = void:FindFirstChild("VoidCauseway")
+        local bridgeCount = 0
+        for _, segment in ipairs(bridge and bridge:GetChildren() or {}) do
+            if segment:IsA("BasePart") and segment.Name:match("^VoidBridgeSegment_") then
+                bridgeCount += 1
+            end
+        end
+        if bridgeCount < 18 then fail(string.format("Мост Границы пустоты: %d из 18 секций", bridgeCount)) end
+        if not void:FindFirstChild("VoidBeacon") then fail("Нет маяка Границы пустоты") end
+        if not void:FindFirstChild("VoidWelcomeSign") then fail("Нет приветственной таблички Границы пустоты") end
+    end
     if ancient then
         local ancientEggs = ancient:FindFirstChild("EggSpawnPoints")
         local ancientEggCount = 0

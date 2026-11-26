@@ -333,3 +333,7 @@ The Starter Island now cycles through clear skies, rain, fog and storms. Weather
 
 ## Pet Exploration — Sprint 4.71
 Companions now have favorite places in their personal nest. They can visit garden trees, flower beds, paths and player-placed decorations/buildings, with species-specific preferences influencing where they go. Rare discoveries can trigger a short owner notification. Exploration is designed to yield to sleep, urgent needs, storm shelter, treasure hunts, toys and friendship.
+
+
+### Void Frontier — destination foundation
+A first endgame landing island is connected to Ancient Heights by an 18-segment walkable causeway. Access requires level 75 and defeating the Ancient Tree Guardian. The destination currently contains a beacon, six rune pillars, a welcome sign and a return portal; its trial, egg pool, resources and final boss are still planned.
