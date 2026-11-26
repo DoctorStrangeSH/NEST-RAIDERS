@@ -899,3 +899,11 @@ Displayed companions can discover destinations in their owner's personal nest. T
 
 ## Void Trial — Sprint 4.89
 The first playable Void Frontier objective is a persistent three-rune sequence: Rift → Echo → Star. A wrong rune resets the sequence. After all three runes are awakened, the player can claim the Void Altar once for 900 coins, 650 XP and 25 Starshards. All interactions are server-validated against current biome, zone access, character health and distance. Studio acceptance is still required.
+
+
+## Star Eater — Sprint 4.90
+- The Void Frontier boss arena contains eight illuminated pylons and the Star Eater model. The fight unlocks only after `void_trial` is completed.
+- Boss health is per-player and persisted in `QuestProgress.VoidBossHealth` (540 HP). Phase II begins at 65%; phase III begins at 30%.
+- Attacks: Rift Slam (targeted ground mark), Void Pulse (boss-centered radius), Starfall (three marked impact zones) and Collapse (large boss-centered danger zone). Every attack has a telegraph and a dodge window; only the targeted player's warning is visible.
+- A first victory sets `CompletedQuests.void_boss` and grants the Mythic `StarEater` companion, 1,800 coins, 1,200 XP and 12 Starshards exactly once.
+- Studio acceptance is required for combat balance, visual readability and multiplayer isolation.
