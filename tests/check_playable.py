@@ -1433,7 +1433,8 @@ assert raid_service.index('if roleCount == 3 then') < raid_service.index('if rol
 assert 'match.RaidPetSynergy = {}' in raid_service
 assert 'match.RaidPetSynergy[participant] = getRaidPetSynergy(followers)' in raid_service
 assert 'local synergy = match.RaidPetSynergy and match.RaidPetSynergy[target] or nil' in raid_service
-assert 'local damageReduction = math.clamp(tonumber(synergy and synergy.DamageReduction) or 0, 0, 0.2)' in raid_service
+assert 'local gearDefense = math.clamp(tonumber(target:GetAttribute("GearDefenseBonus")) or 0, 0, 0.5)' in raid_service
+assert 'local damageReduction = math.clamp((tonumber(synergy and synergy.DamageReduction) or 0) + gearDefense, 0, 0.55)' in raid_service
 assert 'local reducedDamage = math.max(0, math.floor(incomingDamage * (1 - damageReduction) + 0.5))' in raid_service
 assert 'local strikeMultiplier = math.clamp(tonumber(synergy and synergy.DuelDamageMultiplier) or 1, 1, 1.15)' in raid_service
 assert 'participant:SetAttribute("RaidArenaSynergyName", synergy and synergy.Name or "")' in raid_service
