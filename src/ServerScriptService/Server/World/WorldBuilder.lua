@@ -612,6 +612,7 @@ function WorldBuilder:Build()
             Emberlands = "Пепельные земли · уровень 22 + испытание",
             CrystalRealm = "Хрустальное королевство · уровень 35 + испытание",
             AncientHeights = "Древние высоты · уровень 50 + испытание",
+            VoidFrontier = "Граница пустоты · уровень 75 + Страж Древнего древа",
             StarterIsland = "Стартовый остров",
         }
         prompt.ObjectText = zoneLabels[zoneId] or "Неизвестная область"
@@ -2208,6 +2209,89 @@ function WorldBuilder:Build()
     caveChestPrompt.MaxActivationDistance = 10
     caveChestPrompt.RequiresLineOfSight = false
     caveChestPrompt.Parent = caveChest
+
+    -- Void Frontier: first endgame destination slice, unlocked only after the
+    -- Ancient Tree Guardian trial and level 75. The bridge is physically walkable.
+    local void = Instance.new("Folder")
+    void.Name = "VoidFrontier"
+    void.Parent = world
+
+    part(void, "VoidFloatingFoundation", Vector3.new(190, 30, 190),
+        Vector3.new(0, -3, 3300), Color3.fromRGB(37, 43, 68), Enum.Material.Slate, Enum.PartType.Ball)
+    local voidTop = part(void, "VoidLanding", Vector3.new(7, 164, 164),
+        Vector3.new(0, 14, 3300), Color3.fromRGB(53, 61, 91), Enum.Material.Basalt, Enum.PartType.Cylinder)
+    voidTop.CFrame = CFrame.new(0, 14, 3300) * CFrame.Angles(0, 0, math.rad(90))
+    part(void, "VoidArrivalPad", Vector3.new(30, 1.2, 30),
+        Vector3.new(0, 18.2, 3300), Color3.fromRGB(105, 104, 151), Enum.Material.Slate)
+
+    local voidBridge = Instance.new("Folder")
+    voidBridge.Name = "VoidCauseway"
+    voidBridge.Parent = void
+    for index = 1, 18 do
+        local z = 2678 + (index - 1) * 27
+        local segment = part(voidBridge, "VoidBridgeSegment_" .. index,
+            Vector3.new(13, 1.5, 28), Vector3.new(0, 18.5, z),
+            index % 3 == 0 and Color3.fromRGB(119, 105, 171) or Color3.fromRGB(76, 83, 120),
+            Enum.Material.Slate)
+        segment:SetAttribute("BridgeIndex", index)
+        if index % 3 == 0 then
+            local rune = part(voidBridge, "VoidBridgeRune_" .. index,
+                Vector3.new(0.5, 0.12, 5), Vector3.new(0, 19.32, z),
+                Color3.fromRGB(167, 137, 255), Enum.Material.Neon)
+            rune.CanCollide = false
+            local runeLight = Instance.new("PointLight")
+            runeLight.Color = rune.Color
+            runeLight.Range = 8
+            runeLight.Brightness = 0.35
+            runeLight.Parent = rune
+        end
+    end
+
+    for index = 1, 6 do
+        local angle = math.rad((index - 1) * 60)
+        local position = Vector3.new(math.cos(angle) * 59, 20, 3300 + math.sin(angle) * 59)
+        local pillar = part(void, "VoidPillar_" .. index, Vector3.new(4, 16 + (index % 3) * 3, 4),
+            position, Color3.fromRGB(68, 72, 112), Enum.Material.Basalt)
+        local cap = part(void, "VoidPillarCap_" .. index, Vector3.new(5.5, 1.2, 5.5),
+            position + Vector3.new(0, pillar.Size.Y / 2 + 0.5, 0),
+            Color3.fromRGB(153, 130, 235), Enum.Material.Neon)
+        cap.CanCollide = false
+        local light = Instance.new("PointLight")
+        light.Color = cap.Color
+        light.Range = 12
+        light.Brightness = 0.55
+        light.Parent = cap
+    end
+
+    local voidCore = part(void, "VoidBeacon", Vector3.new(5, 13, 5),
+        Vector3.new(0, 27, 3300), Color3.fromRGB(169, 139, 255), Enum.Material.Neon, Enum.PartType.Ball)
+    voidCore.CanCollide = false
+    local voidLight = Instance.new("PointLight")
+    voidLight.Color = voidCore.Color
+    voidLight.Range = 30
+    voidLight.Brightness = 2
+    voidLight.Parent = voidCore
+
+    makeBiomePortal(ancient, "VoidFrontierPortal", Vector3.new(0, 23, 2670),
+        Color3.fromRGB(165, 132, 255), "VoidFrontier", Vector3.new(0, 21, 3300))
+    makeBiomePortal(void, "VoidReturnPortal", Vector3.new(0, 23, 3225),
+        Color3.fromRGB(255, 219, 143), "AncientHeights", Vector3.new(0, 21, 2600))
+
+    local voidSign = part(void, "VoidWelcomeSign", Vector3.new(34, 10, 1),
+        Vector3.new(0, 30, 3374), Color3.fromRGB(31, 35, 58), Enum.Material.Metal)
+    voidSign.CanCollide = false
+    local voidGui = Instance.new("SurfaceGui")
+    voidGui.Face = Enum.NormalId.Front
+    voidGui.Parent = voidSign
+    local voidText = Instance.new("TextLabel")
+    voidText.Size = UDim2.fromScale(1, 1)
+    voidText.BackgroundTransparency = 1
+    voidText.Text = "ГРАНИЦА ПУСТОТЫ\\nУровень 75 · Страж Древнего древа\\nИсследование продолжается"
+    voidText.TextColor3 = Color3.fromRGB(218, 208, 255)
+    voidText.TextScaled = true
+    voidText.TextWrapped = true
+    voidText.Font = Enum.Font.GothamBlack
+    voidText.Parent = voidGui
 
     return world
 end
