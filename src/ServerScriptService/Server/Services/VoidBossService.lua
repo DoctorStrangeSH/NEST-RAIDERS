@@ -197,7 +197,7 @@ function VoidBossService:Init()
         player:SetAttribute("VoidBossAttackType", attack.Id)
         player:SetAttribute("LastNotice", attack.Warning)
         local markers = {}
-        local floorY = 20.35
+        local floorY = 21.75
         local targetOnFloor = Vector3.new(targetPosition.X, floorY, targetPosition.Z)
         if attack.Pattern == "Boss" then
             markers[1] = Vector3.new(corePosition.X, floorY, corePosition.Z)
