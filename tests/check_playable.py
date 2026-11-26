@@ -486,6 +486,10 @@ assert 'PrismTrial' in world and '"PrismGem_" .. definition.Id' in world and 'Id
 assert '"PrismLightBeam_" .. index' in world and 'for index = 1, 2 do' in world and 'PrismGuardian' in world
 assert 'CrystalTrialBossPrompt' in world and 'Лазурный → Розовый → Золотой' in world
 assert 'AncientHeights' in game_config and 'RequiredLevel = 50, RequiredQuest = "crystal_trial"' in game_config
+assert 'VoidFrontier' in game_config and 'RequiredLevel = 75, RequiredQuest = "ancient_temple_boss"' in game_config
+assert 'VoidFrontierPortal' in world and 'VoidReturnPortal' in world
+assert 'VoidBridgeSegment_' in world and 'VoidLanding' in world
+assert 'VoidFrontier' in world_health and 'VoidCauseway' in world_health
 assert 'AncientHeightsPortal' in world and 'AncientReturnPortal' in world
 assert 'AncientLanding' in world and 'AncientWelcomeSign' in world
 assert 'CrystalTrialProgress' in client and 'CrystalTrialBossWindup' in client
