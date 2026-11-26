@@ -17,6 +17,7 @@ local ProfileTemplate = {
         AncientTempleRunes = {},
         AncientTempleBossHealth = 240,
         VoidTrialRunes = {},
+        VoidBossHealth = 540,
         GroveCacheRunes = {},
         ForgottenCaveCrystals = {},
         ForgottenHeartBossHealth = 360,
