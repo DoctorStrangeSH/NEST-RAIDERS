@@ -895,3 +895,7 @@ Displayed companions can discover destinations in their owner's personal nest. T
 - Ancient Heights connects to Void Frontier by an 18-segment physical causeway. The travel prompt remains server-authoritative through ProgressionService:CanEnterZone.
 - The island contains a landing pad, six illuminated rune pillars, a central beacon, a welcome sign and a return portal to Ancient Heights.
 - This is a destination foundation only. The Void trial, unique egg/species, resource economy and final boss are not yet implemented.
+
+
+## Void Trial — Sprint 4.89
+The first playable Void Frontier objective is a persistent three-rune sequence: Rift → Echo → Star. A wrong rune resets the sequence. After all three runes are awakened, the player can claim the Void Altar once for 900 coins, 650 XP and 25 Starshards. All interactions are server-validated against current biome, zone access, character health and distance. Studio acceptance is still required.
