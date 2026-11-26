@@ -1658,3 +1658,13 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add the unique companion's catalogue entry and low-poly follower appearance.
 - [x] Add Void Frontier trial/boss HUD state, attack warning visibility and world-health/regression checks.
 - [ ] Roblox Studio: verify all three phases, attack telegraphs, dodge damage, persistence, multiplayer isolation and one-time rewards.
+
+
+### Sprint 4.91 — Void Frontier ecosystem
+- [x] Add the Mythic Void Egg with Riftling (60%), Echo Wisp (30%) and Nebula Drake (10%).
+- [x] Add three world egg shells and nine safe spawn slots managed by the existing EggService.
+- [x] Add six Starshard outcrops around the island rim with stable IDs and a 180-second per-player/per-node cooldown.
+- [x] Persist Void node cooldowns and Starshard balances; reuse the existing resource HUD.
+- [x] Give an active Star Eater a 30% chance to discover one extra Starshard per harvest.
+- [x] Register VoidHarvestService and add world-health/regression checks.
+- [ ] Roblox Studio: test egg collection/hatching, rarity odds, cooldowns, inventory full state, and two-player isolation.
