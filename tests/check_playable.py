@@ -1247,7 +1247,8 @@ assert 'match.LastStrikeAt = {}' in raid_service
 assert 'match.GuardUntil = {}' in raid_service and 'match.GuardCooldownUntil = {}' in raid_service
 assert 'if targetGuardUntil > timestamp then' in raid_service
 assert 'applyRaidCombatDamage(self, match, opponent, strikeDamage, "Удар соперника")' in raid_service
-assert 'applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE' in raid_service
+assert 'applyRaidCombatDamage(self, match, player, counterDamage, "Контрудар парирования")' in raid_service
+assert 'local counterBonus = math.clamp(tonumber(opponent:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)' in raid_service
 assert 'finishMatch(self, match, target == match.Attacker and "DEFENDER" or "ATTACKER"' in raid_service
 assert 'function RaidService:RaiseGuard(player)' in raid_service
 assert 'match.GuardUntil[player] = guardUntil' in raid_service
@@ -1362,7 +1363,8 @@ assert 'remainingDamage -= absorbed' in raid_service
 assert 'return applyRaidCombatDamage(self, match, target, amount, sourceName)' in raid_service
 assert 'applyDefenseDamage(self, match, match.Attacker, defense.Damage' in raid_service
 assert 'applyRaidCombatDamage(self, match, opponent, strikeDamage, "Удар соперника")' in raid_service
-assert 'applyRaidCombatDamage(self, match, player, RAID_PARRY_COUNTER_DAMAGE' in raid_service
+assert 'applyRaidCombatDamage(self, match, player, counterDamage, "Контрудар парирования")' in raid_service
+assert 'local counterBonus = math.clamp(tonumber(opponent:GetAttribute("GearDamageBonus")) or 0, 0, 0.6)' in raid_service
 assert 'payload.Action == "UsePetAbility"' in raid_service and 'self:UsePetAbility(player)' in raid_service
 assert 'participant:SetAttribute("RaidArenaPetAbilityName", nil)' in raid_service
 assert 'participant:SetAttribute("RaidArenaPetShield", nil)' in raid_service
