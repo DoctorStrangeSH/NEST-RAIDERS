@@ -293,6 +293,16 @@ function WorldHealthCheck:Check()
                 and node:FindFirstChild("MineVoidShardPrompt") then voidNodeCount += 1 end
         end
         if voidNodeCount < 6 then fail(string.format("Звёздные жилы: %d из 6", voidNodeCount)) end
+        local voidForge = void:FindFirstChild("VoidForge")
+        local forgeStation = voidForge and voidForge:FindFirstChild("VoidForgeAnvil")
+        local forgePrompt = forgeStation and forgeStation:FindFirstChild("OpenVoidForgePrompt")
+        if not voidForge or not voidForge:FindFirstChild("VoidForgeFloor")
+            or not voidForge:FindFirstChild("VoidForgeCore") then
+            fail("Нет физической Кузницы пустоты")
+        end
+        if not forgeStation or not forgePrompt or not forgePrompt:IsA("ProximityPrompt") then
+            fail("Нет взаимодействия с Кузницей пустоты")
+        end
         local bridge = void:FindFirstChild("VoidCauseway")
         local bridgeCount = 0
         for _, segment in ipairs(bridge and bridge:GetChildren() or {}) do
