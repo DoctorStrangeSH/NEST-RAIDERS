@@ -2157,3 +2157,22 @@ assert 'VoidArenaPylon_' in void_boss_world and 'StarEaterCore' in void_boss_wor
 assert 'VoidBossPrompt' in void_boss_health and 'VoidArenaPylon_' in void_boss_health
 assert 'VoidBossHealth' in void_boss_client and 'VoidBossWindup' in void_boss_client
 assert 'VoidBossAttackWarning' in void_boss_client and 'VoidBossCompleted' in void_boss_client
+
+
+# Sprint 4.91 — Void Frontier egg pool and Starshard gathering.
+void_harvest = Path("src/ServerScriptService/Server/Services/VoidHarvestService.lua").read_text()
+void_egg_service = Path("src/ServerScriptService/Server/Services/EggService.lua").read_text()
+void_biome_catalog = Path("src/ReplicatedStorage/Shared/Config/BiomeCatalog.lua").read_text()
+assert '"VoidHarvestService"' in server and 'function VoidHarvestService:Init()' in void_harvest
+assert 'VoidNodeCooldowns = {}' in profile_template and 'VoidNodeCooldowns' in void_harvest
+assert 'NODE_COOLDOWN_SECONDS = 180' in void_harvest
+assert 'VoidShardNodeId' in void_harvest and 'MineVoidShardPrompt' in void_harvest
+assert 'materials.Starshard' in void_harvest and 'StarEater' in void_harvest
+assert 'VoidFrontier = {' in void_biome_catalog and 'DefaultEggId = "VoidEgg"' in void_biome_catalog
+assert 'Riftling = 60' in void_biome_catalog and 'EchoWisp = 30' in void_biome_catalog and 'NebulaDrake = 10' in void_biome_catalog
+assert 'Riftling = {' in companion_catalog and 'EchoWisp = {' in companion_catalog and 'NebulaDrake = {' in companion_catalog
+assert 'VoidFrontier = {' in void_egg_service and 'Vector3.new(-28, 19.6, 3245)' in void_egg_service
+assert 'makeEgg(voidEggs' in world and 'VoidStarshardNodes' in world
+assert 'MineVoidShardPrompt' in world and 'VoidShardNodeId' in world
+assert 'VoidFrontier' in world_health and 'VoidStarshardNodes' in world_health and 'EggSpawnPoints' in world_health
+assert 'Пещера и Граница пустоты' in client
