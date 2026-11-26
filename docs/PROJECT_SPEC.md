@@ -915,3 +915,13 @@ The first playable Void Frontier objective is a persistent three-rune sequence: 
 - Six Starshard outcrops use stable node IDs and a 180-second cooldown per player and node. Harvesting grants 1–3 Starshards before artifact bonuses. An active Star Eater has a 30% chance to add one extra shard.
 - Starshard totals reuse the existing resource display. Node cooldowns are persisted in `Materials.VoidNodeCooldowns`.
 - Studio acceptance is required for pickup/hatching, cooldowns, resource balance and multiplayer isolation.
+
+
+## Void Forge — Sprint 4.92
+- A physical Void Forge station is located on the Void Frontier island and can be opened with its ProximityPrompt.
+- Crafting is deterministic: the player chooses one of three recipes. The server verifies Void Frontier access, the player's distance to the forge, recipe identity, artifact collection capacity and all resource balances before deducting anything.
+- Void Harvester: 24 Starshards + 6 Crystal Shards + 1,200 coins; grants 18% gathering bonus.
+- Rift Compass: 18 Starshards + 4 Ash Crystals + 1,000 coins; grants 15% research XP bonus.
+- Nebula Charm: 30 Starshards + 8 Moonpetals + 1,600 coins; grants 12% highest-rarity hatch bonus.
+- Crafted items are normal artifact instances. They persist in the existing profile, can occupy either of the two artifact slots, and use the established artifact bonus and merge systems. Collection capacity remains 40.
+- Studio acceptance is required for crafting, inventory persistence, equipment behavior and real bonus effects.
