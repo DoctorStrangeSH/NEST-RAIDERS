@@ -40,9 +40,9 @@ Status legend: [x] done · [ ] not done · [~] in progress
 
 ## Milestone 2 — Open-world progression
 - [ ] Seamless connected biomes with no mandatory world portals.
-- [~] Server-enforced gates implemented for Starter Island → Emerald Wilds, Emerald trial → Frost Highlands, and Frost trial → Emberlands; remaining late-game biome trials still need their gameplay flows.
+- [~] Server-enforced gates implemented through Ancient Heights; Void Frontier is gated by level 75 + the existing Ancient Tree Guardian victory. Its endgame trial and full biome content remain to be built.
 - [ ] Server-side zone checks for egg collection and interactions.
-- [~] Starter Island, Emerald Wilds, Frost Highlands, and Emberlands have scripted playable slices; the expansion islands are linked by walkable causeways. Heat gameplay still needs Studio acceptance; Crystal Realm, Ancient Heights, and Void Frontier remain to be built.
+- [~] Starter Island, Emerald Wilds, Frost Highlands, Emberlands, Crystal Realm, and Ancient Heights have scripted playable slices. Void Frontier now has its first connected destination slice; its gameplay content remains outstanding.
 - [ ] World landmarks, secrets, caves, traversal routes, and discovery rewards.
 
 ## Milestone 3 — Nest, companions, and economy
@@ -1627,3 +1627,13 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add a 10-second deadline, 90-second pair cooldown and cleanup on cancellation.
 - [x] Add source regression checks.
 - [ ] Complete Roblox Studio acceptance of all four shared games before release.
+
+
+### Sprint 4.88 — Void Frontier destination foundation
+- [x] Correct the endgame gate to use the existing persisted `ancient_temple_boss` completion flag (not the nonexistent `ancient_trial` key).
+- [x] Add a level-75 + Ancient Tree Guardian victory gate to the biome progression catalog.
+- [x] Build a distinct Void Frontier landing island with a beacon, six rune pillars, welcome sign and return route.
+- [x] Connect Ancient Heights to the new island with an 18-segment physical causeway and server-gated travel prompts.
+- [x] Add world-health diagnostics and regression checks for the new destination and both travel portals.
+- [ ] Roblox Studio: test locked and unlocked travel, return travel, bridge collision, respawn and multiplayer isolation.
+- [ ] Add the Void Frontier trial, egg/species catalog, resource loop and endgame reward before calling the biome complete.
