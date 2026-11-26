@@ -2457,6 +2457,46 @@ function WorldBuilder:Build()
     bossSignText.Font = Enum.Font.GothamBlack
     bossSignText.Parent = bossSignGui
 
+    -- Void biome egg pool: three visible world eggs rotate across nine safe slots.
+    local voidEggs = Instance.new("Folder")
+    voidEggs.Name = "EggSpawnPoints"
+    voidEggs.Parent = void
+    makeEgg(voidEggs, Vector3.new(-28, 21, 3245), Color3.fromRGB(167, 112, 255))
+    makeEgg(voidEggs, Vector3.new(0, 21, 3240), Color3.fromRGB(167, 112, 255))
+    makeEgg(voidEggs, Vector3.new(28, 21, 3245), Color3.fromRGB(167, 112, 255))
+
+    -- Starshard outcrops are placed around the safe outer rim, away from the trial
+    -- altar and the Star Eater arena. Each node has a stable ID and server prompt.
+    local voidNodes = Instance.new("Folder")
+    voidNodes.Name = "VoidStarshardNodes"
+    voidNodes.Parent = void
+    local voidNodePositions = {
+        Vector3.new(-78, 23, 3270), Vector3.new(-78, 23, 3330),
+        Vector3.new(-35, 23, 3230), Vector3.new(0, 23, 3240),
+        Vector3.new(5, 23, 3370), Vector3.new(78, 23, 3300),
+    }
+    for index, position in ipairs(voidNodePositions) do
+        local color = index % 2 == 0 and Color3.fromRGB(121, 179, 255) or Color3.fromRGB(183, 132, 255)
+        local node = part(voidNodes, "VoidStarshardNode_" .. index,
+            Vector3.new(4.5, 6 + (index % 3), 4.5), position, color, Enum.Material.Neon, Enum.PartType.Wedge)
+        node.CanCollide = false
+        node:SetAttribute("VoidShardNodeId", "VoidRim_" .. index)
+        local glow = Instance.new("PointLight")
+        glow.Color = color
+        glow.Range = 14
+        glow.Brightness = 0.8
+        glow.Parent = node
+        local prompt = Instance.new("ProximityPrompt")
+        prompt.Name = "MineVoidShardPrompt"
+        prompt.ActionText = "Добыть"
+        prompt.ObjectText = "Звёздная жила"
+        prompt.KeyboardKeyCode = Enum.KeyCode.E
+        prompt.HoldDuration = 1.1
+        prompt.MaxActivationDistance = 11
+        prompt.RequiresLineOfSight = false
+        prompt.Parent = node
+    end
+
     return world
 end
 
