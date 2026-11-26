@@ -2191,7 +2191,7 @@ assert 'HatchBonus = 0.12' in void_forge_catalog
 assert 'payload.Action == "CraftVoidArtifact"' in void_forge_inventory
 assert 'player:GetAttribute("CurrentBiome") ~= "VoidFrontier"' in void_forge_inventory
 assert 'ProgressionService:CanEnterZone(player, "VoidFrontier")' in void_forge_inventory
-assert 'VoidForgeStation' in void_forge_inventory and 'profile.Artifacts >= 40' in void_forge_inventory
+assert 'VoidForgeStation' in void_forge_inventory and '#profile.Artifacts >= 40' in void_forge_inventory
 for recipe in ('VoidHarvester', 'RiftCompass', 'NebulaCharm'):
     assert recipe in void_forge_inventory and recipe in void_forge_client
 assert 'profile.Artifacts' in void_forge_inventory and 'Origin = "VoidForge"' in void_forge_inventory
