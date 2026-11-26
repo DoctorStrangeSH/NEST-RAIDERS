@@ -403,7 +403,7 @@ local CompanionCatalog = {
         PetMoodBonus = 14, PlayMoodBonus = 11,
     },
     Riftling = {
-        Id = "Riftling", Name = "Разломыш", Rarity = "Редкий,
+        Id = "Riftling", Name = "Разломыш", Rarity = "Редкий",
         Income = 260, Weight = 60, EggId = "VoidEgg",
         Description = "Любопытный малыш из трещины между звёздами. Его маленькие рога мерцают фиолетовым светом.",
         Personality = "Любопытный", PersonalityDescription = "Обожает исследовать незнакомые места и искать скрытые проходы.",
@@ -413,7 +413,7 @@ local CompanionCatalog = {
         PetMoodBonus = 10, PlayMoodBonus = 12,
     },
     EchoWisp = {
-        Id = "EchoWisp", Name = "Эхо-огонёк", Rarity = "Эпический,
+        Id = "EchoWisp", Name = "Эхо-огонёк", Rarity = "Эпический",
         Income = 290, Weight = 30, EggId = "VoidEgg",
         Description = "Светящийся дух, который повторяет мелодии далёких миров и оставляет за собой искры.",
         Personality = "Мечтательный", PersonalityDescription = "Любит тишину, музыку и мерцание далёких созвездий.",
@@ -423,7 +423,7 @@ local CompanionCatalog = {
         PetMoodBonus = 13, PlayMoodBonus = 8,
     },
     NebulaDrake = {
-        Id = "NebulaDrake", Name = "Туманная драконка", Rarity = "Мифический,
+        Id = "NebulaDrake", Name = "Туманная драконка", Rarity = "Мифический",
         Income = 340, Weight = 10, EggId = "VoidEgg",
         Description = "Редкая драконка с крыльями из звёздной пыли и сердцем цвета далёкой туманности.",
         Personality = "Энергичный", PersonalityDescription = "Смело исследует пустоту и первой летит навстречу приключениям.",
