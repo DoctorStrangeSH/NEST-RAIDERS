@@ -2219,7 +2219,8 @@ gear_client = Path("src/StarterPlayer/StarterPlayerScripts/ClientBootstrap.clien
 assert '"GearService"' in server and '"GearInventory"' in server
 assert 'GearInventory = {}' in gear_profile and 'EquippedGear = {}' in gear_profile
 for item_id in ('Riftblade', 'Voidplate', 'Starhelm', 'NebulaCloak'):
-    assert item_id + ' = {' in gear_catalog and item_id in gear_service and item_id in gear_client
+    assert item_id + ' = {' in gear_catalog and item_id in gear_client
+assert 'GearCatalog[itemId]' in gear_service
 for slot in ('Weapon', 'Armor', 'Helmet', 'Accessory'):
     assert slot in gear_catalog and slot in gear_service and slot in gear_client
 assert 'payload.Action == "Craft"' in gear_service and 'payload.Action == "Equip"' in gear_service
