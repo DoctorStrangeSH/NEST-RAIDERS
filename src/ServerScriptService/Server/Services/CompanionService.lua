@@ -162,6 +162,24 @@ local DEFINITIONS = {
         Detail = Color3.fromRGB(113, 120, 190),
         Kind = "StarEater",
     },
+    Riftling = {
+        Body = Color3.fromRGB(73, 55, 117),
+        Accent = Color3.fromRGB(193, 130, 255),
+        Detail = Color3.fromRGB(107, 84, 171),
+        Kind = "Riftling",
+    },
+    EchoWisp = {
+        Body = Color3.fromRGB(73, 104, 148),
+        Accent = Color3.fromRGB(137, 207, 255),
+        Detail = Color3.fromRGB(167, 146, 231),
+        Kind = "EchoWisp",
+    },
+    NebulaDrake = {
+        Body = Color3.fromRGB(112, 67, 128),
+        Accent = Color3.fromRGB(255, 167, 220),
+        Detail = Color3.fromRGB(111, 112, 191),
+        Kind = "NebulaDrake",
+    },
 }
 
 local function makeShape(model, name, size, offset, color, shape)
@@ -824,6 +842,24 @@ local function buildPet(parent, companion, index)
         makeShape(model, "LeftFin", Vector3.new(0.5, 1.0, 1.4), Vector3.new(-1.05, 1.45, -0.2), definition.Detail, Enum.PartType.Wedge)
         makeShape(model, "RightFin", Vector3.new(0.5, 1.0, 1.4), Vector3.new(1.05, 1.45, -0.2), definition.Detail, Enum.PartType.Wedge)
         makeShape(model, "CloudTail", Vector3.new(0.65, 0.65, 1.5), Vector3.new(0, 1.0, -1.3), definition.Accent)
+    elseif definition.Kind == "Riftling" then
+        makeShape(model, "RiftlingCore", Vector3.new(0.85, 0.85, 0.55), Vector3.new(0, 1.55, 0.95), definition.Accent)
+        makeShape(model, "RiftHornLeft", Vector3.new(0.3, 0.9, 0.3), Vector3.new(-0.5, 2.55, 0.1), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "RiftHornRight", Vector3.new(0.3, 0.9, 0.3), Vector3.new(0.5, 2.55, 0.1), definition.Detail, Enum.PartType.Wedge)
+        local riftGlow = Instance.new("PointLight")
+        riftGlow.Color = definition.Accent
+        riftGlow.Range = 11
+        riftGlow.Brightness = 1.3
+        riftGlow.Parent = body
+    elseif definition.Kind == "EchoWisp" then
+        makeShape(model, "EchoHalo", Vector3.new(1.8, 0.22, 1.8), Vector3.new(0, 2.7, 0), definition.Accent, Enum.PartType.Cylinder)
+        makeShape(model, "EchoCore", Vector3.new(0.8, 1.0, 0.8), Vector3.new(0, 1.75, 0.1), definition.Detail)
+        makeShape(model, "EchoTail", Vector3.new(0.45, 1.0, 0.45), Vector3.new(0, 0.65, -0.8), definition.Accent, Enum.PartType.Wedge)
+    elseif definition.Kind == "NebulaDrake" then
+        makeShape(model, "NebulaSnout", Vector3.new(0.75, 0.45, 0.9), Vector3.new(0, 1.6, 1.15), definition.Accent)
+        makeShape(model, "NebulaWingLeft", Vector3.new(0.35, 1.2, 1.35), Vector3.new(-1.15, 1.45, -0.1), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "NebulaWingRight", Vector3.new(0.35, 1.2, 1.35), Vector3.new(1.15, 1.45, -0.1), definition.Detail, Enum.PartType.Wedge)
+        makeShape(model, "NebulaCrest", Vector3.new(0.35, 0.9, 0.35), Vector3.new(0, 2.65, 0.2), definition.Accent, Enum.PartType.Wedge)
     elseif definition.Kind == "StarEater" then
         makeShape(model, "StarEaterCore", Vector3.new(0.9, 0.9, 0.55), Vector3.new(0, 1.55, 0.95), definition.Accent)
         makeShape(model, "StarEaterHalo", Vector3.new(1.9, 0.22, 1.9), Vector3.new(0, 2.75, 0), definition.Detail, Enum.PartType.Cylinder)
