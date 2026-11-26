@@ -514,6 +514,86 @@ function InventoryService:HandleRequest(player, payload)
         return { Ok = true, Data = makeSnapshot(profile), Message = message }
     end
 
+    if payload.Action == "CraftVoidArtifact" then
+        if player:GetAttribute("CurrentBiome") ~= "VoidFrontier"
+            or not ProgressionService:CanEnterZone(player, "VoidFrontier") then
+            return { Ok = false, Message = "Кузница работает только на открытой Границе пустоты." }
+        end
+        local recipeId = payload.RecipeId
+        if type(recipeId) ~= "string" or #recipeId > 48 then
+            return { Ok = false, Message = "Неизвестный рецепт кузницы." }
+        end
+        local recipes = {
+            VoidHarvester = {
+                ArtifactId = "VoidHarvester", Starshard = 24, CrystalShard = 6, Coins = 1200,
+            },
+            RiftCompass = {
+                ArtifactId = "RiftCompass", Starshard = 18, AshCrystal = 4, Coins = 1000,
+            },
+            NebulaCharm = {
+                ArtifactId = "NebulaCharm", Starshard = 30, Moonpetal = 8, Coins = 1600,
+            },
+        }
+        local recipe = recipes[recipeId]
+        local definition = recipe and ArtifactCatalog[recipe.ArtifactId]
+        if not recipe or not definition then
+            return { Ok = false, Message = "Этот рецепт ещё не изучен." }
+        end
+        local world = Workspace:FindFirstChild("NestRaidersWorld")
+        local void = world and world:FindFirstChild("VoidFrontier")
+        local forge = void and void:FindFirstChild("VoidForge")
+        local station = forge and forge:FindFirstChild("VoidForgeStation")
+        local character = player.Character
+        local root = character and character:FindFirstChild("HumanoidRootPart")
+        if not station or not root or (root.Position - station.Position).Magnitude > 18 then
+            return { Ok = false, Message = "Подойди к Кузнице пустоты, чтобы создать предмет." }
+        end
+        if #profile.Artifacts >= 40 then
+            return { Ok = false, Message = "Коллекция артефактов заполнена. Освободи место." }
+        end
+        profile.Materials = type(profile.Materials) == "table" and profile.Materials or {}
+        local costs = {
+            Starshard = recipe.Starshard,
+            Coins = recipe.Coins,
+        }
+        if recipe.CrystalShard then costs.CrystalShard = recipe.CrystalShard end
+        if recipe.AshCrystal then costs.AshCrystal = recipe.AshCrystal end
+        if recipe.Moonpetal then costs.Moonpetal = recipe.Moonpetal end
+        local materialNames = {
+            Starshard = "звёздных осколков", CrystalShard = "кристальных осколков",
+            AshCrystal = "пепельных кристаллов", Moonpetal = "лунных лепестков",
+        }
+        local balances = {}
+        for material, cost in pairs(costs) do
+            local balance = material == "Coins"
+                and math.max(0, math.floor(tonumber(profile.Coins) or 0))
+                or math.max(0, math.floor(tonumber(profile.Materials[material]) or 0))
+            balances[material] = balance
+            if balance < cost then
+                local label = material == "Coins" and "монет" or (materialNames[material] or material)
+                return { Ok = false, Message = string.format("Не хватает %s: нужно %d, у тебя %d.", label, cost, balance) }
+            end
+        end
+        -- All validations finish before any resource is spent.
+        for material, cost in pairs(costs) do
+            if material == "Coins" then profile.Coins = balances.Coins - cost
+            else profile.Materials[material] = balances[material] - cost end
+        end
+        local instanceId = HttpService:GenerateGUID(false)
+        table.insert(profile.Artifacts, {
+            Id = definition.Id, Level = 1, InstanceId = instanceId,
+            CraftedAt = os.time(), Origin = "VoidForge", RecipeId = recipeId,
+        })
+        player:SetAttribute("Starshard", math.max(0, math.floor(tonumber(profile.Materials.Starshard) or 0)))
+        player:SetAttribute("CrystalShards", math.max(0, math.floor(tonumber(profile.Materials.CrystalShard) or 0)))
+        player:SetAttribute("AshCrystals", math.max(0, math.floor(tonumber(profile.Materials.AshCrystal) or 0)))
+        player:SetAttribute("Moonpetal", math.max(0, math.floor(tonumber(profile.Materials.Moonpetal) or 0)))
+        player:SetAttribute("Coins", profile.Coins)
+        local message = "Кузница создала предмет: " .. definition.Name .. "!"
+        player:SetAttribute("LastNotice", message)
+        return { Ok = true, Data = makeSnapshot(profile), Message = message }
+    end
+
     if payload.Action == "MergeArtifacts" then
         if type(payload.ArtifactInstanceIds) ~= "table" or #payload.ArtifactInstanceIds ~= 3 then
             return { Ok = false, Message = "Для объединения выбери ровно 3 одинаковых артефакта." }
