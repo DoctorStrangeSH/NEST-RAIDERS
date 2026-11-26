@@ -1285,3 +1285,12 @@ Static regression checks cover species preferences, destination collection, weig
 - [ ] Confirm VoidFrontier is the current biome after arrival and AncientHeights after return.
 - [ ] Test two players with different unlock states; one player's unlock must not affect the other.
 - [ ] Check beacon/pillar visibility and bridge performance on desktop, tablet and mobile.
+
+
+## Sprint 4.89 — Void Trial
+- [ ] Activate Rift, Echo, Star in order; verify progress reaches 3/3 and the altar accepts the claim.
+- [ ] Activate a wrong rune mid-sequence; verify progress resets to 0/3.
+- [ ] Claim the altar twice; verify coins, XP and Starshards are granted only once.
+- [ ] Leave and rejoin after activating one or two runes; verify the sequence is retained.
+- [ ] Test two players independently; one player's runes must not change the other's progress.
+- [ ] Try interacting from another biome, while dead, and outside prompt range; verify no progress or rewards.
