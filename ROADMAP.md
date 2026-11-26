@@ -1678,3 +1678,16 @@ Source and automated packaging checks do not substitute for actual gameplay test
 - [x] Add a forge interaction that opens the existing artifact UI and shows recipes only while in Void Frontier.
 - [x] Add world-health and source regression checks.
 - [ ] Roblox Studio: test each recipe, insufficient materials, full collection, remote spoofing, rejoin persistence, equip/unequip and actual bonus effects.
+
+
+### Sprint 4.93 — Voidwalker equipment
+- [x] Add four persistent gear slots: weapon, armor, helmet and accessory.
+- [x] Add a complete four-piece Voidwalker set with deterministic forge recipes and one item per slot.
+- [x] Validate biome access, forge distance, item identity, duplicate ownership and all resource balances server-side before spending.
+- [x] Persist gear inventory and equipped slot mapping in the reconciled player profile.
+- [x] Apply gear visuals to the character with welded parts and restore them after respawn.
+- [x] Apply damage, defense, max-health and movement bonuses to player attributes and Humanoid stats.
+- [x] Add a four-piece set bonus; integrate gear damage/defense with Void, Ancient Temple, Forgotten Heart and raid combat.
+- [x] Add a responsive gear panel and open it from the Void Forge prompt.
+- [x] Fix the Void Forge station lookup to match the actual world anvil.
+- [ ] Roblox Studio: verify R6/R15 visuals, respawn persistence, all four crafting recipes, equip replacement, set bonus, boss damage and incoming damage reduction.
