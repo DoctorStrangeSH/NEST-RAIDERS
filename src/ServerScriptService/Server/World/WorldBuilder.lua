@@ -2367,6 +2367,89 @@ function WorldBuilder:Build()
     clueText.Font = Enum.Font.GothamBlack
     clueText.Parent = clueGui
 
+    -- Star Eater endgame arena: a raised circular platform, rune pylons and a
+    -- distinct three-phase boss silhouette. The encounter is per-player/server-owned.
+    local bossArena = Instance.new("Folder")
+    bossArena.Name = "VoidBossArena"
+    bossArena.Parent = void
+    local arenaFloor = part(bossArena, "VoidBossArenaFloor", Vector3.new(82, 3, 82),
+        Vector3.new(40, 20, 3300), Color3.fromRGB(35, 34, 58), Enum.Material.Basalt)
+    arenaFloor.TopSurface = Enum.SurfaceType.Smooth
+    local arenaTrim = part(bossArena, "VoidBossArenaTrim", Vector3.new(88, 1, 88),
+        Vector3.new(40, 18.2, 3300), Color3.fromRGB(113, 78, 175), Enum.Material.Neon)
+    arenaTrim.CanCollide = false
+    for index = 1, 8 do
+        local angle = math.rad((index - 1) * 45)
+        local position = Vector3.new(40 + math.cos(angle) * 38, 24, 3300 + math.sin(angle) * 38)
+        local pylon = part(bossArena, "VoidArenaPylon_" .. index,
+            Vector3.new(3.5, 12 + (index % 3) * 2, 3.5), position,
+            Color3.fromRGB(64, 54, 94), Enum.Material.Slate)
+        local pylonCore = part(bossArena, "VoidArenaPylonCore_" .. index,
+            Vector3.new(1.2, 4, 1.2), position + Vector3.new(0, 2, 0),
+            Color3.fromRGB(168, 118, 255), Enum.Material.Neon)
+        pylonCore.CanCollide = false
+        local pylonLight = Instance.new("PointLight")
+        pylonLight.Color = pylonCore.Color
+        pylonLight.Range = 12
+        pylonLight.Brightness = 0.6
+        pylonLight.Parent = pylonCore
+    end
+
+    local starEater = Instance.new("Model")
+    starEater.Name = "StarEater"
+    starEater.Parent = bossArena
+    local bossBody = part(starEater, "StarEaterBody", Vector3.new(15, 18, 13),
+        Vector3.new(40, 31, 3300), Color3.fromRGB(36, 34, 57), Enum.Material.Slate, Enum.PartType.Ball)
+    local bossHead = part(starEater, "StarEaterHead", Vector3.new(11, 10, 10),
+        Vector3.new(40, 43, 3301), Color3.fromRGB(52, 45, 82), Enum.Material.Basalt, Enum.PartType.Ball)
+    local bossCore = part(starEater, "StarEaterCore", Vector3.new(6, 6, 5),
+        Vector3.new(40, 31, 3307), Color3.fromRGB(184, 128, 255), Enum.Material.Neon, Enum.PartType.Ball)
+    bossCore.CanCollide = false
+    local coreLight = Instance.new("PointLight")
+    coreLight.Color = bossCore.Color
+    coreLight.Range = 28
+    coreLight.Brightness = 2.2
+    coreLight.Parent = bossCore
+    for side = -1, 1, 2 do
+        local arm = part(starEater, "StarEaterArm_" .. side, Vector3.new(5, 14, 5),
+            Vector3.new(40 + side * 10, 29, 3300), Color3.fromRGB(44, 39, 69), Enum.Material.Slate, Enum.PartType.Ball)
+        local claw = part(starEater, "StarEaterClaw_" .. side, Vector3.new(4, 5, 4),
+            Vector3.new(40 + side * 10, 21, 3302), Color3.fromRGB(167, 112, 255), Enum.Material.Neon, Enum.PartType.Ball)
+        claw.CanCollide = false
+    end
+    for index = 1, 5 do
+        local angle = math.rad((index - 1) * 72)
+        local spike = part(starEater, "StarEaterCrown_" .. index, Vector3.new(2.8, 9, 2.8),
+            Vector3.new(40 + math.cos(angle) * 5.8, 49, 3301 + math.sin(angle) * 5.8),
+            Color3.fromRGB(168, 119, 255), Enum.Material.Neon, Enum.PartType.Wedge)
+        spike.CanCollide = false
+    end
+    local bossPrompt = Instance.new("ProximityPrompt")
+    bossPrompt.Name = "VoidBossPrompt"
+    bossPrompt.ActionText = "Атаковать"
+    bossPrompt.ObjectText = "Пожиратель звёзд"
+    bossPrompt.KeyboardKeyCode = Enum.KeyCode.E
+    bossPrompt.HoldDuration = 0.35
+    bossPrompt.MaxActivationDistance = 12
+    bossPrompt.RequiresLineOfSight = false
+    bossPrompt.Parent = bossCore
+
+    local bossSign = part(bossArena, "VoidBossSign", Vector3.new(26, 8, 1),
+        Vector3.new(40, 29, 3345), Color3.fromRGB(28, 27, 48), Enum.Material.Metal)
+    bossSign.CanCollide = false
+    local bossSignGui = Instance.new("SurfaceGui")
+    bossSignGui.Face = Enum.NormalId.Front
+    bossSignGui.Parent = bossSign
+    local bossSignText = Instance.new("TextLabel")
+    bossSignText.Size = UDim2.fromScale(1, 1)
+    bossSignText.BackgroundTransparency = 1
+    bossSignText.Text = "ПОЖИРАТЕЛЬ ЗВЁЗД\\nТри фазы · 540 здоровья\\nСначала заверши испытание пустоты"
+    bossSignText.TextColor3 = Color3.fromRGB(222, 202, 255)
+    bossSignText.TextScaled = true
+    bossSignText.TextWrapped = true
+    bossSignText.Font = Enum.Font.GothamBlack
+    bossSignText.Parent = bossSignGui
+
     return world
 end
 
