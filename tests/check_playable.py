@@ -2191,7 +2191,7 @@ assert 'HatchBonus = 0.12' in void_forge_catalog
 assert 'payload.Action == "CraftVoidArtifact"' in void_forge_inventory
 assert 'player:GetAttribute("CurrentBiome") ~= "VoidFrontier"' in void_forge_inventory
 assert 'ProgressionService:CanEnterZone(player, "VoidFrontier")' in void_forge_inventory
-assert 'VoidForgeStation' in void_forge_inventory and '#profile.Artifacts >= 40' in void_forge_inventory
+assert 'VoidForgeAnvil' in void_forge_inventory and '#profile.Artifacts >= 40' in void_forge_inventory
 for recipe in ('VoidHarvester', 'RiftCompass', 'NebulaCharm'):
     assert recipe in void_forge_inventory and recipe in void_forge_client
 assert 'profile.Artifacts' in void_forge_inventory and 'Origin = "VoidForge"' in void_forge_inventory
@@ -2200,3 +2200,38 @@ assert 'OpenVoidForgePrompt' in void_forge_world and 'VoidForgeCore' in void_for
 assert 'VoidForgeFloor' in void_forge_health and 'OpenVoidForgePrompt' in void_forge_health
 assert 'ProximityPromptService.PromptTriggered' in void_forge_client
 assert 'updateVoidForgeButtons' in void_forge_client and 'CurrentBiome' in void_forge_client
+
+
+# Sprint 4.93 — persistent Voidwalker gear and combat stat integration.
+gear_catalog = Path("src/ReplicatedStorage/Shared/Config/GearCatalog.lua").read_text()
+gear_service = Path("src/ServerScriptService/Server/Services/GearService.lua").read_text()
+gear_profile = Path("src/ReplicatedStorage/Shared/Config/ProfileTemplate.lua").read_text()
+gear_inventory = Path("src/ServerScriptService/Server/Services/InventoryService.lua").read_text()
+gear_void_boss = Path("src/ServerScriptService/Server/Services/VoidBossService.lua").read_text()
+gear_ancient_boss = Path("src/ServerScriptService/Server/Services/AncientTempleBossService.lua").read_text()
+gear_heart_boss = Path("src/ServerScriptService/Server/Services/ForgottenHeartBossService.lua").read_text()
+gear_raid = Path("src/ServerScriptService/Server/Services/RaidService.lua").read_text()
+gear_client = Path("src/StarterPlayer/StarterPlayerScripts/ClientBootstrap.client.lua").read_text()
+assert '"GearService"' in server and '"GearInventory"' in server
+assert 'GearInventory = {}' in gear_profile and 'EquippedGear = {}' in gear_profile
+for item_id in ('Riftblade', 'Voidplate', 'Starhelm', 'NebulaCloak'):
+    assert item_id + ' = {' in gear_catalog and item_id in gear_service and item_id in gear_client
+for slot in ('Weapon', 'Armor', 'Helmet', 'Accessory'):
+    assert slot in gear_catalog and slot in gear_service and slot in gear_client
+assert 'payload.Action == "Craft"' in gear_service and 'payload.Action == "Equip"' in gear_service
+assert 'payload.Action == "Unequip"' in gear_service
+assert 'VoidForgeAnvil' in gear_service and 'CurrentBiome' in gear_service
+assert 'ProgressionService:CanEnterZone(player, "VoidFrontier")' in gear_service
+assert 'GearDamageBonus' in gear_service and 'GearDefenseBonus' in gear_service
+assert 'GearMaxHealthBonus' in gear_service and 'GearWalkSpeedBonus' in gear_service
+assert 'VoidGearVisuals' in gear_service and 'WeldConstraint' in gear_service
+assert 'GearSetBonus' in gear_service and 'stats.SetBonus = true' in gear_service
+assert 'GearDamageBonus' in gear_void_boss and 'GearDefenseBonus' in gear_void_boss
+assert 'GearDamageBonus' in gear_ancient_boss and 'GearDefenseBonus' in gear_ancient_boss
+assert 'GearDamageBonus' in gear_heart_boss and 'GearDefenseBonus' in gear_heart_boss
+assert 'GearDefenseBonus' in gear_raid and 'GearDamageBonus' in gear_raid
+assert 'GearEquipmentPanel' in gear_client and 'GearInventory' in gear_client
+assert 'CraftRiftblade' in gear_client and 'CraftVoidplate' in gear_client
+assert 'CraftStarhelm' in gear_client and 'CraftNebulaCloak' in gear_client
+assert 'renderGear' in gear_client and 'OpenVoidForgePrompt' in gear_client
+assert 'VoidForgeAnvil' in gear_inventory
