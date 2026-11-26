@@ -261,6 +261,24 @@ function WorldHealthCheck:Check()
         if not trial or not trial:FindFirstChild("VoidTrialClueSign") then
             fail("Нет подсказки к последовательности Испытания пустоты")
         end
+        local arena = void:FindFirstChild("VoidBossArena")
+        local boss = arena and arena:FindFirstChild("StarEater")
+        local core = boss and boss:FindFirstChild("StarEaterCore")
+        local bossPrompt = core and core:FindFirstChild("VoidBossPrompt")
+        if not arena or not arena:FindFirstChild("VoidBossArenaFloor") then
+            fail("Нет арены Пожирателя звёзд")
+        end
+        if not boss or not boss:IsA("Model") or not core or not bossPrompt
+            or not bossPrompt:IsA("ProximityPrompt") then
+            fail("Нет Пожирателя звёзд или его точки атаки")
+        end
+        local pylonCount = 0
+        for index = 1, 8 do
+            if arena and arena:FindFirstChild("VoidArenaPylon_" .. index)
+                and arena:FindFirstChild("VoidArenaPylonCore_" .. index) then pylonCount += 1 end
+        end
+        if pylonCount < 8 then fail(string.format("Пилоны арены Пустоты: %d из 8", pylonCount)) end
+        if not arena or not arena:FindFirstChild("VoidBossSign") then fail("Нет таблички Пожирателя звёзд") end
         local bridge = void:FindFirstChild("VoidCauseway")
         local bridgeCount = 0
         for _, segment in ipairs(bridge and bridge:GetChildren() or {}) do
