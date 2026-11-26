@@ -2218,7 +2218,7 @@ function WorldBuilder:Build()
 
     part(void, "VoidFloatingFoundation", Vector3.new(190, 30, 190),
         Vector3.new(0, -3, 3300), Color3.fromRGB(37, 43, 68), Enum.Material.Slate, Enum.PartType.Ball)
-    local voidTop = part(void, "VoidLanding", Vector3.new(7, 164, 164),
+    local voidTop = part(void, "VoidLanding", Vector3.new(7, 200, 200),
         Vector3.new(0, 14, 3300), Color3.fromRGB(53, 61, 91), Enum.Material.Basalt, Enum.PartType.Cylinder)
     voidTop.CFrame = CFrame.new(0, 14, 3300) * CFrame.Angles(0, 0, math.rad(90))
     part(void, "VoidArrivalPad", Vector3.new(30, 1.2, 30),
@@ -2228,9 +2228,9 @@ function WorldBuilder:Build()
     voidBridge.Name = "VoidCauseway"
     voidBridge.Parent = void
     for index = 1, 18 do
-        local z = 2678 + (index - 1) * 27
+        local z = 2665 + (index - 1) * 30
         local segment = part(voidBridge, "VoidBridgeSegment_" .. index,
-            Vector3.new(13, 1.5, 28), Vector3.new(0, 18.5, z),
+            Vector3.new(13, 1.5, 50), Vector3.new(0, 18.5, z),
             index % 3 == 0 and Color3.fromRGB(119, 105, 171) or Color3.fromRGB(76, 83, 120),
             Enum.Material.Slate)
         segment:SetAttribute("BridgeIndex", index)
