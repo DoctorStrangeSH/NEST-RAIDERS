@@ -279,6 +279,20 @@ function WorldHealthCheck:Check()
         end
         if pylonCount < 8 then fail(string.format("Пилоны арены Пустоты: %d из 8", pylonCount)) end
         if not arena or not arena:FindFirstChild("VoidBossSign") then fail("Нет таблички Пожирателя звёзд") end
+        local voidEggs = void:FindFirstChild("EggSpawnPoints")
+        local voidEggCount = 0
+        for _, egg in ipairs(voidEggs and voidEggs:GetChildren() or {}) do
+            if egg:IsA("BasePart") and egg:GetAttribute("WorldEgg")
+                and egg:FindFirstChild("CollectEggPrompt") then voidEggCount += 1 end
+        end
+        if voidEggCount < 3 then fail(string.format("Яйца Границы пустоты: %d из 3", voidEggCount)) end
+        local voidNodes = void:FindFirstChild("VoidStarshardNodes")
+        local voidNodeCount = 0
+        for _, node in ipairs(voidNodes and voidNodes:GetChildren() or {}) do
+            if node:IsA("BasePart") and type(node:GetAttribute("VoidShardNodeId")) == "string"
+                and node:FindFirstChild("MineVoidShardPrompt") then voidNodeCount += 1 end
+        end
+        if voidNodeCount < 6 then fail(string.format("Звёздные жилы: %d из 6", voidNodeCount)) end
         local bridge = void:FindFirstChild("VoidCauseway")
         local bridgeCount = 0
         for _, segment in ipairs(bridge and bridge:GetChildren() or {}) do
