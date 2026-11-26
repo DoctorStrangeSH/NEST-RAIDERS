@@ -19,7 +19,6 @@ GameConfig.Progression = {
         { Id = "CrystalRealm", DisplayName = "Хрустальное королевство", RequiredLevel = 35, RequiredQuest = "ember_trial" },
         { Id = "AncientHeights", DisplayName = "Древние высоты", RequiredLevel = 50, RequiredQuest = "crystal_trial" },
         { Id = "VoidFrontier", DisplayName = "Граница пустоты", RequiredLevel = 75, RequiredQuest = "ancient_temple_boss" },
-        { Id = "VoidFrontier", DisplayName = "Граница пустоты", RequiredLevel = 75, RequiredQuest = "ancient_trial" },
     },
 }
 
