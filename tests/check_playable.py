@@ -489,6 +489,9 @@ assert 'AncientHeights' in game_config and 'RequiredLevel = 50, RequiredQuest = 
 assert 'VoidFrontier' in game_config and 'RequiredLevel = 75, RequiredQuest = "ancient_temple_boss"' in game_config
 assert 'VoidFrontierPortal' in world and 'VoidReturnPortal' in world
 assert 'VoidBridgeSegment_' in world and 'VoidLanding' in world
+assert 'local z = 2665 + (index - 1) * 30' in world
+assert 'Vector3.new(13, 1.5, 50)' in world
+assert 'Vector3.new(7, 200, 200)' in world
 assert 'VoidFrontier' in world_health and 'VoidCauseway' in world_health
 assert 'AncientHeightsPortal' in world and 'AncientReturnPortal' in world
 assert 'AncientLanding' in world and 'AncientWelcomeSign' in world
