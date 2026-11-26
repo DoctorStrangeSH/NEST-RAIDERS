@@ -2471,7 +2471,7 @@ updateMaterialsInventory()
 
 -- Artifact collection and two-slot equipment. Crafting is server-validated at the Ancient Heights workshop.
 -- Forward declarations: UI callbacks below run after these helpers are assigned.
-local showNotice, invokeInventory, renderArtifacts
+local showNotice, invokeInventory, renderArtifacts, renderGear
 artifactsPanel = Instance.new("Frame")
 artifactsPanel.Name = "ArtifactsPanel"
 artifactsPanel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -2937,15 +2937,6 @@ local function updateVoidForgeButtons()
 end
 player:GetAttributeChangedSignal("CurrentBiome"):Connect(updateVoidForgeButtons)
 updateVoidForgeButtons()
-ProximityPromptService.PromptTriggered:Connect(function(prompt)
-    if prompt and prompt.Name == "OpenVoidForgePrompt"
-        and player:GetAttribute("CurrentBiome") == "VoidFrontier" then
-        updateGearLayout()
-        refreshGear()
-        gearPanel.Visible = true
-        showNotice("Кузница пустоты открыта. Здесь можно создать экипировку.")
-    end
-end)
 artifactsButton.Activated:Connect(function()
     refreshArtifacts()
     artifactsPanel.Visible = true
@@ -3205,6 +3196,15 @@ player:GetAttributeChangedSignal("ProfileLoaded"):Connect(function()
 end)
 updateGearLayout()
 
+ProximityPromptService.PromptTriggered:Connect(function(prompt)
+    if prompt and prompt.Name == "OpenVoidForgePrompt"
+        and player:GetAttribute("CurrentBiome") == "VoidFrontier" then
+        updateGearLayout()
+        refreshGear()
+        gearPanel.Visible = true
+        showNotice("Кузница пустоты открыта. Здесь можно создать экипировку.")
+    end
+end)
 -- Keep panels mutually exclusive regardless of which gameplay action opens them.
 -- Picker is the sole nested dialog and retains its companion display underneath.
 local modalPanels = {
