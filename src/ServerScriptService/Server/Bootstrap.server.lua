@@ -14,7 +14,7 @@ end
 for _, remoteName in ipairs({
     "CompanionInventory", "EggShop", "CollectionBook", "BondJournal", "NestUpgrade",
     "DisplayPets", "NestDecor", "NestBuild", "IslandVisit",
-    "IslandContest", "PublicProfile", "RaidBoard",
+    "IslandContest", "PublicProfile", "RaidBoard", "GearInventory",
 }) do
     local remote = remoteFolder:FindFirstChild(remoteName)
     if not remote then
