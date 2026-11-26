@@ -47,7 +47,7 @@ if not worldOk then
     remoteFolder:SetAttribute("WorldError", tostring(worldError))
 end
 
-local serviceNames = { "PlayerDataService", "ProgressionService", "HeatService", "AshfallService", "FireTrialService", "CrystalMiningService", "AncientHarvestService", "AncientSecretService", "AncientCaveService", "ForgottenHeartBossService", "AncientCraftingService", "AncientTempleService", "AncientTempleBossService", "VoidTrialService", "VoidBossService", "VoidHarvestService", "CrystalTrialService", "PlotService", "NestService", "NestDecorService", "NestBuildService", "IslandVisitService", "IslandContestService", "PublicProfileService", "RaidService", "CompanionService", "CompanionAdventureService", "BondJournalService", "DisplayPetService", "InventoryService", "EggShopService", "CollectionBookService", "EggService", "EconomyService" }
+local serviceNames = { "PlayerDataService", "ProgressionService", "HeatService", "AshfallService", "FireTrialService", "CrystalMiningService", "AncientHarvestService", "AncientSecretService", "AncientCaveService", "ForgottenHeartBossService", "AncientCraftingService", "AncientTempleService", "AncientTempleBossService", "VoidTrialService", "VoidBossService", "VoidHarvestService", "CrystalTrialService", "PlotService", "NestService", "NestDecorService", "NestBuildService", "IslandVisitService", "IslandContestService", "PublicProfileService", "RaidService", "CompanionService", "CompanionAdventureService", "BondJournalService", "DisplayPetService", "InventoryService", "GearService", "EggShopService", "CollectionBookService", "EggService", "EconomyService" }
 local services = {}
 for _, serviceName in ipairs(serviceNames) do
     local ok, result = pcall(function()
